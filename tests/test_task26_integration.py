@@ -9,14 +9,16 @@ Tests end-to-end functionality for new grammar formats:
 - Railroad diagram formats
 """
 
-import pytest
 import tempfile
 from pathlib import Path
-from udl_rating_framework.io.file_discovery import FileDiscovery
-from udl_rating_framework.core.representation import UDLRepresentation, GrammarFormat
-from udl_rating_framework.core.pipeline import RatingPipeline
-from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+
+import pytest
+
 from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+from udl_rating_framework.core.pipeline import RatingPipeline
+from udl_rating_framework.core.representation import GrammarFormat, UDLRepresentation
+from udl_rating_framework.io.file_discovery import FileDiscovery
 
 
 class TestTask26Integration:
@@ -57,7 +59,8 @@ class TestTask26Integration:
 
             # Verify all expected extensions are found
             discovered_extensions = {f.suffix for f in result.discovered_files}
-            expected_extensions = {Path(f).suffix for f in new_format_files.keys()}
+            expected_extensions = {
+                Path(f).suffix for f in new_format_files.keys()}
             assert discovered_extensions == expected_extensions
 
     def test_format_detection_accuracy(self):
@@ -77,39 +80,62 @@ class TestTask26Integration:
         ]
 
         for filename, content, expected_format in test_cases:
-            with tempfile.NamedTemporaryFile(suffix=Path(filename).suffix, mode='w', delete=False) as f:
+            with tempfile.NamedTemporaryFile(
+                suffix=Path(filename).suffix, mode="w", delete=False
+            ) as f:
                 f.write(content)
                 f.flush()
-                
+
                 udl = UDLRepresentation(content, f.name)
-                assert udl.get_format() == expected_format, f"Format detection failed for {filename}"
-            
+                assert udl.get_format() == expected_format, (
+                    f"Format detection failed for {filename}"
+                )
+
             Path(f.name).unlink()
 
     def test_rule_extraction_for_all_formats(self):
         """Test that grammar rules can be extracted from all new formats."""
         test_cases = [
-            ("test.g4", "grammar Test;\nexpr : term '+' factor ;\nterm : NUMBER ;", ["expr", "term"]),
-            ("test.peg", "Expr <- Term '+' Factor\nTerm <- NUMBER", ["Expr", "Term"]),
-            ("test.y", "%% expr : term '+' factor ;\nterm : NUMBER ;", ["expr", "term"]),
-            ("test.ebnf", "expr ::= term '+' factor\nterm ::= NUMBER", ["expr", "term"]),
-            ("test.abnf", "expr = term \"+\" factor\nterm = NUMBER", ["expr", "term"]),
-            ("test.rr", "expr: term plus factor\nterm: number", ["expr", "term"]),
+            (
+                "test.g4",
+                "grammar Test;\nexpr : term '+' factor ;\nterm : NUMBER ;",
+                ["expr", "term"],
+            ),
+            ("test.peg", "Expr <- Term '+' Factor\nTerm <- NUMBER",
+             ["Expr", "Term"]),
+            (
+                "test.y",
+                "%% expr : term '+' factor ;\nterm : NUMBER ;",
+                ["expr", "term"],
+            ),
+            (
+                "test.ebnf",
+                "expr ::= term '+' factor\nterm ::= NUMBER",
+                ["expr", "term"],
+            ),
+            ("test.abnf", 'expr = term "+" factor\nterm = NUMBER',
+             ["expr", "term"]),
+            ("test.rr", "expr: term plus factor\nterm: number",
+             ["expr", "term"]),
         ]
 
         for filename, content, expected_rules in test_cases:
-            with tempfile.NamedTemporaryFile(suffix=Path(filename).suffix, mode='w', delete=False) as f:
+            with tempfile.NamedTemporaryFile(
+                suffix=Path(filename).suffix, mode="w", delete=False
+            ) as f:
                 f.write(content)
                 f.flush()
-                
+
                 udl = UDLRepresentation(content, f.name)
                 rules = udl.get_grammar_rules()
-                
+
                 # Should extract expected rules
                 rule_names = {rule.lhs for rule in rules}
                 for expected_rule in expected_rules:
-                    assert expected_rule in rule_names, f"Rule {expected_rule} not found in {filename}"
-            
+                    assert expected_rule in rule_names, (
+                        f"Rule {expected_rule} not found in {filename}"
+                    )
+
             Path(f.name).unlink()
 
     def test_metrics_computation_for_new_formats(self):
@@ -119,7 +145,7 @@ class TestTask26Integration:
             ("test.peg", "Expr <- Term '+' Factor\nTerm <- NUMBER"),
             ("test.y", "%% expr : term '+' factor ;\nterm : NUMBER ;"),
             ("test.ebnf", "expr ::= term '+' factor\nterm ::= NUMBER"),
-            ("test.abnf", "expr = term \"+\" factor\nterm = NUMBER"),
+            ("test.abnf", 'expr = term "+" factor\nterm = NUMBER'),
             ("test.rr", "expr: term plus factor\nterm: number"),
         ]
 
@@ -127,54 +153,72 @@ class TestTask26Integration:
         completeness_metric = CompletenessMetric()
 
         for filename, content in test_cases:
-            with tempfile.NamedTemporaryFile(suffix=Path(filename).suffix, mode='w', delete=False) as f:
+            with tempfile.NamedTemporaryFile(
+                suffix=Path(filename).suffix, mode="w", delete=False
+            ) as f:
                 f.write(content)
                 f.flush()
-                
+
                 udl = UDLRepresentation(content, f.name)
-                
+
                 # Should be able to compute metrics without errors
                 consistency_score = consistency_metric.compute(udl)
                 completeness_score = completeness_metric.compute(udl)
-                
+
                 # Scores should be valid (between 0 and 1)
-                assert 0.0 <= consistency_score <= 1.0, f"Invalid consistency score for {filename}: {consistency_score}"
-                assert 0.0 <= completeness_score <= 1.0, f"Invalid completeness score for {filename}: {completeness_score}"
-            
+                assert 0.0 <= consistency_score <= 1.0, (
+                    f"Invalid consistency score for {filename}: {consistency_score}"
+                )
+                assert 0.0 <= completeness_score <= 1.0, (
+                    f"Invalid completeness score for {filename}: {completeness_score}"
+                )
+
             Path(f.name).unlink()
 
     def test_end_to_end_rating_pipeline(self):
         """Test complete rating pipeline with new formats."""
         test_cases = [
-            ("antlr_test.g4", "grammar Test;\nexpr : term '+' factor ;\nterm : NUMBER ;"),
+            (
+                "antlr_test.g4",
+                "grammar Test;\nexpr : term '+' factor ;\nterm : NUMBER ;",
+            ),
             ("peg_test.peg", "Expr <- Term '+' Factor\nTerm <- NUMBER"),
             ("yacc_test.y", "%% expr : term '+' factor ;\nterm : NUMBER ;"),
             ("ebnf_test.ebnf", "expr ::= term '+' factor\nterm ::= NUMBER"),
         ]
 
         # Initialize rating pipeline
-        metric_names = ['consistency', 'completeness', 'expressiveness', 'structural_coherence']
+        metric_names = [
+            "consistency",
+            "completeness",
+            "expressiveness",
+            "structural_coherence",
+        ]
         pipeline = RatingPipeline(metric_names)
 
         for filename, content in test_cases:
-            with tempfile.NamedTemporaryFile(suffix=Path(filename).suffix, mode='w', delete=False) as f:
+            with tempfile.NamedTemporaryFile(
+                suffix=Path(filename).suffix, mode="w", delete=False
+            ) as f:
                 f.write(content)
                 f.flush()
-                
+
                 # Run complete rating pipeline
                 udl = UDLRepresentation(content, f.name)
                 report = pipeline.compute_rating(udl)
-                
+
                 # Should produce valid report
                 assert report is not None
                 assert 0.0 <= report.overall_score <= 1.0
                 assert 0.0 <= report.confidence <= 1.0
                 assert len(report.metric_scores) > 0
-                assert len(report.errors) == 0  # Should not have errors for valid grammars
-                
+                assert (
+                    len(report.errors) == 0
+                )  # Should not have errors for valid grammars
+
                 # Should have computation trace
                 assert len(report.computation_trace) > 0
-            
+
             Path(f.name).unlink()
 
     def test_backward_compatibility(self):
@@ -187,7 +231,7 @@ class TestTask26Integration:
         ]
 
         discovery = FileDiscovery()
-        
+
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
 
@@ -203,15 +247,15 @@ class TestTask26Integration:
 
             # Should still be able to process them
             for discovered_file in result.discovered_files:
-                with open(discovered_file, 'r', encoding='utf-8') as f:
+                with open(discovered_file, "r", encoding="utf-8") as f:
                     content = f.read()
-                
+
                 udl = UDLRepresentation(content, str(discovered_file))
-                
+
                 # Should be able to extract tokens and rules
                 tokens = udl.get_tokens()
                 rules = udl.get_grammar_rules()
-                
+
                 assert len(tokens) > 0
                 # Rules may be empty for simple formats, but should not error
 
@@ -223,12 +267,12 @@ class TestTask26Integration:
             # Create mix of old and new format files
             mixed_files = {
                 "old1.udl": "expr ::= term",
-                "old2.dsl": "stmt := assignment", 
+                "old2.dsl": "stmt := assignment",
                 "new1.g4": "grammar Test; expr : term ;",
                 "new2.peg": "Expr <- Term",
                 "new3.y": "%% expr : term ;",
                 "new4.ebnf": "expr ::= term { '+' term }",
-                "new5.abnf": "expr = term \"+\" factor",
+                "new5.abnf": 'expr = term "+" factor',
                 "new6.rr": "expr: term plus factor",
                 "ignored.py": "print('hello')",  # Should be ignored
             }
@@ -243,20 +287,27 @@ class TestTask26Integration:
             result = discovery.discover_files(str(temp_path))
 
             # Should discover all UDL files but not Python file
-            expected_udl_files = [f for f in mixed_files.keys() if not f.endswith('.py')]
+            expected_udl_files = [
+                f for f in mixed_files.keys() if not f.endswith(".py")
+            ]
             assert len(result.discovered_files) == len(expected_udl_files)
             assert len(result.errors) == 0
 
             # Should be able to process all discovered files
-            metric_names = ['consistency', 'completeness', 'expressiveness', 'structural_coherence']
+            metric_names = [
+                "consistency",
+                "completeness",
+                "expressiveness",
+                "structural_coherence",
+            ]
             pipeline = RatingPipeline(metric_names)
-            
+
             for discovered_file in result.discovered_files:
-                with open(discovered_file, 'r', encoding='utf-8') as f:
+                with open(discovered_file, "r", encoding="utf-8") as f:
                     content = f.read()
                 udl = UDLRepresentation(content, str(discovered_file))
                 report = pipeline.compute_rating(udl)
-                
+
                 # Should produce valid report for each file
                 assert report is not None
                 assert 0.0 <= report.overall_score <= 1.0

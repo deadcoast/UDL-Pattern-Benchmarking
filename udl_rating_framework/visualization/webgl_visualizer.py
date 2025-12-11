@@ -6,9 +6,11 @@ and CTM processing with enhanced interactivity.
 """
 
 import json
-import numpy as np
-from typing import Dict, List, Optional, Any, Tuple
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+
 from ..core.representation import UDLRepresentation
 from ..models.ctm_adapter import TrackingData
 
@@ -16,24 +18,24 @@ from ..models.ctm_adapter import TrackingData
 class WebGLVisualizer:
     """
     Creates advanced 3D visualizations using WebGL.
-    
+
     Provides high-performance 3D rendering for:
     - Complex grammar graphs with thousands of nodes
     - Real-time CTM processing visualization
     - Interactive exploration of language structures
     """
-    
+
     def __init__(self, output_dir: str = "webgl_visualizations"):
         """Initialize WebGL visualizer."""
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
         self._setup_webgl_assets()
-    
+
     def _setup_webgl_assets(self):
         """Set up WebGL shaders and assets."""
         shaders_dir = self.output_dir / "shaders"
         shaders_dir.mkdir(exist_ok=True)
-        
+
         # Vertex shader for 3D nodes
         vertex_shader = """
         attribute vec3 position;
@@ -59,7 +61,7 @@ class WebGLVisualizer:
             gl_PointSize = size;
         }
         """
-        
+
         # Fragment shader for 3D nodes
         fragment_shader = """
         precision mediump float;
@@ -79,23 +81,23 @@ class WebGLVisualizer:
             gl_FragColor = vec4(vColor, alpha);
         }
         """
-        
+
         with open(shaders_dir / "vertex.glsl", "w") as f:
             f.write(vertex_shader)
-        
+
         with open(shaders_dir / "fragment.glsl", "w") as f:
             f.write(fragment_shader)
-    
-    def create_3d_grammar_graph(self, 
-                               udl: UDLRepresentation,
-                               save_path: Optional[str] = None) -> str:
+
+    def create_3d_grammar_graph(
+        self, udl: UDLRepresentation, save_path: Optional[str] = None
+    ) -> str:
         """
         Create advanced 3D grammar graph with WebGL.
-        
+
         Args:
             udl: UDL representation with grammar graph
             save_path: Optional path to save HTML file
-            
+
         Returns:
             Path to generated HTML file
         """
@@ -103,29 +105,29 @@ class WebGLVisualizer:
             save_path = self.output_dir / "3d_grammar_graph.html"
         else:
             save_path = Path(save_path)
-        
+
         # Extract and process graph data
         graph = udl.get_grammar_graph()
         graph_data = self._process_graph_for_3d(graph)
-        
+
         # Generate WebGL HTML
         html_content = self._generate_3d_graph_html(graph_data)
-        
+
         with open(save_path, "w") as f:
             f.write(html_content)
-        
+
         return str(save_path)
-    
-    def create_ctm_3d_animation(self, 
-                               tracking_data: TrackingData,
-                               save_path: Optional[str] = None) -> str:
+
+    def create_ctm_3d_animation(
+        self, tracking_data: TrackingData, save_path: Optional[str] = None
+    ) -> str:
         """
         Create 3D animation of CTM processing.
-        
+
         Args:
             tracking_data: CTM tracking data
             save_path: Optional path to save HTML file
-            
+
         Returns:
             Path to generated HTML file
         """
@@ -133,108 +135,121 @@ class WebGLVisualizer:
             save_path = self.output_dir / "ctm_3d_animation.html"
         else:
             save_path = Path(save_path)
-        
+
         # Process tracking data for 3D visualization
         animation_data = self._process_tracking_data_for_3d(tracking_data)
-        
+
         # Generate WebGL HTML
         html_content = self._generate_ctm_3d_html(animation_data)
-        
+
         with open(save_path, "w") as f:
             f.write(html_content)
-        
+
         return str(save_path)
-    
+
     def _process_graph_for_3d(self, graph) -> Dict[str, Any]:
         """Process NetworkX graph for 3D visualization."""
         import networkx as nx
-        
+
         # Use spring layout in 3D
         pos_2d = nx.spring_layout(graph, k=3, iterations=50)
-        
+
         # Extend to 3D by adding z-coordinate based on node properties
         nodes_3d = []
         for node_id, node_data in graph.nodes(data=True):
             x, y = pos_2d[node_id]
             # Z-coordinate based on node degree or type
             z = len(list(graph.neighbors(node_id))) * 0.5
-            
-            nodes_3d.append({
-                "id": str(node_id),
-                "position": [x * 10, y * 10, z],
-                "color": self._get_node_color_rgb(node_data.get("type", "unknown")),
-                "size": max(5, len(str(node_id)) * 2),
-                "type": node_data.get("type", "unknown")
-            })
-        
+
+            nodes_3d.append(
+                {
+                    "id": str(node_id),
+                    "position": [x * 10, y * 10, z],
+                    "color": self._get_node_color_rgb(node_data.get("type", "unknown")),
+                    "size": max(5, len(str(node_id)) * 2),
+                    "type": node_data.get("type", "unknown"),
+                }
+            )
+
         # Process edges
         edges_3d = []
         for source, target, edge_data in graph.edges(data=True):
-            source_pos = next(n["position"] for n in nodes_3d if n["id"] == str(source))
-            target_pos = next(n["position"] for n in nodes_3d if n["id"] == str(target))
-            
-            edges_3d.append({
-                "source": str(source),
-                "target": str(target),
-                "source_pos": source_pos,
-                "target_pos": target_pos,
-                "weight": edge_data.get("weight", 1)
-            })
-        
+            source_pos = next(n["position"]
+                              for n in nodes_3d if n["id"] == str(source))
+            target_pos = next(n["position"]
+                              for n in nodes_3d if n["id"] == str(target))
+
+            edges_3d.append(
+                {
+                    "source": str(source),
+                    "target": str(target),
+                    "source_pos": source_pos,
+                    "target_pos": target_pos,
+                    "weight": edge_data.get("weight", 1),
+                }
+            )
+
         return {
             "nodes": nodes_3d,
             "edges": edges_3d,
-            "bounds": self._calculate_bounds(nodes_3d)
+            "bounds": self._calculate_bounds(nodes_3d),
         }
-    
-    def _process_tracking_data_for_3d(self, tracking_data: TrackingData) -> Dict[str, Any]:
+
+    def _process_tracking_data_for_3d(
+        self, tracking_data: TrackingData
+    ) -> Dict[str, Any]:
         """Process tracking data for 3D CTM visualization."""
         # Create 3D neuron positions
         n_neurons = tracking_data.n_neurons
         neurons_3d = []
-        
+
         # Arrange neurons in a 3D grid
-        grid_size = int(np.ceil(n_neurons ** (1/3)))
+        grid_size = int(np.ceil(n_neurons ** (1 / 3)))
         for i in range(n_neurons):
             x = (i % grid_size) - grid_size // 2
             y = ((i // grid_size) % grid_size) - grid_size // 2
             z = (i // (grid_size * grid_size)) - grid_size // 2
-            
-            neurons_3d.append({
-                "id": i,
-                "position": [x * 2, y * 2, z * 2],
-                "activations": tracking_data.post_activations[:, 0, i].tolist()  # First batch
-            })
-        
+
+            neurons_3d.append(
+                {
+                    "id": i,
+                    "position": [x * 2, y * 2, z * 2],
+                    "activations": tracking_data.post_activations[
+                        :, 0, i
+                    ].tolist(),  # First batch
+                }
+            )
+
         return {
             "neurons": neurons_3d,
             "iterations": tracking_data.iterations,
-            "synchronization": tracking_data.synch_out[:, 0, :].tolist()  # First batch
+            # First batch
+            "synchronization": tracking_data.synch_out[:, 0, :].tolist(),
         }
-    
+
     def _get_node_color_rgb(self, node_type: str) -> List[float]:
         """Get RGB color for node type."""
         color_map = {
-            "terminal": [0.3, 0.7, 0.3],      # Green
+            "terminal": [0.3, 0.7, 0.3],  # Green
             "non_terminal": [0.1, 0.6, 0.9],  # Blue
-            "rule": [1.0, 0.6, 0.0],          # Orange
-            "constraint": [0.9, 0.3, 0.3],    # Red
-            "unknown": [0.6, 0.6, 0.6]        # Gray
+            "rule": [1.0, 0.6, 0.0],  # Orange
+            "constraint": [0.9, 0.3, 0.3],  # Red
+            "unknown": [0.6, 0.6, 0.6],  # Gray
         }
         return color_map.get(node_type, [0.6, 0.6, 0.6])
-    
+
     def _calculate_bounds(self, nodes_3d: List[Dict]) -> Dict[str, List[float]]:
         """Calculate 3D bounds for camera positioning."""
         positions = [node["position"] for node in nodes_3d]
         if not positions:
             return {"min": [0, 0, 0], "max": [1, 1, 1]}
-        
+
         positions_array = np.array(positions)
         return {
             "min": positions_array.min(axis=0).tolist(),
-            "max": positions_array.max(axis=0).tolist()
+            "max": positions_array.max(axis=0).tolist(),
         }
-    
+
     def _generate_3d_graph_html(self, graph_data: Dict[str, Any]) -> str:
         """Generate HTML for 3D grammar graph visualization."""
         return f"""
@@ -301,8 +316,8 @@ class WebGLVisualizer:
         </div>
         
         <div id="info">
-            <div>Nodes: {len(graph_data['nodes'])}</div>
-            <div>Edges: {len(graph_data['edges'])}</div>
+            <div>Nodes: {len(graph_data["nodes"])}</div>
+            <div>Edges: {len(graph_data["edges"])}</div>
             <div>FPS: <span id="fps">0</span></div>
         </div>
     </div>
@@ -557,7 +572,7 @@ class WebGLVisualizer:
 </body>
 </html>
         """
-    
+
     def _generate_ctm_3d_html(self, animation_data: Dict[str, Any]) -> str:
         """Generate HTML for 3D CTM animation."""
         return f"""
@@ -639,7 +654,7 @@ class WebGLVisualizer:
                 <input type="checkbox" id="showSynchronization" checked onchange="toggleSynchronization()"> Show Synchronization
             </label>
             <br>
-            <div>Iteration: <span id="currentIteration">0</span> / {animation_data['iterations'] - 1}</div>
+            <div>Iteration: <span id="currentIteration">0</span> / {animation_data["iterations"] - 1}</div>
         </div>
         
         <div id="timeline">
@@ -647,7 +662,7 @@ class WebGLVisualizer:
             <div class="timeline-bar">
                 <div class="timeline-progress" id="timelineProgress"></div>
             </div>
-            <input type="range" id="timelineSlider" min="0" max="{animation_data['iterations'] - 1}" value="0" onchange="seekToIteration()">
+            <input type="range" id="timelineSlider" min="0" max="{animation_data["iterations"] - 1}" value="0" onchange="seekToIteration()">
         </div>
     </div>
 

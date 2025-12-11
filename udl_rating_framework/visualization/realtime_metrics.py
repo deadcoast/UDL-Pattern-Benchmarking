@@ -6,17 +6,19 @@ and interactive dashboards for monitoring UDL analysis progress.
 """
 
 import json
-import time
 import threading
-from typing import Dict, List, Optional, Any, Callable
+import time
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from dataclasses import dataclass, asdict
+from typing import Any, Callable, Dict, List, Optional
+
 import numpy as np
 
 
 @dataclass
 class MetricUpdate:
     """Represents a single metric update."""
+
     timestamp: float
     metric_name: str
     value: float
@@ -27,88 +29,89 @@ class MetricUpdate:
 class RealTimeMetricsVisualizer:
     """
     Real-time metrics visualization system.
-    
+
     Provides live updates of metric computations with:
     - WebSocket-based real-time updates
     - Interactive dashboards
     - Historical data tracking
     - Performance monitoring
     """
-    
+
     def __init__(self, output_dir: str = "realtime_visualizations"):
         """Initialize real-time visualizer."""
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
-        
+
         # Data storage
         self.metric_history: Dict[str, List[MetricUpdate]] = {}
         self.active_computations: Dict[str, Dict[str, Any]] = {}
         self.performance_metrics: Dict[str, List[float]] = {
             "computation_time": [],
             "memory_usage": [],
-            "throughput": []
+            "throughput": [],
         }
-        
+
         # Real-time update callbacks
         self.update_callbacks: List[Callable[[MetricUpdate], None]] = []
-        
+
         # Threading for real-time updates
         self.update_thread = None
         self.stop_updates = False
-    
-    def add_metric_update(self, 
-                         metric_name: str, 
-                         value: float, 
-                         udl_file: str, 
-                         iteration: int = 0):
+
+    def add_metric_update(
+        self, metric_name: str, value: float, udl_file: str, iteration: int = 0
+    ):
         """Add a new metric update."""
         update = MetricUpdate(
             timestamp=time.time(),
             metric_name=metric_name,
             value=value,
             udl_file=udl_file,
-            iteration=iteration
+            iteration=iteration,
         )
-        
+
         if metric_name not in self.metric_history:
             self.metric_history[metric_name] = []
-        
+
         self.metric_history[metric_name].append(update)
-        
+
         # Trigger callbacks
         for callback in self.update_callbacks:
             callback(update)
-    
+
     def start_computation_tracking(self, computation_id: str, udl_file: str):
         """Start tracking a computation."""
         self.active_computations[computation_id] = {
             "udl_file": udl_file,
             "start_time": time.time(),
             "metrics_computed": [],
-            "status": "running"
+            "status": "running",
         }
-    
+
     def finish_computation_tracking(self, computation_id: str):
         """Finish tracking a computation."""
         if computation_id in self.active_computations:
             computation = self.active_computations[computation_id]
             computation["end_time"] = time.time()
             computation["status"] = "completed"
-            computation["duration"] = computation["end_time"] - computation["start_time"]
-            
+            computation["duration"] = (
+                computation["end_time"] - computation["start_time"]
+            )
+
             # Update performance metrics
-            self.performance_metrics["computation_time"].append(computation["duration"])
-    
-    def create_realtime_dashboard(self, 
-                                save_path: Optional[str] = None,
-                                websocket_port: int = 8765) -> str:
+            self.performance_metrics["computation_time"].append(
+                computation["duration"])
+
+    def create_realtime_dashboard(
+        self, save_path: Optional[str] = None, websocket_port: int = 8765
+    ) -> str:
         """
         Create real-time dashboard with WebSocket updates.
-        
+
         Args:
             save_path: Optional path to save HTML file
             websocket_port: Port for WebSocket server
-            
+
         Returns:
             Path to generated HTML file
         """
@@ -116,22 +119,22 @@ class RealTimeMetricsVisualizer:
             save_path = self.output_dir / "realtime_dashboard.html"
         else:
             save_path = Path(save_path)
-        
+
         # Generate HTML with WebSocket integration
         html_content = self._generate_realtime_dashboard_html(websocket_port)
-        
+
         with open(save_path, "w") as f:
             f.write(html_content)
-        
+
         return str(save_path)
-    
+
     def create_performance_monitor(self, save_path: Optional[str] = None) -> str:
         """
         Create performance monitoring dashboard.
-        
+
         Args:
             save_path: Optional path to save HTML file
-            
+
         Returns:
             Path to generated HTML file
         """
@@ -139,25 +142,25 @@ class RealTimeMetricsVisualizer:
             save_path = self.output_dir / "performance_monitor.html"
         else:
             save_path = Path(save_path)
-        
+
         # Generate performance monitoring HTML
         html_content = self._generate_performance_monitor_html()
-        
+
         with open(save_path, "w") as f:
             f.write(html_content)
-        
+
         return str(save_path)
-    
-    def create_metric_comparison_view(self, 
-                                    metric_names: List[str],
-                                    save_path: Optional[str] = None) -> str:
+
+    def create_metric_comparison_view(
+        self, metric_names: List[str], save_path: Optional[str] = None
+    ) -> str:
         """
         Create comparative view of multiple metrics.
-        
+
         Args:
             metric_names: List of metrics to compare
             save_path: Optional path to save HTML file
-            
+
         Returns:
             Path to generated HTML file
         """
@@ -165,30 +168,30 @@ class RealTimeMetricsVisualizer:
             save_path = self.output_dir / "metric_comparison.html"
         else:
             save_path = Path(save_path)
-        
+
         # Prepare comparison data
         comparison_data = self._prepare_comparison_data(metric_names)
-        
+
         # Generate comparison HTML
         html_content = self._generate_comparison_html(comparison_data)
-        
+
         with open(save_path, "w") as f:
             f.write(html_content)
-        
+
         return str(save_path)
-    
+
     def export_data(self, format: str = "json") -> str:
         """
         Export collected data in specified format.
-        
+
         Args:
             format: Export format ('json', 'csv', 'parquet')
-            
+
         Returns:
             Path to exported file
         """
         timestamp = int(time.time())
-        
+
         if format == "json":
             export_path = self.output_dir / f"metrics_export_{timestamp}.json"
             export_data = {
@@ -197,65 +200,64 @@ class RealTimeMetricsVisualizer:
                     for name, updates in self.metric_history.items()
                 },
                 "active_computations": self.active_computations,
-                "performance_metrics": self.performance_metrics
+                "performance_metrics": self.performance_metrics,
             }
-            
+
             with open(export_path, "w") as f:
                 json.dump(export_data, f, indent=2)
-        
+
         elif format == "csv":
             import pandas as pd
-            
+
             export_path = self.output_dir / f"metrics_export_{timestamp}.csv"
-            
+
             # Flatten metric history for CSV
             rows = []
             for metric_name, updates in self.metric_history.items():
                 for update in updates:
-                    rows.append({
-                        "timestamp": update.timestamp,
-                        "metric_name": update.metric_name,
-                        "value": update.value,
-                        "udl_file": update.udl_file,
-                        "iteration": update.iteration
-                    })
-            
+                    rows.append(
+                        {
+                            "timestamp": update.timestamp,
+                            "metric_name": update.metric_name,
+                            "value": update.value,
+                            "udl_file": update.udl_file,
+                            "iteration": update.iteration,
+                        }
+                    )
+
             df = pd.DataFrame(rows)
             df.to_csv(export_path, index=False)
-        
+
         return str(export_path)
-    
+
     def _prepare_comparison_data(self, metric_names: List[str]) -> Dict[str, Any]:
         """Prepare data for metric comparison."""
-        comparison_data = {
-            "metrics": metric_names,
-            "data": {},
-            "statistics": {}
-        }
-        
+        comparison_data = {"metrics": metric_names,
+                           "data": {}, "statistics": {}}
+
         for metric_name in metric_names:
             if metric_name in self.metric_history:
                 updates = self.metric_history[metric_name]
                 values = [update.value for update in updates]
                 timestamps = [update.timestamp for update in updates]
-                
+
                 comparison_data["data"][metric_name] = {
                     "values": values,
                     "timestamps": timestamps,
-                    "count": len(values)
+                    "count": len(values),
                 }
-                
+
                 if values:
                     comparison_data["statistics"][metric_name] = {
                         "mean": np.mean(values),
                         "std": np.std(values),
                         "min": np.min(values),
                         "max": np.max(values),
-                        "latest": values[-1]
+                        "latest": values[-1],
                     }
-        
+
         return comparison_data
-    
+
     def _generate_realtime_dashboard_html(self, websocket_port: int) -> str:
         """Generate HTML for real-time dashboard."""
         return f"""
@@ -757,11 +759,11 @@ class RealTimeMetricsVisualizer:
 </body>
 </html>
         """
-    
+
     def _generate_performance_monitor_html(self) -> str:
         """Generate HTML for performance monitoring dashboard."""
         performance_data = json.dumps(self.performance_metrics)
-        
+
         return f"""
 <!DOCTYPE html>
 <html>
@@ -1070,7 +1072,7 @@ class RealTimeMetricsVisualizer:
 </body>
 </html>
         """
-    
+
     def _generate_comparison_html(self, comparison_data: Dict[str, Any]) -> str:
         """Generate HTML for metric comparison view."""
         return f"""
@@ -1159,7 +1161,7 @@ class RealTimeMetricsVisualizer:
 <body>
     <div class="comparison-header">
         <h1>Metric Comparison Analysis</h1>
-        <p>Comparative analysis of {len(comparison_data['metrics'])} metrics</p>
+        <p>Comparative analysis of {len(comparison_data["metrics"])} metrics</p>
     </div>
     
     <div class="controls">

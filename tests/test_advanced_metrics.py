@@ -5,14 +5,19 @@ Tests semantic similarity, readability, maintainability, cross-language compatib
 and evolution tracking metrics.
 """
 
-import pytest
 import numpy as np
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.semantic_similarity import SemanticSimilarityMetric
-from udl_rating_framework.core.metrics.readability import ReadabilityMetric
-from udl_rating_framework.core.metrics.maintainability import MaintainabilityMetric
-from udl_rating_framework.core.metrics.cross_language_compatibility import CrossLanguageCompatibilityMetric
+import pytest
+
+from udl_rating_framework.core.metrics.cross_language_compatibility import (
+    CrossLanguageCompatibilityMetric,
+)
 from udl_rating_framework.core.metrics.evolution_tracking import EvolutionTrackingMetric
+from udl_rating_framework.core.metrics.maintainability import MaintainabilityMetric
+from udl_rating_framework.core.metrics.readability import ReadabilityMetric
+from udl_rating_framework.core.metrics.semantic_similarity import (
+    SemanticSimilarityMetric,
+)
+from udl_rating_framework.core.representation import UDLRepresentation
 
 
 class TestSemanticSimilarityMetric:
@@ -27,7 +32,7 @@ class TestSemanticSimilarityMetric:
         """
         udl = UDLRepresentation(udl_text, "test.udl")
         metric = SemanticSimilarityMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0
 
@@ -35,7 +40,7 @@ class TestSemanticSimilarityMetric:
         """Test semantic similarity with empty UDL."""
         udl = UDLRepresentation("", "empty.udl")
         metric = SemanticSimilarityMetric()
-        
+
         score = metric.compute(udl)
         assert score == 0.0
 
@@ -44,7 +49,7 @@ class TestSemanticSimilarityMetric:
         udl_text = "identifier ::= letter+"
         udl = UDLRepresentation(udl_text, "single.udl")
         metric = SemanticSimilarityMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0  # Single construct should produce valid score
 
@@ -52,9 +57,9 @@ class TestSemanticSimilarityMetric:
         """Test metric properties."""
         metric = SemanticSimilarityMetric()
         properties = metric.get_properties()
-        
-        assert properties['bounded'] is True
-        assert properties['continuous'] is True
+
+        assert properties["bounded"] is True
+        assert properties["continuous"] is True
 
     def test_formula(self):
         """Test formula string."""
@@ -77,7 +82,7 @@ class TestReadabilityMetric:
         """
         udl = UDLRepresentation(udl_text, "test.udl")
         metric = ReadabilityMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0
 
@@ -85,7 +90,7 @@ class TestReadabilityMetric:
         """Test readability with empty UDL."""
         udl = UDLRepresentation("", "empty.udl")
         metric = ReadabilityMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0  # Empty UDL should produce valid score
 
@@ -99,7 +104,7 @@ class TestReadabilityMetric:
         """
         udl = UDLRepresentation(udl_text, "complex.udl")
         metric = ReadabilityMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0
 
@@ -107,9 +112,9 @@ class TestReadabilityMetric:
         """Test metric properties."""
         metric = ReadabilityMetric()
         properties = metric.get_properties()
-        
-        assert properties['bounded'] is True
-        assert properties['continuous'] is True
+
+        assert properties["bounded"] is True
+        assert properties["continuous"] is True
 
     def test_formula(self):
         """Test formula string."""
@@ -135,7 +140,7 @@ class TestMaintainabilityMetric:
         """
         udl = UDLRepresentation(udl_text, "test.udl")
         metric = MaintainabilityMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0
 
@@ -143,7 +148,7 @@ class TestMaintainabilityMetric:
         """Test maintainability with empty UDL."""
         udl = UDLRepresentation("", "empty.udl")
         metric = MaintainabilityMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0  # Empty UDL should produce valid score
 
@@ -156,15 +161,15 @@ class TestMaintainabilityMetric:
         """
         udl = UDLRepresentation(udl_text, "test.udl")
         metric = MaintainabilityMetric()
-        
+
         detailed = metric.get_detailed_metrics(udl)
-        
-        assert 'halstead_volume' in detailed
-        assert 'cyclomatic_complexity' in detailed
-        assert 'lines_of_code' in detailed
-        assert 'comment_ratio' in detailed
-        assert 'maintainability_index' in detailed
-        
+
+        assert "halstead_volume" in detailed
+        assert "cyclomatic_complexity" in detailed
+        assert "lines_of_code" in detailed
+        assert "comment_ratio" in detailed
+        assert "maintainability_index" in detailed
+
         for value in detailed.values():
             assert isinstance(value, (int, float))
             assert value >= 0
@@ -173,9 +178,9 @@ class TestMaintainabilityMetric:
         """Test metric properties."""
         metric = MaintainabilityMetric()
         properties = metric.get_properties()
-        
-        assert properties['bounded'] is True
-        assert properties['continuous'] is True
+
+        assert properties["bounded"] is True
+        assert properties["continuous"] is True
 
     def test_formula(self):
         """Test formula string."""
@@ -197,7 +202,7 @@ class TestCrossLanguageCompatibilityMetric:
         """
         udl = UDLRepresentation(udl_text, "test.udl")
         metric = CrossLanguageCompatibilityMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0
 
@@ -214,7 +219,7 @@ class TestCrossLanguageCompatibilityMetric:
         """
         udl = UDLRepresentation(udl_text, "test.g4")
         metric = CrossLanguageCompatibilityMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0
 
@@ -228,7 +233,7 @@ class TestCrossLanguageCompatibilityMetric:
         """
         udl = UDLRepresentation(udl_text, "test.peg")
         metric = CrossLanguageCompatibilityMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0
 
@@ -236,7 +241,7 @@ class TestCrossLanguageCompatibilityMetric:
         """Test compatibility with empty UDL."""
         udl = UDLRepresentation("", "empty.udl")
         metric = CrossLanguageCompatibilityMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0
 
@@ -244,9 +249,9 @@ class TestCrossLanguageCompatibilityMetric:
         """Test metric properties."""
         metric = CrossLanguageCompatibilityMetric()
         properties = metric.get_properties()
-        
-        assert properties['bounded'] is True
-        assert properties['continuous'] is True
+
+        assert properties["bounded"] is True
+        assert properties["continuous"] is True
 
     def test_formula(self):
         """Test formula string."""
@@ -270,7 +275,7 @@ class TestEvolutionTrackingMetric:
         """
         udl = UDLRepresentation(udl_text, "test.udl")
         metric = EvolutionTrackingMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0
 
@@ -285,35 +290,35 @@ class TestEvolutionTrackingMetric:
         term ::= number | identifier
         identifier ::= letter+
         """
-        
+
         udl_v1 = UDLRepresentation(udl_v1_text, "v1.udl")
         udl_v2 = UDLRepresentation(udl_v2_text, "v2.udl")
-        
+
         metric = EvolutionTrackingMetric()
         comparison = metric.compare_versions(udl_v1, udl_v2)
-        
-        assert 'structural_similarity' in comparison
-        assert 'added_constructs' in comparison
-        assert 'removed_constructs' in comparison
-        assert 'modified_rules' in comparison
-        assert 'compatibility_impact' in comparison
-        assert 'change_complexity' in comparison
-        
-        assert 0.0 <= comparison['structural_similarity'] <= 1.0
-        assert isinstance(comparison['added_constructs'], set)
-        assert isinstance(comparison['removed_constructs'], set)
+
+        assert "structural_similarity" in comparison
+        assert "added_constructs" in comparison
+        assert "removed_constructs" in comparison
+        assert "modified_rules" in comparison
+        assert "compatibility_impact" in comparison
+        assert "change_complexity" in comparison
+
+        assert 0.0 <= comparison["structural_similarity"] <= 1.0
+        assert isinstance(comparison["added_constructs"], set)
+        assert isinstance(comparison["removed_constructs"], set)
 
     def test_version_history(self):
         """Test version history tracking."""
         udl_v1_text = "expression ::= number"
         udl_v2_text = "expression ::= number | identifier"
-        
+
         udl_v1 = UDLRepresentation(udl_v1_text, "v1.udl")
         udl_v2 = UDLRepresentation(udl_v2_text, "v2.udl")
-        
+
         metric = EvolutionTrackingMetric()
         metric.add_version("v1.0", udl_v1)
-        
+
         # Compute score for v2 with v1 in history
         score = metric.compute(udl_v2)
         assert 0.0 <= score <= 1.0
@@ -322,7 +327,7 @@ class TestEvolutionTrackingMetric:
         """Test evolution tracking with empty UDL."""
         udl = UDLRepresentation("", "empty.udl")
         metric = EvolutionTrackingMetric()
-        
+
         score = metric.compute(udl)
         assert 0.0 <= score <= 1.0
 
@@ -330,9 +335,9 @@ class TestEvolutionTrackingMetric:
         """Test metric properties."""
         metric = EvolutionTrackingMetric()
         properties = metric.get_properties()
-        
-        assert properties['bounded'] is True
-        assert properties['continuous'] is True
+
+        assert properties["bounded"] is True
+        assert properties["continuous"] is True
 
     def test_formula(self):
         """Test formula string."""
@@ -358,18 +363,20 @@ class TestAdvancedMetricsIntegration:
         factor ::= number | identifier | '(' expression ')'
         """
         udl = UDLRepresentation(udl_text, "test.udl")
-        
+
         metrics = [
             SemanticSimilarityMetric(),
             ReadabilityMetric(),
             MaintainabilityMetric(),
             CrossLanguageCompatibilityMetric(),
-            EvolutionTrackingMetric()
+            EvolutionTrackingMetric(),
         ]
-        
+
         for metric in metrics:
             score = metric.compute(udl)
-            assert 0.0 <= score <= 1.0, f"{metric.__class__.__name__} produced out-of-bounds score: {score}"
+            assert 0.0 <= score <= 1.0, (
+                f"{metric.__class__.__name__} produced out-of-bounds score: {score}"
+            )
 
     def test_all_metrics_deterministic(self):
         """Test that all advanced metrics are deterministic."""
@@ -379,37 +386,40 @@ class TestAdvancedMetricsIntegration:
         factor ::= number | identifier
         """
         udl = UDLRepresentation(udl_text, "test.udl")
-        
+
         metrics = [
             SemanticSimilarityMetric(),
             ReadabilityMetric(),
             MaintainabilityMetric(),
             CrossLanguageCompatibilityMetric(),
-            EvolutionTrackingMetric()
+            EvolutionTrackingMetric(),
         ]
-        
+
         for metric in metrics:
             scores = [metric.compute(udl) for _ in range(3)]
-            assert all(score == scores[0] for score in scores), \
+            assert all(score == scores[0] for score in scores), (
                 f"{metric.__class__.__name__} is not deterministic: {scores}"
+            )
 
     def test_metric_registration(self):
         """Test that all advanced metrics are properly registered."""
         from udl_rating_framework.core.metrics.base import MetricRegistry
-        
+
         registry = MetricRegistry()
         registered_metrics = registry.list_metrics()
-        
+
         expected_metrics = [
-            'semantic_similarity',
-            'readability', 
-            'maintainability',
-            'cross_language_compatibility',
-            'evolution_tracking'
+            "semantic_similarity",
+            "readability",
+            "maintainability",
+            "cross_language_compatibility",
+            "evolution_tracking",
         ]
-        
+
         for metric_name in expected_metrics:
-            assert metric_name in registered_metrics, f"Metric {metric_name} not registered"
+            assert metric_name in registered_metrics, (
+                f"Metric {metric_name} not registered"
+            )
 
     def test_all_metrics_have_formulas(self):
         """Test that all advanced metrics provide LaTeX formulas."""
@@ -418,15 +428,15 @@ class TestAdvancedMetricsIntegration:
             ReadabilityMetric(),
             MaintainabilityMetric(),
             CrossLanguageCompatibilityMetric(),
-            EvolutionTrackingMetric()
+            EvolutionTrackingMetric(),
         ]
-        
+
         for metric in metrics:
             formula = metric.get_formula()
             assert isinstance(formula, str)
             assert len(formula) > 0
             # Should contain LaTeX-style notation
-            assert any(char in formula for char in ['\\', '_', '^', '{', '}'])
+            assert any(char in formula for char in ["\\", "_", "^", "{", "}"])
 
     def test_all_metrics_have_properties(self):
         """Test that all advanced metrics define mathematical properties."""
@@ -435,15 +445,16 @@ class TestAdvancedMetricsIntegration:
             ReadabilityMetric(),
             MaintainabilityMetric(),
             CrossLanguageCompatibilityMetric(),
-            EvolutionTrackingMetric()
+            EvolutionTrackingMetric(),
         ]
-        
-        expected_properties = ['bounded', 'monotonic', 'additive', 'continuous']
-        
+
+        expected_properties = ["bounded",
+                               "monotonic", "additive", "continuous"]
+
         for metric in metrics:
             properties = metric.get_properties()
             assert isinstance(properties, dict)
-            
+
             for prop in expected_properties:
                 assert prop in properties
                 assert isinstance(properties[prop], bool)
