@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/visualization/activation_visualizer.py
+# hypothesis_version: 6.148.7
+
+[0.3, 0.7, 300, 'Activation Value', 'Density', 'Iteration', 'Neuron Index', 'RdBu_r', 'auto', 'black', 'correlation_matrix', 'default', 'nearest', 'post', 'post_distribution', 'post_heatmap', 'post_timeseries', 'pre', 'pre_distribution', 'pre_heatmap', 'pre_timeseries', 'seaborn-v0_8', 'tight']

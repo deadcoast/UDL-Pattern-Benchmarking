@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/visualization/synchronization_visualizer.py
+# hypothesis_version: 6.148.7
+
+[0.3, 0.7, 1.0, 300, '--', 'Attention Sum', 'Attention Weight', 'Blues', 'Deviation from 1.0', 'Expected (1.0)', 'Frequency', 'Iteration', 'Max Deviation', 'Mean', 'Mean Deviation', 'Sequence Position', 'action', 'attention_evolution', 'auto', 'b-', 'black', 'blue', 'default', 'log', 'nearest', 'out', 'r-', 'red', 'seaborn-v0_8', 'synch_out_evolution', 'synch_out_timeseries', 'tight', 'viridis', '±1 Std']

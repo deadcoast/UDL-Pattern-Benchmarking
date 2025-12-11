@@ -335,10 +335,10 @@
   - Test visualization generation
   - _Requirements: 7.1, 7.2, 7.6_
 
-- [ ] 16. Checkpoint - Ensure all tests pass
+- [x] 16. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 17. Implement comparison and statistical analysis
+- [x] 17. Implement comparison and statistical analysis
   - Create ComparisonEngine class
   - Implement pairwise difference computation: Δ_ij = Q_i - Q_j
   - Implement statistical significance tests (t-test, Wilcoxon)
@@ -346,41 +346,41 @@
   - Implement ranking with confidence intervals
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [ ] 17.1 Write property test for consistent rating procedures
+- [x] 17.1 Write property test for consistent rating procedures
   - **Property 29: Consistent Rating Procedures**
   - **Validates: Requirements 8.1**
   - Rate multiple UDLs
   - Verify identical procedures used
   - _Requirements: 8.1_
 
-- [ ] 17.2 Write property test for pairwise difference computation
+- [x] 17.2 Write property test for pairwise difference computation
   - **Property 30: Pairwise Difference Computation**
   - **Validates: Requirements 8.2**
   - Generate UDL pairs
   - Verify Δ_ij = Q_i - Q_j computed correctly
   - _Requirements: 8.2_
 
-- [ ] 17.3 Write property test for statistical significance testing
+- [x] 17.3 Write property test for statistical significance testing
   - **Property 31: Statistical Significance Testing**
   - **Validates: Requirements 8.3**
   - Compare UDLs
   - Verify p-values are computed and reported
   - _Requirements: 8.3_
 
-- [ ] 17.4 Write property test for effect size computation
+- [x] 17.4 Write property test for effect size computation
   - **Property 32: Effect Size Computation**
   - **Validates: Requirements 8.4**
   - Compare UDLs
   - Verify Cohen's d is computed correctly
   - _Requirements: 8.4_
 
-- [ ] 17.5 Write unit tests for comparison engine
+- [x] 17.5 Write unit tests for comparison engine
   - Test pairwise comparisons
   - Test ranking generation
   - Test confidence interval computation
   - _Requirements: 8.2, 8.3, 8.4, 8.5_
 
-- [ ] 18. Implement evaluation utilities
+- [-] 18. Implement evaluation utilities
   - Create EvaluationSuite class
   - Implement k-fold cross-validation (k ≥ 5)
   - Implement correlation computation (Pearson, Spearman) with confidence intervals

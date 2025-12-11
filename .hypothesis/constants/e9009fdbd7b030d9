@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/io/report_generator.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.3, 0.7, '#28a745', '#dc3545', '#ffc107', '%Y-%m-%d %H:%M:%S', ', ', '1.0.0', 'JSON', 'N/A', 'computation_trace', 'confidence', 'count', 'error_bounds', 'error_count', 'errors', 'format', 'formula', 'generated_at', 'generator_version', 'has_errors', 'has_warnings', 'inputs', 'intermediate_values', 'lower', 'max', 'mean', 'metric_formulas', 'metric_scores', 'metrics', 'min', 'operation', 'output', 'overall_score', 'report_metadata', 'reports', 'reports_with_errors', 'step_number', 'summary', 'timestamp', 'total_errors', 'total_reports', 'total_warnings', 'udl_file', 'upper', 'utf-8', 'w', 'warning_count', 'warnings']
