@@ -9,6 +9,7 @@ This module handles:
 
 from .file_discovery import FileDiscovery, FileDiscoveryResult, FileDiscoveryError
 from .input_validation import InputValidator, ValidationResult, ValidationError, UDLFormat
+from .report_generator import ReportGenerator
 
 __all__ = [
     'FileDiscovery',
@@ -18,4 +19,5 @@ __all__ = [
     'ValidationResult',
     'ValidationError',
     'UDLFormat',
+    'ReportGenerator',
 ]

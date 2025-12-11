@@ -227,7 +227,7 @@
   - Test report generation
   - _Requirements: 5.1, 5.3, 5.5_
 
-- [ ] 12. Implement report generation and output formatting
+- [x] 12. Implement report generation and output formatting
   - Create ReportGenerator class
   - Implement JSON output format
   - Implement CSV output format
@@ -235,7 +235,7 @@
   - Include all metric scores, formulas, and computation traces
   - _Requirements: 5.5, 5.6, 5.7_
 
-- [ ] 12.1 Write unit tests for report generation
+- [x] 12.1 Write unit tests for report generation
   - Test JSON format correctness
   - Test CSV format correctness
   - Test HTML generation
