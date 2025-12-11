@@ -18,6 +18,7 @@ from udl_rating_framework.cli.commands.train import train_command
 from udl_rating_framework.cli.commands.compare import compare_command
 from udl_rating_framework.cli.commands.evaluate import evaluate_command
 from udl_rating_framework.cli.commands.integration import integration
+from udl_rating_framework.cli.commands.analytics import analytics
 from udl_rating_framework.cli.config import load_config, validate_config
 
 
@@ -48,6 +49,7 @@ def cli(ctx: click.Context, config: Optional[Path], verbose: bool, quiet: bool):
     - Training CTM models
     - Comparing multiple UDLs
     - Evaluating model performance
+    - Advanced analytics and reporting
     """
     # Set up logging level
     if quiet:
@@ -76,6 +78,7 @@ cli.add_command(train_command)
 cli.add_command(compare_command)
 cli.add_command(evaluate_command)
 cli.add_command(integration)
+cli.add_command(analytics)
 
 
 def main():
