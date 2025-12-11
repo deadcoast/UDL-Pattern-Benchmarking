@@ -11,6 +11,9 @@ __all__ = [
     "UDLRepresentation",
     "MetricAggregator",
     "ConfidenceCalculator",
+    "RatingPipeline",
+    "QualityReport",
+    "ComputationStep",
 ]
 
 
@@ -25,4 +28,13 @@ def __getattr__(name):
     elif name == "ConfidenceCalculator":
         from udl_rating_framework.core.confidence import ConfidenceCalculator
         return ConfidenceCalculator
+    elif name == "RatingPipeline":
+        from udl_rating_framework.core.pipeline import RatingPipeline
+        return RatingPipeline
+    elif name == "QualityReport":
+        from udl_rating_framework.core.pipeline import QualityReport
+        return QualityReport
+    elif name == "ComputationStep":
+        from udl_rating_framework.core.pipeline import ComputationStep
+        return ComputationStep
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")

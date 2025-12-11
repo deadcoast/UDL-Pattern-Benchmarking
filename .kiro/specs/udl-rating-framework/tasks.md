@@ -199,7 +199,7 @@
   - Test on empty directory
   - _Requirements: 2.1, 2.5_
 
-- [ ] 11. Implement rating computation pipeline
+- [x] 11. Implement rating computation pipeline
   - Create RatingPipeline class that orchestrates metric computation
   - Implement independent metric computation with error handling
   - Implement result aggregation
@@ -207,21 +207,21 @@
   - Implement computation trace generation
   - _Requirements: 5.1, 5.3, 5.5, 5.6_
 
-- [ ] 11.1 Write property test for independent metric computation
+- [x] 11.1 Write property test for independent metric computation
   - **Property 18: Independent Metric Computation**
   - **Validates: Requirements 5.1**
   - Verify metrics can be computed independently
   - Verify no side effects between metrics
   - _Requirements: 5.1_
 
-- [ ] 11.2 Write property test for result aggregation
+- [x] 11.2 Write property test for result aggregation
   - **Property 8: Result Aggregation**
   - **Validates: Requirements 2.4**
   - Process multiple UDL files
   - Verify all results are included in summary
   - _Requirements: 2.4_
 
-- [ ] 11.3 Write unit tests for rating pipeline
+- [x] 11.3 Write unit tests for rating pipeline
   - Test complete pipeline on sample UDL
   - Test error handling when metric fails
   - Test report generation
