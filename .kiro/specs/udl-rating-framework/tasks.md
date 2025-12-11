@@ -171,21 +171,21 @@
 - [x] 9. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 10. Implement file discovery and input processing
+- [x] 10. Implement file discovery and input processing
   - Create file discovery module with recursive directory traversal
   - Implement file extension filtering (.udl, .dsl, .grammar, .ebnf, .txt)
   - Implement error handling for unreadable files
   - Create input validation module
   - _Requirements: 2.1, 2.3, 9.5_
 
-- [ ] 10.1 Write property test for file discovery completeness
+- [x] 10.1 Write property test for file discovery completeness
   - **Property 6: File Discovery Completeness**
   - **Validates: Requirements 2.1**
   - Generate directory structures with UDL files
   - Verify all files are discovered
   - _Requirements: 2.1_
 
-- [ ] 10.2 Write property test for graceful error handling
+- [x] 10.2 Write property test for graceful error handling
   - **Property 7: Graceful Error Handling**
   - **Validates: Requirements 2.3**
   - Create directories with unreadable files
@@ -193,7 +193,7 @@
   - Verify errors are logged
   - _Requirements: 2.3_
 
-- [ ] 10.3 Write unit tests for file discovery
+- [x] 10.3 Write unit tests for file discovery
   - Test on directory with multiple UDL files
   - Test on nested directory structure
   - Test on empty directory
