@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/metrics/consistency.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1.0, '"', "'", "'0'", "'1'", "'false'", "'no'", "'off'", "'on'", "'true'", "'yes'", '::=', ':=', '=', 'additive', 'bounded', 'consistency', 'continuous', 'monotonic', 'not', 'not ', 'operator']

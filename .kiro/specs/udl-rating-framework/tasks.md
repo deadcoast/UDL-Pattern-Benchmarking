@@ -97,7 +97,7 @@
   - Test on minimal UDL
   - _Requirements: 3.3_
 
-- [ ] 6. Implement Expressiveness Metric
+- [x] 6. Implement Expressiveness Metric
   - Implement ExpressivenessMetric class extending QualityMetric
   - Implement Chomsky hierarchy classification algorithm
   - Implement Kolmogorov complexity approximation via compression
@@ -105,7 +105,7 @@
   - Document mathematical formula in LaTeX
   - _Requirements: 1.3, 3.1, 3.4_
 
-- [ ] 6.1 Write property test for expressiveness metric correctness
+- [x] 6.1 Write property test for expressiveness metric correctness
   - **Property 11: Expressiveness Metric Correctness**
   - **Validates: Requirements 3.4**
   - Generate UDLs of different Chomsky types
@@ -113,7 +113,7 @@
   - Verify complexity approximation is reasonable
   - _Requirements: 3.4_
 
-- [ ] 6.2 Write unit tests for expressiveness metric
+- [x] 6.2 Write unit tests for expressiveness metric
   - Test on regular grammar (Type-3)
   - Test on context-free grammar (Type-2)
   - Test on context-sensitive grammar (Type-1)
