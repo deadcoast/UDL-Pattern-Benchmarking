@@ -423,7 +423,7 @@
   - Test report generation
   - _Requirements: 10.1, 10.2, 10.3_
 
-- [ ] 19. Implement CLI interface
+- [x] 19. Implement CLI interface
   - Create command-line interface using argparse or click
   - Implement 'rate' command for rating UDL files/directories
   - Implement 'train' command for training CTM model
@@ -432,7 +432,7 @@
   - Add configuration file support (YAML)
   - _Requirements: 2.1, 4.6, 8.1, 10.1_
 
-- [ ] 19.1 Write integration tests for CLI
+- [x] 19.1 Write integration tests for CLI
   - Test 'rate' command end-to-end
   - Test 'train' command end-to-end
   - Test 'compare' command end-to-end

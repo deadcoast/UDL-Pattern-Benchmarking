@@ -8,4 +8,6 @@ This module provides CLI commands for:
 - Evaluating model performance
 """
 
-__all__ = []
+from .main import main, cli
+
+__all__ = ['main', 'cli']

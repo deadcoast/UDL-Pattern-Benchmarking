@@ -1,0 +1,43 @@
+# Example configuration file for UDL Rating Framework
+# Copy this file and modify as needed
+
+# Quality metric weights (must sum to 1.0)
+metrics:
+  consistency_weight: 0.25
+  completeness_weight: 0.25
+  expressiveness_weight: 0.25
+  structural_coherence_weight: 0.25
+
+# Training configuration
+training:
+  batch_size: 32
+  learning_rate: 0.001
+  epochs: 100
+  validation_split: 0.2
+  early_stopping_patience: 10
+  checkpoint_dir: "checkpoints"
+  alpha: 0.7  # Weight for rating loss
+  beta: 0.3   # Weight for confidence loss
+
+# Model architecture configuration
+model:
+  d_model: 256
+  d_input: 64
+  iterations: 20
+  n_synch_out: 32
+  vocab_size: 10000
+  max_sequence_length: 512
+
+# Evaluation configuration
+evaluation:
+  k_folds: 5
+  bootstrap_samples: 1000
+  confidence_level: 0.95
+  calibration_bins: 10
+
+# Output configuration
+output:
+  formats: ["json", "csv"]
+  output_dir: "output"
+  include_traces: true
+  precision: 6
