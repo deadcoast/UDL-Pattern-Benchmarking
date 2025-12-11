@@ -5,9 +5,10 @@ This conftest is separate from the main tests/conftest.py to avoid
 torch import issues when testing the UDL rating framework.
 """
 
-import pytest
 import sys
 from pathlib import Path
+
+import pytest
 
 # Add the project root to the path
 project_root = Path(__file__).parent.parent.parent

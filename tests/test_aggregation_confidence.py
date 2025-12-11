@@ -6,10 +6,13 @@ Tests the mathematical properties of:
 - ConfidenceCalculator: C = 1 - H(p)/H_max with entropy-based computation
 """
 
-import pytest
-import numpy as np
-from hypothesis import given, strategies as st, settings, assume
 from typing import Dict, List
+
+import numpy as np
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
+
 from udl_rating_framework.core.aggregation import MetricAggregator
 from udl_rating_framework.core.confidence import ConfidenceCalculator
 
@@ -41,7 +44,8 @@ class TestAggregationCorrectness:
         n_metrics = len(metric_names)
 
         # Generate random weights and normalize them to sum to 1
-        raw_weights = np.random.uniform(0.1, 1.0, n_metrics)  # Avoid zero weights
+        raw_weights = np.random.uniform(
+            0.1, 1.0, n_metrics)  # Avoid zero weights
         normalized_weights = raw_weights / np.sum(raw_weights)
 
         weights = {
@@ -51,9 +55,9 @@ class TestAggregationCorrectness:
 
         # Verify weights sum to 1 (within numerical precision)
         weight_sum = sum(weights.values())
-        assert (
-            abs(weight_sum - 1.0) < 1e-10
-        ), f"Weights should sum to 1.0, got {weight_sum}"
+        assert abs(weight_sum - 1.0) < 1e-10, (
+            f"Weights should sum to 1.0, got {weight_sum}"
+        )
 
         # Create aggregator
         aggregator = MetricAggregator(weights)
@@ -62,15 +66,16 @@ class TestAggregationCorrectness:
         result = aggregator.aggregate(metric_values)
 
         # Verify the formula: Q = Σ(wᵢ · mᵢ)
-        expected = sum(weights[name] * value for name, value in metric_values.items())
-        assert (
-            abs(result - expected) < 1e-10
-        ), f"Aggregation formula incorrect: expected {expected}, got {result}"
+        expected = sum(weights[name] * value for name,
+                       value in metric_values.items())
+        assert abs(result - expected) < 1e-10, (
+            f"Aggregation formula incorrect: expected {expected}, got {result}"
+        )
 
         # Verify boundedness: 0 ≤ Q ≤ 1
-        assert (
-            0.0 <= result <= 1.0
-        ), f"Aggregated score {result} is outside [0,1] bounds"
+        assert 0.0 <= result <= 1.0, (
+            f"Aggregated score {result} is outside [0,1] bounds"
+        )
 
         # Additional property: if all metrics are in [0,1] and weights sum to 1,
         # then result must be in [0,1] (which we already tested above)
@@ -188,14 +193,14 @@ class TestConfidenceFormulaCorrectness:
         expected_confidence = np.clip(expected_confidence, 0.0, 1.0)
 
         # Compare with computed confidence
-        assert (
-            abs(confidence - expected_confidence) < 1e-6
-        ), f"Confidence formula incorrect: expected {expected_confidence}, got {confidence}"
+        assert abs(confidence - expected_confidence) < 1e-6, (
+            f"Confidence formula incorrect: expected {expected_confidence}, got {confidence}"
+        )
 
         # Verify boundedness: 0 ≤ C ≤ 1
-        assert (
-            0.0 <= confidence <= 1.0
-        ), f"Confidence {confidence} is outside [0,1] bounds"
+        assert 0.0 <= confidence <= 1.0, (
+            f"Confidence {confidence} is outside [0,1] bounds"
+        )
 
     def test_confidence_extreme_cases(self):
         """Test confidence calculation for extreme probability distributions."""
@@ -206,18 +211,18 @@ class TestConfidenceFormulaCorrectness:
         confidence = calculator.compute_confidence(uniform_probs)
 
         # For uniform distribution, entropy is maximized, so confidence should be 0
-        assert (
-            abs(confidence - 0.0) < 1e-6
-        ), f"Uniform distribution should have confidence ≈ 0, got {confidence}"
+        assert abs(confidence - 0.0) < 1e-6, (
+            f"Uniform distribution should have confidence ≈ 0, got {confidence}"
+        )
 
         # Test delta distribution (should have high confidence)
         delta_probs = np.array([1.0, 0.0, 0.0, 0.0])
         confidence = calculator.compute_confidence(delta_probs)
 
         # For delta distribution, entropy is minimized, so confidence should be 1
-        assert (
-            confidence > 0.99
-        ), f"Delta distribution should have confidence ≈ 1, got {confidence}"
+        assert confidence > 0.99, (
+            f"Delta distribution should have confidence ≈ 1, got {confidence}"
+        )
 
         # Test binary distribution with different levels of certainty
         # High certainty: [0.9, 0.1]
@@ -265,7 +270,7 @@ class TestConfidenceFormulaCorrectness:
         for i in range(1, len(confidences)):
             assert confidences[i] >= confidences[i - 1] - 1e-6, (
                 f"Confidence should increase with peakedness: "
-                f"step {i-1}: {confidences[i-1]}, step {i}: {confidences[i]}"
+                f"step {i - 1}: {confidences[i - 1]}, step {i}: {confidences[i]}"
             )
 
     def test_confidence_input_validation(self):

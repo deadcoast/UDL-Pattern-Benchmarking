@@ -1,12 +1,15 @@
-import torch.nn as nn
-import torch
-import torch.nn.functional as F  # Used for GLU if not in modules
-import numpy as np
 import math
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F  # Used for GLU if not in modules
 
 # Local imports (Assuming these contain necessary custom modules)
 from models.modules import *
-from models.utils import *  # Assuming compute_decay, compute_normalized_entropy are here
+
+# Assuming compute_decay, compute_normalized_entropy are here
+from models.utils import *
 
 
 class LSTMBaseline(nn.Module):
@@ -44,7 +47,8 @@ class LSTMBaseline(nn.Module):
         # --- Backbone / Feature Extraction ---
         if self.backbone_type == "navigation-backbone":
             grid_size = 7
-            self.backbone = MiniGridBackbone(d_input=d_input, grid_size=grid_size)
+            self.backbone = MiniGridBackbone(
+                d_input=d_input, grid_size=grid_size)
             lstm_cell_input_dim = grid_size * grid_size * d_input
 
         elif self.backbone_type == "classic-control-backbone":
@@ -98,7 +102,6 @@ class LSTMBaseline(nn.Module):
 
         # --- Recurrent Loop ---
         for stepi in range(self.iterations):
-
             lstm_input = features.reshape(x.size(0), -1)
             hidden_state, cell_state = self.lstm_cell(
                 lstm_input.squeeze(1), (hidden_state, cell_state)

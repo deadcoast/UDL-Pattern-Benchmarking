@@ -1,8 +1,9 @@
+import math
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F  # Used for GLU
-import math
-import numpy as np
 
 # Assuming 'add_coord_dim' is defined in models.utils
 from models.utils import add_coord_dim
@@ -194,7 +195,8 @@ class SuperLinear(nn.Module):
         self.in_dims = in_dims  # Corresponds to memory_length
         # LayerNorm applied across the history dimension for each neuron independently
         self.layernorm = (
-            nn.LayerNorm(in_dims, elementwise_affine=True) if do_norm else Identity()
+            nn.LayerNorm(
+                in_dims, elementwise_affine=True) if do_norm else Identity()
         )
         self.do_norm = do_norm
 
@@ -212,7 +214,8 @@ class SuperLinear(nn.Module):
         )
         # b1 shape: (1, d_model, out_dims)
         self.register_parameter(
-            "b1", nn.Parameter(torch.zeros((1, N, out_dims)), requires_grad=True)
+            "b1", nn.Parameter(torch.zeros(
+                (1, N, out_dims)), requires_grad=True)
         )
         # Learnable temperature/scaler T
         self.register_parameter("T", nn.Parameter(torch.Tensor([T])))
@@ -280,7 +283,8 @@ class QAMNISTIndexEmbeddings(torch.nn.Module):
         self.embedding_dim = embedding_dim
 
         embedding = torch.zeros(max_seq_length, embedding_dim)
-        position = torch.arange(0, max_seq_length, dtype=torch.float).unsqueeze(1)
+        position = torch.arange(
+            0, max_seq_length, dtype=torch.float).unsqueeze(1)
         div_term = torch.exp(
             torch.arange(0, embedding_dim, 2).float()
             * (-math.log(10000.0) / embedding_dim)
@@ -390,7 +394,8 @@ class MiniGridBackbone(nn.Module):
         self.color_embedding = nn.Embedding(num_colors, embedding_dim)
         self.state_embedding = nn.Embedding(num_states, embedding_dim)
 
-        self.position_embedding = nn.Embedding(grid_size * grid_size, embedding_dim)
+        self.position_embedding = nn.Embedding(
+            grid_size * grid_size, embedding_dim)
 
         self.project_to_d_projection = nn.Sequential(
             nn.Linear(embedding_dim * 4, d_input * 2),
@@ -413,7 +418,8 @@ class MiniGridBackbone(nn.Module):
         color_embed = self.color_embedding(color_idx)
         state_embed = self.state_embedding(state_idx)
 
-        pos_idx = torch.arange(H * W, device=x.device).view(1, H, W).expand(B, -1, -1)
+        pos_idx = torch.arange(
+            H * W, device=x.device).view(1, H, W).expand(B, -1, -1)
         pos_embed = self.position_embedding(pos_idx)
 
         out = self.project_to_d_projection(
@@ -457,7 +463,8 @@ class ShallowWide(nn.Module):
             nn.GLU(dim=1),  # Halves channels to 2048
             nn.BatchNorm2d(2048),
             # Grouped convolution maintains width but processes groups independently
-            nn.Conv2d(2048, 4096, kernel_size=3, stride=1, padding=1, groups=32),
+            nn.Conv2d(2048, 4096, kernel_size=3,
+                      stride=1, padding=1, groups=32),
             nn.GLU(dim=1),  # Halves channels to 2048
             nn.BatchNorm2d(2048),
         )
@@ -509,7 +516,9 @@ class PretrainedResNetWrapper(nn.Module):
             else (
                 512
                 if "50" in self.resnet_type
-                else 1024 if "101" in self.resnet_type else 2048
+                else 1024
+                if "101" in self.resnet_type
+                else 2048
             )
         )  # Approx for layer3/4 output channel numbers
         # Infer H, W assuming output is flattened C * H * W
@@ -636,13 +645,15 @@ class MultiLearnableFourierPositionalEncoding(nn.Module):
         self.embedders = nn.ModuleList()
         for gamma in np.linspace(gamma_range[0], gamma_range[1], N):
             self.embedders.append(
-                LearnableFourierPositionalEncoding(d_model, G, M, F_dim, H_dim, gamma)
+                LearnableFourierPositionalEncoding(
+                    d_model, G, M, F_dim, H_dim, gamma)
             )
 
         # Renamed parameter from 'combination' to 'combination_weights' for clarity only in comments
         # Actual registered name remains 'combination' as in original code
         self.register_parameter(
-            "combination", torch.nn.Parameter(torch.ones(N), requires_grad=True)
+            "combination", torch.nn.Parameter(
+                torch.ones(N), requires_grad=True)
         )
         self.N = N
 
@@ -688,7 +699,8 @@ class CustomRotationalEmbedding(nn.Module):
         super(CustomRotationalEmbedding, self).__init__()
         # Learnable 2D start vector
         self.register_parameter(
-            "start_vector", nn.Parameter(torch.Tensor([0, 1]), requires_grad=True)
+            "start_vector", nn.Parameter(
+                torch.Tensor([0, 1]), requires_grad=True)
         )
         # Projects the 4D concatenated rotated vectors to d_model
         # Input size 4 comes from concatenating two 2D rotated vectors
@@ -773,8 +785,10 @@ class CustomRotationalEmbedding1D(nn.Module):
         self.projection = nn.Linear(2, d_model)
 
     def forward(self, x):
-        start_vector = torch.tensor([0.0, 1.0], device=x.device, dtype=torch.float)
-        theta_rad = torch.deg2rad(torch.linspace(0, 180, x.size(2), device=x.device))
+        start_vector = torch.tensor(
+            [0.0, 1.0], device=x.device, dtype=torch.float)
+        theta_rad = torch.deg2rad(torch.linspace(
+            0, 180, x.size(2), device=x.device))
         cos_theta = torch.cos(theta_rad)
         sin_theta = torch.sin(theta_rad)
         cos_theta = cos_theta.unsqueeze(1)  # Shape: (height, 1)
@@ -790,8 +804,10 @@ class CustomRotationalEmbedding1D(nn.Module):
         )  # Shape: (height, 2, 2)
 
         # Rotate the start vector
-        rotated_vectors = torch.einsum("bij,j->bi", rotation_matrices, start_vector)
+        rotated_vectors = torch.einsum(
+            "bij,j->bi", rotation_matrices, start_vector)
 
         pe = self.projection(rotated_vectors)
         pe = torch.repeat_interleave(pe.unsqueeze(0), x.size(0), 0)
-        return pe.transpose(1, 2)  # Transpose for compatibility with other backbones
+        # Transpose for compatibility with other backbones
+        return pe.transpose(1, 2)

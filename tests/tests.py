@@ -1,12 +1,14 @@
-import torch
-import pytest
 import itertools
+
+import numpy as np
+import pytest
+import torch
+
 from models.constants import (
-    VALID_NEURON_SELECT_TYPES,
     VALID_BACKBONE_TYPES,
+    VALID_NEURON_SELECT_TYPES,
     VALID_POSITIONAL_EMBEDDING_TYPES,
 )
-import numpy as np
 
 
 def rep_size(neuron_select_type: str, n_synch: int) -> int:
@@ -182,7 +184,6 @@ def test_golden_rl(
     golden_test_expected_post_activations_tracking_rl,
     golden_test_expected_synch_out_tracking_rl,
 ):
-
     atol = 1e-5
     golden_test_model_rl.eval()
 
@@ -227,9 +228,9 @@ def test_golden_rl(
     assert torch.isclose(
         entropy, golden_test_expected_action_entropy_rl, atol=atol
     ).all(), f"Entropy does not match expected values."
-    assert torch.isclose(
-        value, golden_test_expected_value_rl, atol=atol
-    ).all(), f"Value does not match expected values."
+    assert torch.isclose(value, golden_test_expected_value_rl, atol=atol).all(), (
+        f"Value does not match expected values."
+    )
     assert torch.isclose(
         state_trace, golden_test_expected_state_trace_rl, atol=atol
     ).all(), f"State trace does not match expected values."
@@ -295,7 +296,8 @@ def test_set_synchronisation_parameters(
         if synch_type == "out":
             exp = torch.arange(0, n_synch, device=device)
         else:
-            exp = torch.arange(model.d_model - n_synch, model.d_model, device=device)
+            exp = torch.arange(model.d_model - n_synch,
+                               model.d_model, device=device)
         assert torch.equal(left, exp) and torch.equal(right, exp)
     elif neuron_select_type == "random":
         pass
@@ -382,7 +384,8 @@ def test_parity_prediction_shape(parity_ctm_model, parity_params, parity_input):
     predictions, _, _ = parity_ctm_model(parity_input)
 
     batch_size, parity_length = parity_input.shape
-    expected_shape = (batch_size, parity_length * 2, parity_params["iterations"])
+    expected_shape = (batch_size, parity_length * 2,
+                      parity_params["iterations"])
     assert predictions.shape == expected_shape
 
 
@@ -411,11 +414,12 @@ def test_qamnist_prediction_shape(
     predictions, _, _ = model(inputs, z)
     B = inputs.shape[0]
     out_dims = qamnist_params["out_dims"]
-    T = inputs.shape[1] + z.shape[1] + qamnist_params["iterations_for_answering"]
+    T = inputs.shape[1] + z.shape[1] + \
+        qamnist_params["iterations_for_answering"]
     expected_shape = (B, out_dims, T)
-    assert (
-        predictions.shape == expected_shape
-    ), f"Expected {expected_shape}, got {predictions.shape}"
+    assert predictions.shape == expected_shape, (
+        f"Expected {expected_shape}, got {predictions.shape}"
+    )
 
 
 def test_qamnist_certainty_shape(
@@ -426,11 +430,12 @@ def test_qamnist_certainty_shape(
 
     _, certainties, _ = model(inputs, z)
     B = inputs.shape[0]
-    T = inputs.shape[1] + z.shape[1] + qamnist_params["iterations_for_answering"]
+    T = inputs.shape[1] + z.shape[1] + \
+        qamnist_params["iterations_for_answering"]
     expected_shape = (B, 2, T)
-    assert (
-        certainties.shape == expected_shape
-    ), f"Expected {expected_shape}, got {certainties.shape}"
+    assert certainties.shape == expected_shape, (
+        f"Expected {expected_shape}, got {certainties.shape}"
+    )
 
 
 def test_qamnist_nans_in_predictions(qamnist_model_factory, qamnist_input, device):

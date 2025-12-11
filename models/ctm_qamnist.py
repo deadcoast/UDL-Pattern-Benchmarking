@@ -1,5 +1,6 @@
-import torch
 import numpy as np
+import torch
+
 from models.ctm import ContinuousThoughtMachine
 from models.modules import (
     MNISTBackbone,
@@ -184,7 +185,8 @@ class ContinuousThoughtMachineQAMNIST(ContinuousThoughtMachine):
         predictions = torch.empty(
             B, self.out_dims, total_iterations, device=device, dtype=x.dtype
         )
-        certainties = torch.empty(B, 2, total_iterations, device=device, dtype=x.dtype)
+        certainties = torch.empty(
+            B, 2, total_iterations, device=device, dtype=x.dtype)
 
         # --- Initialise Recurrent Synch Values  ---
         decay_alpha_action, decay_beta_action = None, None
@@ -192,9 +194,10 @@ class ContinuousThoughtMachineQAMNIST(ContinuousThoughtMachine):
             self.decay_params_action, 0, 15
         )  # Fix from github user: kuviki
         self.decay_params_out.data = torch.clamp(self.decay_params_out, 0, 15)
-        r_action, r_out = torch.exp(-self.decay_params_action).unsqueeze(0).repeat(
-            B, 1
-        ), torch.exp(-self.decay_params_out).unsqueeze(0).repeat(B, 1)
+        r_action, r_out = (
+            torch.exp(-self.decay_params_action).unsqueeze(0).repeat(B, 1),
+            torch.exp(-self.decay_params_out).unsqueeze(0).repeat(B, 1),
+        )
 
         _, decay_alpha_out, decay_beta_out = self.compute_synchronisation(
             activated_state, None, None, r_out, synch_type="out"
@@ -243,7 +246,8 @@ class ContinuousThoughtMachineQAMNIST(ContinuousThoughtMachine):
                 )
             else:
                 kv = kv.squeeze(1)
-                pre_synapse_input = torch.concatenate((kv, activated_state), dim=-1)
+                pre_synapse_input = torch.concatenate(
+                    (kv, activated_state), dim=-1)
 
             # --- Apply Synapses ---
             state = self.synapses(pre_synapse_input)
@@ -277,9 +281,11 @@ class ContinuousThoughtMachineQAMNIST(ContinuousThoughtMachine):
                 pre_activations_tracking.append(
                     state_trace[:, :, -1].detach().cpu().numpy()
                 )
-                post_activations_tracking.append(activated_state.detach().cpu().numpy())
+                post_activations_tracking.append(
+                    activated_state.detach().cpu().numpy())
                 if attn_weights is not None:
-                    attention_tracking.append(attn_weights.detach().cpu().numpy())
+                    attention_tracking.append(
+                        attn_weights.detach().cpu().numpy())
                 if is_question_step:
                     embedding_tracking.append(kv.detach().cpu().numpy())
 

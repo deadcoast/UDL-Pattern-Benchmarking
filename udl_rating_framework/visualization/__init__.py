@@ -7,4 +7,4 @@ Provides tools for visualizing CTM internal representations and activation patte
 from .activation_visualizer import ActivationVisualizer
 from .synchronization_visualizer import SynchronizationVisualizer
 
-__all__ = ['ActivationVisualizer', 'SynchronizationVisualizer']
+__all__ = ["ActivationVisualizer", "SynchronizationVisualizer"]

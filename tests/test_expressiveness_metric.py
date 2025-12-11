@@ -4,13 +4,16 @@ Property-based and unit tests for ExpressivenessMetric.
 Tests the mathematical correctness of the expressiveness metric implementation.
 """
 
-from hypothesis import given, strategies as st, settings, assume
 from typing import List, Set
-from udl_rating_framework.core.representation import UDLRepresentation
+
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
+
 from udl_rating_framework.core.metrics.expressiveness import (
     ExpressivenessMetric,
     Grammar,
 )
+from udl_rating_framework.core.representation import UDLRepresentation
 
 
 def create_udl_with_chomsky_type(chomsky_type: int) -> UDLRepresentation:
@@ -72,9 +75,9 @@ class TestExpressivenessMetricProperties:
             computed_score = metric.compute(udl)
 
             # Verify boundedness
-            assert (
-                0.0 <= computed_score <= 1.0
-            ), f"Expressiveness score {computed_score} not in [0,1] for Chomsky type {chomsky_type}"
+            assert 0.0 <= computed_score <= 1.0, (
+                f"Expressiveness score {computed_score} not in [0,1] for Chomsky type {chomsky_type}"
+            )
 
             # Test Chomsky classification
             grammar = Grammar(udl.get_grammar_rules())
@@ -86,13 +89,15 @@ class TestExpressivenessMetricProperties:
                 1,
                 2,
                 3,
-            ], f"Invalid Chomsky classification {classified_type} for type {chomsky_type}"
+            ], (
+                f"Invalid Chomsky classification {classified_type} for type {chomsky_type}"
+            )
 
             # Test complexity approximation
             complexity_score = metric.approximate_kolmogorov_complexity(udl)
-            assert (
-                0.0 <= complexity_score <= 1.0
-            ), f"Complexity score {complexity_score} not in [0,1] for Chomsky type {chomsky_type}"
+            assert 0.0 <= complexity_score <= 1.0, (
+                f"Complexity score {complexity_score} not in [0,1] for Chomsky type {chomsky_type}"
+            )
 
             # Verify formula: (Chomsky_Level + Complexity_Score) / 2
             chomsky_score = metric.chomsky_levels[classified_type]
@@ -131,40 +136,41 @@ class TestExpressivenessMetricProperties:
             computed_score = metric.compute(udl)
 
             # Verify boundedness
-            assert (
-                0.0 <= computed_score <= 1.0
-            ), f"Score {computed_score} not bounded for UDL: {repr(udl_text[:50])}"
+            assert 0.0 <= computed_score <= 1.0, (
+                f"Score {computed_score} not bounded for UDL: {repr(udl_text[:50])}"
+            )
 
             # Manually verify the computation
             rules = udl.get_grammar_rules()
 
             if not rules:
                 # Empty grammar should have 0 expressiveness
-                assert (
-                    computed_score == 0.0
-                ), f"Empty grammar should have 0 expressiveness, got {computed_score}"
+                assert computed_score == 0.0, (
+                    f"Empty grammar should have 0 expressiveness, got {computed_score}"
+                )
             else:
                 # Verify formula components
                 grammar = Grammar(rules)
                 chomsky_type = metric.classify_chomsky_level(grammar)
                 chomsky_score = metric.chomsky_levels[chomsky_type]
-                complexity_score = metric.approximate_kolmogorov_complexity(udl)
+                complexity_score = metric.approximate_kolmogorov_complexity(
+                    udl)
 
                 # Verify individual components are bounded
-                assert (
-                    0.0 <= chomsky_score <= 1.0
-                ), f"Chomsky score {chomsky_score} not bounded"
-                assert (
-                    0.0 <= complexity_score <= 1.0
-                ), f"Complexity score {complexity_score} not bounded"
+                assert 0.0 <= chomsky_score <= 1.0, (
+                    f"Chomsky score {chomsky_score} not bounded"
+                )
+                assert 0.0 <= complexity_score <= 1.0, (
+                    f"Complexity score {complexity_score} not bounded"
+                )
 
                 # Verify formula: (Chomsky_Level + Complexity_Score) / 2
                 expected_score = (chomsky_score + complexity_score) / 2.0
                 expected_score = max(0.0, min(1.0, expected_score))
 
-                assert (
-                    abs(computed_score - expected_score) < 1e-6
-                ), f"Formula mismatch. Expected: {expected_score}, Got: {computed_score}"
+                assert abs(computed_score - expected_score) < 1e-6, (
+                    f"Formula mismatch. Expected: {expected_score}, Got: {computed_score}"
+                )
 
         except Exception as e:
             # If UDL creation fails, skip this test case
@@ -274,9 +280,9 @@ class TestExpressivenessMetricUnits:
 
         # Simple grammar might have 0 expressiveness if it's very basic (Type-3 with low complexity)
         # This is actually correct behavior
-        assert (
-            0.0 <= score <= 1.0
-        ), f"Simple grammar should have bounded expressiveness, got {score}"
+        assert 0.0 <= score <= 1.0, (
+            f"Simple grammar should have bounded expressiveness, got {score}"
+        )
 
     def test_complex_grammar(self):
         """Test on complex grammar with multiple constructs."""
@@ -296,9 +302,9 @@ class TestExpressivenessMetricUnits:
         score = metric.compute(udl)
 
         # Complex grammar should have high expressiveness
-        assert (
-            0.3 < score <= 1.0
-        ), f"Complex grammar should have high expressiveness, got {score}"
+        assert 0.3 < score <= 1.0, (
+            f"Complex grammar should have high expressiveness, got {score}"
+        )
 
     def test_chomsky_classification_method(self):
         """Test the Chomsky classification method directly."""
@@ -329,10 +335,11 @@ class TestExpressivenessMetricUnits:
 
         # Test simple text (should compress well, low complexity)
         simple_udl = UDLRepresentation("A ::= 'a' A | 'a'", "simple.udl")
-        simple_complexity = metric.approximate_kolmogorov_complexity(simple_udl)
-        assert (
-            0.0 <= simple_complexity <= 1.0
-        ), f"Simple complexity {simple_complexity} not bounded"
+        simple_complexity = metric.approximate_kolmogorov_complexity(
+            simple_udl)
+        assert 0.0 <= simple_complexity <= 1.0, (
+            f"Simple complexity {simple_complexity} not bounded"
+        )
 
         # Test complex text (should compress poorly, high complexity)
         complex_text = """
@@ -342,10 +349,11 @@ class TestExpressivenessMetricUnits:
         T2 ::= 'z2' S3 | 'w2' V2
         """
         complex_udl = UDLRepresentation(complex_text, "complex.udl")
-        complex_complexity = metric.approximate_kolmogorov_complexity(complex_udl)
-        assert (
-            0.0 <= complex_complexity <= 1.0
-        ), f"Complex complexity {complex_complexity} not bounded"
+        complex_complexity = metric.approximate_kolmogorov_complexity(
+            complex_udl)
+        assert 0.0 <= complex_complexity <= 1.0, (
+            f"Complex complexity {complex_complexity} not bounded"
+        )
 
         # Complex text should generally have higher complexity than simple text
         # (though this is not guaranteed due to compression heuristics)
@@ -353,9 +361,9 @@ class TestExpressivenessMetricUnits:
         # Test empty text
         empty_udl = UDLRepresentation("", "empty.udl")
         empty_complexity = metric.approximate_kolmogorov_complexity(empty_udl)
-        assert (
-            empty_complexity == 0.0
-        ), f"Empty text should have 0 complexity, got {empty_complexity}"
+        assert empty_complexity == 0.0, (
+            f"Empty text should have 0 complexity, got {empty_complexity}"
+        )
 
     def test_grammar_symbol_analysis(self):
         """Test the Grammar class symbol analysis."""
@@ -419,9 +427,9 @@ class TestExpressivenessMetricUnits:
         expected_formula = (
             r"Expressiveness(U) = \frac{Chomsky\_Level + Complexity\_Score}{2}"
         )
-        assert (
-            formula == expected_formula
-        ), f"Expected formula {expected_formula}, got {formula}"
+        assert formula == expected_formula, (
+            f"Expected formula {expected_formula}, got {formula}"
+        )
 
     def test_boundedness_verification(self):
         """Test that the metric satisfies boundedness property."""
@@ -438,14 +446,14 @@ class TestExpressivenessMetricUnits:
             udl = UDLRepresentation(udl_text, "test.udl")
             score = metric.compute(udl)
 
-            assert (
-                0.0 <= score <= 1.0
-            ), f"Score {score} not in [0,1] for UDL: {repr(udl_text)}"
+            assert 0.0 <= score <= 1.0, (
+                f"Score {score} not in [0,1] for UDL: {repr(udl_text)}"
+            )
 
             # Also test the verification method
-            assert metric.verify_boundedness(
-                udl
-            ), f"Boundedness verification failed for UDL: {repr(udl_text)}"
+            assert metric.verify_boundedness(udl), (
+                f"Boundedness verification failed for UDL: {repr(udl_text)}"
+            )
 
     def test_determinism_verification(self):
         """Test that the metric satisfies determinism property."""
@@ -468,7 +476,8 @@ class TestExpressivenessMetricUnits:
             assert score == first_score, f"Non-deterministic behavior: got {scores}"
 
         # Also test the verification method
-        assert metric.verify_determinism(udl), "Determinism verification failed"
+        assert metric.verify_determinism(
+            udl), "Determinism verification failed"
 
     def test_chomsky_levels_mapping(self):
         """Test that Chomsky levels are correctly mapped."""
@@ -482,6 +491,6 @@ class TestExpressivenessMetricUnits:
 
         # Verify all values are in [0,1]
         for level, score in metric.chomsky_levels.items():
-            assert (
-                0.0 <= score <= 1.0
-            ), f"Chomsky level {level} maps to invalid score {score}"
+            assert 0.0 <= score <= 1.0, (
+                f"Chomsky level {level} maps to invalid score {score}"
+            )

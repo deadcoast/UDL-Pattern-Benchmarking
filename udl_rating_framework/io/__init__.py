@@ -7,12 +7,12 @@ This module handles:
 - Report generation and formatting
 """
 
-from .file_discovery import FileDiscovery, FileDiscoveryResult, FileDiscoveryError
+from .file_discovery import FileDiscovery, FileDiscoveryError, FileDiscoveryResult
 from .input_validation import (
     InputValidator,
-    ValidationResult,
-    ValidationError,
     UDLFormat,
+    ValidationError,
+    ValidationResult,
 )
 from .report_generator import ReportGenerator
 

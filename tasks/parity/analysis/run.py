@@ -1,46 +1,47 @@
-import torch
-import numpy as np
 import argparse
-import multiprocessing
-from tqdm import tqdm
-import math
-import os
 import csv
-from utils.housekeeping import set_seed
+import math
+import multiprocessing
+import os
+
+import numpy as np
+import seaborn as sns
+import torch
+from tqdm import tqdm
+
 from data.custom_datasets import ParityDataset
+from models.utils import (
+    compute_normalized_entropy,
+    get_all_log_dirs,
+    get_checkpoint_files,
+    get_latest_checkpoint_file,
+    get_model_args_from_checkpoint,
+    load_checkpoint,
+    reshape_predictions,
+)
+from tasks.image_classification.plotting import plot_neural_dynamics
+from tasks.parity.plotting import (
+    create_accuracies_heatmap_gif,
+    create_attentions_heatmap_gif,
+    create_stacked_gif,
+    make_parity_gif,
+    plot_accuracy_thinking_time,
+    plot_accuracy_training,
+    plot_attention_trajectory,
+    plot_input,
+    plot_lstm_last_and_certain_accuracy,
+    plot_prediction,
+    plot_probabilities,
+    plot_target,
+    plot_training_curve_all_runs,
+)
 from tasks.parity.utils import (
+    get_where_most_certain,
     prepare_model,
     reshape_attention_weights,
     reshape_inputs,
-    get_where_most_certain,
 )
-from tasks.parity.plotting import (
-    plot_attention_trajectory,
-    plot_input,
-    plot_target,
-    plot_probabilities,
-    plot_prediction,
-    plot_accuracy_training,
-    create_attentions_heatmap_gif,
-    create_accuracies_heatmap_gif,
-    create_stacked_gif,
-    plot_training_curve_all_runs,
-    plot_accuracy_thinking_time,
-    make_parity_gif,
-    plot_lstm_last_and_certain_accuracy,
-)
-from models.utils import (
-    compute_normalized_entropy,
-    reshape_predictions,
-    get_latest_checkpoint_file,
-    get_checkpoint_files,
-    load_checkpoint,
-    get_model_args_from_checkpoint,
-    get_all_log_dirs,
-)
-from tasks.image_classification.plotting import plot_neural_dynamics
-
-import seaborn as sns
+from utils.housekeeping import set_seed
 
 sns.set_palette("hls")
 sns.set_style("darkgrid")
@@ -153,7 +154,8 @@ def test_handcrafted_examples(model, args, run_model_spefic_save_dir, device):
     all_odd_input = torch.full(
         (args.parity_sequence_length,), -1.0, dtype=torch.float32, device=device
     )
-    all_odd_target = torch.cumsum((all_odd_input == -1).to(torch.long), dim=0) % 2
+    all_odd_target = torch.cumsum(
+        (all_odd_input == -1).to(torch.long), dim=0) % 2
     test_cases.append((all_odd_input, all_odd_target))
 
     random_input = (
@@ -163,7 +165,8 @@ def test_handcrafted_examples(model, args, run_model_spefic_save_dir, device):
         * 2
         - 1
     )
-    random_target = torch.cumsum((random_input == -1).to(torch.long), dim=0) % 2
+    random_target = torch.cumsum(
+        (random_input == -1).to(torch.long), dim=0) % 2
     test_cases.append((random_input, random_target))
 
     for i, (inputs, targets) in enumerate(test_cases):
@@ -187,7 +190,8 @@ def test_handcrafted_examples(model, args, run_model_spefic_save_dir, device):
                 attention,
             ) = model(inputs, track=True)
             predictions = reshape_predictions(
-                predictions, prediction_reshaper=[args.parity_sequence_length, 2]
+                predictions, prediction_reshaper=[
+                    args.parity_sequence_length, 2]
             )
             input_images = reshape_inputs(
                 inputs,
@@ -195,7 +199,8 @@ def test_handcrafted_examples(model, args, run_model_spefic_save_dir, device):
                 grid_size=int(math.sqrt(args.parity_sequence_length)),
             )
 
-            plot_neural_dynamics(post_activations, 100, handcraft_dir, axis_snap=False)
+            plot_neural_dynamics(post_activations, 100,
+                                 handcraft_dir, axis_snap=False)
 
             process = multiprocessing.Process(
                 target=make_parity_gif,
@@ -235,8 +240,10 @@ def test_handcrafted_examples(model, args, run_model_spefic_save_dir, device):
             )
             plot_input(input_images, handcraft_dir, filename)
             plot_target(targets, handcraft_dir, filename, args)
-            plot_probabilities(predictions, certainties, handcraft_dir, filename, args)
-            plot_prediction(predictions, certainties, handcraft_dir, filename, args)
+            plot_probabilities(predictions, certainties,
+                               handcraft_dir, filename, args)
+            plot_prediction(predictions, certainties,
+                            handcraft_dir, filename, args)
 
         if extend_inference_time:
             model.iterations = model.iterations // 2
@@ -247,14 +254,14 @@ def test_handcrafted_examples(model, args, run_model_spefic_save_dir, device):
 def build_model_from_checkpoint_path(checkpoint_path, model_type, device="cpu"):
     checkpoint = load_checkpoint(checkpoint_path, device)
     model_args = get_model_args_from_checkpoint(checkpoint)
-    model = prepare_model([model_args.parity_sequence_length, 2], model_args, device)
+    model = prepare_model(
+        [model_args.parity_sequence_length, 2], model_args, device)
     model.load_state_dict(checkpoint["model_state_dict"], strict=False)
     return model, model_args
 
 
 def analyze_trained_model(run_model_spefic_save_dir, args, device):
     with torch.no_grad():
-
         latest_checkpoint_path = get_latest_checkpoint_file(args.log_dir)
         model, model_args = build_model_from_checkpoint_path(
             latest_checkpoint_path, args.model_type, device=device
@@ -286,7 +293,8 @@ def analyze_trained_model(run_model_spefic_save_dir, args, device):
                 attention,
             ) = model(inputs, track=True)
             predictions = reshape_predictions(
-                predictions, prediction_reshaper=[model_args.parity_sequence_length, 2]
+                predictions, prediction_reshaper=[
+                    model_args.parity_sequence_length, 2]
             )
             corrects_batch = calculate_corrects(predictions, targets)
             corrects_at_most_certain_time_batch = (
@@ -295,12 +303,15 @@ def analyze_trained_model(run_model_spefic_save_dir, args, device):
                 )
             )
             corrects.append(corrects_batch)
-            corrects_at_most_certain_times.append(corrects_at_most_certain_time_batch)
+            corrects_at_most_certain_times.append(
+                corrects_at_most_certain_time_batch)
             attentions.append(attention)
 
-        test_handcrafted_examples(model, model_args, run_model_spefic_save_dir, device)
+        test_handcrafted_examples(
+            model, model_args, run_model_spefic_save_dir, device)
 
-        overall_mean_accuracy = np.mean(np.vstack(corrects_at_most_certain_times))
+        overall_mean_accuracy = np.mean(
+            np.vstack(corrects_at_most_certain_times))
         overall_std_accuracy = np.std(
             np.mean(np.vstack(corrects_at_most_certain_times), axis=1)
         )
@@ -347,7 +358,8 @@ def analyze_training(run_model_spefic_save_dir, args, device):
                 attention,
             ) = model(inputs, track=True)
             predictions = reshape_predictions(
-                predictions, prediction_reshaper=[model_args.parity_sequence_length, 2]
+                predictions, prediction_reshaper=[
+                    model_args.parity_sequence_length, 2]
             )
             attention = reshape_attention_weights(attention)
 
@@ -368,7 +380,8 @@ def analyze_training(run_model_spefic_save_dir, args, device):
             thinking_times_batch = np.argmin(entropy_per_element, axis=1)
 
             corrects.append(corrects_batch)
-            corrects_at_most_certain_times.append(corrects_at_most_certain_time_batch)
+            corrects_at_most_certain_times.append(
+                corrects_at_most_certain_time_batch)
             thinking_times.append(thinking_times_batch)
             attentions.append(attention)
 
@@ -388,8 +401,10 @@ def analyze_training(run_model_spefic_save_dir, args, device):
         )
 
         checkpoint_thinking_times = np.concatenate(thinking_times, axis=0)
-        checkpoint_average_thinking_time = np.mean(checkpoint_thinking_times, axis=0)
-        checkpoint_std_thinking_time = np.std(checkpoint_thinking_times, axis=0)
+        checkpoint_average_thinking_time = np.mean(
+            checkpoint_thinking_times, axis=0)
+        checkpoint_std_thinking_time = np.std(
+            checkpoint_thinking_times, axis=0)
         all_average_thinking_times.append(checkpoint_average_thinking_time)
         all_std_thinking_times.append(checkpoint_std_thinking_time)
 
@@ -434,7 +449,6 @@ def get_accuracy_and_loss_from_checkpoint(checkpoint):
 
 
 if __name__ == "__main__":
-
     args = parse_args()
 
     device = f"cuda:{args.device[0]}" if args.device[0] != -1 else "cpu"
@@ -459,9 +473,9 @@ if __name__ == "__main__":
         scale=args.scale_training_curve,
     )
 
-    progress_bar = tqdm(all_runs_log_dirs, desc="Analyzing Runs", dynamic_ncols=True)
+    progress_bar = tqdm(all_runs_log_dirs,
+                        desc="Analyzing Runs", dynamic_ncols=True)
     for folder in progress_bar:
-
         run, model_name = folder.strip("/").split("/")[-2:]
 
         run_model_spefic_save_dir = f"{save_dir}/{model_name}/{run}"
@@ -485,7 +499,8 @@ if __name__ == "__main__":
                         "Num Iterations",
                     ]
                 )
-            writer.writerow([folder, accuracy_mean, accuracy_std, num_iterations])
+            writer.writerow(
+                [folder, accuracy_mean, accuracy_std, num_iterations])
 
         progress_bar.set_description(f"Analyzing Training at {folder}")
         analyze_training(run_model_spefic_save_dir, args, device)

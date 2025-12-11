@@ -5,10 +5,12 @@ Measures organizational quality using information theory and graph analysis.
 """
 
 import math
+from collections import Counter
+from typing import Any, Dict, List, Tuple
+
 import networkx as nx
 import numpy as np
-from typing import Dict, Any, List, Tuple
-from collections import Counter
+
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import UDLRepresentation
 
@@ -130,7 +132,8 @@ class StructuralCoherenceMetric(QualityMetric):
             undirected_graph = graph.to_undirected()
 
             # Use NetworkX's modularity calculation with greedy community detection
-            communities = nx.community.greedy_modularity_communities(undirected_graph)
+            communities = nx.community.greedy_modularity_communities(
+                undirected_graph)
             modularity = nx.community.modularity(undirected_graph, communities)
 
             return modularity
@@ -306,7 +309,8 @@ class StructuralCoherenceMetric(QualityMetric):
         """
         return {
             "bounded": True,  # Always produces values in [0, 1]
-            "monotonic": False,  # Not monotonic (more structure doesn't always mean higher coherence)
+            # Not monotonic (more structure doesn't always mean higher coherence)
+            "monotonic": False,
             "additive": False,  # Not additive (coherence is not sum of parts)
             "continuous": True,  # Small changes in structure lead to small changes in coherence
         }

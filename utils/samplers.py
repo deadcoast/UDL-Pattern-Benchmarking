@@ -1,9 +1,10 @@
+import itertools
+import math
+
+import numpy as np
 import torch
 import torch.distributed as dist
 from torch.utils.data import Sampler
-import math
-import itertools
-import numpy as np
 
 
 class FastRandomDistributedSampler(Sampler[int]):
@@ -57,7 +58,8 @@ class FastRandomDistributedSampler(Sampler[int]):
         # Determine the number of steps/indices per iterator cycle for this rank
         if epoch_steps is None:
             # Default behavior: roughly one pass over the data
-            self.num_samples_per_epoch = math.ceil(self.dataset_len / self.num_replicas)
+            self.num_samples_per_epoch = math.ceil(
+                self.dataset_len / self.num_replicas)
         else:
             # User-defined length for the iterator cycle
             self.num_samples_per_epoch = epoch_steps
@@ -111,7 +113,7 @@ class QAMNISTSampler(Sampler):
     def __iter__(self):
         indices = torch.randperm(self.num_samples).tolist()
         for i in range(0, self.num_samples, self.batch_size):
-            batch_indices = indices[i : i + self.batch_size]
+            batch_indices = indices[i: i + self.batch_size]
 
             if self.dataset.num_images_range[0] == self.dataset.num_images_range[1]:
                 batch_num_digits = self.dataset.num_images_range[0]

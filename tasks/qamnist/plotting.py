@@ -1,8 +1,8 @@
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-import seaborn as sns
-import numpy as np
 import imageio
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
 from scipy.special import softmax
 
 sns.set_style("darkgrid")
@@ -20,7 +20,6 @@ def make_qamnist_gif(
     filename,
     question_readable=None,
 ):
-
     # Config
     batch_index = 0
     n_neurons_to_visualise = 16
@@ -31,13 +30,15 @@ def make_qamnist_gif(
 
     these_pre_acts = pre_activations[:, batch_index, :]  # Shape: (T, H)
     these_post_acts = post_activations[:, batch_index, :]  # Shape: (T, H)
-    these_inputs = inputs_to_model[:, batch_index, :, :, :]  # Shape: (T, C, H, W)
+    # Shape: (T, C, H, W)
+    these_inputs = inputs_to_model[:, batch_index, :, :, :]
     these_input_gates = input_gates[:, batch_index, :, :]  # Shape: (T, H, W)
     these_predictions = predictions[batch_index, :, :]  # Shape: (C, T)
     these_certainties = certainties[batch_index, :, :]  # Shape: (C, T)
     this_target = targets[batch_index]  # Shape: (C)
 
-    logits_min, logits_max = np.min(these_predictions), np.max(these_predictions)
+    logits_min, logits_max = np.min(
+        these_predictions), np.max(these_predictions)
     probs_min, probs_max = 0, 1
 
     class_labels = [str(i) for i in range(10)]
@@ -138,7 +139,8 @@ def make_qamnist_gif(
                 rotation=90,
             )
         axes_gif["logits"].set_ylim(
-            [logits_min - 0.1 * abs(logits_min), logits_max + 0.1 * abs(logits_max)]
+            [logits_min - 0.1 * abs(logits_min),
+             logits_max + 0.1 * abs(logits_max)]
         )
 
         # Add probability plot
@@ -172,7 +174,8 @@ def make_qamnist_gif(
             np.arange(n_steps), these_certainties[1], "k-", linewidth=2
         )
         axes_gif["certainty"].set_xlim([0, n_steps - 1])
-        axes_gif["certainty"].axvline(x=stepi, color="black", linewidth=1, alpha=0.5)
+        axes_gif["certainty"].axvline(
+            x=stepi, color="black", linewidth=1, alpha=0.5)
         axes_gif["certainty"].set_xticklabels([])
         axes_gif["certainty"].set_yticklabels([])
         axes_gif["certainty"].grid(False)
@@ -187,7 +190,8 @@ def make_qamnist_gif(
             ax_pre = ax.twinx()
 
             pre_min, pre_max = np.min(pre_activation), np.max(pre_activation)
-            post_min, post_max = np.min(post_activation), np.max(post_activation)
+            post_min, post_max = np.min(
+                post_activation), np.max(post_activation)
 
             ax_pre.plot(
                 np.arange(n_steps),
@@ -238,7 +242,8 @@ def make_qamnist_gif(
             this_input_gate = these_input_gates[stepi]
         except (IndexError, TypeError):
             this_input_gate = np.zeros_like(these_input_gates[0])
-        gate_min, gate_max = np.nanmin(this_input_gate), np.nanmax(this_input_gate)
+        gate_min, gate_max = np.nanmin(
+            this_input_gate), np.nanmax(this_input_gate)
         if not np.isclose(gate_min, gate_max):
             normalized_gate = (this_input_gate - gate_min) / (
                 gate_max - gate_min + 1e-8
@@ -258,7 +263,8 @@ def make_qamnist_gif(
         if stepi == 1:
             fig_gif.savefig(filename.split(".gif")[0] + "_frame1.png", dpi=100)
         if stepi == n_steps - 1:
-            fig_gif.savefig(filename.split(".gif")[0] + "_frame-1.png", dpi=100)
+            fig_gif.savefig(filename.split(".gif")[
+                            0] + "_frame-1.png", dpi=100)
 
         # Convert to frame
         canvas = fig_gif.canvas

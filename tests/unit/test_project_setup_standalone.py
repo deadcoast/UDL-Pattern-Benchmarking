@@ -5,8 +5,8 @@ Tests package imports and dependency availability.
 Validates: Requirements 11.7
 """
 
-import sys
 import importlib
+import sys
 from pathlib import Path
 
 # Add project root to path
@@ -160,9 +160,9 @@ def test_dependency_availability():
         assert np is not None
         version = np.__version__.split(".")
         major, minor = int(version[0]), int(version[1])
-        assert major > 1 or (
-            major == 1 and minor >= 24
-        ), f"NumPy version {np.__version__} is too old, need >= 1.24"
+        assert major > 1 or (major == 1 and minor >= 24), (
+            f"NumPy version {np.__version__} is too old, need >= 1.24"
+        )
         print(f"✓ NumPy {np.__version__} available")
     except ImportError:
         print("✗ NumPy is not installed")
@@ -237,8 +237,9 @@ def test_basic_functionality():
 
     # Test ConfidenceCalculator
     try:
-        from udl_rating_framework.core.confidence import ConfidenceCalculator
         import numpy as np
+
+        from udl_rating_framework.core.confidence import ConfidenceCalculator
 
         calculator = ConfidenceCalculator()
         assert calculator is not None
@@ -247,18 +248,18 @@ def test_basic_functionality():
         uniform_probs = np.array([0.25, 0.25, 0.25, 0.25])
         confidence = calculator.compute_confidence(uniform_probs)
         assert 0.0 <= confidence <= 1.0
-        assert (
-            confidence < 0.5
-        ), f"Uniform distribution should have low confidence, got {confidence}"
+        assert confidence < 0.5, (
+            f"Uniform distribution should have low confidence, got {confidence}"
+        )
         print(f"✓ ConfidenceCalculator uniform distribution: {confidence:.3f}")
 
         # Test with delta distribution (high confidence)
         delta_probs = np.array([1.0, 0.0, 0.0, 0.0])
         confidence = calculator.compute_confidence(delta_probs)
         assert 0.0 <= confidence <= 1.0
-        assert (
-            confidence > 0.9
-        ), f"Delta distribution should have high confidence, got {confidence}"
+        assert confidence > 0.9, (
+            f"Delta distribution should have high confidence, got {confidence}"
+        )
         print(f"✓ ConfidenceCalculator delta distribution: {confidence:.3f}")
     except Exception as e:
         print(f"✗ ConfidenceCalculator test failed: {e}")

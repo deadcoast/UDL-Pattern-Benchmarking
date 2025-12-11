@@ -5,17 +5,17 @@ Provides comprehensive report generation in multiple formats (JSON, CSV, HTML)
 with visualizations and mathematical traces.
 """
 
-import json
+import base64
 import csv
 import html
-from datetime import datetime
-from pathlib import Path
-from typing import List, Dict, Any, Optional, Union
+import json
 from dataclasses import asdict
-import base64
-from io import StringIO, BytesIO
+from datetime import datetime
+from io import BytesIO, StringIO
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
-from udl_rating_framework.core.pipeline import QualityReport, ComputationStep
+from udl_rating_framework.core.pipeline import ComputationStep, QualityReport
 
 
 class ReportGenerator:
@@ -129,8 +129,10 @@ class ReportGenerator:
         fieldnames.extend([f"metric_{metric}" for metric in metric_columns])
 
         # Add error bound columns
-        fieldnames.extend([f"error_bound_{metric}_lower" for metric in metric_columns])
-        fieldnames.extend([f"error_bound_{metric}_upper" for metric in metric_columns])
+        fieldnames.extend(
+            [f"error_bound_{metric}_lower" for metric in metric_columns])
+        fieldnames.extend(
+            [f"error_bound_{metric}_upper" for metric in metric_columns])
 
         writer = csv.DictWriter(output, fieldnames=fieldnames)
         writer.writeheader()
@@ -229,7 +231,8 @@ class ReportGenerator:
                 "operation": step.operation,
                 "formula": step.formula,
                 "inputs": step.inputs,
-                "output": str(step.output),  # Convert to string for JSON serialization
+                # Convert to string for JSON serialization
+                "output": str(step.output),
                 "intermediate_values": step.intermediate_values,
             }
             report_dict["computation_trace"].append(step_dict)
@@ -272,7 +275,8 @@ class ReportGenerator:
         return {
             "overall_score": {
                 "mean": (
-                    sum(overall_scores) / len(overall_scores) if overall_scores else 0.0
+                    sum(overall_scores) /
+                    len(overall_scores) if overall_scores else 0.0
                 ),
                 "min": min(overall_scores) if overall_scores else 0.0,
                 "max": max(overall_scores) if overall_scores else 0.0,
@@ -318,7 +322,8 @@ class ReportGenerator:
 
         # Individual report sections
         for i, report in enumerate(reports):
-            content_sections.append(self._generate_html_report_section(report, i))
+            content_sections.append(
+                self._generate_html_report_section(report, i))
 
         # Footer section
         content_sections.append(self._generate_html_footer())
@@ -334,7 +339,7 @@ class ReportGenerator:
 </head>
 <body>
     <div class="container">
-        {''.join(content_sections)}
+        {"".join(content_sections)}
     </div>
     <script>{javascript}</script>
 </body>
@@ -607,19 +612,19 @@ class ReportGenerator:
             <h2>Summary Statistics</h2>
             <div class="score-display">
                 <div class="score-item">
-                    <div class="score-value">{overall_stats.get('mean', 0.0):.3f}</div>
+                    <div class="score-value">{overall_stats.get("mean", 0.0):.3f}</div>
                     <div class="score-label">Average Quality</div>
                 </div>
                 <div class="score-item">
-                    <div class="score-value">{confidence_stats.get('mean', 0.0):.3f}</div>
+                    <div class="score-value">{confidence_stats.get("mean", 0.0):.3f}</div>
                     <div class="score-label">Average Confidence</div>
                 </div>
                 <div class="score-item">
-                    <div class="score-value">{error_stats.get('total_errors', 0)}</div>
+                    <div class="score-value">{error_stats.get("total_errors", 0)}</div>
                     <div class="score-label">Total Errors</div>
                 </div>
                 <div class="score-item">
-                    <div class="score-value">{error_stats.get('total_warnings', 0)}</div>
+                    <div class="score-value">{error_stats.get("total_warnings", 0)}</div>
                     <div class="score-label">Total Warnings</div>
                 </div>
             </div>
@@ -643,7 +648,7 @@ class ReportGenerator:
         <div class="report-section">
             <div class="report-header">
                 <h2>Report {index + 1}: {html.escape(file_name)}</h2>
-                <div class="timestamp">{report.timestamp.strftime('%Y-%m-%d %H:%M:%S')}</div>
+                <div class="timestamp">{report.timestamp.strftime("%Y-%m-%d %H:%M:%S")}</div>
             </div>
             
             <div class="score-display">
@@ -688,16 +693,14 @@ class ReportGenerator:
             ):
                 bounds_str = f"[{bounds[0]:.6f}, {bounds[1]:.6f}]"
 
-            rows.append(
-                f"""
+            rows.append(f"""
             <tr>
                 <td><strong>{html.escape(metric_name)}</strong></td>
                 <td>{score:.6f}</td>
                 <td><span class="formula">{html.escape(formula)}</span></td>
                 <td>{bounds_str}</td>
             </tr>
-            """
-            )
+            """)
 
         return f"""
         <h3>Metric Scores</h3>
@@ -711,7 +714,7 @@ class ReportGenerator:
                 </tr>
             </thead>
             <tbody>
-                {''.join(rows)}
+                {"".join(rows)}
             </tbody>
         </table>
         """
@@ -728,25 +731,23 @@ class ReportGenerator:
                 f"{k}: {v}" for k, v in step.intermediate_values.items()
             )
 
-            trace_steps.append(
-                f"""
+            trace_steps.append(f"""
             <div class="trace-step">
                 <div class="trace-step-header">
                     Step {step.step_number}: {html.escape(step.operation)}
                 </div>
-                {f'<div class="trace-formula">{html.escape(step.formula)}</div>' if step.formula else ''}
+                {f'<div class="trace-formula">{html.escape(step.formula)}</div>' if step.formula else ""}
                 <div><strong>Inputs:</strong> {html.escape(inputs_str)}</div>
                 <div><strong>Output:</strong> {html.escape(str(step.output))}</div>
-                {f'<div><strong>Intermediate Values:</strong> {html.escape(intermediate_str)}</div>' if step.intermediate_values else ''}
+                {f"<div><strong>Intermediate Values:</strong> {html.escape(intermediate_str)}</div>" if step.intermediate_values else ""}
             </div>
-            """
-            )
+            """)
 
         return f"""
         <button class="collapsible">Computation Trace ({len(report.computation_trace)} steps)</button>
         <div class="collapsible-content">
             <div class="computation-trace">
-                {''.join(trace_steps)}
+                {"".join(trace_steps)}
             </div>
         </div>
         """
@@ -756,28 +757,25 @@ class ReportGenerator:
         html_sections = []
 
         if report.errors:
-            error_items = [f"<li>{html.escape(error)}</li>" for error in report.errors]
-            html_sections.append(
-                f"""
+            error_items = [
+                f"<li>{html.escape(error)}</li>" for error in report.errors]
+            html_sections.append(f"""
             <div class="error-section">
                 <h4>Errors ({len(report.errors)})</h4>
-                <ul>{''.join(error_items)}</ul>
+                <ul>{"".join(error_items)}</ul>
             </div>
-            """
-            )
+            """)
 
         if report.warnings:
             warning_items = [
                 f"<li>{html.escape(warning)}</li>" for warning in report.warnings
             ]
-            html_sections.append(
-                f"""
+            html_sections.append(f"""
             <div class="warning-section">
                 <h4>Warnings ({len(report.warnings)})</h4>
-                <ul>{''.join(warning_items)}</ul>
+                <ul>{"".join(warning_items)}</ul>
             </div>
-            """
-            )
+            """)
 
         return "".join(html_sections)
 

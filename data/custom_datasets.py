@@ -1,11 +1,12 @@
-import torch
-from torchvision.datasets import ImageFolder
-from torch.utils.data import Dataset
 import random
+
 import numpy as np
-from tqdm.auto import tqdm
-from PIL import Image
+import torch
 from datasets import load_dataset
+from PIL import Image
+from torch.utils.data import Dataset
+from torchvision.datasets import ImageFolder
+from tqdm.auto import tqdm
 
 
 class SortDataset(Dataset):
@@ -57,17 +58,17 @@ class QAMNISTDataset(Dataset):
     def _calculate_num_images_range(self):
         min_val = self.num_images - self.num_images_delta
         max_val = self.num_images + self.num_images_delta
-        assert (
-            min_val >= 1
-        ), f"Minimum number of images must be at least 1, got {min_val}"
+        assert min_val >= 1, (
+            f"Minimum number of images must be at least 1, got {min_val}"
+        )
         return [min_val, max_val]
 
     def _calculate_num_operations_range(self):
         min_val = self.num_operations - self.num_operations_delta
         max_val = self.num_operations + self.num_operations_delta
-        assert (
-            min_val >= 1
-        ), f"Minimum number of operations must be at least 1, got {min_val}"
+        assert min_val >= 1, (
+            f"Minimum number of operations must be at least 1, got {min_val}"
+        )
         return [min_val, max_val]
 
     def set_num_digits(self, num_digits):
@@ -125,14 +126,16 @@ class QAMNISTDataset(Dataset):
     def __getitem__(self, idx):
         images, targets = [], []
         for _ in range(self.current_num_digits):
-            image, target = self.base_dataset[np.random.randint(self.__len__())]
+            image, target = self.base_dataset[np.random.randint(
+                self.__len__())]
             images.append(image)
             targets.append(target)
 
         observations = torch.repeat_interleave(
             torch.stack(images, 0), repeats=self.num_repeats_per_input, dim=0
         )
-        target, question, question_readable = self._get_target_and_question(targets)
+        target, question, question_readable = self._get_target_and_question(
+            targets)
         return observations, question, question_readable, target
 
 
@@ -147,7 +150,8 @@ class ImageNet(Dataset):
             operators (list): list of operators from which to sample
             action to take on observations (str): can be 'global' to compute operator over full observations, or 'select_K', where K=integer.
         """
-        dataset = load_dataset("imagenet-1k", split=which_split, trust_remote_code=True)
+        dataset = load_dataset(
+            "imagenet-1k", split=which_split, trust_remote_code=True)
 
         self.transform = transform
         self.base_dataset = dataset
@@ -217,7 +221,6 @@ class MazeImageFolder(ImageFolder):
         with tqdm(
             total=self.__len__(), initial=0, leave=True, position=0, dynamic_ncols=True
         ) as pbar:
-
             for index in range(self.__len__()):
                 pbar.set_description("Loading mazes")
                 path, target = self.samples[index]

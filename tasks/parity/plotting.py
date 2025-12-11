@@ -1,31 +1,32 @@
+import math
 import os
-import seaborn as sns
+import re
+from collections import defaultdict
+
+import imageio.v2 as imageio
+import matplotlib as mpl
+import matplotlib.patheffects as path_effects
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from collections import defaultdict
+import seaborn as sns
 from matplotlib.lines import Line2D
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import matplotlib.patheffects as path_effects
 from matplotlib.ticker import FuncFormatter
-from scipy.special import softmax
-import imageio.v2 as imageio
 from PIL import Image
-import math
-import re
+from scipy.special import softmax
 from tqdm import tqdm
+
+from models.utils import (
+    get_accuracy_and_loss_from_checkpoint,
+    get_latest_checkpoint_file,
+    get_model_args_from_checkpoint,
+    load_checkpoint,
+)
+from tasks.image_classification.plotting import save_frames_to_mp4
+from tasks.parity.utils import get_where_most_certain, parse_folder_name
 
 sns.set_style("darkgrid")
 mpl.use("Agg")
-
-from tasks.parity.utils import get_where_most_certain, parse_folder_name
-from models.utils import (
-    get_latest_checkpoint_file,
-    load_checkpoint,
-    get_model_args_from_checkpoint,
-    get_accuracy_and_loss_from_checkpoint,
-)
-from tasks.image_classification.plotting import save_frames_to_mp4
 
 
 def make_parity_gif(
@@ -38,7 +39,6 @@ def make_parity_gif(
     inputs_to_model,
     filename,
 ):
-
     # Config
     batch_index = 0
     n_neurons_to_visualise = 16
@@ -49,7 +49,8 @@ def make_parity_gif(
 
     these_pre_acts = pre_activations[:, batch_index, :]  # Shape: (T, H)
     these_post_acts = post_activations[:, batch_index, :]  # Shape: (T, H)
-    these_inputs = inputs_to_model[:, batch_index, :, :, :]  # Shape: (T, C, H, W)
+    # Shape: (T, C, H, W)
+    these_inputs = inputs_to_model[:, batch_index, :, :, :]
     these_predictions = predictions[batch_index, :, :, :]  # Shape: (d, C, T)
     these_certainties = certainties[batch_index, :, :]  # Shape: (C, T)
     these_attention_weights = attention_weights[:, batch_index, :, :]
@@ -129,7 +130,8 @@ def make_parity_gif(
 
         # Create and show attention heatmap
         this_input_gate = these_attention_weights[stepi]
-        gate_min, gate_max = np.nanmin(this_input_gate), np.nanmax(this_input_gate)
+        gate_min, gate_max = np.nanmin(
+            this_input_gate), np.nanmax(this_input_gate)
         if not np.isclose(gate_min, gate_max):
             normalized_gate = (this_input_gate - gate_min) / (
                 gate_max - gate_min + 1e-8
@@ -156,7 +158,8 @@ def make_parity_gif(
             np.arange(n_steps), these_certainties[1], "k-", linewidth=2
         )
         axes_gif["certainty"].set_xlim([0, n_steps - 1])
-        axes_gif["certainty"].axvline(x=stepi, color="black", linewidth=1, alpha=0.5)
+        axes_gif["certainty"].axvline(
+            x=stepi, color="black", linewidth=1, alpha=0.5)
         axes_gif["certainty"].set_xticklabels([])
         axes_gif["certainty"].set_yticklabels([])
         axes_gif["certainty"].grid(False)
@@ -171,7 +174,8 @@ def make_parity_gif(
             ax_pre = ax.twinx()
 
             pre_min, pre_max = np.min(pre_activation), np.max(pre_activation)
-            post_min, post_max = np.min(post_activation), np.max(post_activation)
+            post_min, post_max = np.min(
+                post_activation), np.max(post_activation)
 
             ax_pre.plot(
                 np.arange(n_steps),
@@ -227,7 +231,8 @@ def make_parity_gif(
         if stepi == 1:
             fig_gif.savefig(filename.split(".gif")[0] + "_frame1.png", dpi=100)
         if stepi == n_steps - 1:
-            fig_gif.savefig(filename.split(".gif")[0] + "_frame-1.png", dpi=100)
+            fig_gif.savefig(filename.split(".gif")[
+                            0] + "_frame-1.png", dpi=100)
 
         # Convert to frame
         canvas = fig_gif.canvas
@@ -341,7 +346,6 @@ def plot_attention_trajectory(
 
 
 def plot_input(input_images, save_dir, filename):
-
     plt.figure(figsize=(5, 5))
     plt.imshow(
         input_images[0],
@@ -378,7 +382,8 @@ def plot_input(input_images, save_dir, filename):
 
 def plot_target(targets, save_dir, filename, args):
     grid_size = int(math.sqrt(args.parity_sequence_length))
-    targets_grid = targets[0].reshape(grid_size, grid_size).detach().cpu().numpy()
+    targets_grid = targets[0].reshape(
+        grid_size, grid_size).detach().cpu().numpy()
     plt.figure(figsize=(5, 5))
     plt.imshow(
         targets_grid,
@@ -536,7 +541,8 @@ def plot_accuracy_heatmap(
     ax.legend(loc="upper left")
     fig.tight_layout(pad=0.1)
     fig.savefig(save_path, dpi=300, bbox_inches="tight")
-    fig.savefig(save_path.replace(".png", ".pdf"), format="pdf", bbox_inches="tight")
+    fig.savefig(save_path.replace(".png", ".pdf"),
+                format="pdf", bbox_inches="tight")
     plt.close(fig)
 
 
@@ -561,7 +567,8 @@ def plot_attention_heatmap(
         vmin=vmin,
         vmax=vmax,
     )
-    cbar = fig.colorbar(im, ax=ax, format=FuncFormatter(lambda x, _: f"{x:05.2f}"))
+    cbar = fig.colorbar(im, ax=ax, format=FuncFormatter(
+        lambda x, _: f"{x:05.2f}"))
     cbar.set_label("Attention Weight")
     ax.set_xlabel("Time Step")
     ax.set_ylabel("Sequence Index")
@@ -570,7 +577,8 @@ def plot_attention_heatmap(
     ax.grid(False)
     fig.tight_layout(pad=0.1)
     fig.savefig(save_path, dpi=300, bbox_inches="tight")
-    fig.savefig(save_path.replace(".png", ".pdf"), format="pdf", bbox_inches="tight")
+    fig.savefig(save_path.replace(".png", ".pdf"),
+                format="pdf", bbox_inches="tight")
     plt.close(fig)
 
 
@@ -613,7 +621,8 @@ def create_attentions_heatmap_gif(all_attentions, scale, save_path, args):
     image_paths = []
 
     for i, attentions in enumerate(all_attentions):
-        save_path_component = os.path.join(heatmap_components_dir, f"frame_{i:04d}.png")
+        save_path_component = os.path.join(
+            heatmap_components_dir, f"frame_{i:04d}.png")
         plot_attention_heatmap(
             attentions, scale, save_path_component, vmin=global_min, vmax=global_max
         )
@@ -637,9 +646,9 @@ def create_stacked_gif(save_path, y_shift=200):
     accuracy_frames = [Image.fromarray(frame) for frame in accuracy_reader]
     attention_frames = [Image.fromarray(frame) for frame in attention_reader]
 
-    assert len(accuracy_frames) == len(
-        attention_frames
-    ), "Mismatch in frame counts between accuracy and attention GIFs"
+    assert len(accuracy_frames) == len(attention_frames), (
+        "Mismatch in frame counts between accuracy and attention GIFs"
+    )
 
     stacked_frames = []
     for acc_frame, att_frame in zip(accuracy_frames, attention_frames):
@@ -749,7 +758,8 @@ def plot_loss_all_runs(
 
     unique_iters = sorted(set(iters_map.values()))
     base_colors = sns.color_palette("hls", n_colors=len(unique_iters))
-    color_lookup = {iters: base_colors[i] for i, iters in enumerate(unique_iters)}
+    color_lookup = {iters: base_colors[i]
+                    for i, iters in enumerate(unique_iters)}
 
     legend_entries = []
     global_max_x = 0
@@ -787,7 +797,8 @@ def plot_loss_all_runs(
         Line2D([0], [0], color="black", linestyle="--", label="LSTM"),
     ]
     color_legend = [
-        Line2D([0], [0], color=color_lookup[it], linestyle="-", label=f"{it} Iters.")
+        Line2D([0], [0], color=color_lookup[it],
+               linestyle="-", label=f"{it} Iters.")
         for it in unique_iters
     ]
 
@@ -835,7 +846,8 @@ def plot_accuracy_all_runs(
 
     unique_iters = sorted(set(iters_map.values()))
     base_colors = sns.color_palette("hls", n_colors=len(unique_iters))
-    color_lookup = {iters: base_colors[i] for i, iters in enumerate(unique_iters)}
+    color_lookup = {iters: base_colors[i]
+                    for i, iters in enumerate(unique_iters)}
 
     legend_entries = []
     global_max_x = 0
@@ -900,7 +912,8 @@ def plot_accuracy_all_runs(
         Line2D([0], [0], color="black", linestyle="--", label="LSTM"),
     ]
     color_legend = [
-        Line2D([0], [0], color=color_lookup[it], linestyle="-", label=f"{it} Iters.")
+        Line2D([0], [0], color=color_lookup[it],
+               linestyle="-", label=f"{it} Iters.")
         for it in unique_iters
     ]
     ax.legend(handles=color_legend + style_legend, loc="upper left")
@@ -931,17 +944,17 @@ def extract_run_name(folder, run_index=None):
 def plot_loss_individual_runs(
     training_data, evaluate_every, save_dir, scale=1.0, x_max=None
 ):
-
     grouped = defaultdict(list)
     label_map = {}
     iters_map = {}
     model_map = {}
 
     base_colors = sns.color_palette("hls", n_colors=3)
-    color_lookup = {f"Run {i+1}": base_colors[i] for i in range(3)}
+    color_lookup = {f"Run {i + 1}": base_colors[i] for i in range(3)}
 
     for i, (folder, data) in enumerate(training_data.items()):
-        checkpoint = load_checkpoint(get_latest_checkpoint_file(folder), device="cpu")
+        checkpoint = load_checkpoint(
+            get_latest_checkpoint_file(folder), device="cpu")
         model_args = get_model_args_from_checkpoint(checkpoint)
         label, model_type, iters = parse_folder_name(folder)
         if iters is None:
@@ -991,17 +1004,17 @@ def plot_loss_individual_runs(
 def plot_accuracy_individual_runs(
     training_data, evaluate_every, save_dir, scale=1.0, smooth=False, x_max=None
 ):
-
     grouped = defaultdict(list)
     label_map = {}
     iters_map = {}
     model_map = {}
 
     base_colors = sns.color_palette("hls", n_colors=3)
-    color_lookup = {f"Run {i+1}": base_colors[i] for i in range(3)}
+    color_lookup = {f"Run {i + 1}": base_colors[i] for i in range(3)}
 
     for i, (folder, data) in enumerate(training_data.items()):
-        checkpoint = load_checkpoint(get_latest_checkpoint_file(folder), device="cpu")
+        checkpoint = load_checkpoint(
+            get_latest_checkpoint_file(folder), device="cpu")
         model_args = get_model_args_from_checkpoint(checkpoint)
         label, model_type, iters = parse_folder_name(folder)
         if iters is None:
@@ -1065,7 +1078,6 @@ def plot_training_curve_all_runs(
     x_max=None,
     plot_individual_runs=True,
 ):
-
     all_folders = [folder for folder in all_folders if "certain" not in folder]
 
     training_data = {}
@@ -1078,7 +1090,8 @@ def plot_training_curve_all_runs(
             evaluation_intervals.append(model_args.track_every)
 
             _, train_losses, test_losses, train_accuracies, test_accuracies = (
-                get_accuracy_and_loss_from_checkpoint(checkpoint, device=device)
+                get_accuracy_and_loss_from_checkpoint(
+                    checkpoint, device=device)
             )
             training_data[folder] = {
                 "train_losses": train_losses,
@@ -1133,13 +1146,16 @@ def plot_accuracy_thinking_time(csv_path, scale, output_dir="analysis/cifar"):
         raise FileNotFoundError(f"CSV file not found: {csv_path}")
 
     df = pd.read_csv(csv_path)
-    df["RunName"] = df["Run"].apply(lambda x: os.path.basename(os.path.dirname(x)))
-    df["Model"] = df["Run"].apply(lambda x: "CTM" if "ctm" in x.lower() else "LSTM")
+    df["RunName"] = df["Run"].apply(
+        lambda x: os.path.basename(os.path.dirname(x)))
+    df["Model"] = df["Run"].apply(
+        lambda x: "CTM" if "ctm" in x.lower() else "LSTM")
 
     grouped = df.groupby(["Model", "Num Iterations"])
     summary = grouped.agg(
         mean_accuracy=("Overall Mean Accuracy", "mean"),
-        std_accuracy=("Overall Std Accuracy", lambda x: np.sqrt(np.mean(x**2))),
+        std_accuracy=("Overall Std Accuracy",
+                      lambda x: np.sqrt(np.mean(x**2))),
     ).reset_index()
 
     summary["mean_accuracy"] *= 100
@@ -1148,7 +1164,8 @@ def plot_accuracy_thinking_time(csv_path, scale, output_dir="analysis/cifar"):
     fig, ax = plt.subplots(figsize=(scale * 5, scale * 5))
 
     for model in ("CTM", "LSTM"):
-        subset = summary[summary["Model"] == model].sort_values(by="Num Iterations")
+        subset = summary[summary["Model"] ==
+                         model].sort_values(by="Num Iterations")
         linestyle = "-" if model == "CTM" else "--"
         ax.errorbar(
             subset["Num Iterations"],
@@ -1187,7 +1204,6 @@ def plot_lstm_last_and_certain_accuracy(
     step=1,
     x_max=None,
 ):
-
     tags = ["lstm_10", "lstm_10_certain", "lstm_25", "lstm_25_certain"]
     folders = [f for f in all_folders if any(tag in f.lower() for tag in tags)]
 
@@ -1205,9 +1221,9 @@ def plot_lstm_last_and_certain_accuracy(
         label = "Certain" if "certain" in f.lower() else "Final"
         training_data.setdefault((iters, label), []).append(acc)
 
-    assert training_data and all(
-        i == eval_intervals[0] for i in eval_intervals
-    ), "Missing or inconsistent eval intervals."
+    assert training_data and all(i == eval_intervals[0] for i in eval_intervals), (
+        "Missing or inconsistent eval intervals."
+    )
     evaluate_every = eval_intervals[0]
 
     keys = sorted(training_data.keys())
@@ -1233,7 +1249,8 @@ def plot_lstm_last_and_certain_accuracy(
             linewidth=2,
             alpha=0.7,
         )
-        ax.fill_between(x, mean - std, mean + std, color=color_map[key], alpha=0.1)
+        ax.fill_between(x, mean - std, mean + std,
+                        color=color_map[key], alpha=0.1)
         max_x = max(max_x, x[-1])
 
     ax.set_xlim([0, x_max or max_x])

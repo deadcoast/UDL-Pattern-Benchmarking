@@ -4,18 +4,18 @@ Rating computation pipeline.
 Orchestrates metric computation, aggregation, and report generation.
 """
 
-import logging
 import hashlib
-from datetime import datetime
-from typing import Dict, List, Optional, Any, Tuple
+import logging
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.base import QualityMetric, MetricRegistry
 from udl_rating_framework.core.aggregation import MetricAggregator
+from udl_rating_framework.core.caching import get_metric_cache, get_udl_cache
 from udl_rating_framework.core.confidence import ConfidenceCalculator
-from udl_rating_framework.core.caching import get_udl_cache, get_metric_cache
+from udl_rating_framework.core.metrics.base import MetricRegistry, QualityMetric
+from udl_rating_framework.core.representation import UDLRepresentation
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +109,9 @@ class RatingPipeline:
             self.udl_cache = None
             self.metric_cache = None
 
-        logger.info(f"Initialized pipeline with metrics: {metric_names}, caching: {enable_caching}")
+        logger.info(
+            f"Initialized pipeline with metrics: {metric_names}, caching: {enable_caching}"
+        )
 
     def compute_rating(self, udl: UDLRepresentation) -> QualityReport:
         """
@@ -175,7 +177,7 @@ class RatingPipeline:
                     # Compute metric value if not cached
                     if value is None:
                         value = metric.compute(udl)
-                        
+
                         # Cache the result if enabled
                         if self.enable_caching and self.metric_cache and udl_hash:
                             self.metric_cache.put_metric(udl_hash, name, value)
@@ -244,7 +246,8 @@ class RatingPipeline:
                                 "metric_values": metric_values,
                             },
                             output=overall_score,
-                            intermediate_values={"overall_score": overall_score},
+                            intermediate_values={
+                                "overall_score": overall_score},
                         )
                         report.computation_trace.append(step)
                         step_counter += 1
@@ -348,7 +351,8 @@ class RatingPipeline:
         reports = []
         for i, udl in enumerate(udls):
             try:
-                logger.debug(f"Processing UDL {i+1}/{len(udls)}: {udl.file_path}")
+                logger.debug(
+                    f"Processing UDL {i + 1}/{len(udls)}: {udl.file_path}")
                 report = self.compute_rating(udl)
                 reports.append(report)
             except Exception as e:
@@ -369,7 +373,8 @@ class RatingPipeline:
                 )
                 reports.append(error_report)
 
-        logger.info(f"Batch processing completed. {len(reports)} reports generated.")
+        logger.info(
+            f"Batch processing completed. {len(reports)} reports generated.")
         return reports
 
     def get_available_metrics(self) -> Dict[str, str]:
@@ -427,7 +432,8 @@ class RatingPipeline:
             # Test confidence computation
             try:
                 test_probs = [0.5, 0.3, 0.2]
-                confidence = self.confidence_calculator.compute_confidence(test_probs)
+                confidence = self.confidence_calculator.compute_confidence(
+                    test_probs)
                 results["confidence_works"] = True
                 results["confidence_bounded"] = bool(0.0 <= confidence <= 1.0)
             except Exception:
@@ -456,15 +462,15 @@ class RatingPipeline:
     def _compute_udl_hash(self, udl: UDLRepresentation) -> str:
         """
         Compute hash of UDL for caching.
-        
+
         Args:
             udl: UDL representation
-            
+
         Returns:
             SHA-256 hash of UDL content
         """
         content = udl.source_text + str(udl.file_path)
-        return hashlib.sha256(content.encode('utf-8')).hexdigest()
+        return hashlib.sha256(content.encode("utf-8")).hexdigest()
 
     def clear_caches(self) -> None:
         """Clear all caches used by this pipeline."""
@@ -479,13 +485,13 @@ class RatingPipeline:
         """Get cache statistics."""
         if not self.enable_caching:
             return {"caching_enabled": False}
-        
+
         stats = {"caching_enabled": True}
-        
+
         if self.udl_cache:
             stats["udl_cache"] = self.udl_cache.get_stats()
-        
+
         if self.metric_cache:
             stats["metric_cache"] = self.metric_cache.get_stats()
-        
+
         return stats

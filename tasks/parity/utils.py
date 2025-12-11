@@ -1,6 +1,7 @@
+import math
 import os
 import re
-import math
+
 from models.ctm import ContinuousThoughtMachine
 from models.lstm import LSTMBaseline
 
@@ -41,7 +42,8 @@ def prepare_model(prediction_reshaper, args, device):
             dropout=args.dropout,
         ).to(device)
     else:
-        raise ValueError(f"Model must be either ctm or lstm, not {args.model_type}")
+        raise ValueError(
+            f"Model must be either ctm or lstm, not {args.model_type}")
 
     return model
 
@@ -49,9 +51,9 @@ def prepare_model(prediction_reshaper, args, device):
 def reshape_attention_weights(attention_weights):
     T, B = attention_weights.shape[0], attention_weights.shape[1]
     grid_size = math.sqrt(attention_weights.shape[-1])
-    assert (
-        grid_size.is_integer()
-    ), f"Grid size should be a perfect square, but got {attention_weights.shape[-1]}"
+    assert grid_size.is_integer(), (
+        f"Grid size should be a perfect square, but got {attention_weights.shape[-1]}"
+    )
     H_ATTENTION = W_ATTENTION = int(grid_size)
     attn_weights_reshaped = attention_weights.reshape(
         T, B, -1, H_ATTENTION, W_ATTENTION

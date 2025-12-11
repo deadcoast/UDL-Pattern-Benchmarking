@@ -5,9 +5,10 @@ Tests package imports and dependency availability.
 Validates: Requirements 11.7
 """
 
-import pytest
-import sys
 import importlib
+import sys
+
+import pytest
 
 
 class TestPackageImports:
@@ -103,9 +104,9 @@ class TestDependencyAvailability:
             # Check version is 2.0 or higher
             version = torch.__version__.split(".")
             major = int(version[0])
-            assert (
-                major >= 2
-            ), f"PyTorch version {torch.__version__} is too old, need >= 2.0"
+            assert major >= 2, (
+                f"PyTorch version {torch.__version__} is too old, need >= 2.0"
+            )
         except ImportError:
             pytest.fail("PyTorch is not installed")
 
@@ -118,9 +119,9 @@ class TestDependencyAvailability:
             # Check version is 3.0 or higher
             version = nx.__version__.split(".")
             major = int(version[0])
-            assert (
-                major >= 3
-            ), f"NetworkX version {nx.__version__} is too old, need >= 3.0"
+            assert major >= 3, (
+                f"NetworkX version {nx.__version__} is too old, need >= 3.0"
+            )
         except ImportError:
             pytest.fail("NetworkX is not installed")
 
@@ -133,9 +134,9 @@ class TestDependencyAvailability:
             # Check version is 1.24 or higher
             version = np.__version__.split(".")
             major, minor = int(version[0]), int(version[1])
-            assert major > 1 or (
-                major == 1 and minor >= 24
-            ), f"NumPy version {np.__version__} is too old, need >= 1.24"
+            assert major > 1 or (major == 1 and minor >= 24), (
+                f"NumPy version {np.__version__} is too old, need >= 1.24"
+            )
         except ImportError:
             pytest.fail("NumPy is not installed")
 
@@ -148,9 +149,9 @@ class TestDependencyAvailability:
             # Check version is 1.10 or higher
             version = scipy.__version__.split(".")
             major, minor = int(version[0]), int(version[1])
-            assert major > 1 or (
-                major == 1 and minor >= 10
-            ), f"SciPy version {scipy.__version__} is too old, need >= 1.10"
+            assert major > 1 or (major == 1 and minor >= 10), (
+                f"SciPy version {scipy.__version__} is too old, need >= 1.10"
+            )
         except ImportError:
             pytest.fail("SciPy is not installed")
 
@@ -163,9 +164,9 @@ class TestDependencyAvailability:
             # Check version is 6.0 or higher
             version = hypothesis.__version__.split(".")
             major = int(version[0])
-            assert (
-                major >= 6
-            ), f"Hypothesis version {hypothesis.__version__} is too old, need >= 6.0"
+            assert major >= 6, (
+                f"Hypothesis version {hypothesis.__version__} is too old, need >= 6.0"
+            )
         except ImportError:
             pytest.fail("Hypothesis is not installed")
 
@@ -218,8 +219,9 @@ class TestBasicFunctionality:
 
     def test_confidence_calculator_basic_computation(self):
         """Test basic confidence computation."""
-        from udl_rating_framework.core.confidence import ConfidenceCalculator
         import numpy as np
+
+        from udl_rating_framework.core.confidence import ConfidenceCalculator
 
         calculator = ConfidenceCalculator()
 

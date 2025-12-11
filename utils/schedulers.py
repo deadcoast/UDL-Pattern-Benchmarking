@@ -1,7 +1,7 @@
-import torch
 import math
 
-from torch.optim.lr_scheduler import LambdaLR, SequentialLR, MultiStepLR
+import torch
+from torch.optim.lr_scheduler import LambdaLR, MultiStepLR, SequentialLR
 
 
 class warmup:
@@ -110,7 +110,9 @@ class WarmupMultiStepLR(object):
         self.gamma = gamma
 
         # Define the warmup scheduler
-        lambda_func = lambda step: step / warmup_steps if step < warmup_steps else 1.0
+        def lambda_func(step):
+            return step / warmup_steps if step < warmup_steps else 1.0
+
         warmup_scheduler = LambdaLR(
             optimizer, lr_lambda=lambda_func, last_epoch=last_epoch
         )

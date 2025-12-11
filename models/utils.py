@@ -1,7 +1,8 @@
+import os
+import re
+
 import torch
 import torch.nn.functional as F
-import re
-import os
 
 
 def compute_decay(T, params, clamp_lims=(0, 15)):
@@ -18,7 +19,8 @@ def compute_decay(T, params, clamp_lims=(0, 15)):
         .expand(T, params.shape[0])
     )
     out = torch.exp(
-        -indices * torch.clamp(params, clamp_lims[0], clamp_lims[1]).unsqueeze(0)
+        -indices *
+        torch.clamp(params, clamp_lims[0], clamp_lims[1]).unsqueeze(0)
     )
     return out
 
@@ -40,7 +42,8 @@ def add_coord_dim(x, scaled=True):
         H, 1
     )  # Shape (H, W)
     y_coords = (
-        torch.arange(H, device=x.device, dtype=x.dtype).unsqueeze(-1).repeat(1, W)
+        torch.arange(H, device=x.device,
+                     dtype=x.dtype).unsqueeze(-1).repeat(1, W)
     )  # Shape (H, W)
     if scaled:
         x_coords /= W - 1
@@ -101,10 +104,12 @@ def get_all_log_dirs(root_dir):
 
 
 def get_latest_checkpoint(log_dir):
-    files = [f for f in os.listdir(log_dir) if re.match(r"checkpoint_\d+\.pt", f)]
+    files = [f for f in os.listdir(
+        log_dir) if re.match(r"checkpoint_\d+\.pt", f)]
     return (
         os.path.join(
-            log_dir, max(files, key=lambda f: int(re.search(r"\d+", f).group()))
+            log_dir, max(files, key=lambda f: int(
+                re.search(r"\d+", f).group()))
         )
         if files
         else None
@@ -131,7 +136,8 @@ def get_checkpoint_files(filepath):
 
 
 def load_checkpoint(checkpoint_path, device):
-    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    checkpoint = torch.load(
+        checkpoint_path, map_location=device, weights_only=False)
     return checkpoint
 
 

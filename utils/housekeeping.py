@@ -1,11 +1,10 @@
-import numpy as np
-import random
-import torch
-
-
-import os
-import zipfile
 import glob
+import os
+import random
+import zipfile
+
+import numpy as np
+import torch
 
 
 def zip_python_code(output_filename):

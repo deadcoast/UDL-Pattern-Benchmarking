@@ -1,13 +1,15 @@
+from types import SimpleNamespace
+
 import pytest
 import torch
+
 from models.ctm import ContinuousThoughtMachine
 from models.ctm_qamnist import ContinuousThoughtMachineQAMNIST
-from utils.samplers import QAMNISTSampler
 from tasks.qamnist.utils import get_dataset
+from tasks.rl.train import Agent
 from tests.test_data import *
 from utils.housekeeping import set_seed
-from tasks.rl.train import Agent
-from types import SimpleNamespace
+from utils.samplers import QAMNISTSampler
 
 # --- Housekeeping ---
 

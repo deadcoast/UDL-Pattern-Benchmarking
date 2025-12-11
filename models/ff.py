@@ -65,7 +65,8 @@ class FFBaseline(nn.Module):
             Identity()
         )  # Placeholder, potentially replaced if using ResNet
 
-        self.initial_rgb = nn.LazyConv2d(3, 1, 1)  # Adapts input channels lazily
+        # Adapts input channels lazily
+        self.initial_rgb = nn.LazyConv2d(3, 1, 1)
         resnet_family = resnet18  # Default
         if "34" in self.backbone_type:
             resnet_family = resnet34

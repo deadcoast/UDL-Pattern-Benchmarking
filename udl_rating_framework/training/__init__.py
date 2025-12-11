@@ -6,4 +6,4 @@ Contains training pipeline and related utilities for CTM model training.
 
 from .training_pipeline import TrainingPipeline
 
-__all__ = ['TrainingPipeline']
+__all__ = ["TrainingPipeline"]
