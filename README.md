@@ -20,6 +20,23 @@ The UDL Rating Framework provides objective, reproducible quality assessments of
 
 ## Installation
 
+This project uses [uv](https://docs.astral.sh/uv/) for fast, reliable Python package management.
+
+### Prerequisites
+
+First, install uv if you haven't already:
+
+```bash
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Or via pip
+pip install uv
+```
+
 ### From Source
 
 ```bash
@@ -27,17 +44,29 @@ The UDL Rating Framework provides objective, reproducible quality assessments of
 git clone https://github.com/yourusername/udl-rating-framework.git
 cd udl-rating-framework
 
-# Install dependencies
-pip install -r requirements-udl.txt
+# Create virtual environment and install dependencies
+uv sync
 
-# Install the package
-pip install -e .
+# The virtual environment is automatically activated when using uv run
+# Or manually activate with:
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+
+### Development Installation
+
+```bash
+# Install with development dependencies
+uv sync --extra dev --extra docs
+
+# Or install specific groups
+uv sync --extra dev  # Just development tools
+uv sync --extra docs # Just documentation tools
 ```
 
 ### Using pip (when published)
 
 ```bash
-pip install udl-rating-framework
+pip install continuous-thought-machines
 ```
 
 ## Quick Start
@@ -129,38 +158,39 @@ where wᵢ are weights (Σwᵢ = 1) and mᵢ are individual metrics.
 
 ```bash
 # Run all tests
-pytest
+uv run pytest
 
 # Run unit tests only
-pytest tests/unit/
+uv run pytest tests/unit/
 
 # Run with coverage
-pytest --cov=udl_rating_framework --cov-report=html
+uv run pytest --cov=udl_rating_framework --cov-report=html
 ```
 
 ### Code Quality
 
 ```bash
 # Format code
-black udl_rating_framework/
+uv run black udl_rating_framework/
 
 # Lint
-flake8 udl_rating_framework/
+uv run flake8 udl_rating_framework/
 
 # Type checking
-mypy udl_rating_framework/
+uv run mypy udl_rating_framework/
 ```
 
 ## Requirements
 
 - Python 3.10+
+- uv package manager
 - PyTorch 2.0+
 - NetworkX 3.0+
 - NumPy 1.24+
 - SciPy 1.10+
 - Hypothesis 6.0+
 
-See `requirements-udl.txt` for complete list.
+All dependencies are managed through `pyproject.toml` and installed via uv. The `uv.lock` file ensures reproducible builds across environments.
 
 ## Documentation
 
