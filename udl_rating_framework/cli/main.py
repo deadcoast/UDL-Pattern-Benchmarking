@@ -17,6 +17,7 @@ from udl_rating_framework.cli.commands.rate import rate_command
 from udl_rating_framework.cli.commands.train import train_command
 from udl_rating_framework.cli.commands.compare import compare_command
 from udl_rating_framework.cli.commands.evaluate import evaluate_command
+from udl_rating_framework.cli.commands.integration import integration
 from udl_rating_framework.cli.config import load_config, validate_config
 
 
@@ -74,6 +75,7 @@ cli.add_command(rate_command)
 cli.add_command(train_command)
 cli.add_command(compare_command)
 cli.add_command(evaluate_command)
+cli.add_command(integration)
 
 
 def main():
