@@ -243,11 +243,26 @@ class TestDataClasses:
         
         assert constraint.type == "syntactic"
         assert constraint.condition == "balanced_parens"
-        assert constraint.metadata == {}
+        assert constraint.metadata == ()  # Empty tuple for no metadata
+        assert constraint.get_metadata_dict() == {}  # Should return empty dict
         
         # Test that Constraint is hashable (frozen=True)
         constraint_set = {constraint}
         assert len(constraint_set) == 1
+        
+        # Test constraint with metadata
+        constraint_with_meta = Constraint(
+            type="semantic",
+            condition="type_check",
+            metadata={"priority": 1, "scope": "local"}
+        )
+        assert constraint_with_meta.type == "semantic"
+        assert constraint_with_meta.condition == "type_check"
+        assert constraint_with_meta.get_metadata_dict() == {"priority": 1, "scope": "local"}
+        
+        # Test that constraint with metadata is also hashable
+        constraint_meta_set = {constraint_with_meta}
+        assert len(constraint_meta_set) == 1
     
     def test_ast_creation(self):
         """Test AST class creation."""

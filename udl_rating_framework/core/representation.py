@@ -6,7 +6,7 @@ Provides formal representation of UDL structure for mathematical analysis.
 
 import re
 import networkx as nx
-from typing import List, Dict, Set, Any, Optional, Union
+from typing import List, Dict, Set, Any, Optional, Union, Tuple
 from dataclasses import dataclass
 from enum import Enum
 
@@ -40,11 +40,16 @@ class Constraint:
     """Represents a constraint in grammar rules."""
     type: str
     condition: str
-    metadata: Dict[str, Any] = None
+    metadata: Tuple[Tuple[str, Any], ...] = ()
     
     def __post_init__(self):
-        if self.metadata is None:
-            object.__setattr__(self, 'metadata', {})
+        # Convert dict to tuple of tuples for hashability
+        if isinstance(self.metadata, dict):
+            object.__setattr__(self, 'metadata', tuple(sorted(self.metadata.items())))
+    
+    def get_metadata_dict(self) -> Dict[str, Any]:
+        """Convert metadata back to dict for easier access."""
+        return dict(self.metadata)
 
 
 @dataclass

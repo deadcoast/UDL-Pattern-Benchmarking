@@ -168,10 +168,10 @@
   - Test confidence on delta distribution (expect high confidence)
   - _Requirements: 1.5, 1.6_
 
-- [ ] 9. Checkpoint - Ensure all tests pass
+- [x] 9. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 10. Implement file discovery and input processing
+- [-] 10. Implement file discovery and input processing
   - Create file discovery module with recursive directory traversal
   - Implement file extension filtering (.udl, .dsl, .grammar, .ebnf, .txt)
   - Implement error handling for unreadable files
