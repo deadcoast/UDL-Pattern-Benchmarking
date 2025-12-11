@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/data/custom_datasets.py
+# hypothesis_version: 6.148.7
+
+[0.5, 255, 999, 100000, 10000000, '+', '-', 'Loading mazes', 'RGB', 'Solving all mazes...', 'image', 'imagenet-1k', 'label', 'preloaded_samples', 'train']

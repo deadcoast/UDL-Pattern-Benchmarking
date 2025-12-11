@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/models/ctm_rl.py
+# hypothesis_version: 6.148.7
+
+['action', 'diagonal_mask_out', 'first-last', 'navigation-backbone', 'none', 'out', 'random-pairing']

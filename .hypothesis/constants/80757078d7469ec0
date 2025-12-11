@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/representation.py
+# hypothesis_version: 6.148.7
+
+['"[^"]*"', '#.*', "'[^']*'", '::=', '::=|:=|=', ':=', '=', 'AST', 'COMMENT', 'DELIMITER', 'EOF', 'IDENTIFIER', 'KEYWORD', 'LITERAL', 'NEWLINE', 'NonTerminal', 'OPERATOR', 'ProductionRule', 'RHS', 'Statement', 'Symbol', 'Token', 'UDL', 'UNKNOWN', 'WHITESPACE', '[(){}[\\]]', '[*+?]', '[0-9]+', '[^\\s\\w]', '\\n', '\\s+', '\\|', 'category', 'comment', 'comment_constraint', 'constraint:', 'function', 'keyword', 'line', 'meaning', 'metadata', 'non_terminal', 'operator', 'source', 'symbol', 'terminal', 'type', 'value', '|']

@@ -11,21 +11,26 @@ from types import SimpleNamespace
 
 # --- Housekeeping ---
 
+
 @pytest.fixture
 def device():
     return torch.device("cpu")
+
 
 @pytest.fixture
 def seed():
     return 42
 
+
 @pytest.fixture(autouse=True)
 def auto_set_seed(seed):
     set_seed(seed)
 
+
 # --- Golden Test Fixtures ---
 
 # ------ Parity ------
+
 
 @pytest.fixture
 def golden_test_params_parity(parity_params):
@@ -35,43 +40,54 @@ def golden_test_params_parity(parity_params):
     parity_small_params["prediction_reshaper"] = [parity_length, 2]
     return parity_small_params
 
+
 @pytest.fixture
 def golden_test_model_parity(golden_test_params_parity, device):
     return ContinuousThoughtMachine(**golden_test_params_parity).to(device)
+
 
 @pytest.fixture
 def golden_test_input_parity(device):
     return GOLDEN_TEST_INPUT_PARITY.to(device)
 
+
 @pytest.fixture
 def golden_test_expected_predictions_parity(device):
     return GOLDEN_TEST_EXPECTED_PREDICTIONS_PARITY.to(device)
+
 
 @pytest.fixture
 def golden_test_expected_certainties_parity(device):
     return GOLDEN_TEST_EXPECTED_CERTAINTIES_PARITY.to(device)
 
+
 @pytest.fixture
 def golden_test_expected_synchronization_out_tracking_parity():
     return GOLDEN_TEST_EXPECTED_SYNCH_OUT_TRACKING_PARITY
+
 
 @pytest.fixture
 def golden_test_expected_synchronization_action_tracking_parity():
     return GOLDEN_TEST_EXPECTED_SYNCH_ACTION_TRACKING_PARITY
 
+
 @pytest.fixture
 def golden_test_expected_pre_activations_tracking_parity():
     return GOLDEN_TEST_EXPECTED_PRE_ACTIVATIONS_TRACKING_PARITY
+
 
 @pytest.fixture
 def golden_test_expected_post_activations_tracking_parity():
     return GOLDEN_TEST_EXPECTED_POST_ACTIVATIONS_TRACKING_PARITY
 
+
 @pytest.fixture
 def golden_test_expected_attentions_tracking_parity():
     return GOLDEN_TEST_EXPECTED_ATTENTIONS_TRACKING_PARITY
 
+
 # ------ QAMNIST ------
+
 
 @pytest.fixture
 def golden_test_params_qamnist(base_params):
@@ -83,9 +99,11 @@ def golden_test_params_qamnist(base_params):
     params["iterations_for_answering"] = 1
     return params
 
+
 @pytest.fixture
 def golden_test_model_qamnist(golden_test_params_qamnist, device):
     return ContinuousThoughtMachineQAMNIST(**golden_test_params_qamnist).to(device)
+
 
 @pytest.fixture
 def golden_test_input_qamnist(device):
@@ -105,7 +123,9 @@ def golden_test_input_qamnist(device):
     )
 
     sampler = QAMNISTSampler(train_data, batch_size=batch_size)
-    loader = torch.utils.data.DataLoader(train_data, batch_sampler=sampler, num_workers=0)
+    loader = torch.utils.data.DataLoader(
+        train_data, batch_sampler=sampler, num_workers=0
+    )
 
     inputs, z, _, _ = next(iter(loader))
     inputs = inputs.to(device)
@@ -113,39 +133,49 @@ def golden_test_input_qamnist(device):
 
     return inputs, z
 
+
 @pytest.fixture
 def golden_test_expected_predictions_qamnist(device):
     return GOLDEN_TEST_EXPECTED_PREDICTIONS_QAMNIST.to(device)
+
 
 @pytest.fixture
 def golden_test_expected_certainties_qamnist(device):
     return GOLDEN_TEST_EXPECTED_CERTAINTIES_QAMNIST.to(device)
 
+
 @pytest.fixture
 def golden_test_expected_synchronization_out_tracking_qamnist(device):
     return GOLDEN_TEST_EXPECTED_SYNCH_OUT_TRACKING_QAMNIST.to(device)
+
 
 @pytest.fixture
 def golden_test_expected_synchronization_action_tracking_qamnist():
     return GOLDEN_TEST_EXPECTED_SYNCH_ACTION_TRACKING_QAMNIST
 
+
 @pytest.fixture
 def golden_test_expected_pre_activations_tracking_qamnist():
     return GOLDEN_TEST_EXPECTED_PRE_ACTIVATIONS_TRACKING_QAMNIST
+
 
 @pytest.fixture
 def golden_test_expected_post_activations_tracking_qamnist():
     return GOLDEN_TEST_EXPECTED_POST_ACTIVATIONS_TRACKING_QAMNIST
 
+
 @pytest.fixture
 def golden_test_expected_attentions_tracking_qamnist():
     return GOLDEN_TEST_EXPECTED_ATTENTIONS_TRACKING_QAMNIST
+
 
 @pytest.fixture
 def golden_test_expected_embeddings_tracking_qamnist():
     return GOLDEN_TEST_EXPECTED_EMBEDDINGS_TRACKING_QAMNIST
 
+
 # ------ RL (CartPole) ------
+
 
 @pytest.fixture
 def golden_test_params_rl(base_params):
@@ -157,92 +187,117 @@ def golden_test_params_rl(base_params):
     params.pop("positional_embedding_type")
     return params
 
+
 @pytest.fixture
 def golden_test_model_rl(golden_test_params_rl, device):
     args = SimpleNamespace(
         env_id="CartPole-v1",
         model_type="ctm",
         continuous_state_trace=True,
-        iterations=golden_test_params_rl['iterations'],
-        d_model=golden_test_params_rl['d_model'],
-        d_input=golden_test_params_rl['d_input'],
-        n_synch_out=golden_test_params_rl['n_synch_out'],
-        synapse_depth=golden_test_params_rl['synapse_depth'],
-        memory_length=golden_test_params_rl['memory_length'],
-        deep_memory=golden_test_params_rl['deep_nlms'],
-        memory_hidden_dims=golden_test_params_rl['memory_hidden_dims'],
-        do_normalisation=golden_test_params_rl['do_layernorm_nlm'],
-        dropout=golden_test_params_rl.get('dropout', 0),
-        neuron_select_type=golden_test_params_rl.get('neuron_select_type', 'first-last'),
+        iterations=golden_test_params_rl["iterations"],
+        d_model=golden_test_params_rl["d_model"],
+        d_input=golden_test_params_rl["d_input"],
+        n_synch_out=golden_test_params_rl["n_synch_out"],
+        synapse_depth=golden_test_params_rl["synapse_depth"],
+        memory_length=golden_test_params_rl["memory_length"],
+        deep_memory=golden_test_params_rl["deep_nlms"],
+        memory_hidden_dims=golden_test_params_rl["memory_hidden_dims"],
+        do_normalisation=golden_test_params_rl["do_layernorm_nlm"],
+        dropout=golden_test_params_rl.get("dropout", 0),
+        neuron_select_type=golden_test_params_rl.get(
+            "neuron_select_type", "first-last"
+        ),
     )
-    size_action_space = 2  
+    size_action_space = 2
     model = Agent(size_action_space, args, device).to(device)
     return model
+
 
 @pytest.fixture()
 def environment_to_test():
     return "cartpole"
 
+
 @pytest.fixture
 def golden_test_inputs_rl(environment_to_test):
     if environment_to_test != "cartpole":
         raise NotImplementedError("RL test only tests cartpole.")
-    observations = torch.tensor([[ 0.01,  0.02,  0.03,  0.04],], dtype=torch.float32)
+    observations = torch.tensor(
+        [
+            [0.01, 0.02, 0.03, 0.04],
+        ],
+        dtype=torch.float32,
+    )
     return observations
+
 
 @pytest.fixture
 def golden_test_expected_initial_state_trace_rl(device):
     return GOLDEN_TEST_EXPECTED_INITIAL_STATE_TRACE_RL.to(device)
 
+
 @pytest.fixture
 def golden_test_expected_initial_activated_state_trace_rl(device):
     return GOLDEN_TEST_EXPECTED_INITIAL_ACTIVATED_STATE_TRACE_RL.to(device)
+
 
 @pytest.fixture
 def golden_test_expected_action_rl(device):
     return GOLDEN_TEST_EXPECTED_ACTION_RL.to(device)
 
+
 @pytest.fixture
 def golden_test_expected_action_log_prob_rl(device):
     return GOLDEN_TEST_EXPECTED_ACTION_LOG_PROB_RL.to(device)
+
 
 @pytest.fixture
 def golden_test_expected_action_entropy_rl(device):
     return GOLDEN_TEST_EXPECTED_ENTROPY_RL.to(device)
 
+
 @pytest.fixture
 def golden_test_expected_value_rl(device):
     return GOLDEN_TEST_EXPECTED_VALUE_RL.to(device)
+
 
 @pytest.fixture
 def golden_test_expected_state_trace_rl(device):
     return GOLDEN_TEST_EXPECTED_STATE_TRACE_RL.to(device)
 
+
 @pytest.fixture
 def golden_test_expected_activated_state_trace_rl(device):
     return GOLDEN_TEST_EXPECTED_ACTIVATED_STATE_TRACE_RL.to(device)
+
 
 @pytest.fixture
 def golden_test_expected_action_logits_rl(device):
     return GOLDEN_TEST_EXPECTED_ACTION_LOGITS_RL.to(device)
 
+
 @pytest.fixture
 def golden_test_expected_action_probs_rl(device):
     return GOLDEN_TEST_EXPECTED_ACTION_PROBS_RL.to(device)
+
 
 @pytest.fixture
 def golden_test_expected_pre_activations_tracking_rl():
     return GOLDEN_TEST_EXPECTED_PRE_ACTIVATIONS_TRACKING_RL
 
+
 @pytest.fixture
 def golden_test_expected_post_activations_tracking_rl():
     return GOLDEN_TEST_EXPECTED_POST_ACTIVATIONS_TRACKING_RL
+
 
 @pytest.fixture
 def golden_test_expected_synch_out_tracking_rl():
     return GOLDEN_TEST_SYNCH_OUT_TRACKING_RL
 
+
 # --- Parity Fixtures ---
+
 
 @pytest.fixture
 def base_params():
@@ -267,11 +322,19 @@ def base_params():
         n_random_pairing_self=0,
     )
 
+
 @pytest.fixture
 def parity_input(device):
     batch_size = 4
     parity_length = 64
-    return torch.randint(0, 2, (batch_size, parity_length), dtype=torch.float32, device=device) * 2 - 1
+    return (
+        torch.randint(
+            0, 2, (batch_size, parity_length), dtype=torch.float32, device=device
+        )
+        * 2
+        - 1
+    )
+
 
 @pytest.fixture
 def ctm_factory():
@@ -279,7 +342,9 @@ def ctm_factory():
         config = base_config.copy()
         config.update(overrides)
         return ContinuousThoughtMachine(**config)
+
     return _create_model
+
 
 @pytest.fixture
 def parity_params(base_params):
@@ -291,11 +356,14 @@ def parity_params(base_params):
     parity_params["prediction_reshaper"] = [parity_length, 2]
     return parity_params
 
+
 @pytest.fixture
 def parity_ctm_model(parity_params, device):
     return ContinuousThoughtMachine(**parity_params).to(device)
 
+
 # --- QAMNIST Fixtures ---
+
 
 @pytest.fixture
 def qamnist_params():
@@ -321,6 +389,7 @@ def qamnist_params():
         n_random_pairing_self=0,
     )
 
+
 @pytest.fixture
 def qamnist_input(device):
     q_num_images = 3
@@ -339,7 +408,9 @@ def qamnist_input(device):
     )
 
     sampler = QAMNISTSampler(train_data, batch_size=batch_size)
-    loader = torch.utils.data.DataLoader(train_data, batch_sampler=sampler, num_workers=0)
+    loader = torch.utils.data.DataLoader(
+        train_data, batch_sampler=sampler, num_workers=0
+    )
 
     inputs, z, _, _ = next(iter(loader))
     inputs = inputs.to(device)
@@ -347,11 +418,12 @@ def qamnist_input(device):
 
     return inputs, z
 
+
 @pytest.fixture
 def qamnist_model_factory(qamnist_params):
     def _create_model(neuron_select_type):
         return ContinuousThoughtMachineQAMNIST(
             **{**qamnist_params, "neuron_select_type": neuron_select_type}
         )
-    return _create_model
 
+    return _create_model

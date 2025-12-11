@@ -20,11 +20,14 @@ def __getattr__(name):
     """Lazy import of main classes."""
     if name == "UDLRepresentation":
         from udl_rating_framework.core.representation import UDLRepresentation
+
         return UDLRepresentation
     elif name == "MetricAggregator":
         from udl_rating_framework.core.aggregation import MetricAggregator
+
         return MetricAggregator
     elif name == "ConfidenceCalculator":
         from udl_rating_framework.core.confidence import ConfidenceCalculator
+
         return ConfidenceCalculator
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")

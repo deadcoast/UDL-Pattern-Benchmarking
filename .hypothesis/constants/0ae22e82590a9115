@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/models/modules.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.1, 1.0, 2.5, 10000.0, 128, 180, 256, 512, 1024, 2048, 4096, '101', '18', '34', '50', 'BDM,MHD->BDH', 'T', 'b1', 'bij,j->bi', 'combination', 'embedding', 'start_vector', 'w1', 'wij,j->wi']

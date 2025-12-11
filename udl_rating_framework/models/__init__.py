@@ -1,8 +1,9 @@
 """
-CTM model components for UDL rating.
+Models module for UDL Rating Framework.
 
-This module contains the neural network components that learn to approximate
-the mathematical metrics using the Continuous Thought Machine architecture.
+Contains neural network models for UDL quality prediction.
 """
 
-__all__ = []
+from .ctm_adapter import UDLRatingCTM
+
+__all__ = ["UDLRatingCTM"]

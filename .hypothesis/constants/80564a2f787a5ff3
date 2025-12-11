@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/models/ctm_adapter.py
+# hypothesis_version: 6.148.7
+
+[0.1, 128, 256, 512, '..', '<BOS>', '<EOS>', '<PAD>', '<UNK>', 'custom-rotational-1d', 'd_input', 'd_model', 'deep_nlms', 'dropout', 'heads', 'iterations', 'memory_hidden_dims', 'memory_length', 'models', 'n_synch_action', 'n_synch_out', 'neuron_select_type', 'none', 'random-pairing', 'synapse_depth']

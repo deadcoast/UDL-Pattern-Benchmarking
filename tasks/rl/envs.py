@@ -1,18 +1,20 @@
 import gymnasium as gym
 import numpy as np
 
+
 class MaskVelocityWrapper(gym.Wrapper):
     """
     Simple wrapper that automatically resets the environment on done.
     Modeled after EpisodicLifeEnv but simplified since we don't need
     to handle lives or partial resets.
     """
+
     def __init__(self, env: gym.Env) -> None:
         super().__init__(env)
 
     def reset(self, **kwargs):
         obs, info = self.env.reset(**kwargs)
-        return self._apply_velocity_mask(obs), info 
+        return self._apply_velocity_mask(obs), info
 
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)

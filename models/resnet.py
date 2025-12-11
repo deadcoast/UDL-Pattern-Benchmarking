@@ -76,7 +76,7 @@ class BasicBlock(nn.Module):
             identity = self.downsample(x)
 
         out += identity
-        
+
         out = self.relu(out)
         return out
 
@@ -129,7 +129,6 @@ class Bottleneck(nn.Module):
 
         out += identity
 
-        
         # activation = None
         # activation = out.detach().cpu().numpy()
         out = self.relu(out)
@@ -175,32 +174,57 @@ class ResNet(nn.Module):
 
         # NOTE: Important!
         # This has changed from a kernel size of 7 (padding=3) to a kernel of 3 (padding=1)
-        # The reason for this was to limit the receptive field to constrain models to 
+        # The reason for this was to limit the receptive field to constrain models to
         # "Looking around" to gather information.
 
-        self.conv1 = nn.Conv2d(
-            in_channels, self.inplanes, kernel_size=3, stride=1, padding=1, bias=False
-        ) if in_channels in [1, 3] else nn.LazyConv2d(
-            self.inplanes, kernel_size=3, stride=1, padding=1, bias=False
+        self.conv1 = (
+            nn.Conv2d(
+                in_channels,
+                self.inplanes,
+                kernel_size=3,
+                stride=1,
+                padding=1,
+                bias=False,
+            )
+            if in_channels in [1, 3]
+            else nn.LazyConv2d(
+                self.inplanes, kernel_size=3, stride=1, padding=1, bias=False
+            )
         )
         # END
 
         self.bn1 = norm_layer(self.inplanes)
         self.relu = nn.ReLU(inplace=True)
-        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1) if do_initial_max_pool else Identity()
+        self.maxpool = (
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+            if do_initial_max_pool
+            else Identity()
+        )
         self.layer1 = self._make_layer(block, 64, layers[0])
         self.feature_scales = feature_scales
         if 2 in feature_scales:
             self.layer2 = self._make_layer(
-                block, 128, layers[1], stride=stride, dilate=replace_stride_with_dilation[0]
+                block,
+                128,
+                layers[1],
+                stride=stride,
+                dilate=replace_stride_with_dilation[0],
             )
             if 3 in feature_scales:
                 self.layer3 = self._make_layer(
-                    block, 256, layers[2], stride=stride, dilate=replace_stride_with_dilation[1]
+                    block,
+                    256,
+                    layers[2],
+                    stride=stride,
+                    dilate=replace_stride_with_dilation[1],
                 )
                 if 4 in feature_scales:
                     self.layer4 = self._make_layer(
-                        block, 512, layers[3], stride=stride, dilate=replace_stride_with_dilation[2]
+                        block,
+                        512,
+                        layers[3],
+                        stride=stride,
+                        dilate=replace_stride_with_dilation[2],
                     )
 
         # NOTE: Commented this out as it is not used anymore for this work, kept it for reference
@@ -283,83 +307,207 @@ class ResNet(nn.Module):
         return x
 
 
-def _resnet(in_channels, feature_scales, stride, arch, block, layers, pretrained, progress, device, do_initial_max_pool, **kwargs):
-    model = ResNet(in_channels, feature_scales, stride, block, layers, do_initial_max_pool=do_initial_max_pool, **kwargs)
+def _resnet(
+    in_channels,
+    feature_scales,
+    stride,
+    arch,
+    block,
+    layers,
+    pretrained,
+    progress,
+    device,
+    do_initial_max_pool,
+    **kwargs,
+):
+    model = ResNet(
+        in_channels,
+        feature_scales,
+        stride,
+        block,
+        layers,
+        do_initial_max_pool=do_initial_max_pool,
+        **kwargs,
+    )
     if pretrained:
-        assert in_channels==3
+        assert in_channels == 3
         script_dir = os.path.dirname(__file__)
         state_dict = torch.load(
-            script_dir + '/state_dicts/' + arch + ".pt", map_location=device
+            script_dir + "/state_dicts/" + arch + ".pt", map_location=device
         )
         model.load_state_dict(state_dict, strict=False)
     return model
 
 
-def resnet18(in_channels, feature_scales, stride=2, pretrained=False, progress=True, device="cpu", do_initial_max_pool=True, **kwargs):
+def resnet18(
+    in_channels,
+    feature_scales,
+    stride=2,
+    pretrained=False,
+    progress=True,
+    device="cpu",
+    do_initial_max_pool=True,
+    **kwargs,
+):
     """Constructs a ResNet-18 model.
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _resnet(in_channels,
-        feature_scales, stride, "resnet18", BasicBlock, [2, 2, 2, 2], pretrained, progress, device, do_initial_max_pool, **kwargs
+    return _resnet(
+        in_channels,
+        feature_scales,
+        stride,
+        "resnet18",
+        BasicBlock,
+        [2, 2, 2, 2],
+        pretrained,
+        progress,
+        device,
+        do_initial_max_pool,
+        **kwargs,
     )
 
 
-def resnet34(in_channels, feature_scales, stride=2, pretrained=False, progress=True, device="cpu", do_initial_max_pool=True, **kwargs):
+def resnet34(
+    in_channels,
+    feature_scales,
+    stride=2,
+    pretrained=False,
+    progress=True,
+    device="cpu",
+    do_initial_max_pool=True,
+    **kwargs,
+):
     """Constructs a ResNet-34 model.
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _resnet(in_channels,
-        feature_scales, stride, "resnet34", BasicBlock, [3, 4, 6, 3], pretrained, progress, device, do_initial_max_pool, **kwargs
+    return _resnet(
+        in_channels,
+        feature_scales,
+        stride,
+        "resnet34",
+        BasicBlock,
+        [3, 4, 6, 3],
+        pretrained,
+        progress,
+        device,
+        do_initial_max_pool,
+        **kwargs,
     )
 
 
-def resnet50(in_channels, feature_scales, stride=2, pretrained=False, progress=True, device="cpu", do_initial_max_pool=True, **kwargs):
+def resnet50(
+    in_channels,
+    feature_scales,
+    stride=2,
+    pretrained=False,
+    progress=True,
+    device="cpu",
+    do_initial_max_pool=True,
+    **kwargs,
+):
     """Constructs a ResNet-50 model.
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _resnet(in_channels,
-        feature_scales, stride, "resnet50", Bottleneck, [3, 4, 6, 3], pretrained, progress, device, do_initial_max_pool, **kwargs
+    return _resnet(
+        in_channels,
+        feature_scales,
+        stride,
+        "resnet50",
+        Bottleneck,
+        [3, 4, 6, 3],
+        pretrained,
+        progress,
+        device,
+        do_initial_max_pool,
+        **kwargs,
     )
 
 
-def resnet101(in_channels, feature_scales, stride=2, pretrained=False, progress=True, device="cpu", do_initial_max_pool=True, **kwargs):
+def resnet101(
+    in_channels,
+    feature_scales,
+    stride=2,
+    pretrained=False,
+    progress=True,
+    device="cpu",
+    do_initial_max_pool=True,
+    **kwargs,
+):
     """Constructs a ResNet-50 model.
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _resnet(in_channels,
-        feature_scales, stride, "resnet101", Bottleneck, [3, 4, 23, 3], pretrained, progress, device, do_initial_max_pool, **kwargs
+    return _resnet(
+        in_channels,
+        feature_scales,
+        stride,
+        "resnet101",
+        Bottleneck,
+        [3, 4, 23, 3],
+        pretrained,
+        progress,
+        device,
+        do_initial_max_pool,
+        **kwargs,
     )
 
 
-def resnet152(in_channels, feature_scales, stride=2, pretrained=False, progress=True, device="cpu", do_initial_max_pool=True, **kwargs):
+def resnet152(
+    in_channels,
+    feature_scales,
+    stride=2,
+    pretrained=False,
+    progress=True,
+    device="cpu",
+    do_initial_max_pool=True,
+    **kwargs,
+):
     """Constructs a ResNet-50 model.
     Args:
         pretrained (bool): If True, returns a model pre-trained on ImageNet
         progress (bool): If True, displays a progress bar of the download to stderr
     """
-    return _resnet(in_channels,
-        feature_scales, stride, "resnet152", Bottleneck, [3, 4, 36, 3], pretrained, progress, device, do_initial_max_pool, **kwargs
+    return _resnet(
+        in_channels,
+        feature_scales,
+        stride,
+        "resnet152",
+        Bottleneck,
+        [3, 4, 36, 3],
+        pretrained,
+        progress,
+        device,
+        do_initial_max_pool,
+        **kwargs,
     )
+
 
 def prepare_resnet_backbone(backbone_type):
-      
-    resnet_family = resnet18 # Default
-    if '34' in backbone_type: resnet_family = resnet34
-    if '50' in backbone_type: resnet_family = resnet50
-    if '101' in backbone_type: resnet_family = resnet101
-    if '152' in backbone_type: resnet_family = resnet152
+
+    resnet_family = resnet18  # Default
+    if "34" in backbone_type:
+        resnet_family = resnet34
+    if "50" in backbone_type:
+        resnet_family = resnet50
+    if "101" in backbone_type:
+        resnet_family = resnet101
+    if "152" in backbone_type:
+        resnet_family = resnet152
 
     # Determine which ResNet blocks to keep
-    block_num_str = backbone_type.split('-')[-1]
-    hyper_blocks_to_keep = list(range(1, int(block_num_str) + 1)) if block_num_str.isdigit() else [1, 2, 3, 4]
+    block_num_str = backbone_type.split("-")[-1]
+    hyper_blocks_to_keep = (
+        list(range(1, int(block_num_str) + 1))
+        if block_num_str.isdigit()
+        else [1, 2, 3, 4]
+    )
 
     backbone = resnet_family(
         3,

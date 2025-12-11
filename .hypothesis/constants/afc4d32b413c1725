@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/models/../../models/ctm.py
+# hypothesis_version: 6.148.7
+
+[2.5, 128, 224, 256, 512, 1024, 2048, '-', '1', '18', '2', '3', '34', '4', 'action', 'cpu', 'custom-rotational', 'custom-rotational-1d', 'first', 'first-last', 'imagenet', 'last', 'learnable-fourier', 'maze-large', 'model.safetensors', 'none', 'out', 'parity_backbone', 'random', 'random-pairing', 'resnet', 'shallow-wide', 'start_trace']

@@ -9,15 +9,20 @@ from scipy.special import softmax
 
 
 from tasks.rl.train import Agent
-from tasks.rl.analysis.run import get_training_data_from_checkpoint_path, get_size_action_space, prepare_env
+from tasks.rl.analysis.run import (
+    get_training_data_from_checkpoint_path,
+    get_size_action_space,
+    prepare_env,
+)
 from tasks.rl.utils import combine_tracking_data
 from tasks.image_classification.plotting import save_frames_to_mp4
 
 
 def load_model(agent, checkpoint_path, device):
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
-    agent.load_state_dict(checkpoint['model_state_dict'])
+    agent.load_state_dict(checkpoint["model_state_dict"])
     pass
+
 
 def interpolate_post_activations(arrays, target_length):
     interpolated = []
@@ -29,13 +34,20 @@ def interpolate_post_activations(arrays, target_length):
             continue
         x_old = np.linspace(0, 1, T)
         x_new = np.linspace(0, 1, target_length)
-        arr_interp = np.array([
-            np.interp(x_new, x_old, arr[:, d]) for d in range(D)
-        ]).T
+        arr_interp = np.array([np.interp(x_new, x_old, arr[:, d]) for d in range(D)]).T
         interpolated.append(arr_interp)
     return interpolated
 
-def make_rl_gif(post_activations, inputs_to_model, action_probs, actions, save_path, umap_positions, umap_point_scaler=1.0):
+
+def make_rl_gif(
+    post_activations,
+    inputs_to_model,
+    action_probs,
+    actions,
+    save_path,
+    umap_positions,
+    umap_point_scaler=1.0,
+):
 
     batch_index = 0
     figscale = 0.32
@@ -50,17 +62,15 @@ def make_rl_gif(post_activations, inputs_to_model, action_probs, actions, save_p
 
     mosaic = [
         [f"obs", f"obs", f"obs", f"obs", "probs", "probs", "probs", "probs"],
-        [f"obs", f"obs", f"obs", f"obs", "probs", "probs","probs", "probs"],
+        [f"obs", f"obs", f"obs", f"obs", "probs", "probs", "probs", "probs"],
     ]
     for _ in range(2, 8):
-        mosaic.append(
-            ["umap", "umap", "umap", "umap", "umap", "umap", "umap", "umap"]
-        )
+        mosaic.append(["umap", "umap", "umap", "umap", "umap", "umap", "umap", "umap"])
 
     for t in range(n_steps):
-        rows      = len(mosaic)
+        rows = len(mosaic)
         cell_size = figscale * 4
-        fig_h     = rows * cell_size
+        fig_h = rows * cell_size
 
         probs_t = action_probs[t]
 
@@ -68,7 +78,7 @@ def make_rl_gif(post_activations, inputs_to_model, action_probs, actions, save_p
             mosaic,
             figsize=(6 * cell_size, fig_h),
             constrained_layout=False,
-            gridspec_kw={'wspace': 0.05, 'hspace': 0.05},  # small gaps
+            gridspec_kw={"wspace": 0.05, "hspace": 0.05},  # small gaps
         )
         # restore a little margin
         fig.subplots_adjust(left=0.02, right=0.98, top=0.98, bottom=0.02)
@@ -79,19 +89,26 @@ def make_rl_gif(post_activations, inputs_to_model, action_probs, actions, save_p
         if this_image.shape[-1] == 1:
             this_image = np.repeat(this_image, 3, axis=-1)
 
-
         ax["obs"].imshow(this_image)
         ax["obs"].axis("off")
 
         probs_t = action_probs[t]
-        colors = ['black' if i == actions[t] else 'gray' for i in range(len(probs_t))]
-        bars = ax["probs"].bar(np.arange(len(probs_t)), probs_t, color=colors, width=0.9, alpha=0.8)
-        ax["probs"].axis('off')
+        colors = ["black" if i == actions[t] else "gray" for i in range(len(probs_t))]
+        bars = ax["probs"].bar(
+            np.arange(len(probs_t)), probs_t, color=colors, width=0.9, alpha=0.8
+        )
+        ax["probs"].axis("off")
         for bar, label in zip(bars, class_labels):
             x = bar.get_x() + bar.get_width() / 2
-            ax["probs"].annotate(label, xy=(x, 0), xytext=(1, 0),
-                                textcoords="offset points",
-                                ha='center', va='bottom', rotation=90)
+            ax["probs"].annotate(
+                label,
+                xy=(x, 0),
+                xytext=(1, 0),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                rotation=90,
+            )
         ax["probs"].set_ylim([0, 1])
 
         z = post_act_this_batch[t]
@@ -104,14 +121,14 @@ def make_rl_gif(post_activations, inputs_to_model, action_probs, actions, save_p
             umap_positions[:, 1],
             s=point_sizes,
             c=cmap(z_norm),
-            alpha=0.8
+            alpha=0.8,
         )
         ax["umap"].axis("off")
 
         canvas = fig.canvas
         canvas.draw()
         frame = np.frombuffer(canvas.buffer_rgba(), dtype=np.uint8)
-        w, h   = canvas.get_width_height()
+        w, h = canvas.get_width_height()
         frames.append(frame.reshape(h, w, 4)[..., :3])
         plt.close(fig)
 
@@ -124,7 +141,7 @@ def make_rl_gif(post_activations, inputs_to_model, action_probs, actions, save_p
         f"{save_path}/activation.mp4",
         fps=15,
         gop_size=1,
-        preset="slow"
+        preset="slow",
     )
 
 
@@ -133,7 +150,12 @@ def run_umap(agent, model_args):
     all_post_activations = []
     point_counts = 150
 
-    eval_env = prepare_env(model_args.env_id, model_args.max_environment_steps, mask_velocity=model_args.mask_velocity, render_mode="rgb_array")
+    eval_env = prepare_env(
+        model_args.env_id,
+        model_args.max_environment_steps,
+        mask_velocity=model_args.mask_velocity,
+        render_mode="rgb_array",
+    )
     with tqdm(total=point_counts, desc="Collecting UMAP data") as pbar:
         for idx in range(point_counts):
             eval_next_obs, _ = eval_env.reset(seed=idx)
@@ -142,34 +164,59 @@ def run_umap(agent, model_args):
             tracking_data_by_world_step = []
             for environment_step_i in range(model_args.max_environment_steps):
                 with torch.no_grad():
-                    action, _, _, value, eval_state, tracking_data, action_logits, action_probs = agent.get_action_and_value(
+                    (
+                        action,
+                        _,
+                        _,
+                        value,
+                        eval_state,
+                        tracking_data,
+                        action_logits,
+                        action_probs,
+                    ) = agent.get_action_and_value(
                         torch.Tensor(eval_next_obs).to(device).unsqueeze(0),
                         eval_state,
                         torch.Tensor([eval_next_done]).to(device),
-                        track=True
+                        track=True,
                     )
-                eval_next_obs, reward, termination, truncation, _ = eval_env.step(action.cpu().numpy()[0])
+                eval_next_obs, reward, termination, truncation, _ = eval_env.step(
+                    action.cpu().numpy()[0]
+                )
                 eval_next_done = termination or truncation
 
-                tracking_data['actions'] = np.tile(action.detach().cpu().numpy(), (model_args.iterations)) # Shape T
-                tracking_data['values'] = np.tile(value.squeeze(-1).detach().cpu().numpy(), (model_args.iterations)) # Shape T
-                tracking_data['action_logits'] = np.tile(action_logits.detach().cpu().numpy(), (model_args.iterations, 1)) # Shape T, A
-                tracking_data['action_probs'] = np.tile(action_probs.detach().cpu().numpy(), (model_args.iterations, 1))# Shape T, A
-                tracking_data['rewards'] = np.tile(np.array(reward), (model_args.iterations)) # Shape T
-                tracking_data['inputs'] = np.tile(np.array(eval_env.render()), (model_args.iterations, 1, 1, 1)) # Shape T, H, W, C
+                tracking_data["actions"] = np.tile(
+                    action.detach().cpu().numpy(), (model_args.iterations)
+                )  # Shape T
+                tracking_data["values"] = np.tile(
+                    value.squeeze(-1).detach().cpu().numpy(), (model_args.iterations)
+                )  # Shape T
+                tracking_data["action_logits"] = np.tile(
+                    action_logits.detach().cpu().numpy(), (model_args.iterations, 1)
+                )  # Shape T, A
+                tracking_data["action_probs"] = np.tile(
+                    action_probs.detach().cpu().numpy(), (model_args.iterations, 1)
+                )  # Shape T, A
+                tracking_data["rewards"] = np.tile(
+                    np.array(reward), (model_args.iterations)
+                )  # Shape T
+                tracking_data["inputs"] = np.tile(
+                    np.array(eval_env.render()), (model_args.iterations, 1, 1, 1)
+                )  # Shape T, H, W, C
 
                 tracking_data_by_world_step.append(tracking_data)
 
                 if eval_next_done:
                     break
-            
+
             eval_env.close()
 
             combined_tracking_data = combine_tracking_data(tracking_data_by_world_step)
-            all_post_activations.append(combined_tracking_data['post_activations'])
+            all_post_activations.append(combined_tracking_data["post_activations"])
             pbar.update(1)
 
-    all_post_activations = interpolate_post_activations(all_post_activations, all_post_activations[-1].shape[0])
+    all_post_activations = interpolate_post_activations(
+        all_post_activations, all_post_activations[-1].shape[0]
+    )
     stacked = np.stack(all_post_activations, 1)
     umap_features = stacked.reshape(-1, stacked.shape[-1])
     reducer = umap.UMAP(
@@ -177,32 +224,36 @@ def run_umap(agent, model_args):
         n_neighbors=40,
         min_dist=1,
         spread=1,
-        metric='cosine',
-        local_connectivity=1
+        metric="cosine",
+        local_connectivity=1,
     )
     positions = reducer.fit_transform(umap_features.T)
     return combined_tracking_data, positions
 
+
 def run_model_and_make_gif(checkpoint_path, save_path, env_id, device):
 
     # Load the model
-    _, _, _, _, _, model_args = get_training_data_from_checkpoint_path(checkpoint_path, device)
-    agent = Agent(size_action_space=get_size_action_space(env_id), args=model_args, device=device).to(device)
+    _, _, _, _, _, model_args = get_training_data_from_checkpoint_path(
+        checkpoint_path, device
+    )
+    agent = Agent(
+        size_action_space=get_size_action_space(env_id), args=model_args, device=device
+    ).to(device)
     load_model(agent, checkpoint_path, device)
 
-    # Run the umapping 
+    # Run the umapping
     tracking_data, positions = run_umap(agent, model_args)
 
     make_rl_gif(
-        post_activations=tracking_data['post_activations'],
-        inputs_to_model=tracking_data['inputs'],
-        action_probs=tracking_data['action_probs'],
-        actions=tracking_data['actions'],
+        post_activations=tracking_data["post_activations"],
+        inputs_to_model=tracking_data["inputs"],
+        action_probs=tracking_data["action_probs"],
+        actions=tracking_data["actions"],
         save_path=save_path,
         umap_positions=positions,
-        umap_point_scaler=1.0,  
+        umap_point_scaler=1.0,
     )
-
 
     pass
 

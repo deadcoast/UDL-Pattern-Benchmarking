@@ -1,4 +1,3 @@
-
 import torch
 import os
 import math
@@ -31,13 +30,13 @@ def make_parity_gif(
     umap_point_scaler=1.0,
 ):
     batch_index = 0
-    figscale = 0.32 
+    figscale = 0.32
     n_steps, n_heads, seqLen = attention_weights.shape[:3]
     grid_side = int(np.sqrt(seqLen))
     frames = []
 
-    inputs_this_batch  = inputs_to_model[:, batch_index]
-    preds_this_batch   = predictions[batch_index]
+    inputs_this_batch = inputs_to_model[:, batch_index]
+    preds_this_batch = predictions[batch_index]
     targets_this_batch = targets[batch_index]
     post_act_this_batch = post_activations[:, batch_index]
 
@@ -47,35 +46,34 @@ def make_parity_gif(
         [f"att_1", f"in_1", "probs", "probs", "target", "target"],
     ]
     for h in range(2, n_heads):
-        mosaic.append(
-            [f"att_{h}", f"in_{h}", "umap", "umap",
-             "umap", "umap"]
-        )
+        mosaic.append([f"att_{h}", f"in_{h}", "umap", "umap", "umap", "umap"])
 
     for t in range(n_steps):
-        rows      = len(mosaic)
+        rows = len(mosaic)
         cell_size = figscale * 4
-        fig_h     = rows * cell_size
+        fig_h = rows * cell_size
 
         fig, ax = plt.subplot_mosaic(
             mosaic,
             figsize=(6 * cell_size, fig_h),
             constrained_layout=False,
-            gridspec_kw={'wspace': 0.05, 'hspace': 0.05},  # small gaps
+            gridspec_kw={"wspace": 0.05, "hspace": 0.05},  # small gaps
         )
         # restore a little margin
         fig.subplots_adjust(left=0.02, right=0.98, top=0.98, bottom=0.02)
 
         # probabilities heatmap
         logits_t = preds_this_batch[:, :, t]
-        probs_t  = softmax(logits_t, axis=1)[:, 0].reshape(grid_side, grid_side)
+        probs_t = softmax(logits_t, axis=1)[:, 0].reshape(grid_side, grid_side)
         ax["probs"].imshow(probs_t, cmap="gray", vmin=0, vmax=1)
         ax["probs"].axis("off")
 
         # target overlay
         ax["target"].imshow(
             targets_this_batch.reshape(grid_side, grid_side),
-            cmap="gray_r", vmin=0, vmax=1
+            cmap="gray_r",
+            vmin=0,
+            vmax=1,
         )
         ax["target"].axis("off")
         ax["target"].grid(which="minor", color="black", linestyle="-", linewidth=0.5)
@@ -90,10 +88,9 @@ def make_parity_gif(
             umap_positions[:, 1],
             s=point_sizes,
             c=cmap(z_norm),
-            alpha=0.8
+            alpha=0.8,
         )
         ax["umap"].axis("off")
-
 
         # normalize attention
         att_t = attention_weights[t, :, :]
@@ -133,41 +130,39 @@ def make_parity_gif(
                 x0, y0 = route_history[h][i]
                 x1, y1 = route_history[h][i + 1]
                 color = colors[i]
-                is_last = (i == len(route_history[h]) - 2)
-                style   = '->' if is_last else '-'
-                lw      = 2.0 if is_last else 1.6
-                alpha   = 1.0 if is_last else 0.9
-                scale   = 10  if is_last else 1
+                is_last = i == len(route_history[h]) - 2
+                style = "->" if is_last else "-"
+                lw = 2.0 if is_last else 1.6
+                alpha = 1.0 if is_last else 0.9
+                scale = 10 if is_last else 1
 
                 # draw arrow
                 arr = FancyArrowPatch(
-                    (x0, y0), (x1, y1),
+                    (x0, y0),
+                    (x1, y1),
                     arrowstyle=style,
                     linewidth=lw,
                     mutation_scale=scale,
                     alpha=alpha,
                     facecolor=color,
                     edgecolor=color,
-                    shrinkA=0, shrinkB=0,
-                    capstyle='round', joinstyle='round',
+                    shrinkA=0,
+                    shrinkB=0,
+                    capstyle="round",
+                    joinstyle="round",
                     zorder=3 if is_last else 2,
                     clip_on=False,
                 )
                 ax[f"in_{h}"].add_patch(arr)
 
                 ax[f"in_{h}"].scatter(
-                    x1, y1,
-                    marker='x',
-                    s=40,
-                    color=color,
-                    linewidths=lw,
-                    zorder=4
+                    x1, y1, marker="x", s=40, color=color, linewidths=lw, zorder=4
                 )
 
         canvas = fig.canvas
         canvas.draw()
         frame = np.frombuffer(canvas.buffer_rgba(), dtype=np.uint8)
-        w, h   = canvas.get_width_height()
+        w, h = canvas.get_width_height()
         frames.append(frame.reshape(h, w, 4)[..., :3])
         plt.close(fig)
 
@@ -180,8 +175,9 @@ def make_parity_gif(
         f"{save_path}/activation.mp4",
         fps=15,
         gop_size=1,
-        preset="slow"
+        preset="slow",
     )
+
 
 def run_umap(model, testloader):
     all_post_activations = []
@@ -207,8 +203,8 @@ def run_umap(model, testloader):
         n_neighbors=20,
         min_dist=1,
         spread=1,
-        metric='cosine',
-        local_connectivity=1
+        metric="cosine",
+        local_connectivity=1,
     )
     positions = reducer.fit_transform(umap_features.T)
     return positions
@@ -220,8 +216,9 @@ def run_model_and_make_gif(checkpoint_path, save_path, device):
     iterations = 75
 
     test_data = ParityDataset(sequence_length=parity_sequence_length, length=10000)
-    testloader = torch.utils.data.DataLoader(test_data, batch_size=256, shuffle=True, num_workers=0, drop_last=False)
-
+    testloader = torch.utils.data.DataLoader(
+        test_data, batch_size=256, shuffle=True, num_workers=0, drop_last=False
+    )
 
     model, _ = build_model_from_checkpoint_path(checkpoint_path, "ctm", device=device)
 
@@ -236,8 +233,12 @@ def run_model_and_make_gif(checkpoint_path, save_path, device):
     model.eval()
     with torch.inference_mode():
         predictions, _, _, _, post_activations, attention = model(input, track=True)
-        predictons = reshape_predictions(predictions, prediction_reshaper=[parity_sequence_length, 2])
-        input_images = reshape_inputs(input, iterations, grid_size=int(math.sqrt(parity_sequence_length)))
+        predictons = reshape_predictions(
+            predictions, prediction_reshaper=[parity_sequence_length, 2]
+        )
+        input_images = reshape_inputs(
+            input, iterations, grid_size=int(math.sqrt(parity_sequence_length))
+        )
 
         make_parity_gif(
             predictions=predictons.detach().cpu().numpy(),
@@ -247,13 +248,12 @@ def run_model_and_make_gif(checkpoint_path, save_path, device):
             inputs_to_model=input_images,
             save_path=save_path,
             umap_positions=positions,
-            umap_point_scaler=1.0,  
+            umap_point_scaler=1.0,
         )
 
 
-
 if __name__ == "__main__":
-    
+
     CHECKPOINT_PATH = "checkpoints/parity/run1/ctm_75_25/checkpoint_200000.pt"
     SAVE_PATH = f"tasks/parity/analysis/outputs/blog_gifs/"
     os.makedirs(SAVE_PATH, exist_ok=True)

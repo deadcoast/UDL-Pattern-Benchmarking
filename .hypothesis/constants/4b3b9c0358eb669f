@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/models/lstm_rl.py
+# hypothesis_version: 6.148.7
+
+['navigation-backbone', 'start_cell_state', 'start_hidden_state']

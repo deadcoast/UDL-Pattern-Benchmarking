@@ -242,7 +242,7 @@
   - Verify all required fields are present
   - _Requirements: 5.5, 5.7_
 
-- [ ] 13. Implement CTM model adapter for UDL rating
+- [x] 13. Implement CTM model adapter for UDL rating
   - Create UDLRatingCTM class extending nn.Module
   - Implement token embedding layer
   - Integrate ContinuousThoughtMachine from existing codebase
@@ -250,21 +250,21 @@
   - Add sigmoid activation to ensure output in [0,1]
   - _Requirements: 4.2, 5.2, 5.3_
 
-- [ ] 13.1 Write property test for embedding dimensionality
+- [x] 13.1 Write property test for embedding dimensionality
   - **Property 14: Embedding Dimensionality**
   - **Validates: Requirements 4.2**
   - Generate random tokens
   - Verify embeddings are in ℝᵈ
   - _Requirements: 4.2_
 
-- [ ] 13.2 Write property test for synchronization extraction
+- [x] 13.2 Write property test for synchronization extraction
   - **Property 19: Synchronization Extraction**
   - **Validates: Requirements 5.2**
   - Process UDL through CTM
   - Verify S(t) is extracted at all iterations t ∈ [1, T]
   - _Requirements: 5.2_
 
-- [ ] 13.3 Write unit tests for CTM adapter
+- [x] 13.3 Write unit tests for CTM adapter
   - Test forward pass produces correct output shapes
   - Test output is in [0,1] range
   - Test with various sequence lengths

@@ -1,19 +1,42 @@
 from manim import config
+
 config.background_color = "WHITE"
 
 from manim import Scene, MathTex, Indicate, RED, BLACK
 
+
 class ModularEquationHighlight(Scene):
     def construct(self):
         tokens = [
-            "(", "(", "(", "(", "(", "(", "(",  # 0-6
-            "5", "-", "6",                      # 7-9
-            ")", ")",                           # 10-11
-            "\mod", "10",                      # 12-13
-            ")", "+", "5",                      # 14-16
-            ")", ")", "\mod", "10",            # 17-20
-            ")", "+", "5",                      # 21-23
-            ")", "\mod", "10", "=", "9"        # 24-28
+            "(",
+            "(",
+            "(",
+            "(",
+            "(",
+            "(",
+            "(",  # 0-6
+            "5",
+            "-",
+            "6",  # 7-9
+            ")",
+            ")",  # 10-11
+            "\mod",
+            "10",  # 12-13
+            ")",
+            "+",
+            "5",  # 14-16
+            ")",
+            ")",
+            "\mod",
+            "10",  # 17-20
+            ")",
+            "+",
+            "5",  # 21-23
+            ")",
+            "\mod",
+            "10",
+            "=",
+            "9",  # 24-28
         ]
 
         eq = MathTex(*tokens)
