@@ -5,6 +5,7 @@ Orchestrates metric computation, aggregation, and report generation.
 """
 
 import logging
+import hashlib
 from datetime import datetime
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field
@@ -14,6 +15,7 @@ from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.metrics.base import QualityMetric, MetricRegistry
 from udl_rating_framework.core.aggregation import MetricAggregator
 from udl_rating_framework.core.confidence import ConfidenceCalculator
+from udl_rating_framework.core.caching import get_udl_cache, get_metric_cache
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +64,7 @@ class RatingPipeline:
         metric_names: List[str],
         weights: Optional[Dict[str, float]] = None,
         enable_tracing: bool = True,
+        enable_caching: bool = True,
     ):
         """
         Initialize rating pipeline.
@@ -70,9 +73,11 @@ class RatingPipeline:
             metric_names: List of metric names to compute
             weights: Optional weights for aggregation (defaults to equal weights)
             enable_tracing: Whether to generate computation traces
+            enable_caching: Whether to enable caching for performance
         """
         self.metric_names = metric_names
         self.enable_tracing = enable_tracing
+        self.enable_caching = enable_caching
 
         # Initialize metrics from registry
         self.metrics: Dict[str, QualityMetric] = {}
@@ -96,7 +101,15 @@ class RatingPipeline:
         # Initialize confidence calculator
         self.confidence_calculator = ConfidenceCalculator()
 
-        logger.info(f"Initialized pipeline with metrics: {metric_names}")
+        # Initialize caches if enabled
+        if self.enable_caching:
+            self.udl_cache = get_udl_cache()
+            self.metric_cache = get_metric_cache()
+        else:
+            self.udl_cache = None
+            self.metric_cache = None
+
+        logger.info(f"Initialized pipeline with metrics: {metric_names}, caching: {enable_caching}")
 
     def compute_rating(self, udl: UDLRepresentation) -> QualityReport:
         """
@@ -143,12 +156,29 @@ class RatingPipeline:
             metric_values = {}
             metric_errors = {}
 
+            # Compute UDL hash for caching if enabled
+            udl_hash = None
+            if self.enable_caching and self.metric_cache:
+                udl_hash = self._compute_udl_hash(udl)
+
             for name, metric in self.metrics.items():
                 try:
                     logger.debug(f"Computing metric: {name}")
 
-                    # Compute metric value
-                    value = metric.compute(udl)
+                    # Check cache first if enabled
+                    value = None
+                    if self.enable_caching and self.metric_cache and udl_hash:
+                        value = self.metric_cache.get_metric(udl_hash, name)
+                        if value is not None:
+                            logger.debug(f"Cache hit for metric {name}")
+
+                    # Compute metric value if not cached
+                    if value is None:
+                        value = metric.compute(udl)
+                        
+                        # Cache the result if enabled
+                        if self.enable_caching and self.metric_cache and udl_hash:
+                            self.metric_cache.put_metric(udl_hash, name, value)
 
                     # Validate boundedness
                     if not (0.0 <= value <= 1.0):
@@ -422,3 +452,40 @@ class RatingPipeline:
             results["validation_error"] = str(e)
 
         return results
+
+    def _compute_udl_hash(self, udl: UDLRepresentation) -> str:
+        """
+        Compute hash of UDL for caching.
+        
+        Args:
+            udl: UDL representation
+            
+        Returns:
+            SHA-256 hash of UDL content
+        """
+        content = udl.source_text + str(udl.file_path)
+        return hashlib.sha256(content.encode('utf-8')).hexdigest()
+
+    def clear_caches(self) -> None:
+        """Clear all caches used by this pipeline."""
+        if self.enable_caching:
+            if self.udl_cache:
+                self.udl_cache.clear()
+            if self.metric_cache:
+                self.metric_cache.clear()
+            logger.info("Cleared pipeline caches")
+
+    def get_cache_stats(self) -> Dict[str, Any]:
+        """Get cache statistics."""
+        if not self.enable_caching:
+            return {"caching_enabled": False}
+        
+        stats = {"caching_enabled": True}
+        
+        if self.udl_cache:
+            stats["udl_cache"] = self.udl_cache.get_stats()
+        
+        if self.metric_cache:
+            stats["metric_cache"] = self.metric_cache.get_stats()
+        
+        return stats

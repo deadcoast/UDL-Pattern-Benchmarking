@@ -464,7 +464,7 @@
   - Verify system produces identical results (within ε = 1e-6)
   - _Requirements: 1.3, 11.2_
 
-- [ ] 22. Performance optimization and benchmarking
+- [x] 22. Performance optimization and benchmarking
   - Implement caching for parsed UDL representations
   - Add multiprocessing for batch file processing
   - Optimize metric computation algorithms
@@ -472,14 +472,14 @@
   - Profile and optimize bottlenecks
   - _Requirements: 8.6, 9.2, 10.7_
 
-- [ ] 22.1 Write performance tests
+- [x] 22.1 Write performance tests
   - Benchmark metric computation time vs UDL size
   - Benchmark CTM inference time vs sequence length
   - Benchmark batch processing throughput
   - Verify complexity bounds (O(n) or O(n log n))
   - _Requirements: 8.6, 9.2, 10.7_
 
-- [ ] 23. Final integration and system testing
+- [-] 23. Final integration and system testing
   - Run complete end-to-end tests on real UDL examples
   - Verify all 40 correctness properties hold
   - Test error recovery scenarios
