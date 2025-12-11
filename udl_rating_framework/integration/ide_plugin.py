@@ -5,14 +5,14 @@ Provides integration with popular IDEs and editors for real-time UDL quality fee
 """
 
 import json
+import logging
 import os
 import shutil
 import subprocess
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Union
-import logging
 import tempfile
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class PluginConfig:
     """Configuration for IDE plugins."""
+
     enable_real_time_checking: bool = True
     quality_threshold: float = 0.7
     show_detailed_metrics: bool = True
@@ -32,7 +33,7 @@ class PluginConfig:
 class IDEPluginManager:
     """
     Manager for IDE plugin integrations.
-    
+
     Supports:
     - VS Code extension
     - IntelliJ IDEA plugin
@@ -40,47 +41,45 @@ class IDEPluginManager:
     - Emacs package
     - Sublime Text package
     """
-    
+
     def __init__(self, config: Optional[PluginConfig] = None):
         """Initialize IDE plugin manager."""
         self.config = config or PluginConfig()
-        
+
         # Plugin templates and configurations
         self.plugin_templates = {
-            'vscode': self._get_vscode_template(),
-            'intellij': self._get_intellij_template(),
-            'vim': self._get_vim_template(),
-            'emacs': self._get_emacs_template(),
-            'sublime': self._get_sublime_template()
+            "vscode": self._get_vscode_template(),
+            "intellij": self._get_intellij_template(),
+            "vim": self._get_vim_template(),
+            "emacs": self._get_emacs_template(),
+            "sublime": self._get_sublime_template(),
         }
-    
+
     def generate_vscode_extension(self, output_dir: Path) -> Path:
         """
         Generate VS Code extension for UDL quality checking.
-        
+
         Args:
             output_dir: Directory to create extension in
-        
+
         Returns:
             Path to generated extension directory
         """
-        extension_dir = output_dir / 'udl-rating-vscode'
+        extension_dir = output_dir / "udl-rating-vscode"
         extension_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Create package.json
         package_json = {
             "name": "udl-rating",
             "displayName": "UDL Rating Framework",
             "description": "Real-time UDL quality checking and analysis",
             "version": "1.0.0",
-            "engines": {
-                "vscode": "^1.60.0"
-            },
+            "engines": {"vscode": "^1.60.0"},
             "categories": ["Linters", "Other"],
             "activationEvents": [
                 "onLanguage:udl",
                 "onLanguage:dsl",
-                "onLanguage:grammar"
+                "onLanguage:grammar",
             ],
             "main": "./out/extension.js",
             "contributes": {
@@ -89,29 +88,29 @@ class IDEPluginManager:
                         "id": "udl",
                         "aliases": ["UDL", "udl"],
                         "extensions": [".udl", ".dsl", ".grammar", ".ebnf"],
-                        "configuration": "./language-configuration.json"
+                        "configuration": "./language-configuration.json",
                     }
                 ],
                 "grammars": [
                     {
                         "language": "udl",
                         "scopeName": "source.udl",
-                        "path": "./syntaxes/udl.tmGrammar.json"
+                        "path": "./syntaxes/udl.tmGrammar.json",
                     }
                 ],
                 "commands": [
                     {
                         "command": "udl-rating.checkQuality",
-                        "title": "Check UDL Quality"
+                        "title": "Check UDL Quality",
                     },
                     {
                         "command": "udl-rating.showReport",
-                        "title": "Show Quality Report"
+                        "title": "Show Quality Report",
                     },
                     {
                         "command": "udl-rating.toggleRealTime",
-                        "title": "Toggle Real-time Checking"
-                    }
+                        "title": "Toggle Real-time Checking",
+                    },
                 ],
                 "configuration": {
                     "title": "UDL Rating",
@@ -119,38 +118,38 @@ class IDEPluginManager:
                         "udl-rating.enableRealTime": {
                             "type": "boolean",
                             "default": True,
-                            "description": "Enable real-time quality checking"
+                            "description": "Enable real-time quality checking",
                         },
                         "udl-rating.qualityThreshold": {
                             "type": "number",
                             "default": 0.7,
-                            "description": "Minimum quality threshold for warnings"
+                            "description": "Minimum quality threshold for warnings",
                         },
                         "udl-rating.showDetailedMetrics": {
                             "type": "boolean",
                             "default": True,
-                            "description": "Show detailed metric information"
-                        }
-                    }
-                }
+                            "description": "Show detailed metric information",
+                        },
+                    },
+                },
             },
             "scripts": {
                 "vscode:prepublish": "npm run compile",
                 "compile": "tsc -p ./",
-                "watch": "tsc -watch -p ./"
+                "watch": "tsc -watch -p ./",
             },
             "devDependencies": {
                 "@types/vscode": "^1.60.0",
                 "@types/node": "14.x",
-                "typescript": "^4.4.4"
-            }
+                "typescript": "^4.4.4",
+            },
         }
-        
-        with open(extension_dir / 'package.json', 'w') as f:
+
+        with open(extension_dir / "package.json", "w") as f:
             json.dump(package_json, f, indent=2)
-        
+
         # Create TypeScript extension code
-        extension_ts = '''
+        extension_ts = """
 import * as vscode from 'vscode';
 import { spawn } from 'child_process';
 import * as path from 'path';
@@ -391,14 +390,14 @@ export function deactivate() {
         statusBarItem.dispose();
     }
 }
-'''
-        
+"""
+
         # Create src directory and extension.ts
-        src_dir = extension_dir / 'src'
+        src_dir = extension_dir / "src"
         src_dir.mkdir(exist_ok=True)
-        with open(src_dir / 'extension.ts', 'w') as f:
+        with open(src_dir / "extension.ts", "w") as f:
             f.write(extension_ts)
-        
+
         # Create tsconfig.json
         tsconfig = {
             "compilerOptions": {
@@ -408,107 +407,88 @@ export function deactivate() {
                 "lib": ["es6"],
                 "sourceMap": True,
                 "rootDir": "src",
-                "strict": True
+                "strict": True,
             },
-            "exclude": ["node_modules", ".vscode-test"]
+            "exclude": ["node_modules", ".vscode-test"],
         }
-        
-        with open(extension_dir / 'tsconfig.json', 'w') as f:
+
+        with open(extension_dir / "tsconfig.json", "w") as f:
             json.dump(tsconfig, f, indent=2)
-        
+
         # Create language configuration
         lang_config = {
-            "comments": {
-                "lineComment": "#",
-                "blockComment": ["/*", "*/"]
-            },
-            "brackets": [
-                ["{", "}"],
-                ["[", "]"],
-                ["(", ")"]
-            ],
+            "comments": {"lineComment": "#", "blockComment": ["/*", "*/"]},
+            "brackets": [["{", "}"], ["[", "]"], ["(", ")"]],
             "autoClosingPairs": [
                 ["{", "}"],
                 ["[", "]"],
                 ["(", ")"],
-                ["\"", "\""],
-                ["'", "'"]
+                ['"', '"'],
+                ["'", "'"],
             ],
             "surroundingPairs": [
                 ["{", "}"],
                 ["[", "]"],
                 ["(", ")"],
-                ["\"", "\""],
-                ["'", "'"]
-            ]
+                ['"', '"'],
+                ["'", "'"],
+            ],
         }
-        
-        with open(extension_dir / 'language-configuration.json', 'w') as f:
+
+        with open(extension_dir / "language-configuration.json", "w") as f:
             json.dump(lang_config, f, indent=2)
-        
+
         # Create syntax highlighting
-        syntaxes_dir = extension_dir / 'syntaxes'
+        syntaxes_dir = extension_dir / "syntaxes"
         syntaxes_dir.mkdir(exist_ok=True)
-        
+
         syntax_grammar = {
             "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
             "name": "UDL",
             "patterns": [
-                {
-                    "include": "#keywords"
-                },
-                {
-                    "include": "#strings"
-                },
-                {
-                    "include": "#comments"
-                }
+                {"include": "#keywords"},
+                {"include": "#strings"},
+                {"include": "#comments"},
             ],
             "repository": {
                 "keywords": {
                     "patterns": [
                         {
                             "name": "keyword.control.udl",
-                            "match": "\\b(rule|token|grammar|import|export)\\b"
+                            "match": "\\b(rule|token|grammar|import|export)\\b",
                         }
                     ]
                 },
                 "strings": {
                     "name": "string.quoted.double.udl",
-                    "begin": "\"",
-                    "end": "\"",
+                    "begin": '"',
+                    "end": '"',
                     "patterns": [
-                        {
-                            "name": "constant.character.escape.udl",
-                            "match": "\\\\."
-                        }
-                    ]
+                        {"name": "constant.character.escape.udl", "match": "\\\\."}
+                    ],
                 },
                 "comments": {
                     "patterns": [
-                        {
-                            "name": "comment.line.number-sign.udl",
-                            "match": "#.*$"
-                        }
+                        {"name": "comment.line.number-sign.udl", "match": "#.*$"}
                     ]
-                }
+                },
             },
-            "scopeName": "source.udl"
+            "scopeName": "source.udl",
         }
-        
-        with open(syntaxes_dir / 'udl.tmGrammar.json', 'w') as f:
+
+        with open(syntaxes_dir / "udl.tmGrammar.json", "w") as f:
             json.dump(syntax_grammar, f, indent=2)
-        
+
         logger.info(f"VS Code extension generated at {extension_dir}")
         return extension_dir
-    
+
     def generate_intellij_plugin(self, output_dir: Path) -> Path:
         """Generate IntelliJ IDEA plugin for UDL quality checking."""
-        plugin_dir = output_dir / 'udl-rating-intellij'
+        plugin_dir = output_dir / "udl-rating-intellij"
         plugin_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Create plugin.xml
-        plugin_xml = '''
+        plugin_xml = """
 <idea-plugin>
     <id>com.udlrating.intellij</id>
     <name>UDL Rating Framework</name>
@@ -568,11 +548,11 @@ export function deactivate() {
         </action>
     </actions>
 </idea-plugin>
-'''
-        
-        with open(plugin_dir / 'plugin.xml', 'w') as f:
+"""
+
+        with open(plugin_dir / "plugin.xml", "w") as f:
             f.write(plugin_xml)
-        
+
         # Create build.gradle
         build_gradle = '''
 plugins {
@@ -602,16 +582,18 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 '''
-        
-        with open(plugin_dir / 'build.gradle', 'w') as f:
+
+        with open(plugin_dir / "build.gradle", "w") as f:
             f.write(build_gradle)
-        
+
         # Create Java source structure
-        java_dir = plugin_dir / 'src' / 'main' / 'java' / 'com' / 'udlrating' / 'intellij'
+        java_dir = (
+            plugin_dir / "src" / "main" / "java" / "com" / "udlrating" / "intellij"
+        )
         java_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Create basic Java classes (simplified)
-        file_type_java = '''
+        file_type_java = """
 package com.udlrating.intellij;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
@@ -652,27 +634,27 @@ public class UDLFileType extends LanguageFileType {
         return IconLoader.getIcon("/icons/udl.png", UDLFileType.class);
     }
 }
-'''
-        
-        with open(java_dir / 'UDLFileType.java', 'w') as f:
+"""
+
+        with open(java_dir / "UDLFileType.java", "w") as f:
             f.write(file_type_java)
-        
+
         logger.info(f"IntelliJ plugin generated at {plugin_dir}")
         return plugin_dir
-    
+
     def generate_vim_plugin(self, output_dir: Path) -> Path:
         """Generate Vim/Neovim plugin for UDL quality checking."""
-        plugin_dir = output_dir / 'udl-rating-vim'
+        plugin_dir = output_dir / "udl-rating-vim"
         plugin_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Create plugin structure
-        (plugin_dir / 'plugin').mkdir(exist_ok=True)
-        (plugin_dir / 'autoload').mkdir(exist_ok=True)
-        (plugin_dir / 'syntax').mkdir(exist_ok=True)
-        (plugin_dir / 'ftdetect').mkdir(exist_ok=True)
-        
+        (plugin_dir / "plugin").mkdir(exist_ok=True)
+        (plugin_dir / "autoload").mkdir(exist_ok=True)
+        (plugin_dir / "syntax").mkdir(exist_ok=True)
+        (plugin_dir / "ftdetect").mkdir(exist_ok=True)
+
         # Create main plugin file
-        plugin_vim = '''
+        plugin_vim = """
 " UDL Rating Framework plugin for Vim/Neovim
 " Maintainer: UDL Rating Team
 
@@ -712,13 +694,13 @@ augroup END
 nnoremap <leader>uq :UDLCheckQuality<CR>
 nnoremap <leader>ur :UDLShowReport<CR>
 nnoremap <leader>ut :UDLToggleRealtime<CR>
-'''
-        
-        with open(plugin_dir / 'plugin' / 'udl_rating.vim', 'w') as f:
+"""
+
+        with open(plugin_dir / "plugin" / "udl_rating.vim", "w") as f:
             f.write(plugin_vim)
-        
+
         # Create autoload functions
-        autoload_vim = '''
+        autoload_vim = """
 " UDL Rating autoload functions
 
 let s:timer_id = -1
@@ -869,13 +851,13 @@ function! s:update_statusline(result)
     let l:emoji = l:score >= g:udl_rating_threshold ? '✅' : '⚠️'
     let b:udl_quality_status = l:emoji . ' UDL: ' . printf('%.3f', l:score)
 endfunction
-'''
-        
-        with open(plugin_dir / 'autoload' / 'udl_rating.vim', 'w') as f:
+"""
+
+        with open(plugin_dir / "autoload" / "udl_rating.vim", "w") as f:
             f.write(autoload_vim)
-        
+
         # Create syntax file
-        syntax_vim = '''
+        syntax_vim = """
 " Vim syntax file for UDL
 " Language: User Defined Language
 " Maintainer: UDL Rating Team
@@ -911,155 +893,160 @@ hi def link udlBlockComment Comment
 hi def link udlIdentifier Identifier
 
 let b:current_syntax = "udl"
-'''
-        
-        with open(plugin_dir / 'syntax' / 'udl.vim', 'w') as f:
+"""
+
+        with open(plugin_dir / "syntax" / "udl.vim", "w") as f:
             f.write(syntax_vim)
-        
+
         # Create file type detection
-        ftdetect_vim = '''
+        ftdetect_vim = """
 " UDL file type detection
 au BufRead,BufNewFile *.udl,*.dsl,*.grammar,*.ebnf set filetype=udl
-'''
-        
-        with open(plugin_dir / 'ftdetect' / 'udl.vim', 'w') as f:
+"""
+
+        with open(plugin_dir / "ftdetect" / "udl.vim", "w") as f:
             f.write(ftdetect_vim)
-        
+
         logger.info(f"Vim plugin generated at {plugin_dir}")
         return plugin_dir
-    
+
     def _get_vscode_template(self) -> Dict[str, Any]:
         """Get VS Code extension template."""
         return {
             "type": "vscode",
-            "files": ["package.json", "src/extension.ts", "tsconfig.json"]
+            "files": ["package.json", "src/extension.ts", "tsconfig.json"],
         }
-    
+
     def _get_intellij_template(self) -> Dict[str, Any]:
         """Get IntelliJ plugin template."""
         return {
             "type": "intellij",
-            "files": ["plugin.xml", "build.gradle", "src/main/java/**/*.java"]
+            "files": ["plugin.xml", "build.gradle", "src/main/java/**/*.java"],
         }
-    
+
     def _get_vim_template(self) -> Dict[str, Any]:
         """Get Vim plugin template."""
         return {
             "type": "vim",
-            "files": ["plugin/*.vim", "autoload/*.vim", "syntax/*.vim", "ftdetect/*.vim"]
+            "files": [
+                "plugin/*.vim",
+                "autoload/*.vim",
+                "syntax/*.vim",
+                "ftdetect/*.vim",
+            ],
         }
-    
+
     def _get_emacs_template(self) -> Dict[str, Any]:
         """Get Emacs package template."""
-        return {
-            "type": "emacs",
-            "files": ["udl-rating.el"]
-        }
-    
+        return {"type": "emacs", "files": ["udl-rating.el"]}
+
     def _get_sublime_template(self) -> Dict[str, Any]:
         """Get Sublime Text package template."""
         return {
             "type": "sublime",
-            "files": ["UDL.sublime-syntax", "UDL.sublime-settings"]
+            "files": ["UDL.sublime-syntax", "UDL.sublime-settings"],
         }
-    
+
     def install_plugin(self, plugin_type: str, plugin_dir: Path) -> bool:
         """
         Install plugin for specified IDE.
-        
+
         Args:
             plugin_type: Type of plugin ('vscode', 'intellij', 'vim', etc.)
             plugin_dir: Directory containing plugin files
-        
+
         Returns:
             True if installation successful
         """
         try:
-            if plugin_type == 'vscode':
+            if plugin_type == "vscode":
                 return self._install_vscode_extension(plugin_dir)
-            elif plugin_type == 'intellij':
+            elif plugin_type == "intellij":
                 return self._install_intellij_plugin(plugin_dir)
-            elif plugin_type == 'vim':
+            elif plugin_type == "vim":
                 return self._install_vim_plugin(plugin_dir)
             else:
                 logger.error(f"Unsupported plugin type: {plugin_type}")
                 return False
-                
+
         except Exception as e:
             logger.error(f"Failed to install {plugin_type} plugin: {e}")
             return False
-    
+
     def _install_vscode_extension(self, plugin_dir: Path) -> bool:
         """Install VS Code extension."""
         try:
             # Build extension
-            subprocess.run(['npm', 'install'], cwd=plugin_dir, check=True)
-            subprocess.run(['npm', 'run', 'compile'], cwd=plugin_dir, check=True)
-            
+            subprocess.run(["npm", "install"], cwd=plugin_dir, check=True)
+            subprocess.run(["npm", "run", "compile"],
+                           cwd=plugin_dir, check=True)
+
             # Package extension
-            subprocess.run(['vsce', 'package'], cwd=plugin_dir, check=True)
-            
+            subprocess.run(["vsce", "package"], cwd=plugin_dir, check=True)
+
             # Install extension
-            vsix_files = list(plugin_dir.glob('*.vsix'))
+            vsix_files = list(plugin_dir.glob("*.vsix"))
             if vsix_files:
-                subprocess.run(['code', '--install-extension', str(vsix_files[0])], check=True)
+                subprocess.run(
+                    ["code", "--install-extension", str(vsix_files[0])], check=True
+                )
                 logger.info("VS Code extension installed successfully")
                 return True
             else:
                 logger.error("No VSIX file found")
                 return False
-                
+
         except subprocess.CalledProcessError as e:
             logger.error(f"Failed to install VS Code extension: {e}")
             return False
-    
+
     def _install_intellij_plugin(self, plugin_dir: Path) -> bool:
         """Install IntelliJ plugin."""
         try:
             # Build plugin
-            subprocess.run(['./gradlew', 'buildPlugin'], cwd=plugin_dir, check=True)
-            
+            subprocess.run(["./gradlew", "buildPlugin"],
+                           cwd=plugin_dir, check=True)
+
             logger.info("IntelliJ plugin built successfully")
-            logger.info("Install manually through IntelliJ IDEA plugin manager")
+            logger.info(
+                "Install manually through IntelliJ IDEA plugin manager")
             return True
-            
+
         except subprocess.CalledProcessError as e:
             logger.error(f"Failed to build IntelliJ plugin: {e}")
             return False
-    
+
     def _install_vim_plugin(self, plugin_dir: Path) -> bool:
         """Install Vim plugin."""
         try:
             # Determine Vim config directory
             vim_config_dirs = [
-                Path.home() / '.vim',
-                Path.home() / '.config' / 'nvim'
-            ]
-            
+                Path.home() / ".vim", Path.home() / ".config" / "nvim"]
+
             vim_config_dir = None
             for config_dir in vim_config_dirs:
                 if config_dir.exists():
                     vim_config_dir = config_dir
                     break
-            
+
             if not vim_config_dir:
                 # Create .vim directory
-                vim_config_dir = Path.home() / '.vim'
+                vim_config_dir = Path.home() / ".vim"
                 vim_config_dir.mkdir(exist_ok=True)
-            
+
             # Copy plugin files
-            for subdir in ['plugin', 'autoload', 'syntax', 'ftdetect']:
+            for subdir in ["plugin", "autoload", "syntax", "ftdetect"]:
                 src_dir = plugin_dir / subdir
                 dst_dir = vim_config_dir / subdir
-                
+
                 if src_dir.exists():
                     dst_dir.mkdir(exist_ok=True)
-                    for file_path in src_dir.glob('*'):
+                    for file_path in src_dir.glob("*"):
                         shutil.copy2(file_path, dst_dir)
-            
+
             logger.info(f"Vim plugin installed to {vim_config_dir}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to install Vim plugin: {e}")
             return False
@@ -1068,38 +1055,50 @@ au BufRead,BufNewFile *.udl,*.dsl,*.grammar,*.ebnf set filetype=udl
 def main():
     """CLI entry point for IDE plugin management."""
     import argparse
-    
-    parser = argparse.ArgumentParser(description='UDL IDE Plugin Manager')
-    parser.add_argument('action', choices=['generate', 'install'])
-    parser.add_argument('--plugin-type', choices=['vscode', 'intellij', 'vim', 'emacs', 'sublime'],
-                       required=True, help='Type of plugin to generate/install')
-    parser.add_argument('--output-dir', type=Path, default=Path.cwd(),
-                       help='Output directory for generated plugins')
-    parser.add_argument('--plugin-dir', type=Path,
-                       help='Directory containing plugin files (for install action)')
-    
+
+    parser = argparse.ArgumentParser(description="UDL IDE Plugin Manager")
+    parser.add_argument("action", choices=["generate", "install"])
+    parser.add_argument(
+        "--plugin-type",
+        choices=["vscode", "intellij", "vim", "emacs", "sublime"],
+        required=True,
+        help="Type of plugin to generate/install",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path.cwd(),
+        help="Output directory for generated plugins",
+    )
+    parser.add_argument(
+        "--plugin-dir",
+        type=Path,
+        help="Directory containing plugin files (for install action)",
+    )
+
     args = parser.parse_args()
-    
+
     manager = IDEPluginManager()
-    
-    if args.action == 'generate':
-        if args.plugin_type == 'vscode':
+
+    if args.action == "generate":
+        if args.plugin_type == "vscode":
             plugin_dir = manager.generate_vscode_extension(args.output_dir)
-        elif args.plugin_type == 'intellij':
+        elif args.plugin_type == "intellij":
             plugin_dir = manager.generate_intellij_plugin(args.output_dir)
-        elif args.plugin_type == 'vim':
+        elif args.plugin_type == "vim":
             plugin_dir = manager.generate_vim_plugin(args.output_dir)
         else:
-            print(f"Plugin generation for {args.plugin_type} not yet implemented")
+            print(
+                f"Plugin generation for {args.plugin_type} not yet implemented")
             return
-        
+
         print(f"Plugin generated at: {plugin_dir}")
-        
-    elif args.action == 'install':
+
+    elif args.action == "install":
         if not args.plugin_dir:
             print("--plugin-dir is required for install action")
             return
-        
+
         success = manager.install_plugin(args.plugin_type, args.plugin_dir)
         if success:
             print(f"{args.plugin_type} plugin installed successfully")
@@ -1108,5 +1107,5 @@ def main():
             exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
