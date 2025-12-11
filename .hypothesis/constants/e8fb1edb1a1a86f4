@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/cli/config.py
+# hypothesis_version: 6.148.7
+
+[1e-06, 0.001, 0.2, 0.25, 0.3, 0.7, 0.95, 1.0, 100, 256, 512, 1000, 10000, 'alpha', 'batch_size', 'beta', 'bootstrap_samples', 'calibration_bins', 'checkpoint_dir', 'checkpoints', 'completeness_weight', 'confidence_level', 'consistency_weight', 'csv', 'd_input', 'd_model', 'epochs', 'evaluation', 'formats', 'include_traces', 'iterations', 'json', 'k_folds', 'learning_rate', 'max_sequence_length', 'metrics', 'model', 'n_synch_out', 'output', 'output_dir', 'precision', 'r', 'training', 'validation_split', 'vocab_size', 'w']

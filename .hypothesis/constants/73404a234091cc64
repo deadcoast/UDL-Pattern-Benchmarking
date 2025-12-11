@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/cli/main.py
+# hypothesis_version: 6.148.7
+
+['--config', '--quiet', '--verbose', '-c', '-q', '-v', '__main__', 'config']

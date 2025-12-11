@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/multiprocessing.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.75, 1.0, 1.5, 100, 'Computing metrics', 'Processing', 'Processing UDL files', 'high', 'low', 'medium', 'r', 'utf-8']

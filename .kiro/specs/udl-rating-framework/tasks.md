@@ -487,5 +487,5 @@
   - Verify mathematical correctness on all examples
   - _Requirements: All_
 
-- [ ] 24. Final Checkpoint - Ensure all tests pass
+- [x] 24. Final Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.

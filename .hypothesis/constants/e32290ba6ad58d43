@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/caching.py
+# hypothesis_version: 6.148.7
+
+[500, 1000, 'average_accesses', 'max_size', 'metric_cache', 'newest_entry', 'oldest_entry', 'size', 'total_accesses', 'udl_cache', 'utf-8']

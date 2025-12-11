@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/cli/commands/rate.py
+# hypothesis_version: 6.148.7
+
+[1e-06, 0.25, 1.0, ',', '--consistency-weight', '--extensions', '--format', '--include-traces', '--output', '--recursive', '-e', '-f', '-o', '-r', 'CompletenessMetric', 'ConsistencyMetric', 'ExpressivenessMetric', 'Output format', 'completeness', 'completeness_weight', 'config', 'consistency', 'consistency_weight', 'csv', 'expressiveness', 'html', 'include_traces', 'input_path', 'json', 'metrics', 'output', 'output_dir', 'r', 'rate', 'structural_coherence', 'utf-8', 'w']

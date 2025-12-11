@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/pipeline.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.05, 0.2, 0.3, 0.5, 1.0, 'Aggregate metrics', 'Compute confidence', 'Formula unavailable', 'N/A', 'aggregation_bounded', 'aggregation_works', 'caching_enabled', 'confidence', 'confidence_bounded', 'confidence_works', 'metric_cache', 'metric_scores', 'metric_values', 'metrics', 'overall', 'overall_score', 'pipeline_works', 'prediction_probs', 'report_complete', 'udl', 'udl_cache', 'udl_file', 'utf-8', 'validation_error', 'weights']

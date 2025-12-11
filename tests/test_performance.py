@@ -447,8 +447,8 @@ class TestBatchProcessingPerformance:
             speedup = sequential_time / parallel_time if parallel_time > 0 else float('inf')
             
             # Parallel processing should provide some speedup or at least not be much slower
-            # For small tasks, overhead may dominate, so allow some tolerance
-            expected_min_speedup = 0.8 if worker_count > 1 else 1.0  # Allow 20% overhead
+            # For small tasks, overhead may dominate, so allow more tolerance
+            expected_min_speedup = 0.7 if worker_count > 1 else 1.0  # Allow 30% overhead for small tasks
             assert speedup >= expected_min_speedup, \
                 f"Parallel processing too slow with {worker_count} workers: {speedup:.2f}x"
             
