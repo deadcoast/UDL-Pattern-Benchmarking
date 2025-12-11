@@ -4,11 +4,12 @@ Readability Metric implementation.
 Measures readability of UDL syntax using linguistic and structural analysis.
 """
 
-import re
 import math
-from typing import Dict, List, Set, Any, Tuple
+import re
+from typing import Any, Dict, List, Set, Tuple
+
 from udl_rating_framework.core.metrics.base import QualityMetric
-from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType
+from udl_rating_framework.core.representation import Token, TokenType, UDLRepresentation
 
 
 class ReadabilityMetric(QualityMetric):
@@ -36,10 +37,10 @@ class ReadabilityMetric(QualityMetric):
     def __init__(self):
         """Initialize readability metric with default weights."""
         self.weights = {
-            'flesch': 0.25,
-            'complexity': 0.25,
-            'consistency': 0.25,
-            'clarity': 0.25
+            "flesch": 0.25,
+            "complexity": 0.25,
+            "consistency": 0.25,
+            "clarity": 0.25,
         }
 
     def compute(self, udl: UDLRepresentation) -> float:
@@ -66,10 +67,10 @@ class ReadabilityMetric(QualityMetric):
 
         # Weighted combination
         readability_score = (
-            self.weights['flesch'] * flesch_score +
-            self.weights['complexity'] * complexity_score +
-            self.weights['consistency'] * consistency_score +
-            self.weights['clarity'] * clarity_score
+            self.weights["flesch"] * flesch_score
+            + self.weights["complexity"] * complexity_score
+            + self.weights["consistency"] * consistency_score
+            + self.weights["clarity"] * clarity_score
         )
 
         return max(0.0, min(1.0, readability_score))
@@ -86,9 +87,15 @@ class ReadabilityMetric(QualityMetric):
         """
         # Extract meaningful tokens (exclude whitespace, delimiters)
         meaningful_tokens = [
-            token for token in tokens
-            if token.type in [TokenType.IDENTIFIER, TokenType.KEYWORD, 
-                             TokenType.LITERAL, TokenType.COMMENT]
+            token
+            for token in tokens
+            if token.type
+            in [
+                TokenType.IDENTIFIER,
+                TokenType.KEYWORD,
+                TokenType.LITERAL,
+                TokenType.COMMENT,
+            ]
         ]
 
         if not meaningful_tokens:
@@ -103,7 +110,9 @@ class ReadabilityMetric(QualityMetric):
         words = len(meaningful_tokens)
 
         # Count "syllables" (character complexity)
-        syllables = sum(self._count_syllables(token.text) for token in meaningful_tokens)
+        syllables = sum(
+            self._count_syllables(token.text) for token in meaningful_tokens
+        )
 
         # Adapted Flesch formula for code
         # Original: 206.835 - 1.015 * (words/sentences) - 84.6 * (syllables/words)
@@ -114,7 +123,9 @@ class ReadabilityMetric(QualityMetric):
         avg_sentence_length = words / sentences
         avg_syllables_per_word = syllables / words
 
-        flesch_raw = 206.835 - 1.015 * avg_sentence_length - 84.6 * avg_syllables_per_word
+        flesch_raw = (
+            206.835 - 1.015 * avg_sentence_length - 84.6 * avg_syllables_per_word
+        )
 
         # Normalize to [0, 1] (typical Flesch scores range from 0-100)
         flesch_normalized = max(0.0, min(100.0, flesch_raw)) / 100.0
@@ -133,13 +144,19 @@ class ReadabilityMetric(QualityMetric):
         """
         # Count production rules, statements, or major constructs
         units = 0
-        
+
         for token in tokens:
             # Production rule indicators
-            if token.type == TokenType.OPERATOR and token.text in ['::=', ':=', '->', ':', '<-']:
+            if token.type == TokenType.OPERATOR and token.text in [
+                "::=",
+                ":=",
+                "->",
+                ":",
+                "<-",
+            ]:
                 units += 1
             # Statement terminators
-            elif token.text in [';', '.', '\n\n']:
+            elif token.text in [";", ".", "\n\n"]:
                 units += 1
 
         # Minimum of 1 unit
@@ -156,13 +173,13 @@ class ReadabilityMetric(QualityMetric):
             Estimated syllable count
         """
         # Remove non-alphabetic characters
-        word = re.sub(r'[^a-zA-Z]', '', word.lower())
-        
+        word = re.sub(r"[^a-zA-Z]", "", word.lower())
+
         if not word:
             return 1
 
         # Simple syllable counting heuristic
-        vowels = 'aeiouy'
+        vowels = "aeiouy"
         syllables = 0
         prev_was_vowel = False
 
@@ -173,7 +190,7 @@ class ReadabilityMetric(QualityMetric):
             prev_was_vowel = is_vowel
 
         # Handle silent 'e'
-        if word.endswith('e') and syllables > 1:
+        if word.endswith("e") and syllables > 1:
             syllables -= 1
 
         return max(1, syllables)
@@ -203,14 +220,16 @@ class ReadabilityMetric(QualityMetric):
         normalized_nesting = max(0.0, 1.0 - (nesting_depth / max_nesting))
 
         max_operator_density = 0.5  # 50% operators would be very dense
-        normalized_operator_density = max(0.0, 1.0 - (operator_density / max_operator_density))
+        normalized_operator_density = max(
+            0.0, 1.0 - (operator_density / max_operator_density)
+        )
 
         # Combine complexity factors
         complexity_score = (
-            0.3 * normalized_nesting +
-            0.3 * normalized_operator_density +
-            0.2 * rule_complexity +
-            0.2 * identifier_complexity
+            0.3 * normalized_nesting
+            + 0.3 * normalized_operator_density
+            + 0.2 * rule_complexity
+            + 0.2 * identifier_complexity
         )
 
         return max(0.0, min(1.0, complexity_score))
@@ -227,9 +246,9 @@ class ReadabilityMetric(QualityMetric):
         """
         max_depth = 0
         current_depth = 0
-        
-        open_brackets = {'(', '[', '{', '<'}
-        close_brackets = {')', ']', '}', '>'}
+
+        open_brackets = {"(", "[", "{", "<"}
+        close_brackets = {")", "]", "}", ">"}
 
         for token in tokens:
             if token.text in open_brackets:
@@ -253,10 +272,13 @@ class ReadabilityMetric(QualityMetric):
         if not tokens:
             return 0.0
 
-        operator_count = sum(1 for token in tokens if token.type == TokenType.OPERATOR)
+        operator_count = sum(
+            1 for token in tokens if token.type == TokenType.OPERATOR)
         total_meaningful = sum(
-            1 for token in tokens 
-            if token.type not in [TokenType.WHITESPACE, TokenType.NEWLINE, TokenType.EOF]
+            1
+            for token in tokens
+            if token.type
+            not in [TokenType.WHITESPACE, TokenType.NEWLINE, TokenType.EOF]
         )
 
         if total_meaningful == 0:
@@ -280,19 +302,21 @@ class ReadabilityMetric(QualityMetric):
         total_complexity = 0
         for rule in rules:
             # Rule complexity based on RHS length and structure
-            rhs_length = len(rule.rhs) if hasattr(rule, 'rhs') else 0
-            constraint_count = len(rule.constraints) if hasattr(rule, 'constraints') else 0
-            
+            rhs_length = len(rule.rhs) if hasattr(rule, "rhs") else 0
+            constraint_count = (
+                len(rule.constraints) if hasattr(rule, "constraints") else 0
+            )
+
             # Simple complexity measure
             rule_complexity = rhs_length + constraint_count * 2
             total_complexity += rule_complexity
 
         avg_complexity = total_complexity / len(rules)
-        
+
         # Normalize (assume max reasonable complexity is 20)
         max_complexity = 20
         normalized = max(0.0, 1.0 - (avg_complexity / max_complexity))
-        
+
         return normalized
 
     def _compute_identifier_complexity(self, tokens: List[Token]) -> float:
@@ -306,16 +330,16 @@ class ReadabilityMetric(QualityMetric):
             Identifier complexity score in [0, 1] (higher = less complex)
         """
         identifiers = [
-            token.text for token in tokens
-            if token.type == TokenType.IDENTIFIER
+            token.text for token in tokens if token.type == TokenType.IDENTIFIER
         ]
 
         if not identifiers:
             return 1.0
 
         # Analyze identifier characteristics
-        avg_length = sum(len(ident) for ident in identifiers) / len(identifiers)
-        
+        avg_length = sum(len(ident)
+                         for ident in identifiers) / len(identifiers)
+
         # Prefer moderate length identifiers (5-15 characters)
         optimal_length = 10
         length_score = 1.0 - abs(avg_length - optimal_length) / optimal_length
@@ -335,8 +359,7 @@ class ReadabilityMetric(QualityMetric):
             Consistency score in [0, 1]
         """
         identifiers = [
-            token.text for token in tokens
-            if token.type == TokenType.IDENTIFIER
+            token.text for token in tokens if token.type == TokenType.IDENTIFIER
         ]
 
         if not identifiers:
@@ -344,13 +367,12 @@ class ReadabilityMetric(QualityMetric):
 
         # Analyze naming patterns
         naming_patterns = self._analyze_naming_patterns(identifiers)
-        pattern_consistency = self._compute_pattern_consistency(naming_patterns)
+        pattern_consistency = self._compute_pattern_consistency(
+            naming_patterns)
 
         # Analyze operator usage consistency
         operators = [
-            token.text for token in tokens
-            if token.type == TokenType.OPERATOR
-        ]
+            token.text for token in tokens if token.type == TokenType.OPERATOR]
         operator_consistency = self._compute_operator_consistency(operators)
 
         # Combine consistency measures
@@ -369,30 +391,32 @@ class ReadabilityMetric(QualityMetric):
             Dict mapping pattern types to counts
         """
         patterns = {
-            'camelCase': 0,
-            'snake_case': 0,
-            'PascalCase': 0,
-            'kebab-case': 0,
-            'UPPER_CASE': 0,
-            'lowercase': 0,
-            'mixed': 0
+            "camelCase": 0,
+            "snake_case": 0,
+            "PascalCase": 0,
+            "kebab-case": 0,
+            "UPPER_CASE": 0,
+            "lowercase": 0,
+            "mixed": 0,
         }
 
         for ident in identifiers:
-            if re.match(r'^[a-z][a-zA-Z0-9]*$', ident) and any(c.isupper() for c in ident):
-                patterns['camelCase'] += 1
-            elif re.match(r'^[a-z][a-z0-9_]*$', ident) and '_' in ident:
-                patterns['snake_case'] += 1
-            elif re.match(r'^[A-Z][a-zA-Z0-9]*$', ident):
-                patterns['PascalCase'] += 1
-            elif '-' in ident:
-                patterns['kebab-case'] += 1
+            if re.match(r"^[a-z][a-zA-Z0-9]*$", ident) and any(
+                c.isupper() for c in ident
+            ):
+                patterns["camelCase"] += 1
+            elif re.match(r"^[a-z][a-z0-9_]*$", ident) and "_" in ident:
+                patterns["snake_case"] += 1
+            elif re.match(r"^[A-Z][a-zA-Z0-9]*$", ident):
+                patterns["PascalCase"] += 1
+            elif "-" in ident:
+                patterns["kebab-case"] += 1
             elif ident.isupper():
-                patterns['UPPER_CASE'] += 1
+                patterns["UPPER_CASE"] += 1
             elif ident.islower():
-                patterns['lowercase'] += 1
+                patterns["lowercase"] += 1
             else:
-                patterns['mixed'] += 1
+                patterns["mixed"] += 1
 
         return patterns
 
@@ -430,16 +454,19 @@ class ReadabilityMetric(QualityMetric):
             return 1.0
 
         # Check for consistent use of assignment operators
-        assignment_ops = [op for op in operators if op in ['::=', ':=', '->', ':', '=']]
-        
+        assignment_ops = [op for op in operators if op in [
+            "::=", ":=", "->", ":", "="]]
+
         if not assignment_ops:
             return 1.0
 
         # Count unique assignment operators
         unique_assignment_ops = set(assignment_ops)
-        
+
         # Prefer using one consistent assignment operator
-        consistency_score = 1.0 / len(unique_assignment_ops) if unique_assignment_ops else 1.0
+        consistency_score = (
+            1.0 / len(unique_assignment_ops) if unique_assignment_ops else 1.0
+        )
 
         return min(1.0, consistency_score)
 
@@ -454,8 +481,7 @@ class ReadabilityMetric(QualityMetric):
             Clarity score in [0, 1]
         """
         identifiers = [
-            token.text for token in tokens
-            if token.type == TokenType.IDENTIFIER
+            token.text for token in tokens if token.type == TokenType.IDENTIFIER
         ]
 
         if not identifiers:
@@ -481,34 +507,40 @@ class ReadabilityMetric(QualityMetric):
             True if identifier appears meaningful
         """
         # Heuristics for meaningful identifiers
-        
+
         # Too short (likely abbreviations)
         if len(identifier) < 3:
             return False
-        
+
         # All single character or numbers
-        if re.match(r'^[a-zA-Z0-9]$', identifier):
+        if re.match(r"^[a-zA-Z0-9]$", identifier):
             return False
-        
+
         # Contains vowels (more likely to be words)
-        if not re.search(r'[aeiouAEIOU]', identifier):
+        if not re.search(r"[aeiouAEIOU]", identifier):
             return False
-        
+
         # Not just numbers
         if identifier.isdigit():
             return False
-        
+
         # Common meaningful patterns
         meaningful_patterns = [
-            r'.*[Nn]ame.*', r'.*[Tt]ype.*', r'.*[Vv]alue.*',
-            r'.*[Ee]xpr.*', r'.*[Ss]tmt.*', r'.*[Dd]ecl.*',
-            r'.*[Rr]ule.*', r'.*[Tt]oken.*', r'.*[Ii]d.*'
+            r".*[Nn]ame.*",
+            r".*[Tt]ype.*",
+            r".*[Vv]alue.*",
+            r".*[Ee]xpr.*",
+            r".*[Ss]tmt.*",
+            r".*[Dd]ecl.*",
+            r".*[Rr]ule.*",
+            r".*[Tt]oken.*",
+            r".*[Ii]d.*",
         ]
-        
+
         for pattern in meaningful_patterns:
             if re.match(pattern, identifier):
                 return True
-        
+
         return True  # Default to meaningful if passes basic checks
 
     def get_formula(self) -> str:

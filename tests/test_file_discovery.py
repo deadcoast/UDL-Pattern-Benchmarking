@@ -7,12 +7,15 @@ Tests the file discovery system's ability to:
 - Process various directory layouts
 """
 
-import pytest
-import tempfile
 import os
+import tempfile
 from pathlib import Path
-from hypothesis import given, strategies as st, settings, assume
 from typing import Set
+
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
+
 from udl_rating_framework.io.file_discovery import FileDiscovery, FileDiscoveryError
 
 
@@ -46,7 +49,8 @@ def directory_structure_strategy(draw):
                 ext = draw(st.sampled_from(unsupported_extensions))
 
             filename = f"file_{i}{ext}"
-            full_path = os.path.join(path_prefix, filename) if path_prefix else filename
+            full_path = os.path.join(
+                path_prefix, filename) if path_prefix else filename
 
             # Generate simple UDL content for supported files
             if ext in supported_extensions:
@@ -164,9 +168,9 @@ class TestFileDiscoveryProperties:
             # Verify no extra files were discovered (only supported extensions)
             supported_extensions = discovery.get_supported_extensions()
             for discovered_file in discovered_files:
-                assert (
-                    discovered_file.suffix in supported_extensions
-                ), f"Discovered file with unsupported extension: {discovered_file}"
+                assert discovered_file.suffix in supported_extensions, (
+                    f"Discovered file with unsupported extension: {discovered_file}"
+                )
 
             # Verify result metadata is reasonable
             assert result.total_files_examined >= len(discovered_files)
@@ -227,12 +231,13 @@ class TestFileDiscoveryProperties:
                 )
 
                 # Should have logged errors for unreadable files
-                assert (
-                    len(result.errors) > 0
-                ), "No errors were logged for unreadable files"
+                assert len(result.errors) > 0, (
+                    "No errors were logged for unreadable files"
+                )
 
                 # Should have examined more files than discovered (due to unreadable ones)
-                assert result.total_files_examined >= len(result.discovered_files)
+                assert result.total_files_examined >= len(
+                    result.discovered_files)
 
             finally:
                 # Restore permissions for cleanup
@@ -277,8 +282,18 @@ class TestFileDiscoveryUnit:
 
                 # Track UDL files (including new formats)
                 if file_path.suffix in {
-                    ".udl", ".dsl", ".grammar", ".ebnf", ".txt",
-                    ".g4", ".peg", ".y", ".yacc", ".bnf", ".abnf", ".rr"
+                    ".udl",
+                    ".dsl",
+                    ".grammar",
+                    ".ebnf",
+                    ".txt",
+                    ".g4",
+                    ".peg",
+                    ".y",
+                    ".yacc",
+                    ".bnf",
+                    ".abnf",
+                    ".rr",
                 }:
                     expected_udl_files.append(file_path)
 
@@ -421,12 +436,14 @@ class TestFileDiscoveryUnit:
 
             # Test case-sensitive
             discovery_sensitive = FileDiscovery(case_sensitive=True)
-            result_sensitive = discovery_sensitive.discover_files(str(temp_path))
+            result_sensitive = discovery_sensitive.discover_files(
+                str(temp_path))
             # Should only find files with exact case match (only .udl in lowercase)
             assert len(result_sensitive.discovered_files) == 1
 
             # Verify the case-sensitive result contains only the lowercase .udl file
-            discovered_names = {f.name for f in result_sensitive.discovered_files}
+            discovered_names = {
+                f.name for f in result_sensitive.discovered_files}
             assert "test3.udl" in discovered_names
 
     def test_extension_management(self):
@@ -463,7 +480,7 @@ class TestFileDiscoveryUnit:
                 ("yacc_grammar.y", "%% expr : term '+' factor ;"),
                 ("bison_grammar.yacc", "%% stmt : expr ';' ;"),
                 ("bnf_grammar.bnf", "expr ::= term '+' factor"),
-                ("abnf_grammar.abnf", "expr = term \"+\" factor"),
+                ("abnf_grammar.abnf", 'expr = term "+" factor'),
                 ("extended_bnf.xbnf", "expr ::= term { '+' term }"),
                 ("wirth_notation.wsn", "expr = term { '+' term }."),
                 ("railroad_diagram.rr", "expr: term followed by '+' and factor"),
@@ -484,10 +501,20 @@ class TestFileDiscoveryUnit:
             assert len(result.errors) == 0
 
             # Verify all expected extensions are supported
-            expected_extensions = {".g4", ".peg", ".y", ".yacc", ".bnf", ".abnf", 
-                                 ".xbnf", ".wsn", ".rr", ".railroad"}
+            expected_extensions = {
+                ".g4",
+                ".peg",
+                ".y",
+                ".yacc",
+                ".bnf",
+                ".abnf",
+                ".xbnf",
+                ".wsn",
+                ".rr",
+                ".railroad",
+            }
             supported_extensions = discovery.get_supported_extensions()
-            
+
             for ext in expected_extensions:
                 assert ext in supported_extensions, f"Extension {ext} not supported"
 
