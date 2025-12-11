@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UDL Rating Framework - Comprehensive Dashboard</title>
+    <link rel="stylesheet" href="static/style.css">
+    <style>
+        .dashboard-nav {
+            background: #2196f3;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+        
+        .dashboard-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        
+        .dashboard-nav li {
+            display: inline-block;
+            margin: 0 10px;
+        }
+        
+        .dashboard-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        .dashboard-nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .visualization-frame {
+            width: 100%;
+            height: 800px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .dashboard-section {
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .dashboard-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>UDL Rating Framework - Comprehensive Dashboard</h1>
+        
+        <nav class="dashboard-nav">
+            <ul>
+                <li><a href="#" onclick="showSection('grammar-graph')">Grammar Graph</a></li>
+                <li><a href="#" onclick="showSection('dependency-flow')">Dependency Flow</a></li>
+                <li><a href='#' onclick="showSection('ctm-animation')">CTM Animation</a></li>
+                <li><a href='#' onclick="showSection('metrics-dashboard')">Metrics Dashboard</a></li>
+            </ul>
+        </nav>
+        
+        <div id="grammar-graph" class="dashboard-section active">
+            <h2>Interactive Grammar Graph</h2>
+            <iframe src="grammar_graph.html" class="visualization-frame"></iframe>
+        </div>
+        
+        <div id="dependency-flow" class="dashboard-section">
+            <h2>Grammar Dependency Flow</h2>
+            <iframe src="dependency_flow.html" class="visualization-frame"></iframe>
+        </div>
+        
+        <div id='ctm-animation' class='dashboard-section'><h2>CTM Processing Animation</h2><iframe src='ctm_animation.html' class='visualization-frame'></iframe></div>
+        
+        <div id='metrics-dashboard' class='dashboard-section'><h2>Real-time Metrics Dashboard</h2><iframe src='metrics_dashboard.html' class='visualization-frame'></iframe></div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.dashboard-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
+        

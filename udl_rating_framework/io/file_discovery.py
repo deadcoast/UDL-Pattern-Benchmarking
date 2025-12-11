@@ -44,7 +44,18 @@ class FileDiscovery:
     """
 
     # Supported UDL file extensions as specified in requirements
-    DEFAULT_EXTENSIONS = {".udl", ".dsl", ".grammar", ".ebnf", ".txt"}
+    # Task 26: Added support for ANTLR, PEG, Yacc/Bison, EBNF variants, and Railroad diagram formats
+    DEFAULT_EXTENSIONS = {
+        ".udl", ".dsl", ".grammar", ".ebnf", ".txt",  # Original formats
+        ".g4",  # ANTLR grammar files
+        ".peg",  # PEG grammar files
+        ".y", ".yacc",  # Yacc/Bison files
+        ".bnf",  # BNF files (EBNF variant)
+        ".abnf",  # Augmented BNF (RFC 5234)
+        ".rr", ".railroad",  # Railroad diagram formats
+        ".xbnf",  # Extended BNF variant
+        ".wsn", ".wirth"  # Wirth Syntax Notation (another EBNF variant)
+    }
 
     def __init__(
         self,

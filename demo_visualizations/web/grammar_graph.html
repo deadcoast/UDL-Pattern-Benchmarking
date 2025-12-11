@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interactive Grammar Graph</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/three@0.147.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive Grammar Graph Visualization</h1>
+        
+        <div class="controls">
+            <label>
+                <input type="checkbox" id="show3d" onchange="toggle3D()"> 3D View
+            </label>
+            <label>
+                Node Size: <input type="range" id="nodeSize" min="5" max="50" value="20" onchange="updateNodeSize()">
+            </label>
+            <label>
+                Link Strength: <input type="range" id="linkStrength" min="0.1" max="2" step="0.1" value="1" onchange="updateLinkStrength()">
+            </label>
+        </div>
+        
+        <div id="graph-container" class="visualization-panel">
+            <svg id="graph-svg" width="800" height="600"></svg>
+            <div id="graph-3d" style="display: none;"></div>
+        </div>
+        
+        <div class="tooltip"></div>
+    </div>
+
+    <script>
+        const nodes = [];
+        const links = [];
+        
+        let simulation, svg, node, link, tooltip;
+        let is3D = false;
+        let scene, camera, renderer, controls;
+        
+        function initializeVisualization() {
+            svg = d3.select("#graph-svg");
+            tooltip = d3.select(".tooltip");
+            
+            // Initialize 2D visualization
+            initialize2D();
+        }
+        
+        function initialize2D() {
+            svg.selectAll("*").remove();
+            
+            const width = 800;
+            const height = 600;
+            
+            simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).strength(1))
+                .force("charge", d3.forceManyBody().strength(-300))
+                .force("center", d3.forceCenter(width / 2, height / 2));
+            
+            link = svg.append("g")
+                .selectAll("line")
+                .data(links)
+                .enter().append("line")
+                .attr("class", "link")
+                .attr("stroke-width", d => Math.sqrt(d.weight));
+            
+            node = svg.append("g")
+                .selectAll("circle")
+                .data(nodes)
+                .enter().append("circle")
+                .attr("class", "grammar-node")
+                .attr("r", d => d.size)
+                .attr("fill", d => d.color)
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended))
+                .on("mouseover", showTooltip)
+                .on("mouseout", hideTooltip);
+            
+            simulation.on("tick", () => {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+                
+                node
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+            });
+        }
+        
+        function initialize3D() {
+            const container = document.getElementById('graph-3d');
+            container.innerHTML = '';
+            
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, 800/600, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(800, 600);
+            container.appendChild(renderer.domElement);
+            
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            
+            // Add nodes as spheres
+            nodes.forEach(node => {
+                const geometry = new THREE.SphereGeometry(node.size / 10, 32, 32);
+                const material = new THREE.MeshBasicMaterial({ color: node.color });
+                const sphere = new THREE.Mesh(geometry, material);
+                
+                sphere.position.set(
+                    (Math.random() - 0.5) * 100,
+                    (Math.random() - 0.5) * 100,
+                    (Math.random() - 0.5) * 100
+                );
+                
+                scene.add(sphere);
+            });
+            
+            // Add links as lines
+            links.forEach(link => {
+                const material = new THREE.LineBasicMaterial({ color: 0x999999 });
+                const geometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(0, 0, 0),
+                    new THREE.Vector3(10, 10, 10)
+                ]);
+                const line = new THREE.Line(geometry, material);
+                scene.add(line);
+            });
+            
+            camera.position.z = 50;
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+        }
+        
+        function toggle3D() {
+            is3D = !is3D;
+            if (is3D) {
+                document.getElementById('graph-svg').style.display = 'none';
+                document.getElementById('graph-3d').style.display = 'block';
+                initialize3D();
+            } else {
+                document.getElementById('graph-svg').style.display = 'block';
+                document.getElementById('graph-3d').style.display = 'none';
+                initialize2D();
+            }
+        }
+        
+        function updateNodeSize() {
+            const size = document.getElementById('nodeSize').value;
+            if (!is3D) {
+                node.attr("r", d => d.size * size / 20);
+            }
+        }
+        
+        function updateLinkStrength() {
+            const strength = document.getElementById('linkStrength').value;
+            if (!is3D) {
+                simulation.force("link").strength(strength);
+                simulation.alpha(1).restart();
+            }
+        }
+        
+        function showTooltip(event, d) {
+            tooltip.transition().duration(200).style("opacity", .9);
+            tooltip.html(`Node: ${d.label}<br/>Type: ${d.type}`)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 28) + "px");
+        }
+        
+        function hideTooltip() {
+            tooltip.transition().duration(500).style("opacity", 0);
+        }
+        
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+        
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+        
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+        
+        // Initialize on load
+        initializeVisualization();
+    </script>
+</body>
+</html>
+        

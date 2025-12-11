@@ -1,0 +1,499 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-time Metrics Dashboard</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-connected { background: #4caf50; }
+        .status-disconnected { background: #f44336; }
+        .status-connecting { background: #ff9800; }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2196f3;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .metric-name {
+            text-align: center;
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        .metric-trend {
+            text-align: center;
+            font-size: 0.9em;
+        }
+        
+        .trend-up { color: #4caf50; }
+        .trend-down { color: #f44336; }
+        .trend-stable { color: #666; }
+        
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            display: inline-block;
+            margin: 0 15px;
+        }
+        
+        button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        
+        button:hover { background: #1976d2; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        
+        .log-container {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .log-entry {
+            margin: 2px 0;
+            font-size: 0.9em;
+        }
+        
+        .log-timestamp {
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-header">
+        <h1>Real-time UDL Metrics Dashboard</h1>
+        <div>
+            <span class="status-indicator" id="connectionStatus"></span>
+            <span id="connectionText">Connecting...</span>
+            <span style="margin-left: 20px;">Updates: <span id="updateCount">0</span></span>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <button onclick="toggleUpdates()">Pause/Resume</button>
+            <button onclick="clearData()">Clear Data</button>
+            <button onclick="exportData()">Export Data</button>
+        </div>
+        <div class="control-group">
+            <label>Update Rate: 
+                <select id="updateRate" onchange="changeUpdateRate()">
+                    <option value="100">10 Hz</option>
+                    <option value="500" selected>2 Hz</option>
+                    <option value="1000">1 Hz</option>
+                    <option value="2000">0.5 Hz</option>
+                </select>
+            </label>
+        </div>
+        <div class="control-group">
+            <label>History Length: 
+                <select id="historyLength" onchange="changeHistoryLength()">
+                    <option value="50">50 points</option>
+                    <option value="100" selected>100 points</option>
+                    <option value="200">200 points</option>
+                    <option value="500">500 points</option>
+                </select>
+            </label>
+        </div>
+    </div>
+    
+    <div class="metrics-grid" id="metricsGrid">
+        <!-- Metric cards will be dynamically generated -->
+    </div>
+    
+    <div class="chart-container">
+        <h3>Metric Evolution</h3>
+        <div id="timeSeriesChart" style="height: 400px;"></div>
+    </div>
+    
+    <div class="chart-container">
+        <h3>Metric Correlations</h3>
+        <div id="correlationChart" style="height: 400px;"></div>
+    </div>
+    
+    <div class="log-container" id="logContainer">
+        <div class="log-entry">
+            <span class="log-timestamp">[Starting]</span> Real-time dashboard initialized
+        </div>
+    </div>
+
+    <script>
+        // WebSocket connection
+        let ws;
+        let isConnected = false;
+        let isPaused = false;
+        let updateCount = 0;
+        let updateRate = 500;
+        let historyLength = 100;
+        
+        // Data storage
+        let metricsData = {};
+        let timeSeriesData = [];
+        
+        // UI elements
+        const connectionStatus = document.getElementById('connectionStatus');
+        const connectionText = document.getElementById('connectionText');
+        const updateCountElement = document.getElementById('updateCount');
+        const metricsGrid = document.getElementById('metricsGrid');
+        const logContainer = document.getElementById('logContainer');
+        
+        function connectWebSocket() {
+            try {
+                ws = new WebSocket(`ws://localhost:8765`);
+                
+                ws.onopen = function(event) {
+                    isConnected = true;
+                    updateConnectionStatus();
+                    addLogEntry('Connected to metrics server');
+                };
+                
+                ws.onmessage = function(event) {
+                    if (!isPaused) {
+                        const data = JSON.parse(event.data);
+                        handleMetricUpdate(data);
+                    }
+                };
+                
+                ws.onclose = function(event) {
+                    isConnected = false;
+                    updateConnectionStatus();
+                    addLogEntry('Disconnected from metrics server');
+                    
+                    // Attempt to reconnect after 3 seconds
+                    setTimeout(connectWebSocket, 3000);
+                };
+                
+                ws.onerror = function(error) {
+                    addLogEntry('WebSocket error: ' + error);
+                };
+                
+            } catch (error) {
+                addLogEntry('Failed to connect: ' + error);
+                setTimeout(connectWebSocket, 3000);
+            }
+        }
+        
+        function updateConnectionStatus() {
+            if (isConnected) {
+                connectionStatus.className = 'status-indicator status-connected';
+                connectionText.textContent = 'Connected';
+            } else {
+                connectionStatus.className = 'status-indicator status-disconnected';
+                connectionText.textContent = 'Disconnected';
+            }
+        }
+        
+        function handleMetricUpdate(data) {
+            updateCount++;
+            updateCountElement.textContent = updateCount;
+            
+            const metricName = data.metric_name;
+            const value = data.value;
+            const timestamp = data.timestamp;
+            
+            // Update metrics data
+            if (!metricsData[metricName]) {
+                metricsData[metricName] = {
+                    values: [],
+                    timestamps: [],
+                    latest: 0,
+                    trend: 'stable'
+                };
+            }
+            
+            const metric = metricsData[metricName];
+            metric.values.push(value);
+            metric.timestamps.push(timestamp);
+            metric.latest = value;
+            
+            // Keep only recent history
+            if (metric.values.length > historyLength) {
+                metric.values.shift();
+                metric.timestamps.shift();
+            }
+            
+            // Calculate trend
+            if (metric.values.length >= 2) {
+                const recent = metric.values.slice(-5);
+                const older = metric.values.slice(-10, -5);
+                if (recent.length > 0 && older.length > 0) {
+                    const recentAvg = recent.reduce((a, b) => a + b) / recent.length;
+                    const olderAvg = older.reduce((a, b) => a + b) / older.length;
+                    const diff = recentAvg - olderAvg;
+                    
+                    if (Math.abs(diff) < 0.01) {
+                        metric.trend = 'stable';
+                    } else if (diff > 0) {
+                        metric.trend = 'up';
+                    } else {
+                        metric.trend = 'down';
+                    }
+                }
+            }
+            
+            // Update UI
+            updateMetricCards();
+            updateCharts();
+            
+            addLogEntry(`${metricName}: ${value.toFixed(4)} (${data.udl_file})`);
+        }
+        
+        function updateMetricCards() {
+            metricsGrid.innerHTML = '';
+            
+            Object.keys(metricsData).forEach(metricName => {
+                const metric = metricsData[metricName];
+                const card = document.createElement('div');
+                card.className = 'metric-card';
+                
+                const trendClass = `trend-${metric.trend}`;
+                const trendSymbol = metric.trend === 'up' ? '↗' : 
+                                  metric.trend === 'down' ? '↘' : '→';
+                
+                card.innerHTML = `
+                    <div class="metric-name">${metricName}</div>
+                    <div class="metric-value">${metric.latest.toFixed(4)}</div>
+                    <div class="metric-trend ${trendClass}">
+                        ${trendSymbol} ${metric.trend.toUpperCase()}
+                    </div>
+                `;
+                
+                metricsGrid.appendChild(card);
+            });
+        }
+        
+        function updateCharts() {
+            updateTimeSeriesChart();
+            updateCorrelationChart();
+        }
+        
+        function updateTimeSeriesChart() {
+            const traces = [];
+            
+            Object.keys(metricsData).forEach(metricName => {
+                const metric = metricsData[metricName];
+                traces.push({
+                    x: metric.timestamps.map(t => new Date(t * 1000)),
+                    y: metric.values,
+                    name: metricName,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    line: { width: 2 }
+                });
+            });
+            
+            const layout = {
+                title: 'Metric Values Over Time',
+                xaxis: { title: 'Time' },
+                yaxis: { title: 'Value', range: [0, 1] },
+                showlegend: true,
+                margin: { t: 50, r: 50, b: 50, l: 50 }
+            };
+            
+            Plotly.newPlot('timeSeriesChart', traces, layout, { responsive: true });
+        }
+        
+        function updateCorrelationChart() {
+            const metricNames = Object.keys(metricsData);
+            if (metricNames.length < 2) return;
+            
+            // Calculate correlation matrix
+            const correlations = [];
+            const labels = [];
+            
+            for (let i = 0; i < metricNames.length; i++) {
+                correlations[i] = [];
+                labels[i] = metricNames[i];
+                
+                for (let j = 0; j < metricNames.length; j++) {
+                    const corr = calculateCorrelation(
+                        metricsData[metricNames[i]].values,
+                        metricsData[metricNames[j]].values
+                    );
+                    correlations[i][j] = corr;
+                }
+            }
+            
+            const trace = {
+                z: correlations,
+                x: labels,
+                y: labels,
+                type: 'heatmap',
+                colorscale: 'RdBu',
+                zmid: 0,
+                zmin: -1,
+                zmax: 1
+            };
+            
+            const layout = {
+                title: 'Metric Correlations',
+                xaxis: { title: 'Metrics' },
+                yaxis: { title: 'Metrics' },
+                margin: { t: 50, r: 50, b: 100, l: 100 }
+            };
+            
+            Plotly.newPlot('correlationChart', [trace], layout, { responsive: true });
+        }
+        
+        function calculateCorrelation(x, y) {
+            const n = Math.min(x.length, y.length);
+            if (n < 2) return 0;
+            
+            const meanX = x.slice(0, n).reduce((a, b) => a + b) / n;
+            const meanY = y.slice(0, n).reduce((a, b) => a + b) / n;
+            
+            let numerator = 0;
+            let sumXX = 0;
+            let sumYY = 0;
+            
+            for (let i = 0; i < n; i++) {
+                const dx = x[i] - meanX;
+                const dy = y[i] - meanY;
+                numerator += dx * dy;
+                sumXX += dx * dx;
+                sumYY += dy * dy;
+            }
+            
+            const denominator = Math.sqrt(sumXX * sumYY);
+            return denominator === 0 ? 0 : numerator / denominator;
+        }
+        
+        function addLogEntry(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span> ${message}`;
+            
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // Keep only last 100 log entries
+            while (logContainer.children.length > 100) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+        }
+        
+        function toggleUpdates() {
+            isPaused = !isPaused;
+            addLogEntry(isPaused ? 'Updates paused' : 'Updates resumed');
+        }
+        
+        function clearData() {
+            metricsData = {};
+            updateCount = 0;
+            updateCountElement.textContent = '0';
+            metricsGrid.innerHTML = '';
+            updateCharts();
+            addLogEntry('Data cleared');
+        }
+        
+        function exportData() {
+            const dataStr = JSON.stringify(metricsData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `metrics_data_${Date.now()}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            addLogEntry('Data exported');
+        }
+        
+        function changeUpdateRate() {
+            updateRate = parseInt(document.getElementById('updateRate').value);
+            addLogEntry(`Update rate changed to ${1000/updateRate} Hz`);
+        }
+        
+        function changeHistoryLength() {
+            historyLength = parseInt(document.getElementById('historyLength').value);
+            addLogEntry(`History length changed to ${historyLength} points`);
+        }
+        
+        // Initialize
+        connectWebSocket();
+        updateConnectionStatus();
+        
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                addLogEntry('Dashboard hidden - pausing updates');
+                isPaused = true;
+            } else {
+                addLogEntry('Dashboard visible - resuming updates');
+                isPaused = false;
+            }
+        });
+    </script>
+</body>
+</html>
+        

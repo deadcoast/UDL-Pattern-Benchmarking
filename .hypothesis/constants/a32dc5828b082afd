@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/io/file_discovery.py
+# hypothesis_version: 6.148.7
+
+['.', '.abnf', '.bnf', '.dsl', '.ebnf', '.g4', '.grammar', '.peg', '.railroad', '.rr', '.txt', '.udl', '.wirth', '.wsn', '.xbnf', '.y', '.yacc', 'r', 'utf-8']

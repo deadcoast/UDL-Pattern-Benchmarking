@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-time Metrics Dashboard</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Real-time Metrics Dashboard</h1>
+        
+        <div class="controls">
+            <button onclick="startRealTimeUpdates()">Start Real-time</button>
+            <button onclick="stopRealTimeUpdates()">Stop</button>
+            <label>
+                Update Interval: <input type="range" id="updateInterval" min="100" max="5000" value="1000" onchange="updateInterval()"> ms
+            </label>
+        </div>
+        
+        <div class="metric-displays">
+            
+            <div class="metric-display">
+                <div class="metric-name">consistency</div>
+                <div class="metric-value" id="metric-consistency">0.616</div>
+            </div>
+            
+            <div class="metric-display">
+                <div class="metric-name">completeness</div>
+                <div class="metric-value" id="metric-completeness">0.609</div>
+            </div>
+            
+            <div class="metric-display">
+                <div class="metric-name">expressiveness</div>
+                <div class="metric-value" id="metric-expressiveness">0.329</div>
+            </div>
+            
+            <div class="metric-display">
+                <div class="metric-name">structural_coherence</div>
+                <div class="metric-value" id="metric-structural_coherence">0.336</div>
+            </div>
+            
+        </div>
+        
+        <div class="visualization-panel">
+            <h3>Metric Evolution</h3>
+            <svg id="metrics-chart" width="800" height="400"></svg>
+        </div>
+        
+        <div class="visualization-panel">
+            <h3>Metric Correlations</h3>
+            <svg id="correlation-matrix" width="400" height="400"></svg>
+        </div>
+    </div>
+
+    <script>
+        const metricHistory = {"consistency": [0.4714514588415838, 0.4288631752590222, 0.49509435643614563, 0.4918732821102376, 0.48827526581190056, 0.45893647279474464, 0.46668620100492014, 0.48167369996090786, 0.39823217778976233, 0.5017234220655691, 0.33102910790530027, 0.5380816546095202, 0.3796966619156002, 0.4481101520615881, 0.46840182758698, 0.48815290349745255, 0.4496856261563523, 0.48843561973693317, 0.4144750443929385, 0.5130747377320034, 0.4400090675589164, 0.5210185371417784, 0.4252467565662328, 0.5401928221771589, 0.4615131008616707, 0.475876181493574, 0.5090900600310599, 0.5939635009347114, 0.5528154827958159, 0.517322886066357, 0.5425537933458346, 0.5383812282773662, 0.5524167188464311, 0.49621998817416496, 0.48625839868201176, 0.48964084977735634, 0.54373351734089, 0.5266710131766172, 0.5534469447066132, 0.5194340688744612, 0.532927014154745, 0.4675045233750984, 0.493318732667716, 0.5733328467156498, 0.5077513249040647, 0.45029477858478895, 0.4743750397753371, 0.5350571254524104, 0.5486731129604165, 0.5266217391920698, 0.5399822238593935, 0.4946886938301216, 0.5428592455672299, 0.5595787276192741, 0.5722996091399832, 0.6732505157955253, 0.609108890726983, 0.5497640668771878, 0.5953909788869975, 0.5774024536495264, 0.546242186588215, 0.676218740435306, 0.5669379588443159, 0.5689778448694683, 0.6678382768601007, 0.48610753063057016, 0.5095115081640973, 0.6169917334734066, 0.5888503874237414, 0.5888930774328082, 0.5471229083178373, 0.5318689652760468, 0.6457526477628384, 0.5876828549645589, 0.5974940816061053, 0.7220263623184345, 0.646553199074961, 0.5949816843314135, 0.5973692077836263, 0.6585076291626504, 0.6353290731908823, 0.6437534929263921, 0.6031567976176152, 0.5554542776467225, 0.5529278030999621, 0.6252223516905443, 0.6048434611814675, 0.6622219572443452, 0.6331406363509322, 0.47631059191010194, 0.5546418443420439, 0.7256623241377125, 0.6429583968050769, 0.7545992853322012, 0.6974100730599985, 0.5890670871569182, 0.6210071270688295, 0.7198123589133413, 0.5418342473122608, 0.6158954454953797], "completeness": [0.7152863820411527, 0.8285030454913771, 0.7401186333470027, 0.6601822445174551, 0.7056116789234369, 0.6781857915645163, 0.7634654494749461, 0.7650404900459107, 0.8004262235691839, 0.6918435050318819, 0.7657119239067095, 0.6971348457793025, 0.7516316089472894, 0.8323076450511765, 0.7503205894217866, 0.6910405943351969, 0.6988429061285089, 0.6811335651446424, 0.6762627884889115, 0.7683082187323087, 0.7720173803382296, 0.746087111413777, 0.7183018656972823, 0.7275576328507305, 0.7311254616562757, 0.770168257289742, 0.8379099416602142, 0.7326920810228941, 0.7710272432546434, 0.7636447294935458, 0.8015476349717866, 0.8152330519007442, 0.8019731457967353, 0.7669520541751239, 0.6954078317072417, 0.6677126923451806, 0.7655834708414352, 0.6749876069102693, 0.7893430204813272, 0.7639440609470537, 0.79213643887033, 0.7991212073466682, 0.6969257940736114, 0.761789865712946, 0.6589935285048247, 0.6855553625639778, 0.76518452809942, 0.7470024172474959, 0.7349215274294938, 0.6910188847250521, 0.6696156025859842, 0.6596813136567639, 0.7474693975406987, 0.7288504999524238, 0.6427845293405288, 0.80080565726882, 0.7481727352350508, 0.7264732460274566, 0.7165826951704594, 0.745806463190987, 0.7890049066948405, 0.743935336198538, 0.6991800983536742, 0.7815598701689338, 0.6440849051945002, 0.7329858643883672, 0.723176919492991, 0.6456697572045677, 0.7183138549945529, 0.7559407750155411, 0.737927316679127, 0.7284914652429649, 0.701984576717854, 0.7311544263854696, 0.6957523943530778, 0.722349926426172, 0.5937807818893402, 0.631607474964027, 0.6888684587807667, 0.612776106695065, 0.6275665741307106, 0.5867288642015276, 0.6990170732614233, 0.689313094816968, 0.6813289340280998, 0.7063153057354262, 0.7953043223290701, 0.6599467351937174, 0.6687060090783966, 0.7093771921294312, 0.6938780277261785, 0.6658026941115177, 0.6645097164255296, 0.7360964096365491, 0.7004764278321279, 0.7475674614558906, 0.6127690817995998, 0.7155661194767091, 0.579303433608874, 0.609025889218704], "expressiveness": [0.25922773639721863, 0.4407656763460782, 0.34079027059292566, 0.4680649076153853, 0.40426616719781266, 0.33136273276177824, 0.3939398429225438, 0.45586542247976214, 0.3788822705692073, 0.3956971214546938, 0.36992406328485583, 0.3462532335440253, 0.2667019098401653, 0.3746091060933416, 0.35906657726377633, 0.30717853314348925, 0.3546259662546638, 0.3461473411183558, 0.32455672290124943, 0.38306409439555544, 0.4123338869328884, 0.4091059327469761, 0.3545196155234749, 0.39476515333842976, 0.3261492399537013, 0.3561973379565691, 0.3625868575840676, 0.3839876862075485, 0.4007336140551366, 0.29272831053776177, 0.4448433942069943, 0.31828936646565803, 0.3027956163162255, 0.3283382941045077, 0.36838428190630657, 0.352422648463101, 0.3280992361157992, 0.3311928684971027, 0.3217728158862966, 0.313920888457088, 0.26258406014914104, 0.3252977176045367, 0.38124730291154374, 0.38785224942799457, 0.27008360826836236, 0.3324534820513315, 0.2158975741009994, 0.23562823591896376, 0.40229435876842834, 0.2637356457560277, 0.3265827301722228, 0.334613852765741, 0.29921427245245424, 0.3352366166617281, 0.32164683630323837, 0.2683609905553205, 0.36124969163150944, 0.3608665293673142, 0.4229645612842443, 0.380882903968634, 0.307195092455593, 0.35663349855983345, 0.3318171004939647, 0.27482299283226697, 0.4039041060628251, 0.3117141065811853, 0.34046180474529747, 0.32088921426469924, 0.3844444991309449, 0.3310751515457398, 0.256784837415989, 0.3237714846590398, 0.3254647480556856, 0.29110513034086694, 0.27257104612415206, 0.3474923001782894, 0.30294125865512656, 0.35033451440050273, 0.30319493608085907, 0.22957998434335886, 0.3360140849407746, 0.23643346056097447, 0.3548378653055118, 0.3480471437370162, 0.26260644496071817, 0.2909382993944653, 0.3428773275849304, 0.2930797235123039, 0.2150992815638541, 0.3019830413041265, 0.3100254595461216, 0.26320778790882104, 0.30923767211567726, 0.23861624962295933, 0.35697513175041073, 0.34840295438683433, 0.24531211643942022, 0.33680709024562816, 0.31105781481651085, 0.329476027409975], "structural_coherence": [0.5096139886693802, 0.48658338119112626, 0.46319850879509816, 0.5397562806980587, 0.4846065835284115, 0.5081607004358424, 0.5222072666607543, 0.43370324196774085, 0.49687858166402044, 0.5048047073257285, 0.5106644502193384, 0.4832027443658699, 0.48125958350624864, 0.5070892068220854, 0.3830527236475828, 0.4354403071809551, 0.457438239451809, 0.5197865042446216, 0.48602435114298637, 0.5125580687924967, 0.4401743327021476, 0.5253884651823234, 0.46210523211007687, 0.43521826110876394, 0.5534139365716148, 0.3422945526424979, 0.49245306062374294, 0.4909035456284477, 0.48615757143535837, 0.4491553520987033, 0.5061844948913501, 0.3540095709047991, 0.4301069742440344, 0.4032849673730576, 0.49442244695704224, 0.4652821245023079, 0.4158119369526766, 0.4627033177607026, 0.49063339143299384, 0.4706262841566358, 0.5274602644912119, 0.46893036956688233, 0.4242022381114682, 0.45124240052665837, 0.4553943869563111, 0.477963964563382, 0.41691087809407057, 0.42090867975113283, 0.44980757820468203, 0.48124702008204556, 0.3774083540047095, 0.4851425845740544, 0.45432049440706224, 0.47828485240379426, 0.3763185019770623, 0.4143918332973045, 0.4274966776501958, 0.44243056588085783, 0.4035492508137833, 0.416726262298163, 0.4569539046440147, 0.47360128881868063, 0.4499505701494859, 0.43644079346803044, 0.43962589580546013, 0.4337947991822673, 0.3992503736787125, 0.40002107266381304, 0.4197974816020237, 0.4279705895683564, 0.3927759347729309, 0.3346739414057499, 0.3651134662252125, 0.42388929752413357, 0.45985995872160884, 0.42804849831063835, 0.4147178884173972, 0.4155974659259958, 0.3723875098226851, 0.42252675947274926, 0.38750672670940234, 0.4146947997221403, 0.3924872991675272, 0.3353995518986249, 0.4286424086706818, 0.4141052958795658, 0.4077713160270132, 0.4537181959826538, 0.33062460383488984, 0.3282184947683478, 0.431724174487101, 0.4172128993033964, 0.4406508511261828, 0.40384061428904106, 0.4907264257756804, 0.46778834832179444, 0.3377234590584091, 0.38744228073457826, 0.42880703505294504, 0.3360745424039784]};
+        let realTimeInterval;
+        let isRealTime = false;
+        
+        function initializeDashboard() {
+            setupMetricsChart();
+            setupCorrelationMatrix();
+            updateVisualizations();
+        }
+        
+        function setupMetricsChart() {
+            const svg = d3.select("#metrics-chart");
+            const width = 800;
+            const height = 400;
+            const margin = { top: 20, right: 80, bottom: 30, left: 50 };
+            
+            svg.selectAll("*").remove();
+            
+            const xScale = d3.scaleLinear()
+                .domain([0, Math.max(...Object.values(metricHistory).map(arr => arr.length)) - 1])
+                .range([margin.left, width - margin.right]);
+            
+            const yScale = d3.scaleLinear()
+                .domain([0, 1])
+                .range([height - margin.bottom, margin.top]);
+            
+            // Add axes
+            svg.append("g")
+                .attr("transform", `translate(0,${height - margin.bottom})`)
+                .call(d3.axisBottom(xScale));
+            
+            svg.append("g")
+                .attr("transform", `translate(${margin.left},0)`)
+                .call(d3.axisLeft(yScale));
+            
+            // Add lines for each metric
+            const colors = d3.schemeCategory10;
+            const line = d3.line()
+                .x((d, i) => xScale(i))
+                .y(d => yScale(d));
+            
+            Object.keys(metricHistory).forEach((metric, i) => {
+                svg.append("path")
+                    .datum(metricHistory[metric])
+                    .attr("class", `metric-line metric-${metric}`)
+                    .attr("fill", "none")
+                    .attr("stroke", colors[i % colors.length])
+                    .attr("stroke-width", 2)
+                    .attr("d", line);
+                
+                // Add legend
+                svg.append("text")
+                    .attr("x", width - margin.right + 10)
+                    .attr("y", margin.top + i * 20)
+                    .attr("fill", colors[i % colors.length])
+                    .text(metric);
+            });
+        }
+        
+        function setupCorrelationMatrix() {
+            const svg = d3.select("#correlation-matrix");
+            const size = 400;
+            const margin = 40;
+            
+            svg.selectAll("*").remove();
+            
+            const metrics = Object.keys(metricHistory);
+            const n = metrics.length;
+            const cellSize = (size - 2 * margin) / n;
+            
+            // Compute correlation matrix
+            const correlations = [];
+            for (let i = 0; i < n; i++) {
+                correlations[i] = [];
+                for (let j = 0; j < n; j++) {
+                    correlations[i][j] = computeCorrelation(
+                        metricHistory[metrics[i]], 
+                        metricHistory[metrics[j]]
+                    );
+                }
+            }
+            
+            // Create color scale
+            const colorScale = d3.scaleSequential(d3.interpolateRdBu)
+                .domain([-1, 1]);
+            
+            // Add cells
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    svg.append("rect")
+                        .attr("x", margin + j * cellSize)
+                        .attr("y", margin + i * cellSize)
+                        .attr("width", cellSize)
+                        .attr("height", cellSize)
+                        .attr("fill", colorScale(correlations[i][j]))
+                        .attr("stroke", "white");
+                    
+                    svg.append("text")
+                        .attr("x", margin + j * cellSize + cellSize/2)
+                        .attr("y", margin + i * cellSize + cellSize/2)
+                        .attr("text-anchor", "middle")
+                        .attr("dominant-baseline", "middle")
+                        .attr("fill", Math.abs(correlations[i][j]) > 0.5 ? "white" : "black")
+                        .text(correlations[i][j].toFixed(2));
+                }
+            }
+            
+            // Add labels
+            metrics.forEach((metric, i) => {
+                svg.append("text")
+                    .attr("x", margin + i * cellSize + cellSize/2)
+                    .attr("y", margin - 10)
+                    .attr("text-anchor", "middle")
+                    .text(metric);
+                
+                svg.append("text")
+                    .attr("x", margin - 10)
+                    .attr("y", margin + i * cellSize + cellSize/2)
+                    .attr("text-anchor", "end")
+                    .attr("dominant-baseline", "middle")
+                    .text(metric);
+            });
+        }
+        
+        function computeCorrelation(x, y) {
+            const n = Math.min(x.length, y.length);
+            if (n < 2) return 0;
+            
+            const meanX = x.slice(0, n).reduce((a, b) => a + b) / n;
+            const meanY = y.slice(0, n).reduce((a, b) => a + b) / n;
+            
+            let numerator = 0;
+            let sumXX = 0;
+            let sumYY = 0;
+            
+            for (let i = 0; i < n; i++) {
+                const dx = x[i] - meanX;
+                const dy = y[i] - meanY;
+                numerator += dx * dy;
+                sumXX += dx * dx;
+                sumYY += dy * dy;
+            }
+            
+            const denominator = Math.sqrt(sumXX * sumYY);
+            return denominator === 0 ? 0 : numerator / denominator;
+        }
+        
+        function updateVisualizations() {
+            // Update metric displays
+            Object.keys(metricHistory).forEach(metric => {
+                const latest = metricHistory[metric][metricHistory[metric].length - 1];
+                const display = document.getElementById(`metric-${metric}`);
+                if (display) {
+                    display.textContent = latest.toFixed(3);
+                }
+            });
+            
+            // Redraw charts
+            setupMetricsChart();
+            setupCorrelationMatrix();
+        }
+        
+        function startRealTimeUpdates() {
+            if (!isRealTime) {
+                isRealTime = true;
+                const interval = document.getElementById("updateInterval").value;
+                realTimeInterval = setInterval(() => {
+                    // Simulate new data
+                    Object.keys(metricHistory).forEach(metric => {
+                        const lastValue = metricHistory[metric][metricHistory[metric].length - 1];
+                        const newValue = Math.max(0, Math.min(1, lastValue + (Math.random() - 0.5) * 0.1));
+                        metricHistory[metric].push(newValue);
+                        
+                        // Keep only last 100 points
+                        if (metricHistory[metric].length > 100) {
+                            metricHistory[metric].shift();
+                        }
+                    });
+                    
+                    updateVisualizations();
+                }, parseInt(interval));
+            }
+        }
+        
+        function stopRealTimeUpdates() {
+            isRealTime = false;
+            clearInterval(realTimeInterval);
+        }
+        
+        function updateInterval() {
+            if (isRealTime) {
+                stopRealTimeUpdates();
+                startRealTimeUpdates();
+            }
+        }
+        
+        // Initialize on load
+        initializeDashboard();
+    </script>
+</body>
+</html>
+        

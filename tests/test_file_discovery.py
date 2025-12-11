@@ -251,13 +251,20 @@ class TestFileDiscoveryUnit:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
 
-            # Create test files
+            # Create test files including new formats from Task 26
             files_to_create = [
                 ("test1.udl", "expr ::= term"),
                 ("test2.dsl", "stmt := assignment"),
                 ("test3.grammar", "rule pattern"),
                 ("test4.ebnf", "expr = term { '+' term }"),
                 ("test5.txt", "Simple text grammar"),
+                ("test6.g4", "grammar Test; expr : term ;"),  # ANTLR
+                ("test7.peg", "expr <- term"),  # PEG
+                ("test8.y", "%% expr : term ;"),  # Yacc
+                ("test9.yacc", "%% stmt : expr ;"),  # Yacc variant
+                ("test10.bnf", "expr ::= term"),  # BNF
+                ("test11.abnf", "expr = term"),  # ABNF
+                ("test12.rr", "expr: term"),  # Railroad
                 ("ignored.py", "print('hello')"),  # Should be ignored
                 ("ignored.json", '{"key": "value"}'),  # Should be ignored
             ]
@@ -268,8 +275,11 @@ class TestFileDiscoveryUnit:
                 with open(file_path, "w", encoding="utf-8") as f:
                     f.write(content)
 
-                # Track UDL files
-                if file_path.suffix in {".udl", ".dsl", ".grammar", ".ebnf", ".txt"}:
+                # Track UDL files (including new formats)
+                if file_path.suffix in {
+                    ".udl", ".dsl", ".grammar", ".ebnf", ".txt",
+                    ".g4", ".peg", ".y", ".yacc", ".bnf", ".abnf", ".rr"
+                }:
                     expected_udl_files.append(file_path)
 
             # Run discovery
@@ -440,3 +450,47 @@ class TestFileDiscoveryUnit:
         # Test adding extension without dot
         discovery.add_extension("newext")
         assert ".newext" in discovery.get_supported_extensions()
+
+    def test_new_format_support(self):
+        """Test support for new grammar formats added in Task 26."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+
+            # Create files with new format extensions
+            new_format_files = [
+                ("antlr_grammar.g4", "grammar Test; expr : term '+' factor ;"),
+                ("peg_grammar.peg", "expr <- term '+' factor"),
+                ("yacc_grammar.y", "%% expr : term '+' factor ;"),
+                ("bison_grammar.yacc", "%% stmt : expr ';' ;"),
+                ("bnf_grammar.bnf", "expr ::= term '+' factor"),
+                ("abnf_grammar.abnf", "expr = term \"+\" factor"),
+                ("extended_bnf.xbnf", "expr ::= term { '+' term }"),
+                ("wirth_notation.wsn", "expr = term { '+' term }."),
+                ("railroad_diagram.rr", "expr: term followed by '+' and factor"),
+                ("railroad_alt.railroad", "stmt: expression or assignment"),
+            ]
+
+            for filename, content in new_format_files:
+                file_path = temp_path / filename
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(content)
+
+            # Run discovery
+            discovery = FileDiscovery()
+            result = discovery.discover_files(str(temp_path))
+
+            # Should discover all new format files
+            assert len(result.discovered_files) == len(new_format_files)
+            assert len(result.errors) == 0
+
+            # Verify all expected extensions are supported
+            expected_extensions = {".g4", ".peg", ".y", ".yacc", ".bnf", ".abnf", 
+                                 ".xbnf", ".wsn", ".rr", ".railroad"}
+            supported_extensions = discovery.get_supported_extensions()
+            
+            for ext in expected_extensions:
+                assert ext in supported_extensions, f"Extension {ext} not supported"
+
+            # Verify discovered files have correct extensions
+            discovered_extensions = {f.suffix for f in result.discovered_files}
+            assert discovered_extensions == expected_extensions
