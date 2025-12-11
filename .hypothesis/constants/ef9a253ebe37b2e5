@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/evaluation/evaluation_suite.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.95, 100, 1000, 'MAE', 'R2', 'RMSE', 'k_folds must be ≥ 5', 'predict']

@@ -380,7 +380,7 @@
   - Test confidence interval computation
   - _Requirements: 8.2, 8.3, 8.4, 8.5_
 
-- [-] 18. Implement evaluation utilities
+- [x] 18. Implement evaluation utilities
   - Create EvaluationSuite class
   - Implement k-fold cross-validation (k ≥ 5)
   - Implement correlation computation (Pearson, Spearman) with confidence intervals
@@ -389,35 +389,35 @@
   - Implement bootstrap confidence intervals (B ≥ 1000)
   - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
 
-- [ ] 18.1 Write property test for correlation reporting
+- [x] 18.1 Write property test for correlation reporting
   - **Property 37: Correlation Reporting**
   - **Validates: Requirements 10.2**
   - Run evaluation
   - Verify Pearson and Spearman correlations with 95% CIs
   - _Requirements: 10.2_
 
-- [ ] 18.2 Write property test for calibration error computation
+- [x] 18.2 Write property test for calibration error computation
   - **Property 38: Calibration Error Computation**
   - **Validates: Requirements 10.3**
   - Generate predictions with confidences
   - Verify ECE = Σ_i |accuracy_i - confidence_i| · (n_i/n)
   - _Requirements: 10.3_
 
-- [ ] 18.3 Write property test for error distribution analysis
+- [x] 18.3 Write property test for error distribution analysis
   - **Property 39: Error Distribution Analysis**
   - **Validates: Requirements 10.4**
   - Generate error distributions
   - Verify Shapiro-Wilk test is applied
   - _Requirements: 10.4_
 
-- [ ] 18.4 Write property test for bootstrap confidence intervals
+- [x] 18.4 Write property test for bootstrap confidence intervals
   - **Property 40: Bootstrap Confidence Intervals**
   - **Validates: Requirements 10.5**
   - Compute performance metrics
   - Verify bootstrap CIs with B ≥ 1000
   - _Requirements: 10.5_
 
-- [ ] 18.5 Write unit tests for evaluation suite
+- [x] 18.5 Write unit tests for evaluation suite
   - Test cross-validation execution
   - Test metric computation
   - Test report generation
