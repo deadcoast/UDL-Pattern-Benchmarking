@@ -1,141 +1,208 @@
-# 🕰️ The Continuous Thought Machine
+# UDL Rating Framework
 
-📚 [PAPER: Technical Report](https://arxiv.org/abs/2505.05522) | 📝 [Blog](https://sakana.ai/ctm/) | 🕹️ [Interactive Website](https://pub.sakana.ai/ctm) | ✏️ [Tutorial](examples/01_mnist.ipynb)
+A mathematically-grounded system for evaluating the quality of User Defined Languages (UDLs), built on the Continuous Thought Machine (CTM) architecture.
 
-![Activations](assets/activations.gif)
+## Overview
 
-We present the Continuous Thought Machine (CTM), a model designed to unfold and then leverage neural activity as the underlying mechanism for observation and action. Our contributions are:
+The UDL Rating Framework provides objective, reproducible quality assessments of domain-specific languages through formal mathematical metrics. Every rating is traceable to rigorous mathematical foundations, eliminating subjective judgments.
 
-1. An internal temporal axis, decoupled from any input data, that enables neuron activity to unfold.
+## Features
 
-2. Neuron-level temporal processing, where each neuron uses unique weight parameters to process a history of incoming signals, enabling fine-grained temporal dynamics.
+- **Mathematical Rigor**: All metrics are formally defined with proven properties
+- **Four Quality Dimensions**:
+  - **Consistency**: Internal coherence using graph-theoretic analysis
+  - **Completeness**: Construct coverage using set theory
+  - **Expressiveness**: Language power via Chomsky hierarchy classification
+  - **Structural Coherence**: Organizational quality using information theory
+- **Confidence Scores**: Entropy-based certainty measures
+- **CTM Integration**: Neural approximation for fast inference
+- **Comprehensive Testing**: Property-based and unit testing
 
-3. Neural synchronisation, employed as a direct latent representation for modulating data and producing outputs, thus directly encoding information in the timing of neural activity.
+## Installation
 
-We demonstrate the CTM's strong performance and versatility across a range of challenging tasks, including ImageNet classification, solving 2D mazes, sorting, parity computation, question-answering, and RL tasks.
+### From Source
 
-We provide all necessary code to reproduce our results and invite others to build upon and use CTMs in their own work.
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/udl-rating-framework.git
+cd udl-rating-framework
 
-## [Interactive Website](https://pub.sakana.ai/ctm)
-Please see our [Interactive Website](https://pub.sakana.ai/ctm) for a maze-solving demo, many demonstrative videos of the method, results, and other findings. 
+# Install dependencies
+pip install -r requirements-udl.txt
 
-
-## Repo structure
-```
-├── tasks
-│   ├── image_classification
-│   │   ├── train.py                          # Training code for image classification (cifar, imagenet)
-│   │   ├── imagenet_classes.py               # Helper for imagenet class names
-│   │   ├── plotting.py                       # Plotting utils specific to this task
-│   │   └── analysis
-│   │       ├──run_imagenet_analysis.py       # ImageNet eval and visualisation code
-│   │       └──outputs/                       # Folder for outputs of analysis
-│   ├── mazes
-│   │   ├── train.py                          # Training code for solving 2D mazes (by way of a route; see paper)
-│   │   └── plotting.py                       # Plotting utils specific to this task
-│   │   └── analysis
-│   │       ├──run.py                         # Maze analysis code
-│   │       └──outputs/                       # Folder for outputs of analysis
-│   ├── sort
-│   │   ├── train.py                          # Training code for sorting
-│   │   └── utils.py                          # Sort specific utils (e.g., CTC decode)
-│   ├── parity
-│   │   ├── train.py                          # Training code for parity task
-│   │   ├── utils.py                          # Parity-specific helper functions
-│   │   ├── plotting.py                       # Plotting utils specific to this task
-│   │   ├── scripts/
-│   │   │   └── *.sh                          # Training scripts for different experimental setups
-│   │   └── analysis/
-│   │       └── run.py                        # Entry point for parity analysis
-│   ├── qamnist
-│   │   ├── train.py                          # Training code for QAMNIST task (quantized MNIST)
-│   │   ├── utils.py                          # QAMNIST-specific helper functions
-│   │   ├── plotting.py                       # Plotting utils specific to this task
-│   │   ├── scripts/
-│   │   │   └── *.sh                          # Training scripts for different experimental setups
-│   │   └── analysis/
-│   │       └── run.py                        # Entry point for QAMNIST analysis
-│   └── rl
-│       ├── train.py                          # Training code for RL environments
-│       ├── utils.py                          # RL-specific helper functions
-│       ├── plotting.py                       # Plotting utils specific to this task
-│       ├── envs.py                           # Custom RL environment wrappers
-│       ├── scripts/
-│       │   ├── 4rooms/
-│       │   │   └── *.sh                      # Training scripts for MiniGrid-FourRooms-v0 environment
-│       │   ├── acrobot/
-│       │   │   └── *.sh                      # Training scripts for Acrobot-v1 environment
-│       │   └── cartpole/
-│       │       └── *.sh                      # Training scripts for CartPole-v1 environment
-│       └── analysis/
-│           └── run.py                        # Entry point for RL analysis
-├── data                                      # This is where data will be saved and downloaded to
-│   └── custom_datasets.py                    # Custom datasets (e.g., Mazes), sort
-├── models
-│   ├── ctm.py                                # Main model code, used for: image classification, solving mazes, sort
-│   ├── ctm_*.py                              # Other model code, standalone adjustments for other tasks
-│   ├── ff.py                                 # feed-forward (simple) baseline code (e.g., for image classification)
-│   ├── lstm.py                               # LSTM baseline code (e.g., for image classification)
-│   ├── lstm_*.py                              # Other baseline code, standalone adjustments for other tasks
-│   ├── modules.py                            # Helper modules, including Neuron-level models and the Synapse UNET
-│   ├── utils.py                              # Helper functions (e.g., synch decay)
-│   └── resnet.py                             # Wrapper for ResNet featuriser
-├── utils
-│   ├── housekeeping.py                       # Helper functions for keeping things neat
-│   ├── losses.py                             # Loss functions for various tasks (mostly with reshaping stuff)
-│   └── schedulers.py                         # Helper wrappers for learning rate schedulers
-└── checkpoints
-    └── imagenet, mazes, ...                  # Checkpoint directories (see google drive link for files)
-
+# Install the package
+pip install -e .
 ```
 
-## Setup
-To set up the environment using conda:
+### Using pip (when published)
 
-```
-conda create --name=ctm python=3.12
-conda activate ctm
-pip install -r requirements.txt
+```bash
+pip install udl-rating-framework
 ```
 
-If there are issues with PyTorch versions, the following can be ran:
-```
-pip uninstall torch
-pip install torch --index-url https://download.pytorch.org/whl/cu121
+## Quick Start
+
+### Rating a UDL File
+
+```python
+from udl_rating_framework import UDLRepresentation
+from udl_rating_framework.core.metrics import ConsistencyMetric
+
+# Load a UDL
+with open("my_language.udl", "r") as f:
+    udl = UDLRepresentation(f.read(), "my_language.udl")
+
+# Compute consistency
+metric = ConsistencyMetric()
+score = metric.compute(udl)
+print(f"Consistency: {score:.3f}")
 ```
 
-## Model training
-Each task has its own (set of) training code. See for instance [tasks/image_classification/train.py](tasks/image_classification/train.py). We have set it up like this to ensure ease-of-use as opposed to clinical efficiency. This code is for researchers and we hope to have it shared in a way that fosters collaboration and learning. 
+### Command-Line Interface
 
-While we have provided reasonable defaults in the argparsers of each training setup, scripts to replicate the setups in the paper will typically be found in the accompanying script folders. If you simply want to dive in, run the following as a module (setup like this to make it easy to run many high-level training scripts from the top directory):
+```bash
+# Rate a directory of UDL files
+udl-rate --directory ./my_udls --output report.json
+
+# Train a CTM model
+udl-train --dataset ./training_data --epochs 50 --output model.pt
+
+# Compare multiple UDLs
+udl-compare --files udl_v1.dsl udl_v2.dsl --output comparison.html
+
+# Evaluate model performance
+udl-evaluate --model model.pt --test-set ./test_data
+```
+
+## Project Structure
 
 ```
-python -m tasks.image_classification.train
+udl_rating_framework/
+├── core/                  # Core components
+│   ├── representation.py  # UDL representation
+│   ├── metrics/          # Quality metrics
+│   ├── aggregation.py    # Metric aggregation
+│   └── confidence.py     # Confidence calculation
+├── models/               # CTM model components
+├── io/                   # Input/output handling
+├── evaluation/           # Evaluation utilities
+├── utils/                # Utility functions
+└── cli/                  # Command-line interface
+
+tests/
+├── unit/                 # Unit tests
+├── property/             # Property-based tests
+├── integration/          # Integration tests
+└── performance/          # Performance benchmarks
+
+docs/
+└── mathematical_framework.tex  # Mathematical specification
 ```
-For debugging in VSCode, this configuration example might be helpful to you:
+
+## Mathematical Foundation
+
+All metrics are formally defined in `docs/mathematical_framework.pdf`. Key definitions:
+
+### Consistency Metric
+
 ```
-{
-    "name": "Debug: train image classifier",
-    "type": "debugpy",
-    "request": "launch",
-    "module": "tasks.image_classification.train",
-    "console": "integratedTerminal",
-    "justMyCode": false
+Consistency(U) = 1 - (|Contradictions| + |Cycles|) / (|Rules| + 1)
+```
+
+### Completeness Metric
+
+```
+Completeness(U) = |Defined_Constructs| / |Required_Constructs|
+```
+
+### Overall Quality Score
+
+```
+Q(U) = Σᵢ wᵢ · mᵢ(U)
+```
+
+where wᵢ are weights (Σwᵢ = 1) and mᵢ are individual metrics.
+
+## Development
+
+### Running Tests
+
+```bash
+# Run all tests
+pytest
+
+# Run unit tests only
+pytest tests/unit/
+
+# Run with coverage
+pytest --cov=udl_rating_framework --cov-report=html
+```
+
+### Code Quality
+
+```bash
+# Format code
+black udl_rating_framework/
+
+# Lint
+flake8 udl_rating_framework/
+
+# Type checking
+mypy udl_rating_framework/
+```
+
+## Requirements
+
+- Python 3.10+
+- PyTorch 2.0+
+- NetworkX 3.0+
+- NumPy 1.24+
+- SciPy 1.10+
+- Hypothesis 6.0+
+
+See `requirements-udl.txt` for complete list.
+
+## Documentation
+
+- [Mathematical Framework](docs/mathematical_framework.pdf) - Complete mathematical specification
+- [API Documentation](https://udl-rating-framework.readthedocs.io/) - API reference
+- [Tutorial Notebooks](examples/) - Jupyter notebooks with examples
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
+
+## Citation
+
+If you use this framework in your research, please cite:
+
+```bibtex
+@software{udl_rating_framework,
+  title = {UDL Rating Framework: Mathematically-Grounded Language Quality Assessment},
+  author = {UDL Rating Framework Team},
+  year = {2024},
+  url = {https://github.com/yourusername/udl-rating-framework}
 }
 ```
 
+## Acknowledgments
 
-## Running analyses
+Built on the Continuous Thought Machine (CTM) architecture for temporal sequence processing.
 
-We also provide analysis and plotting code to replicate many of the plots in our paper. See `tasks/.../analysis/*` for more details on that. We also provide some data (e.g., the mazes we generated for training) and checkpoints (see [here](#checkpoints-and-data)). Note that ffmpeg is required for generating mp4 files from the analysis scripts. It can be installed with:
-```
-conda install -c conda-forge ffmpeg
-```
+## Status
 
+This project is under active development. Current status:
 
-## Checkpoints and data
-You can download the data and checkpoints from here: 
-- checkpoints: https://drive.google.com/drive/folders/1vSg8T7FqP-guMDk1LU7_jZaQtXFP9sZg
-- maze data: https://drive.google.com/file/d/1cBgqhaUUtsrll8-o2VY42hPpyBcfFv86/view?usp=drivesdk
+- [x] Project structure and foundation
+- [ ] Core metrics implementation
+- [ ] CTM integration
+- [ ] Evaluation utilities
+- [ ] Documentation and examples
 
-Checkpoints go in the `checkpoints` folder. For instance, when properly populated, the checkpoints folder will have the maze checkpoint in `checkpoints/mazes/...`
+## Contact
+
+For questions or issues, please open an issue on GitHub or contact the maintainers.
