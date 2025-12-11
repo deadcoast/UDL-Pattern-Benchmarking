@@ -5,10 +5,11 @@ Provides formal representation of UDL structure for mathematical analysis.
 """
 
 import re
-import networkx as nx
-from typing import List, Dict, Set, Any, Optional, Union, Tuple
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
+
+import networkx as nx
 
 
 class TokenType(Enum):
@@ -48,7 +49,8 @@ class Constraint:
     def __post_init__(self):
         # Convert dict to tuple of tuples for hashability
         if isinstance(self.metadata, dict):
-            object.__setattr__(self, "metadata", tuple(sorted(self.metadata.items())))
+            object.__setattr__(self, "metadata", tuple(
+                sorted(self.metadata.items())))
 
     def get_metadata_dict(self) -> Dict[str, Any]:
         """Convert metadata back to dict for easier access."""
@@ -84,7 +86,8 @@ class UDLTokenizer:
 
     # Common UDL patterns
     TOKEN_PATTERNS = [
-        (r"#.*", TokenType.COMMENT),  # Comments$', TokenType.COMMENT),  # Comments
+        # Comments$', TokenType.COMMENT),  # Comments
+        (r"#.*", TokenType.COMMENT),
         (r"\n", TokenType.NEWLINE),  # Newlines
         (r"\s+", TokenType.WHITESPACE),  # Whitespace
         (r"::=|:=|=", TokenType.OPERATOR),  # Assignment operators
@@ -286,14 +289,16 @@ class UDLRepresentation:
                 rhs = []
                 i += 2
                 while i < len(tokens) and not (
-                    i + 1 < len(tokens) and tokens[i + 1].text in ["::=", ":=", "="]
+                    i + 1 < len(tokens) and tokens[i +
+                                                   1].text in ["::=", ":=", "="]
                 ):
                     if tokens[i].type != TokenType.EOF:
                         rhs.append(tokens[i].text)
                     i += 1
 
                 rule = GrammarRule(
-                    lhs=lhs, rhs=rhs, constraints=[], metadata={"operator": operator}
+                    lhs=lhs, rhs=rhs, constraints=[], metadata={
+                        "operator": operator}
                 )
                 rules.append(rule)
             else:
@@ -328,13 +333,16 @@ class UDLRepresentation:
 
         for token in self._tokens:
             if token.type == TokenType.IDENTIFIER:
-                semantic_map[token] = {"type": "symbol", "category": "non_terminal"}
+                semantic_map[token] = {
+                    "type": "symbol", "category": "non_terminal"}
             elif token.type == TokenType.LITERAL:
                 semantic_map[token] = {"type": "terminal", "value": token.text}
             elif token.type == TokenType.OPERATOR:
-                semantic_map[token] = {"type": "operator", "function": token.text}
+                semantic_map[token] = {
+                    "type": "operator", "function": token.text}
             elif token.type == TokenType.KEYWORD:
-                semantic_map[token] = {"type": "keyword", "meaning": token.text}
+                semantic_map[token] = {
+                    "type": "keyword", "meaning": token.text}
 
         return semantic_map
 
@@ -347,7 +355,8 @@ class UDLRepresentation:
             if token.type == TokenType.COMMENT:
                 # Simple constraint extraction from comments
                 if "constraint:" in token.text.lower():
-                    constraint_text = token.text.split("constraint:", 1)[1].strip()
+                    constraint_text = token.text.split(
+                        "constraint:", 1)[1].strip()
                     constraint = Constraint(
                         type="comment_constraint",
                         condition=constraint_text,

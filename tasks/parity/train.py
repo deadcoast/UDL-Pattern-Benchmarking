@@ -5,31 +5,31 @@ import os
 import random  # Used for saving/loading RNG state
 
 import matplotlib as mpl
-
-mpl.use("Agg")  # Use Agg backend before pyplot import
 import matplotlib.pyplot as plt  # Used for loss/accuracy plots
 import numpy as np
-
-np.seterr(divide="ignore", invalid="warn")  # Keep basic numpy settings
 import seaborn as sns
-
-sns.set_style("darkgrid")
 import torch
-
-if torch.cuda.is_available():
-    torch.set_float32_matmul_precision("high")
 import torchvision  # For disabling warning
+from autoclip.torch import QuantileClip  # Used for gradient clipping
 from tqdm.auto import tqdm  # Used for progress bars
 
-from autoclip.torch import QuantileClip  # Used for gradient clipping
 from data.custom_datasets import ParityDataset
+from models.utils import get_latest_checkpoint, reshape_predictions
 from tasks.image_classification.plotting import plot_neural_dynamics
-from models.utils import reshape_predictions, get_latest_checkpoint
 from tasks.parity.plotting import make_parity_gif
 from tasks.parity.utils import prepare_model, reshape_attention_weights, reshape_inputs
 from utils.housekeeping import set_seed, zip_python_code
 from utils.losses import parity_loss
 from utils.schedulers import WarmupCosineAnnealingLR, WarmupMultiStepLR, warmup
+
+mpl.use("Agg")  # Use Agg backend before pyplot import
+
+np.seterr(divide="ignore", invalid="warn")  # Keep basic numpy settings
+
+sns.set_style("darkgrid")
+
+if torch.cuda.is_available():
+    torch.set_float32_matmul_precision("high")
 
 torchvision.disable_beta_transforms_warning()
 torch.serialization.add_safe_globals([argparse.Namespace])
@@ -110,7 +110,8 @@ def parse_args():
         default=16,
         help="Hidden dimensions for deep NLMs.",
     )
-    parser.add_argument("--dropout", type=float, default=0.0, help="Dropout rate.")
+    parser.add_argument("--dropout", type=float,
+                        default=0.0, help="Dropout rate.")
     parser.add_argument(
         "--do_normalisation",
         action=argparse.BooleanOptionalAction,
@@ -137,7 +138,8 @@ def parse_args():
     parser.add_argument(
         "--batch_size_test", type=int, default=256, help="Batch size for testing."
     )
-    parser.add_argument("--lr", type=float, default=1e-4, help="Learning rate.")
+    parser.add_argument("--lr", type=float, default=1e-4,
+                        help="Learning rate.")
     parser.add_argument(
         "--training_iterations",
         type=int,
@@ -242,7 +244,6 @@ def parse_args():
 
 
 if __name__ == "__main__":
-
     args = parse_args()
 
     set_seed(args.seed)
@@ -251,13 +252,15 @@ if __name__ == "__main__":
         os.makedirs(args.log_dir)
 
     assert (
-        int(math.sqrt(args.parity_sequence_length)) ** 2 == args.parity_sequence_length
+        int(math.sqrt(args.parity_sequence_length)
+            ) ** 2 == args.parity_sequence_length
     ), "parity_sequence_length must be a perfect square."
 
     train_data = ParityDataset(
         sequence_length=args.parity_sequence_length, length=100000
     )
-    test_data = ParityDataset(sequence_length=args.parity_sequence_length, length=10000)
+    test_data = ParityDataset(
+        sequence_length=args.parity_sequence_length, length=10000)
 
     trainloader = torch.utils.data.DataLoader(
         train_data, batch_size=args.batch_size, shuffle=True, num_workers=0
@@ -337,14 +340,14 @@ if __name__ == "__main__":
 
     # Metrics tracking (I like custom)
     # Using batched estimates
-    start_iter = 0  # For reloading, keep track of this (pretty tqdm stuff needs it)
+    # For reloading, keep track of this (pretty tqdm stuff needs it)
+    start_iter = 0
     train_losses = []
     test_losses = []
     train_accuracies = []  # This will be per internal tick, not so simple
     test_accuracies = []
-    train_accuracies_most_certain = (
-        []
-    )  # This will be selected according to what is returned by loss function
+    # This will be selected according to what is returned by loss function
+    train_accuracies_most_certain = []
     test_accuracies_most_certain = []
     train_accuracies_most_certain_per_input = []
     test_accuracies_most_certain_per_input = []
@@ -356,7 +359,8 @@ if __name__ == "__main__":
     # Now that everything is initliased, reload if desired
     if args.reload and (latest_checkpoint_path := get_latest_checkpoint(args.log_dir)):
         print(f"Reloading from: {latest_checkpoint_path}")
-        checkpoint = torch.load(f"{latest_checkpoint_path}", weights_only=False)
+        checkpoint = torch.load(
+            f"{latest_checkpoint_path}", weights_only=False)
         model.load_state_dict(checkpoint["model_state_dict"], strict=True)
         if not args.reload_model_only:
             print("Reloading optimizer etc.")
@@ -445,7 +449,8 @@ if __name__ == "__main__":
             accuracy_finegrained = (
                 (
                     predictions.argmax(2)[
-                        torch.arange(predictions.size(0), device=predictions.device),
+                        torch.arange(predictions.size(
+                            0), device=predictions.device),
                         :,
                         where_most_certain,
                     ]
@@ -463,7 +468,6 @@ if __name__ == "__main__":
             if bi % args.track_every == 0:  # and bi != 0:
                 model.eval()
                 with torch.inference_mode():
-
                     inputs, targets = next(iter(testloader))
                     inputs = inputs.to(device)
                     targets = targets.to(device)
@@ -476,7 +480,8 @@ if __name__ == "__main__":
                         attention,
                     ) = model(inputs, track=True)
 
-                    predictions = reshape_predictions(predictions, prediction_reshaper)
+                    predictions = reshape_predictions(
+                        predictions, prediction_reshaper)
                     attention = reshape_attention_weights(attention)
                     inputs = reshape_inputs(
                         inputs,
@@ -506,7 +511,7 @@ if __name__ == "__main__":
                     )
                     process.start()
 
-                    ##################################### TRAIN METRICS
+                    # TRAIN METRICS
                     all_predictions = []
                     all_targets = []
                     all_predictions_most_certain = []
@@ -527,9 +532,7 @@ if __name__ == "__main__":
                             position=1,
                             dynamic_ncols=True,
                         ) as pbar_inner:
-
                             for inferi, (inputs, targets) in enumerate(loader):
-
                                 inputs = inputs.to(device)
                                 targets = targets.to(device)
                                 these_predictions, certainties, synchronisation = model(
@@ -547,7 +550,8 @@ if __name__ == "__main__":
                                 )
                                 all_losses.append(loss.item())
 
-                                all_targets.append(targets.detach().cpu().numpy())
+                                all_targets.append(
+                                    targets.detach().cpu().numpy())
 
                                 all_predictions_most_certain.append(
                                     these_predictions.argmax(2)[
@@ -563,7 +567,8 @@ if __name__ == "__main__":
                                     .numpy()
                                 )
                                 all_predictions.append(
-                                    these_predictions.argmax(2).detach().cpu().numpy()
+                                    these_predictions.argmax(
+                                        2).detach().cpu().numpy()
                                 )
 
                                 if (
@@ -585,7 +590,8 @@ if __name__ == "__main__":
 
                         train_accuracies.append(
                             np.mean(
-                                all_predictions == all_targets[..., np.newaxis],
+                                all_predictions == all_targets[...,
+                                                               np.newaxis],
                                 axis=tuple(range(all_predictions.ndim - 1)),
                             )
                         )
@@ -600,7 +606,7 @@ if __name__ == "__main__":
                         )
                         train_losses.append(np.mean(all_losses))
 
-                        ##################################### TEST METRICS
+                        # TEST METRICS
                         all_predictions = []
                         all_predictions_most_certain = []
                         all_targets = []
@@ -619,7 +625,6 @@ if __name__ == "__main__":
                             dynamic_ncols=True,
                         ) as pbar_inner:
                             for inferi, (inputs, targets) in enumerate(loader):
-
                                 inputs = inputs.to(device)
                                 targets = targets.to(device)
                                 these_predictions, certainties, synchronisation = model(
@@ -640,7 +645,8 @@ if __name__ == "__main__":
                                 )
                                 all_losses.append(loss.item())
 
-                                all_targets.append(targets.detach().cpu().numpy())
+                                all_targets.append(
+                                    targets.detach().cpu().numpy())
 
                                 all_predictions_most_certain.append(
                                     these_predictions.argmax(2)[
@@ -656,7 +662,8 @@ if __name__ == "__main__":
                                     .numpy()
                                 )
                                 all_predictions.append(
-                                    these_predictions.argmax(2).detach().cpu().numpy()
+                                    these_predictions.argmax(
+                                        2).detach().cpu().numpy()
                                 )
 
                                 if (
@@ -665,7 +672,8 @@ if __name__ == "__main__":
                                     and not args.full_eval
                                 ):
                                     break
-                                pbar_inner.set_description("Computing metrics for test")
+                                pbar_inner.set_description(
+                                    "Computing metrics for test")
                                 pbar_inner.update(1)
 
                         all_predictions = np.concatenate(all_predictions)
@@ -676,7 +684,8 @@ if __name__ == "__main__":
 
                         test_accuracies.append(
                             np.mean(
-                                all_predictions == all_targets[..., np.newaxis],
+                                all_predictions == all_targets[...,
+                                                               np.newaxis],
                                 axis=tuple(range(all_predictions.ndim - 1)),
                             )
                         )
@@ -705,13 +714,15 @@ if __name__ == "__main__":
                                 axacc_train.plot(
                                     iters,
                                     train_acc,
-                                    color=cm((ti) / (train_accuracies[0].shape[-1])),
+                                    color=cm(
+                                        (ti) / (train_accuracies[0].shape[-1])),
                                     alpha=0.3,
                                 )
                                 axacc_test.plot(
                                     iters,
                                     test_acc,
-                                    color=cm((ti) / (test_accuracies[0].shape[-1])),
+                                    color=cm(
+                                        (ti) / (test_accuracies[0].shape[-1])),
                                     alpha=0.3,
                                 )
                         axacc_train.plot(
@@ -749,7 +760,8 @@ if __name__ == "__main__":
                         axacc_test.set_xlim([0, args.training_iterations])
 
                         figacc.tight_layout()
-                        figacc.savefig(f"{args.log_dir}/accuracies.png", dpi=150)
+                        figacc.savefig(
+                            f"{args.log_dir}/accuracies.png", dpi=150)
                         plt.close(figacc)
 
                         figloss = plt.figure(figsize=(10, 5))

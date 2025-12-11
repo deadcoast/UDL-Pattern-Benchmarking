@@ -1,28 +1,27 @@
-import re
-import os
-import torch
-from torch import optim
-import numpy as np
-import matplotlib.pyplot as plt
 import argparse
-from collections import defaultdict
-from scipy.interpolate import interp1d
-from collections import defaultdict
 import csv
 import multiprocessing
+import os
+import re
+from collections import defaultdict
 
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+import torch
+from scipy.interpolate import interp1d
+from torch import optim
+
+from tasks.image_classification.plotting import plot_neural_dynamics
+from tasks.rl.plotting import make_rl_gif
 from tasks.rl.train import (
     Agent,
+    load_model,
     make_env_classic_control,
     make_env_minigrid,
-    load_model,
 )
-from utils.housekeeping import set_seed
 from tasks.rl.utils import combine_tracking_data
-from tasks.rl.plotting import make_rl_gif
-from tasks.image_classification.plotting import plot_neural_dynamics
-
-import seaborn as sns
+from utils.housekeeping import set_seed
 
 sns.set_palette("hls")
 sns.set_style("darkgrid")
@@ -42,7 +41,8 @@ def parse_args():
         default=10,
         help="Number of evaluation environments",
     )
-    parser.add_argument("--seed", type=int, default=0, help="Random seed to use")
+    parser.add_argument("--seed", type=int, default=0,
+                        help="Random seed to use")
     parser.add_argument(
         "--device",
         type=int,
@@ -67,7 +67,8 @@ def get_checkpoint_paths_for_environment(environment, log_dir):
 
 
 def load_checkpoint(checkpoint_path, device):
-    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    checkpoint = torch.load(
+        checkpoint_path, map_location=device, weights_only=False)
     print(f"Loaded checkpoint from {checkpoint_path}.")
     return checkpoint
 
@@ -158,7 +159,6 @@ def plot(
     title="Episode Rewards",
     save_path="episode_rewards_avg.png",
 ):
-
     fig, ax = plt.subplots(figsize=(10 * scale, 5 * scale))
 
     iter_groups = defaultdict(list)
@@ -194,8 +194,10 @@ def plot(
         color = colors[i]
         linestyle = "--" if "LSTM" in label.upper() else "-"
 
-        ax.plot(common_steps, mean, label=label, color=color, linestyle=linestyle)
-        ax.fill_between(common_steps, mean - std, mean + std, alpha=0.1, color=color)
+        ax.plot(common_steps, mean, label=label,
+                color=color, linestyle=linestyle)
+        ax.fill_between(common_steps, mean - std, mean +
+                        std, alpha=0.1, color=color)
 
     ax.set_xlabel("Environment Steps")
     ax.set_ylabel(ylabel)
@@ -211,7 +213,8 @@ def plot(
 def create_training_curves(save_dir, log_dir, device):
     for env_id in ("CartPole-v1", "Acrobot-v1", "MiniGrid-FourRooms-v0"):
         os.makedirs(f"{save_dir}/{env_id}", exist_ok=True)
-        checkpoint_paths = get_checkpoint_paths_for_environment(env_id, log_dir)
+        checkpoint_paths = get_checkpoint_paths_for_environment(
+            env_id, log_dir)
         grouped_data = defaultdict(
             lambda: {"steps": [], "rewards": [], "lengths": [], "name": ""}
         )
@@ -221,7 +224,8 @@ def create_training_curves(save_dir, log_dir, device):
             global_steps = get_global_steps_from_checkpoint(checkpoint)
             episode_rewards = get_episode_rewards_from_checkpoint(checkpoint)
             episode_lengths = get_episode_lengths_from_checkpoint(checkpoint)
-            config_key, human_readable_name = get_human_readable_name(checkpoint_path)
+            config_key, human_readable_name = get_human_readable_name(
+                checkpoint_path)
 
             if global_steps and episode_rewards and episode_lengths:
                 grouped_data[config_key]["steps"].append(global_steps)
@@ -342,7 +346,8 @@ def create_episode_length_csv_and_activation_plots(save_dir, args):
         os.makedirs(os.path.dirname(csv_filepath), exist_ok=True)
         prepare_csv(csv_filepath)
 
-        checkpoint_paths = get_checkpoint_paths_for_environment(env_id, args.log_dir)
+        checkpoint_paths = get_checkpoint_paths_for_environment(
+            env_id, args.log_dir)
         ARCHS_TO_TEST = ["ctm", "lstm"]
         ITERS_TO_TEST = [1, 2, 5]
         RUNS_TO_TEST = [1, 2, 3]
@@ -350,13 +355,13 @@ def create_episode_length_csv_and_activation_plots(save_dir, args):
             for iters in ITERS_TO_TEST:
                 episode_lengths = []
                 for run in RUNS_TO_TEST:
-
                     activation_plots_path = (
                         f"{save_dir}/{env_id}/arch_{arch}_iters_{iters}_run_{run}"
                     )
                     os.makedirs(activation_plots_path, exist_ok=True)
 
-                    checkpoints = filter_checkpoints(checkpoint_paths, iters, arch, run)
+                    checkpoints = filter_checkpoints(
+                        checkpoint_paths, iters, arch, run)
                     if not checkpoints:
                         print(
                             f"Skipping: no checkpoint found for {env_id} | iters={iters} | arch={arch} | run={run}"
@@ -368,7 +373,8 @@ def create_episode_length_csv_and_activation_plots(save_dir, args):
                     )
                     model_args.log_dir = f"{args.log_dir}/{env_id}"
 
-                    agent = Agent(size_action_space, model_args, device).to(device)
+                    agent = Agent(size_action_space,
+                                  model_args, device).to(device)
                     optimizer = optim.Adam(
                         agent.parameters(), lr=model_args.lr, eps=1e-5
                     )
@@ -401,7 +407,8 @@ def create_episode_length_csv_and_activation_plots(save_dir, args):
                                     action_logits,
                                     action_probs,
                                 ) = agent.get_action_and_value(
-                                    torch.Tensor(eval_next_obs).to(device).unsqueeze(0),
+                                    torch.Tensor(eval_next_obs).to(
+                                        device).unsqueeze(0),
                                     eval_state,
                                     torch.Tensor([eval_next_done]).to(device),
                                     track=True,

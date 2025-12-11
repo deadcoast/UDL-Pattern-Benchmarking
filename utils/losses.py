@@ -50,7 +50,8 @@ def compute_ctc_loss(predictions, targets, blank_label=0):
     #    We handle padding by only passing the valid lengths to CTCLoss.
     concatenated_targets = torch.cat(list(targets))  # Concatenate targets
 
-    loss = ctc_loss(log_probs, concatenated_targets, input_lengths, target_lengths)
+    loss = ctc_loss(log_probs, concatenated_targets,
+                    input_lengths, target_lengths)
 
     return loss
 
@@ -59,7 +60,8 @@ def sort_loss(predictions, targets):
     """
     The sort task was used partly to show that ctc loss can work.
     """
-    loss = compute_ctc_loss(predictions, targets, blank_label=predictions.shape[1] - 1)
+    loss = compute_ctc_loss(predictions, targets,
+                            blank_label=predictions.shape[1] - 1)
     return loss
 
 
@@ -78,14 +80,16 @@ def image_classification_loss(predictions, certainties, targets, use_most_certai
         targets.unsqueeze(-1), predictions.size(-1), -1
     )
     # Losses are of shape [B, internal_ticks]
-    losses = nn.CrossEntropyLoss(reduction="none")(predictions, targets_expanded)
+    losses = nn.CrossEntropyLoss(reduction="none")(
+        predictions, targets_expanded)
 
     loss_index_1 = losses.argmin(dim=1)
     loss_index_2 = certainties[:, 1].argmax(-1)
     if not use_most_certain:  # Revert to final loss if set
         loss_index_2[:] = -1
 
-    batch_indexer = torch.arange(predictions.size(0), device=predictions.device)
+    batch_indexer = torch.arange(
+        predictions.size(0), device=predictions.device)
     loss_minimum_ce = losses[batch_indexer, loss_index_1].mean()
     loss_selected = losses[batch_indexer, loss_index_2].mean()
 
@@ -115,7 +119,8 @@ def maze_loss(
     predictions_reshaped = predictions.flatten(0, 1)
     # Targets reshaped to: [B*route_length, internal_ticks]
     targets_reshaped = (
-        torch.repeat_interleave(targets.unsqueeze(-1), predictions.size(-1), -1)
+        torch.repeat_interleave(targets.unsqueeze(-1),
+                                predictions.size(-1), -1)
         .flatten(0, 1)
         .long()
     )
@@ -133,7 +138,8 @@ def maze_loss(
         1, iscorrects.size(1) + 1, device=iscorrects.device
     ).reshape(1, -1, 1)
     correct_mask[:, 0, :] = 1
-    upto_where = correct_mask.cumsum(1).argmax(1).max(-1)[0] + cirriculum_lookahead
+    upto_where = correct_mask.cumsum(1).argmax(
+        1).max(-1)[0] + cirriculum_lookahead
     loss_mask = torch.zeros_like(losses)
     for bi in range(predictions.size(0)):
         loss_mask[bi, : upto_where[bi]] = 1
@@ -147,7 +153,8 @@ def maze_loss(
     if not use_most_certain:
         loss_index_2[:] = -1
 
-    batch_indexer = torch.arange(predictions.size(0), device=predictions.device)
+    batch_indexer = torch.arange(
+        predictions.size(0), device=predictions.device)
     loss_minimum_ce = losses[batch_indexer, loss_index_1]
     loss_selected = losses[batch_indexer, loss_index_2]
 
@@ -172,7 +179,8 @@ def parity_loss(predictions, certainties, targets, use_most_certain=True):
     # Losses are of shape [B, parity_sequence_length, internal_ticks]
     losses = nn.CrossEntropyLoss(reduction="none")(
         predictions.flatten(0, 1),
-        torch.repeat_interleave(targets.unsqueeze(-1), predictions.size(-1), -1)
+        torch.repeat_interleave(targets.unsqueeze(-1),
+                                predictions.size(-1), -1)
         .flatten(0, 1)
         .long(),
     ).reshape(predictions[:, :, 0].shape)
@@ -185,7 +193,8 @@ def parity_loss(predictions, certainties, targets, use_most_certain=True):
     if not use_most_certain:
         loss_index_2[:] = -1
 
-    batch_indexer = torch.arange(predictions.size(0), device=predictions.device)
+    batch_indexer = torch.arange(
+        predictions.size(0), device=predictions.device)
     loss_minimum_ce = losses[batch_indexer, loss_index_1].mean()
     loss_selected = losses[batch_indexer, loss_index_2].mean()
 
@@ -208,7 +217,8 @@ def qamnist_loss(predictions, certainties, targets, use_most_certain=True):
 
     losses = nn.CrossEntropyLoss(reduction="none")(
         predictions,
-        torch.repeat_interleave(targets.unsqueeze(-1), predictions.size(-1), -1),
+        torch.repeat_interleave(targets.unsqueeze(-1),
+                                predictions.size(-1), -1),
     )
 
     loss_index_1 = losses.argmin(dim=1)
@@ -216,7 +226,8 @@ def qamnist_loss(predictions, certainties, targets, use_most_certain=True):
     if not use_most_certain:
         loss_index_2[:] = -1
 
-    batch_indexer = torch.arange(predictions.size(0), device=predictions.device)
+    batch_indexer = torch.arange(
+        predictions.size(0), device=predictions.device)
     loss_minimum_ce = losses[batch_indexer, loss_index_1].mean()
     loss_selected = losses[batch_indexer, loss_index_2].mean()
 

@@ -95,7 +95,8 @@ def test_basic_instantiation():
     try:
         from udl_rating_framework.core.representation import Token
 
-        token = Token(text="keyword", type="KEYWORD", position=0, line=1, column=1)
+        token = Token(text="keyword", type="KEYWORD",
+                      position=0, line=1, column=1)
         assert token.text == "keyword"
         assert token.type == "KEYWORD"
         print("✓ Token instantiation")
@@ -178,7 +179,8 @@ def test_aggregation_computation():
         result = aggregator.aggregate(metric_values)
 
         expected = 0.3 * 0.8 + 0.7 * 0.6  # 0.24 + 0.42 = 0.66
-        assert abs(result - expected) < 1e-6, f"Expected {expected}, got {result}"
+        assert abs(
+            result - expected) < 1e-6, f"Expected {expected}, got {result}"
         print(f"✓ Aggregation computation (result: {result:.3f})")
     except Exception as e:
         print(f"✗ Aggregation computation failed: {e}")

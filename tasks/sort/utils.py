@@ -36,9 +36,11 @@ def decode_predictions(predictions, blank_label=0, return_wait_times=False):
                 wait_time_now = 0
             else:
                 wait_time_now += 1
-        decoded_sequences.append(torch.tensor(decoded, device=predictions.device))
+        decoded_sequences.append(torch.tensor(
+            decoded, device=predictions.device))
         if return_wait_times:
-            wait_times_all.append(torch.tensor(wait_times, device=predictions.device))
+            wait_times_all.append(torch.tensor(
+                wait_times, device=predictions.device))
 
     if return_wait_times:
         return decoded_sequences, wait_times_all

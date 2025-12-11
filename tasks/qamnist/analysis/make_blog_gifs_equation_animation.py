@@ -1,8 +1,6 @@
-from manim import config
+from manim import BLACK, RED, Indicate, MathTex, Scene, config
 
 config.background_color = "WHITE"
-
-from manim import Scene, MathTex, Indicate, RED, BLACK
 
 
 class ModularEquationHighlight(Scene):
@@ -50,7 +48,8 @@ class ModularEquationHighlight(Scene):
 
         for idx in highlight_sequence:
             eq[idx].set_stroke(color=RED, width=6)
-            self.play(Indicate(eq[idx], color=RED, scale_factor=1.3), run_time=10 / 15)
+            self.play(Indicate(eq[idx], color=RED,
+                      scale_factor=1.3), run_time=10 / 15)
             eq[idx].set_stroke(color=BLACK, width=0)
 
         self.wait(10 / 15)

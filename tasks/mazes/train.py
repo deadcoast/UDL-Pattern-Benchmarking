@@ -1,34 +1,32 @@
 import argparse
 import os
 import random
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-
-sns.set_style("darkgrid")
 import torch
-
-if torch.cuda.is_available():
-    # For faster
-    torch.set_float32_matmul_precision("high")
+import torchvision
 from tqdm.auto import tqdm
 
 from data.custom_datasets import MazeImageFolder
 from models.ctm import ContinuousThoughtMachine
-from models.lstm import LSTMBaseline
 from models.ff import FFBaseline
-from tasks.mazes.plotting import make_maze_gif
+from models.lstm import LSTMBaseline
 from tasks.image_classification.plotting import plot_neural_dynamics
+from tasks.mazes.plotting import make_maze_gif
 from utils.housekeeping import set_seed, zip_python_code
 from utils.losses import maze_loss
 from utils.schedulers import WarmupCosineAnnealingLR, WarmupMultiStepLR, warmup
 
-import torchvision
+sns.set_style("darkgrid")
+
+if torch.cuda.is_available():
+    # For faster
+    torch.set_float32_matmul_precision("high")
 
 torchvision.disable_beta_transforms_warning()
-
-import warnings
 
 warnings.filterwarnings(
     "ignore", message="using precomputed metric; inverse_transform will be unavailable"
@@ -40,19 +38,22 @@ warnings.filterwarnings(
     "ignore",
     "Corrupt EXIF data",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 warnings.filterwarnings(
     "ignore",
     "UserWarning: Metadata Warning",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 warnings.filterwarnings(
     "ignore",
     "UserWarning: Truncated File Read",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 
 
@@ -73,7 +74,8 @@ def parse_args():
     parser.add_argument(
         "--d_model", type=int, default=512, help="Dimension of the model."
     )
-    parser.add_argument("--dropout", type=float, default=0.0, help="Dropout rate.")
+    parser.add_argument("--dropout", type=float,
+                        default=0.0, help="Dropout rate.")
     parser.add_argument(
         "--backbone_type",
         type=str,
@@ -344,7 +346,6 @@ def parse_args():
 
 
 if __name__ == "__main__":
-
     # Hosuekeeping
     args = parse_args()
 
@@ -661,10 +662,12 @@ if __name__ == "__main__":
 
                 if args.model == "ctm":
                     # CTM output: (B, SeqLength*5, Ticks), Certainties: (B, Ticks)
-                    predictions_raw, certainties, synchronisation = model(inputs)
+                    predictions_raw, certainties, synchronisation = model(
+                        inputs)
                     # Reshape predictions: (B, SeqLength, 5, Ticks)
                     predictions = predictions_raw.reshape(
-                        predictions_raw.size(0), -1, 5, predictions_raw.size(-1)
+                        predictions_raw.size(
+                            0), -1, 5, predictions_raw.size(-1)
                     )
                     loss, where_most_certain, upto_where = maze_loss(
                         predictions,
@@ -692,10 +695,12 @@ if __name__ == "__main__":
 
                 elif args.model == "lstm":
                     # LSTM output: (B, SeqLength*5, Ticks), Certainties: (B, Ticks)
-                    predictions_raw, certainties, synchronisation = model(inputs)
+                    predictions_raw, certainties, synchronisation = model(
+                        inputs)
                     # Reshape predictions: (B, SeqLength, 5, Ticks)
                     predictions = predictions_raw.reshape(
-                        predictions_raw.size(0), -1, 5, predictions_raw.size(-1)
+                        predictions_raw.size(
+                            0), -1, 5, predictions_raw.size(-1)
                     )
                     loss, where_most_certain, upto_where = maze_loss(
                         predictions,
@@ -756,7 +761,8 @@ if __name__ == "__main__":
                     where_most_certain_max = where_most_certain
 
                 if (
-                    isinstance(upto_where, (np.ndarray, list)) and len(upto_where) > 0
+                    isinstance(upto_where, (np.ndarray, list)
+                               ) and len(upto_where) > 0
                 ):  # Check if it's a list/array
                     upto_where_mean = np.mean(upto_where)
                     upto_where_std = np.std(upto_where)
@@ -793,7 +799,6 @@ if __name__ == "__main__":
             if bi % args.track_every == 0 and (bi != 0 or args.reload_model_only):
                 model.eval()  # Use eval mode for consistency during tracking
                 with torch.inference_mode():  # Use inference mode for tracking
-
                     # --- Quantitative Metrics ---
                     iters.append(bi)
                     # Re-initialize metric lists for this evaluation step
@@ -815,12 +820,10 @@ if __name__ == "__main__":
                         num_workers=num_workers_test,
                     )  # Use consistent num_workers
                     all_targets_list = []
-                    all_predictions_list = (
-                        []
-                    )  # Per step/tick predictions argmax (N, S, T) or (N, S)
-                    all_predictions_most_certain_list = (
-                        []
-                    )  # Predictions at chosen step/tick argmax (N, S)
+                    # Per step/tick predictions argmax (N, S, T) or (N, S)
+                    all_predictions_list = []
+                    # Predictions at chosen step/tick argmax (N, S)
+                    all_predictions_most_certain_list = []
                     all_losses = []
 
                     with tqdm(
@@ -853,7 +856,8 @@ if __name__ == "__main__":
                                     use_most_certain=True,
                                 )
                                 all_predictions_list.append(
-                                    predictions.argmax(2).detach().cpu().numpy()
+                                    predictions.argmax(
+                                        2).detach().cpu().numpy()
                                 )  # B,S,C,T -> argmax class -> B,S,T
                                 pred_at_certain = predictions.argmax(2)[
                                     torch.arange(
@@ -881,7 +885,8 @@ if __name__ == "__main__":
                                     use_most_certain=False,
                                 )  # where = -1
                                 all_predictions_list.append(
-                                    predictions.argmax(2).detach().cpu().numpy()
+                                    predictions.argmax(
+                                        2).detach().cpu().numpy()
                                 )  # B,S,C,T
                                 pred_at_certain = predictions.argmax(2)[
                                     torch.arange(
@@ -906,10 +911,12 @@ if __name__ == "__main__":
                                     use_most_certain=False,
                                 )  # where = -1
                                 all_predictions_list.append(
-                                    predictions.argmax(2).detach().cpu().numpy()
+                                    predictions.argmax(
+                                        2).detach().cpu().numpy()
                                 )  # B,S
                                 all_predictions_most_certain_list.append(
-                                    predictions.argmax(2).detach().cpu().numpy()
+                                    predictions.argmax(
+                                        2).detach().cpu().numpy()
                                 )  # B,S (same as above for FF)
 
                             all_losses.append(loss.item())
@@ -920,7 +927,7 @@ if __name__ == "__main__":
                             ):
                                 break
                             pbar_inner.set_description(
-                                f"Computing metrics for train (Batch {inferi+1})"
+                                f"Computing metrics for train (Batch {inferi + 1})"
                             )
                             pbar_inner.update(1)
 
@@ -982,7 +989,8 @@ if __name__ == "__main__":
                         for inferi, (inputs, targets) in enumerate(loader):
                             inputs = inputs.to(device)
                             targets = targets.to(device)
-                            all_targets_list.append(targets.detach().cpu().numpy())
+                            all_targets_list.append(
+                                targets.detach().cpu().numpy())
 
                             # Model-specific forward, reshape, loss for evaluation
                             if args.model == "ctm":
@@ -1000,7 +1008,8 @@ if __name__ == "__main__":
                                     use_most_certain=True,
                                 )
                                 all_predictions_list.append(
-                                    predictions.argmax(2).detach().cpu().numpy()
+                                    predictions.argmax(
+                                        2).detach().cpu().numpy()
                                 )  # B,S,T
                                 pred_at_certain = predictions.argmax(2)[
                                     torch.arange(
@@ -1028,7 +1037,8 @@ if __name__ == "__main__":
                                     use_most_certain=False,
                                 )  # where = -1
                                 all_predictions_list.append(
-                                    predictions.argmax(2).detach().cpu().numpy()
+                                    predictions.argmax(
+                                        2).detach().cpu().numpy()
                                 )  # B,S,T
                                 pred_at_certain = predictions.argmax(2)[
                                     torch.arange(
@@ -1053,10 +1063,12 @@ if __name__ == "__main__":
                                     use_most_certain=False,
                                 )  # where = -1
                                 all_predictions_list.append(
-                                    predictions.argmax(2).detach().cpu().numpy()
+                                    predictions.argmax(
+                                        2).detach().cpu().numpy()
                                 )  # B,S
                                 all_predictions_most_certain_list.append(
-                                    predictions.argmax(2).detach().cpu().numpy()
+                                    predictions.argmax(
+                                        2).detach().cpu().numpy()
                                 )  # B,S (same as above for FF)
 
                             all_losses.append(loss.item())
@@ -1067,7 +1079,7 @@ if __name__ == "__main__":
                             ):
                                 break
                             pbar_inner.set_description(
-                                f"Computing metrics for test (Batch {inferi+1})"
+                                f"Computing metrics for test (Batch {inferi + 1})"
                             )
                             pbar_inner.update(1)
 
@@ -1245,12 +1257,14 @@ if __name__ == "__main__":
 
                         # Create maze GIF (task-specific plotting)
                         make_maze_gif(
-                            (inputs_viz[longest_index].detach().cpu().numpy() + 1) / 2,
+                            (inputs_viz[longest_index].detach(
+                            ).cpu().numpy() + 1) / 2,
                             predictions_viz[longest_index]
                             .detach()
                             .cpu()
                             .numpy(),  # Pass reshaped B,S,C,T -> S,C,T
-                            targets_viz[longest_index].detach().cpu().numpy(),  # S
+                            targets_viz[longest_index].detach(
+                            ).cpu().numpy(),  # S
                             attention_tracking_viz[
                                 :, longest_index
                             ],  # Pass T, (H), H, W
@@ -1276,12 +1290,16 @@ if __name__ == "__main__":
                     # Save all tracked metrics
                     "train_losses": train_losses,
                     "test_losses": test_losses,
-                    "train_accuracies": train_accuracies,  # List of (S, T) or (S,) arrays
-                    "test_accuracies": test_accuracies,  # List of (S, T) or (S,) arrays
+                    # List of (S, T) or (S,) arrays
+                    "train_accuracies": train_accuracies,
+                    # List of (S, T) or (S,) arrays
+                    "test_accuracies": test_accuracies,
                     "train_accuracies_most_certain": train_accuracies_most_certain,  # List of scalars
                     "test_accuracies_most_certain": test_accuracies_most_certain,  # List of scalars
-                    "train_accuracies_most_certain_permaze": train_accuracies_most_certain_permaze,  # List of scalars
-                    "test_accuracies_most_certain_permaze": test_accuracies_most_certain_permaze,  # List of scalars
+                    # List of scalars
+                    "train_accuracies_most_certain_permaze": train_accuracies_most_certain_permaze,
+                    # List of scalars
+                    "test_accuracies_most_certain_permaze": test_accuracies_most_certain_permaze,
                     "iters": iters,
                     "args": args,  # Save args used for this run
                     # RNG states

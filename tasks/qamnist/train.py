@@ -2,35 +2,31 @@ import argparse
 import multiprocessing  # Used for GIF generation
 import os
 import random
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+import torch
+import torchvision
+from tqdm.auto import tqdm
+
+from models.utils import get_latest_checkpoint, reshape_predictions
+from tasks.image_classification.plotting import plot_neural_dynamics
+from tasks.parity.utils import reshape_attention_weights
+from tasks.qamnist.plotting import make_qamnist_gif
+from tasks.qamnist.utils import get_dataset, prepare_model
+from utils.housekeeping import set_seed, zip_python_code
+from utils.losses import qamnist_loss
+from utils.samplers import QAMNISTSampler
+from utils.schedulers import WarmupCosineAnnealingLR, WarmupMultiStepLR, warmup
 
 sns.set_style("darkgrid")
-import torch
 
 if torch.cuda.is_available():
     torch.set_float32_matmul_precision("high")
-from tqdm.auto import tqdm
-
-from utils.samplers import QAMNISTSampler
-from tasks.image_classification.plotting import plot_neural_dynamics
-from tasks.qamnist.plotting import make_qamnist_gif
-from utils.housekeeping import set_seed, zip_python_code
-from utils.losses import qamnist_loss
-from utils.schedulers import WarmupCosineAnnealingLR, WarmupMultiStepLR, warmup
-from tasks.parity.utils import reshape_attention_weights
-from tasks.qamnist.utils import get_dataset, prepare_model
-from models.utils import reshape_predictions, get_latest_checkpoint
-
-
-import torchvision
 
 torchvision.disable_beta_transforms_warning()
-
-
-import warnings
 
 warnings.filterwarnings(
     "ignore", message="using precomputed metric; inverse_transform will be unavailable"
@@ -43,22 +39,24 @@ warnings.filterwarnings(
     "ignore",
     "Corrupt EXIF data",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 
 warnings.filterwarnings(
     "ignore",
     "UserWarning: Metadata Warning",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
-
 
 warnings.filterwarnings(
     "ignore",
     "UserWarning: Truncated File Read",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 
 
@@ -171,7 +169,8 @@ def parse_args():
         default=4,
         help="Hidden dimensions of the memory if using deep memory.",
     )
-    parser.add_argument("--dropout", type=float, default=0.0, help="Dropout rate.")
+    parser.add_argument("--dropout", type=float,
+                        default=0.0, help="Dropout rate.")
     parser.add_argument(
         "--do_normalisation",
         action=argparse.BooleanOptionalAction,
@@ -285,7 +284,6 @@ def parse_args():
 
 
 if __name__ == "__main__":
-
     # Hosuekeeping
     args = parse_args()
 
@@ -337,7 +335,8 @@ if __name__ == "__main__":
     # For lazy modules so that we can get param count
     pseudo_data = train_data.__getitem__(0)
     pseudo_inputs = pseudo_data[0].unsqueeze(0).to(device)
-    pseudo_z = torch.tensor(pseudo_data[1]).unsqueeze(0).unsqueeze(2).to(device)
+    pseudo_z = torch.tensor(pseudo_data[1]).unsqueeze(
+        0).unsqueeze(2).to(device)
     model(pseudo_inputs, pseudo_z)
 
     model.train()
@@ -374,14 +373,14 @@ if __name__ == "__main__":
 
     # Metrics tracking (I like custom)
     # Using batched estimates
-    start_iter = 0  # For reloading, keep track of this (pretty tqdm stuff needs it)
+    # For reloading, keep track of this (pretty tqdm stuff needs it)
+    start_iter = 0
     train_losses = []
     test_losses = []
     train_accuracies = []  # This will be per internal tick, not so simple
     test_accuracies = []
-    train_accuracies_most_certain = (
-        []
-    )  # This will be selected according to what is returned by loss function
+    # This will be selected according to what is returned by loss function
+    train_accuracies_most_certain = []
     test_accuracies_most_certain = []
     iters = []
     scaler = torch.amp.GradScaler(
@@ -391,7 +390,8 @@ if __name__ == "__main__":
     # Now that everything is initliased, reload if desired
     if args.reload and (latest_checkpoint_path := get_latest_checkpoint(args.log_dir)):
         print(f"Reloading from: {latest_checkpoint_path}")
-        checkpoint = torch.load(f"{latest_checkpoint_path}", weights_only=False)
+        checkpoint = torch.load(
+            f"{latest_checkpoint_path}", weights_only=False)
         model.load_state_dict(checkpoint["model_state_dict"], strict=True)
         if not args.reload_model_only:
             print("Reloading optimizer etc.")
@@ -452,8 +452,10 @@ if __name__ == "__main__":
             ):
                 predictions, certainties, synchronisation = model(inputs, z)
 
-                predictions_answer_steps = predictions[:, :, -args.q_num_answer_steps :]
-                certainties_answer_steps = certainties[:, :, -args.q_num_answer_steps :]
+                predictions_answer_steps = predictions[:,
+                                                       :, -args.q_num_answer_steps:]
+                certainties_answer_steps = certainties[:,
+                                                       :, -args.q_num_answer_steps:]
 
                 loss, where_most_certain = qamnist_loss(
                     predictions_answer_steps,
@@ -490,8 +492,8 @@ if __name__ == "__main__":
             if bi % args.track_every == 0:
                 model.eval()
                 with torch.inference_mode():
-
-                    inputs, z, question_readable, targets = next(iter(testloader))
+                    inputs, z, question_readable, targets = next(
+                        iter(testloader))
                     inputs = inputs.to(device)
                     targets = targets.to(device)
                     z = torch.stack(z, 1).to(device)
@@ -506,12 +508,14 @@ if __name__ == "__main__":
                         embedding_tracking,
                     ) = model(inputs, z, track=True)
 
-                    predictions = reshape_predictions(predictions, prediction_reshaper)
+                    predictions = reshape_predictions(
+                        predictions, prediction_reshaper)
                     attention = reshape_attention_weights(attention_tracking)
 
                     T = predictions.size(-1)
                     B = predictions.size(0)
-                    gif_inputs = torch.zeros((T, B, 1, 32, 32), device=inputs.device)
+                    gif_inputs = torch.zeros(
+                        (T, B, 1, 32, 32), device=inputs.device)
                     digits_input = inputs.permute(1, 0, 2, 3, 4)
                     gif_inputs[: digits_input.size(0)] = digits_input
 
@@ -528,7 +532,7 @@ if __name__ == "__main__":
                         gif_inputs.device
                     )
                     gif_inputs[
-                        digits_input.size(0) : digits_input.size(0) + T_embed
+                        digits_input.size(0): digits_input.size(0) + T_embed
                     ] = embedding_tensor[:T_embed]
 
                     pbar.set_description("Tracking: Neural dynamics")
@@ -554,7 +558,7 @@ if __name__ == "__main__":
                     )
                     process.start()
 
-                    ##################################### TRAIN METRICS
+                    # TRAIN METRICS
                     all_predictions = []
                     all_targets = []
                     all_predictions_most_certain = []
@@ -578,14 +582,12 @@ if __name__ == "__main__":
                             position=1,
                             dynamic_ncols=True,
                         ) as pbar_inner:
-
                             for inferi, (
                                 inputs,
                                 z,
                                 question_readable,
                                 targets,
                             ) in enumerate(loader):
-
                                 inputs = inputs.to(device)
                                 targets = targets.to(device)
                                 z = torch.stack(z, 1).to(device)
@@ -594,10 +596,10 @@ if __name__ == "__main__":
                                 )
 
                                 these_predictions_answer_steps = these_predictions[
-                                    :, :, -args.q_num_answer_steps :
+                                    :, :, -args.q_num_answer_steps:
                                 ]
                                 certainties_answer_steps = certainties[
-                                    :, :, -args.q_num_answer_steps :
+                                    :, :, -args.q_num_answer_steps:
                                 ]
 
                                 loss, where_most_certain = qamnist_loss(
@@ -608,12 +610,14 @@ if __name__ == "__main__":
                                 )
                                 all_losses.append(loss.item())
 
-                                all_targets.append(targets.detach().cpu().numpy())
+                                all_targets.append(
+                                    targets.detach().cpu().numpy())
 
                                 all_predictions_most_certain.append(
                                     these_predictions_answer_steps.argmax(1)[
                                         torch.arange(
-                                            these_predictions_answer_steps.size(0),
+                                            these_predictions_answer_steps.size(
+                                                0),
                                             device=these_predictions.device,
                                         ),
                                         where_most_certain,
@@ -648,7 +652,8 @@ if __name__ == "__main__":
 
                         train_accuracies.append(
                             np.mean(
-                                all_predictions == all_targets[..., np.newaxis],
+                                all_predictions == all_targets[...,
+                                                               np.newaxis],
                                 axis=tuple(range(all_predictions.ndim - 1)),
                             )
                         )
@@ -657,7 +662,7 @@ if __name__ == "__main__":
                         )
                         train_losses.append(np.mean(all_losses))
 
-                        ##################################### TEST METRICS
+                        # TEST METRICS
                         all_predictions = []
                         all_predictions_most_certain = []
                         all_targets = []
@@ -681,7 +686,6 @@ if __name__ == "__main__":
                                 question_readable,
                                 targets,
                             ) in enumerate(loader):
-
                                 inputs = inputs.to(device)
                                 targets = targets.to(device)
                                 z = torch.stack(z, 1).to(device)
@@ -690,10 +694,10 @@ if __name__ == "__main__":
                                 )
 
                                 these_predictions_answer_steps = these_predictions[
-                                    :, :, -args.q_num_answer_steps :
+                                    :, :, -args.q_num_answer_steps:
                                 ]
                                 certainties_answer_steps = certainties[
-                                    :, :, -args.q_num_answer_steps :
+                                    :, :, -args.q_num_answer_steps:
                                 ]
 
                                 loss, where_most_certain = qamnist_loss(
@@ -704,12 +708,14 @@ if __name__ == "__main__":
                                 )
                                 all_losses.append(loss.item())
 
-                                all_targets.append(targets.detach().cpu().numpy())
+                                all_targets.append(
+                                    targets.detach().cpu().numpy())
 
                                 all_predictions_most_certain.append(
                                     these_predictions_answer_steps.argmax(1)[
                                         torch.arange(
-                                            these_predictions_answer_steps.size(0),
+                                            these_predictions_answer_steps.size(
+                                                0),
                                             device=these_predictions_answer_steps.device,
                                         ),
                                         where_most_certain,
@@ -719,7 +725,8 @@ if __name__ == "__main__":
                                     .numpy()
                                 )
                                 all_predictions.append(
-                                    these_predictions.argmax(1).detach().cpu().numpy()
+                                    these_predictions.argmax(
+                                        1).detach().cpu().numpy()
                                 )
 
                                 if (
@@ -728,7 +735,8 @@ if __name__ == "__main__":
                                     and inferi != 0
                                 ):
                                     break
-                                pbar_inner.set_description("Computing metrics for test")
+                                pbar_inner.set_description(
+                                    "Computing metrics for test")
                                 pbar_inner.update(1)
 
                         all_predictions = np.concatenate(all_predictions)
@@ -739,7 +747,8 @@ if __name__ == "__main__":
 
                         test_accuracies.append(
                             np.mean(
-                                all_predictions == all_targets[..., np.newaxis],
+                                all_predictions == all_targets[...,
+                                                               np.newaxis],
                                 axis=tuple(range(all_predictions.ndim - 1)),
                             )
                         )
@@ -774,7 +783,8 @@ if __name__ == "__main__":
                         axacc_test.set_xlim([0, args.training_iterations])
 
                         figacc.tight_layout()
-                        figacc.savefig(f"{args.log_dir}/accuracies.png", dpi=150)
+                        figacc.savefig(
+                            f"{args.log_dir}/accuracies.png", dpi=150)
                         plt.close(figacc)
 
                         figloss = plt.figure(figsize=(10, 5))

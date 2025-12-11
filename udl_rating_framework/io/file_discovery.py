@@ -9,11 +9,10 @@ This module provides functionality for:
 """
 
 import logging
-from pathlib import Path
-from typing import List, Set, Generator, Optional, Tuple
-from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Generator, List, Optional, Set, Tuple
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -84,10 +83,12 @@ class FileDiscovery:
 
         # Validate directory path
         if not path.exists():
-            raise FileDiscoveryError(f"Directory does not exist: {directory_path}")
+            raise FileDiscoveryError(
+                f"Directory does not exist: {directory_path}")
 
         if not path.is_dir():
-            raise FileDiscoveryError(f"Path is not a directory: {directory_path}")
+            raise FileDiscoveryError(
+                f"Path is not a directory: {directory_path}")
 
         discovered_files = []
         errors = []
@@ -267,39 +268,37 @@ class FileDiscovery:
         self.supported_extensions.discard(extension)
 
     def discover_and_read_files_parallel(
-        self, 
-        directory_path: str, 
-        max_workers: Optional[int] = None
+        self, directory_path: str, max_workers: Optional[int] = None
     ) -> Tuple[List[Tuple[str, str]], List[str]]:
         """
         Discover and read UDL files in parallel.
-        
+
         Args:
             directory_path: Path to directory to scan
             max_workers: Maximum number of worker threads for file reading
-            
+
         Returns:
             Tuple of (file_contents, errors) where file_contents is list of (path, content) tuples
         """
         # First discover all files
         discovery_result = self.discover_files(directory_path)
-        
+
         if not discovery_result.discovered_files:
             return [], discovery_result.errors
-        
+
         # Read files in parallel
         file_contents = []
         errors = list(discovery_result.errors)  # Start with discovery errors
-        
+
         def read_file(file_path: Path) -> Tuple[bool, str, str]:
             """Read a single file. Returns (success, path, content_or_error)."""
             try:
-                with open(file_path, 'r', encoding='utf-8') as f:
+                with open(file_path, "r", encoding="utf-8") as f:
                     content = f.read()
                 return True, str(file_path), content
             except Exception as e:
                 return False, str(file_path), str(e)
-        
+
         # Use ThreadPoolExecutor for I/O bound file reading
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             # Submit all file reading tasks
@@ -307,26 +306,28 @@ class FileDiscovery:
                 executor.submit(read_file, file_path): file_path
                 for file_path in discovery_result.discovered_files
             }
-            
+
             # Collect results as they complete
             for future in as_completed(future_to_path):
                 file_path = future_to_path[future]
-                
+
                 try:
                     success, path, content_or_error = future.result()
-                    
+
                     if success:
                         file_contents.append((path, content_or_error))
                     else:
                         error_msg = f"Failed to read {path}: {content_or_error}"
                         errors.append(error_msg)
                         logger.error(error_msg)
-                        
+
                 except Exception as e:
                     error_msg = f"Unexpected error reading {file_path}: {str(e)}"
                     errors.append(error_msg)
                     logger.error(error_msg)
-        
-        logger.info(f"Read {len(file_contents)} files successfully, {len(errors) - len(discovery_result.errors)} read errors")
-        
+
+        logger.info(
+            f"Read {len(file_contents)} files successfully, {len(errors) - len(discovery_result.errors)} read errors"
+        )
+
         return file_contents, errors

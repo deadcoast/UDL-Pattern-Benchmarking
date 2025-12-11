@@ -1,10 +1,10 @@
-import numpy as np
-import cv2
-import torch
 import os
-import matplotlib.pyplot as plt
-import imageio
 
+import cv2
+import imageio
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
 from tqdm.auto import tqdm
 
 
@@ -45,7 +45,8 @@ def draw_path(x, route, valid_only=False, gt=False, cmap=None):
     start = np.argwhere((x == [1, 0, 0]).all(axis=2))
     end = np.argwhere((x == [0, 1, 0]).all(axis=2))
     if cmap is None:
-        cmap = plt.get_cmap("winter") if not valid_only else plt.get_cmap("summer")
+        cmap = plt.get_cmap(
+            "winter") if not valid_only else plt.get_cmap("summer")
 
     # Initialize the current position
     current_pos = start[0]
@@ -294,14 +295,16 @@ def make_maze_gif(
 
     route_steps = [
         np.unravel_index(
-            np.argmax((inputs == np.reshape(np.array([1, 0, 0]), (3, 1, 1))).all(0)),
+            np.argmax((inputs == np.reshape(
+                np.array([1, 0, 0]), (3, 1, 1))).all(0)),
             inputs.shape[1:],
         )
     ]  # Starting point
     frames = []
     cmap = plt.get_cmap("gist_rainbow")
     cmap_viridis = plt.get_cmap("viridis")
-    step_linspace = np.linspace(0, 1, predictions.shape[-1])  # For sampling colours
+    step_linspace = np.linspace(
+        0, 1, predictions.shape[-1])  # For sampling colours
     with tqdm(
         total=predictions.shape[-1],
         initial=0,
@@ -444,5 +447,6 @@ def make_maze_gif(
     ax.axis("off")
     fig.tight_layout(pad=0)
     fig.savefig(f"{save_location}/route_approximation.png", dpi=200)
-    imageio.mimsave(f"{save_location}/prediction.gif", frames, fps=15, loop=100)
+    imageio.mimsave(f"{save_location}/prediction.gif",
+                    frames, fps=15, loop=100)
     plt.close(fig)

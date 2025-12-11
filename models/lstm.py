@@ -1,20 +1,20 @@
-import torch.nn as nn
-import torch
-import numpy as np
 import math
 
+import numpy as np
+import torch
+import torch.nn as nn
+
+from models.constants import VALID_BACKBONE_TYPES, VALID_POSITIONAL_EMBEDDING_TYPES
 from models.modules import (
-    ParityBackbone,
-    LearnableFourierPositionalEncoding,
-    MultiLearnableFourierPositionalEncoding,
     CustomRotationalEmbedding,
     CustomRotationalEmbedding1D,
+    LearnableFourierPositionalEncoding,
+    MultiLearnableFourierPositionalEncoding,
+    ParityBackbone,
     ShallowWide,
 )
 from models.resnet import prepare_resnet_backbone
 from models.utils import compute_normalized_entropy
-
-from models.constants import VALID_BACKBONE_TYPES, VALID_POSITIONAL_EMBEDDING_TYPES
 
 
 class LSTMBaseline(nn.Module):
@@ -101,14 +101,16 @@ class LSTMBaseline(nn.Module):
         x = self.initial_rgb(x)
         self.kv_features = self.backbone(x)
         pos_emb = self.positional_embedding(self.kv_features)
-        combined_features = (self.kv_features + pos_emb).flatten(2).transpose(1, 2)
+        combined_features = (self.kv_features +
+                             pos_emb).flatten(2).transpose(1, 2)
         kv = self.kv_proj(combined_features)
         return kv
 
     def compute_certainty(self, current_prediction):
         """Compute the certainty of the current prediction."""
         B = current_prediction.size(0)
-        reshaped_pred = current_prediction.reshape([B] + self.prediction_reshaper)
+        reshaped_pred = current_prediction.reshape(
+            [B] + self.prediction_reshaper)
         ne = compute_normalized_entropy(reshaped_pred)
         current_certainty = torch.stack((ne, 1 - ne), -1)
         return current_certainty
@@ -118,7 +120,8 @@ class LSTMBaseline(nn.Module):
     def set_initial_rgb(self):
         """Set the initial RGB processing module based on the backbone type."""
         if "resnet" in self.backbone_type:
-            self.initial_rgb = nn.LazyConv2d(3, 1, 1)  # Adapts input channels lazily
+            # Adapts input channels lazily
+            self.initial_rgb = nn.LazyConv2d(3, 1, 1)
         else:
             self.initial_rgb = nn.Identity()
 
@@ -166,7 +169,8 @@ class LSTMBaseline(nn.Module):
             self.backbone = ShallowWide()
         elif self.backbone_type == "parity_backbone":
             d_backbone = self.get_d_backbone()
-            self.backbone = ParityBackbone(n_embeddings=2, d_embedding=d_backbone)
+            self.backbone = ParityBackbone(
+                n_embeddings=2, d_embedding=d_backbone)
         elif "resnet" in self.backbone_type:
             self.backbone = prepare_resnet_backbone(self.backbone_type)
         elif self.backbone_type == "none":
@@ -206,9 +210,9 @@ class LSTMBaseline(nn.Module):
     def verify_args(self):
         """Verify the validity of the input arguments."""
 
-        assert self.backbone_type in VALID_BACKBONE_TYPES + [
-            "none"
-        ], f"Invalid backbone_type: {self.backbone_type}"
+        assert self.backbone_type in VALID_BACKBONE_TYPES + ["none"], (
+            f"Invalid backbone_type: {self.backbone_type}"
+        )
 
         assert self.positional_embedding_type in VALID_POSITIONAL_EMBEDDING_TYPES + [
             "none"
@@ -237,19 +241,21 @@ class LSTMBaseline(nn.Module):
         kv = self.compute_features(x)
 
         # --- Initialise Recurrent State ---
-        hn = torch.repeat_interleave(self.start_hidden_state.unsqueeze(1), x.size(0), 1)
-        cn = torch.repeat_interleave(self.start_cell_state.unsqueeze(1), x.size(0), 1)
+        hn = torch.repeat_interleave(
+            self.start_hidden_state.unsqueeze(1), x.size(0), 1)
+        cn = torch.repeat_interleave(
+            self.start_cell_state.unsqueeze(1), x.size(0), 1)
         state_trace = [hn[-1]]
 
         # --- Prepare Storage for Outputs per Iteration ---
         predictions = torch.empty(
             B, self.out_dims, self.iterations, device=device, dtype=x.dtype
         )
-        certainties = torch.empty(B, 2, self.iterations, device=device, dtype=x.dtype)
+        certainties = torch.empty(
+            B, 2, self.iterations, device=device, dtype=x.dtype)
 
         # --- Recurrent Loop  ---
         for stepi in range(self.iterations):
-
             # --- Interact with Data via Attention ---
             q = self.q_proj(hn[-1].unsqueeze(1))
             attn_out, attn_weights = self.attention(

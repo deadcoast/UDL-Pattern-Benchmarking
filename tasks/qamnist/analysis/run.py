@@ -1,26 +1,27 @@
-import re
-import os
-import torch
-import numpy as np
-import matplotlib.pyplot as plt
-from utils.samplers import QAMNISTSampler
 import argparse
-import pandas as pd
 import multiprocessing
+import os
+import re
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import torch
 from tqdm import tqdm
 
-from utils.housekeeping import set_seed
-from tasks.qamnist.plotting import make_qamnist_gif
+from models.utils import (
+    get_all_log_dirs,
+    get_latest_checkpoint_file,
+    get_model_args_from_checkpoint,
+    load_checkpoint,
+)
 from tasks.image_classification.plotting import plot_neural_dynamics
 from tasks.parity.plotting import plot_training_curve_all_runs
-from models.utils import (
-    load_checkpoint,
-    get_all_log_dirs,
-    get_model_args_from_checkpoint,
-    get_latest_checkpoint_file,
-)
 from tasks.parity.utils import reshape_attention_weights
+from tasks.qamnist.plotting import make_qamnist_gif
 from tasks.qamnist.utils import get_dataset, prepare_model
+from utils.housekeeping import set_seed
+from utils.samplers import QAMNISTSampler
 
 
 def parse_args():
@@ -92,7 +93,8 @@ def plot_accuracy_operations(
 ):
     fig, ax = plt.subplots(figsize=(12, 6))
     cmap = plt.get_cmap("viridis")
-    ax.axvline(x=4, color="red", linestyle="--", linewidth=2, label="Training Regime")
+    ax.axvline(x=4, color="red", linestyle="--",
+               linewidth=2, label="Training Regime")
     for i, digit in enumerate(num_digits_to_test):
         norm_digit = (digit - min(num_digits_to_test)) / (
             max(num_digits_to_test) - min(num_digits_to_test)
@@ -112,11 +114,13 @@ def plot_accuracy_operations(
             color=color,
             alpha=0.2,
         )
-    norm = plt.Normalize(vmin=min(num_digits_to_test), vmax=max(num_digits_to_test))
+    norm = plt.Normalize(vmin=min(num_digits_to_test),
+                         vmax=max(num_digits_to_test))
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
     cbar = fig.colorbar(
-        sm, ax=ax, ticks=range(min(num_digits_to_test), max(num_digits_to_test) + 1)
+        sm, ax=ax, ticks=range(min(num_digits_to_test),
+                               max(num_digits_to_test) + 1)
     )
     cbar.set_label("Number of Digits")
     ax.set_xlabel("Number of Operations")
@@ -206,10 +210,10 @@ def contains_only_zero_zero_ops(q):
 
 
 def create_case_study_plots(model, model_args, save_dir):
-
     num_digits = 2
     num_operations = 4
-    testloader = prepare_data_for_analysis(num_digits, num_operations, model_args)
+    testloader = prepare_data_for_analysis(
+        num_digits, num_operations, model_args)
     inputs, z, question_readable, targets = next(iter(testloader))
     inputs, targets = inputs.to(device), targets.to(device)
     z = torch.stack(z, 1).to(device)
@@ -240,7 +244,7 @@ def create_case_study_plots(model, model_args, save_dir):
     embedding_input[:T_embed] = reshaped
 
     embedding_tensor = torch.from_numpy(embedding_input).to(gif_inputs.device)
-    gif_inputs[digits_input.size(0) : digits_input.size(0) + T_embed] = (
+    gif_inputs[digits_input.size(0): digits_input.size(0) + T_embed] = (
         embedding_tensor[:T_embed]
     )
 
@@ -274,11 +278,11 @@ def get_accuracy(testloader, model, device, args):
         if args.model_type == "lstm":
             predictions_argmax = predictions[:, :, -1].argmax(1)
         elif args.model_type == "ctm":
-            predictions_argmax = predictions[:, :, -args.q_num_answer_steps :].argmax(
+            predictions_argmax = predictions[:, :, -args.q_num_answer_steps:].argmax(
                 1
             )[
                 np.arange(inputs.size(0)),
-                certainties[:, 1, -args.q_num_answer_steps :].argmax(-1),
+                certainties[:, 1, -args.q_num_answer_steps:].argmax(-1),
             ]
         else:
             raise ValueError(
@@ -292,7 +296,6 @@ def get_accuracy(testloader, model, device, args):
 
 
 if __name__ == "__main__":
-
     args = parse_args()
 
     device = f"cuda:{args.device[0]}" if args.device[0] != -1 else "cpu"
@@ -318,7 +321,8 @@ if __name__ == "__main__":
         plot_individual_runs=False,
     )
 
-    progress_bar = tqdm(all_runs_log_dirs, desc="Analyzing Runs", dynamic_ncols=True)
+    progress_bar = tqdm(all_runs_log_dirs,
+                        desc="Analyzing Runs", dynamic_ncols=True)
     for folder in progress_bar:
         progress_bar.set_description(f"Analyzing Model at {folder}")
 
@@ -340,7 +344,8 @@ if __name__ == "__main__":
         accuracy_matrix = np.zeros(
             (len(num_operations_to_test), len(num_digits_to_test))
         )
-        std_matrix = np.zeros((len(num_operations_to_test), len(num_digits_to_test)))
+        std_matrix = np.zeros(
+            (len(num_operations_to_test), len(num_digits_to_test)))
         results = []
         for i, num_digits in enumerate(num_digits_to_test):
             for j, num_operations in enumerate(num_operations_to_test):

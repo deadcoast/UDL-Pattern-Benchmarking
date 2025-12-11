@@ -9,12 +9,17 @@ This module provides:
 - Comprehensive evaluation suite with cross-validation and statistical analysis
 """
 
-from .comparison import ComparisonEngine, ComparisonResult, RankingResult, ComparisonSummary
-from .evaluation_suite import EvaluationSuite, EvaluationResult
+from .comparison import (
+    ComparisonEngine,
+    ComparisonResult,
+    ComparisonSummary,
+    RankingResult,
+)
+from .evaluation_suite import EvaluationResult, EvaluationSuite
 
 __all__ = [
     "ComparisonEngine",
-    "ComparisonResult", 
+    "ComparisonResult",
     "RankingResult",
     "ComparisonSummary",
     "EvaluationSuite",

@@ -4,9 +4,9 @@ Base class for quality metrics.
 Defines the abstract interface that all metrics must implement.
 """
 
-from abc import ABC, abstractmethod
-from typing import Dict, Type, Set, Any, Optional
 import logging
+from abc import ABC, abstractmethod
+from typing import Any, Dict, Optional, Set, Type
 
 logger = logging.getLogger(__name__)
 
@@ -176,7 +176,8 @@ class QualityMetric(ABC):
         claimed_properties = self.get_properties()
         for prop, claimed in claimed_properties.items():
             if prop in results and claimed and not results[prop]:
-                logger.warning(f"Metric claims to be {prop} but validation failed")
+                logger.warning(
+                    f"Metric claims to be {prop} but validation failed")
 
         return results
 

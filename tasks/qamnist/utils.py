@@ -1,9 +1,9 @@
+import numpy as np
+from torchvision import datasets, transforms
+
+from data.custom_datasets import QAMNISTDataset
 from models.ctm_qamnist import ContinuousThoughtMachineQAMNIST
 from models.lstm_qamnist import LSTMBaseline
-from data.custom_datasets import QAMNISTDataset
-from torchvision import datasets
-from torchvision import transforms
-import numpy as np
 
 
 def get_dataset(
@@ -23,7 +23,8 @@ def get_dataset(
         ]
     )
     train_data = QAMNISTDataset(
-        datasets.MNIST("data/", train=True, transform=transform, download=True),
+        datasets.MNIST("data/", train=True,
+                       transform=transform, download=True),
         num_images=q_num_images,
         num_images_delta=q_num_images_delta,
         num_repeats_per_input=q_num_repeats_per_input,
@@ -31,7 +32,8 @@ def get_dataset(
         num_operations_delta=q_num_operations_delta,
     )
     test_data = QAMNISTDataset(
-        datasets.MNIST("data/", train=False, transform=transform, download=True),
+        datasets.MNIST("data/", train=False,
+                       transform=transform, download=True),
         num_images=q_num_images,
         num_images_delta=q_num_images_delta,
         num_repeats_per_input=q_num_repeats_per_input,
@@ -81,6 +83,7 @@ def prepare_model(args, device):
             iterations_for_answering=args.q_num_answer_steps,
         ).to(device)
     else:
-        raise ValueError(f"Model must be either ctm or lstm, not {args.model_type}")
+        raise ValueError(
+            f"Model must be either ctm or lstm, not {args.model_type}")
 
     return model

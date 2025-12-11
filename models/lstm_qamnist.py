@@ -1,12 +1,15 @@
-import torch.nn as nn
-import torch
-import torch.nn.functional as F  # Used for GLU if not in modules
-import numpy as np
 import math
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F  # Used for GLU if not in modules
 
 # Local imports (Assuming these contain necessary custom modules)
 from models.modules import *
-from models.utils import *  # Assuming compute_decay, compute_normalized_entropy are here
+
+# Assuming compute_decay, compute_normalized_entropy are here
+from models.utils import *
 
 
 class LSTMBaseline(nn.Module):
@@ -86,7 +89,8 @@ class LSTMBaseline(nn.Module):
 
         # Attention
         self.q_proj = nn.LazyLinear(d_input)
-        self.kv_proj = nn.Sequential(nn.LazyLinear(d_input), nn.LayerNorm(d_input))
+        self.kv_proj = nn.Sequential(
+            nn.LazyLinear(d_input), nn.LayerNorm(d_input))
         self.attention = nn.MultiheadAttention(
             d_input, heads, dropout, batch_first=True
         )
@@ -97,7 +101,8 @@ class LSTMBaseline(nn.Module):
     def compute_certainty(self, current_prediction):
         """Compute the certainty of the current prediction."""
         B = current_prediction.size(0)
-        reshaped_pred = current_prediction.reshape([B] + self.prediction_reshaper)
+        reshaped_pred = current_prediction.reshape(
+            [B] + self.prediction_reshaper)
         ne = compute_normalized_entropy(reshaped_pred)
         current_certainty = torch.stack((ne, 1 - ne), -1)
         return current_certainty
@@ -150,9 +155,7 @@ class LSTMBaseline(nn.Module):
 
         # --- Tracking Initialization ---
         activations_tracking = []
-        attention_tracking = (
-            []
-        )  # Note: reshaping this correctly requires knowing num_heads
+        attention_tracking = []  # Note: reshaping this correctly requires knowing num_heads
         embedding_tracking = []
 
         thought_steps = ThoughtSteps(
@@ -192,7 +195,6 @@ class LSTMBaseline(nn.Module):
 
         # --- Recurrent Loop (T=iterations steps) ---
         for stepi in range(thought_steps.total_iterations):
-
             is_digit_step, is_question_step, is_answer_step = (
                 thought_steps.determine_step_type(stepi)
             )
@@ -230,7 +232,8 @@ class LSTMBaseline(nn.Module):
                     hidden_state.squeeze(1).detach().cpu().numpy()
                 )
                 if attn_weights is not None:
-                    attention_tracking.append(attn_weights.detach().cpu().numpy())
+                    attention_tracking.append(
+                        attn_weights.detach().cpu().numpy())
                 if is_question_step:
                     embedding_tracking.append(kv.detach().cpu().numpy())
 
