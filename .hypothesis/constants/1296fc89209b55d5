@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/training/active_learning.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1e-10, 0.2, 0.3, 0.5, 0.7, 1.0, 100, 'config', 'core_set', 'cpu', 'cuda', 'diversity_method', 'diversity_sampling', 'diversity_weight', 'entropy', 'final_train_loss', 'final_val_loss', 'hybrid', 'initial_pool_size', 'iteration', 'kmeans', 'labeled_indices', 'labeled_pool_size', 'learning_history', 'max_iterations', 'model_state_dict', 'n_clusters', 'neuron_diversity', 'new_samples', 'pool_sizes', 'query_batch_size', 'query_strategy', 'random', 'retrain_epochs', 'temporal_instability', 'train_loss', 'train_losses', 'training_history', 'uncertainty_method', 'uncertainty_sampling', 'uncertainty_weight', 'val_loss', 'val_losses', 'validation_split']

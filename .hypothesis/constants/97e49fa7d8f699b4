@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/analytics/time_series_analyzer.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.05, 0.1, 0.3, 0.5, 1.0, 1.96, 2.0, 4.0, '## Executive Summary', '## Recommendations', '**Anomalies:**', '**Change Points:**', '.', '. ', 'confidence', 'overall_score']

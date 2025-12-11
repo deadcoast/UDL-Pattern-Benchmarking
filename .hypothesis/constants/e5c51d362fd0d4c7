@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/visualization/webgl_visualizer.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.1, 0.3, 0.5, 0.6, 0.7, 0.9, 1.0, 'activations', 'bounds', 'color', 'constraint', 'edges', 'fragment.glsl', 'id', 'iterations', 'max', 'min', 'neurons', 'nodes', 'non_terminal', 'position', 'rule', 'shaders', 'size', 'source', 'source_pos', 'synchronization', 'target', 'target_pos', 'terminal', 'type', 'unknown', 'vertex.glsl', 'w', 'webgl_visualizations', 'weight']

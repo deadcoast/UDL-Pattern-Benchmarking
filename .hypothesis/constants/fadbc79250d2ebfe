@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/training/transfer_learning.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1e-05, 0.0001, 0.001, 0.1, 256, 512, 'adaptation_method', 'adapter', 'adapter_dim', 'adapters', 'attention_mask', 'bert-base-uncased', 'cpu', 'ctm_config', 'cuda', 'd_input', 'd_model', 'encoder', 'feature_extraction', 'fine_tune_epochs', 'fine_tune_layers', 'fine_tune_lr', 'freeze_pretrained', 'heads', 'input_ids', 'iterations', 'max_length', 'model_state_dict', 'n_synch_out', 'pretrain_epochs', 'pretrain_loss', 'pretrain_lr', 'projection_dim', 'pt', 'temporal_dynamics', 'transfer_config', 'transformer', 'vocab_size']

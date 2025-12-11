@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/metrics/semantic_similarity.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.95, 1.0, 2.0, 1000, '"', '#', "'", '(.)([A-Z][a-z]+)', '([a-z0-9])([A-Z])', '*/', '/*', '//', '[_-]', '\\1 \\2', 'additive', 'bounded', 'continuous', 'english', 'monotonic', 'semantic_similarity']

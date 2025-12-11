@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/metrics/maintainability.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.01, 0.23, 1.0, 2.4, 5.2, 16.2, 171.0, 171, '!', '&', '(', ')', '*', '+', '/', '<', '>', '?', '[', ']', 'additive', 'bounded', 'comment_ratio', 'continuous', 'difficulty', 'effort', 'halstead_volume', 'length', 'lines_of_code', 'maintainability', 'monotonic', 'rhs', 'vocabulary', 'volume', '{', '|', '}', '~']

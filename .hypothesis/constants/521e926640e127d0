@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/analytics/trend_predictor.py
+# hypothesis_version: 6.148.7
+
+[-0.001, 0.0, 0.001, 0.05, 0.2, 0.4, 0.7, 0.95, 1.0, 1.96, 100, 3600, '## Executive Summary', '## Recommendations', '/', 'coef_', 'confidence', 'day_of_week', 'declining', 'default', 'feature_importances_', 'improving', 'inf', 'lag_1', 'lag_2', 'lag_3', 'lag_4', 'lag_5', 'last_value', 'linear', 'mae', 'month', 'monthly', 'monthly_cycle', 'mse', 'overall_score', 'polynomial', 'project', 'r2', 'random_forest', 'recent_mean', 'recent_std', 'stable', 'time_trend', 'timestamp', 'unknown', 'value']

@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/training/ensemble_methods.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.001, 0.05, 0.8, 1.0, 1.96, 'EnsemblePredictor', 'aggregator', 'bayesian', 'confidence_lower', 'confidence_upper', 'cpu', 'cuda', 'deep_nlms', 'dropout', 'first-last', 'heads', 'iterations', 'member_ids', 'member_predictions', 'member_weights', 'memory_length', 'meta_learner.pt', 'method', 'metrics', 'model_id', 'model_state_dict', 'n_synch_action', 'n_synch_out', 'neuron_select_type', 'num_members', 'prediction_max', 'prediction_min', 'prediction_std', 'predictions', 'r', 'random', 'random-pairing', 'simple_average', 'stacking', 'synapse_depth', 'total_uncertainty', 'training_history', 'val_correlation', 'val_loss', 'w', 'weight', 'weighted_average']

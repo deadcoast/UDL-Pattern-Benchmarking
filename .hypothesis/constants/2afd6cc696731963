@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/cli/commands/analytics.py
+# hypothesis_version: 6.148.7
+
+[0.0, '*.json', '--aggregation', '--clustering-method', '--format', '--horizon', '--metrics', '--min-observations', '--min-reports', '--models', '--n-clusters', '--output', '--output-dir', '--platform', '--project-mapping', '--reports-dir', '--target-score', '--time-grouping', '--udl-file', '-f', '-m', '-o', '-p', '-r', '=', 'Aggregation level', 'Export format', '__main__', 'computation_trace', 'confidence', 'csv', 'daily', 'declining', 'detailed', 'error_bounds', 'errors', 'excel', 'executive', 'export_metadata.json', 'hierarchical', 'high', 'improving', 'json', 'kmeans', 'linear', 'metric_formulas', 'metric_scores', 'monthly', 'overall_score', 'parquet', 'polynomial', 'powerbi', 'r', 'random_forest', 'reports', 'stable', 'summary', 'tableau', 'timestamp', 'udl_file', 'w', 'warnings', 'weekly', 'xml']

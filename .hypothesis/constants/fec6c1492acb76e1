@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/analytics/portfolio_analyzer.py
+# hypothesis_version: 6.148.7
+
+[-0.001, 0.0, 0.001, 0.01, 0.1, 0.2, 0.25, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 1.0, 2.5, '## Executive Summary', '## Project Clusters', '## Project Profiles', '## Rankings', '## Recommendations', '- Key Gaps:', '/', 'avg_confidence', 'avg_overall_score', 'cluster_1', 'confidence', 'consistency', 'consistency_score', 'default', 'developing', 'high', 'improvement', 'kmeans', 'low', 'mature', 'maxclust', 'medium', 'metric_', 'num_udl_files', 'overall', 'overall_score', 'quality_trend', 'stable', 'total_reports', 'trend', 'ward']

@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/streaming.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1.0, 5.0, 100, 1000, 1024, 'File not opened', 'aggregated', 'buffer_size', 'chunk_id', 'chunk_size', 'completeness', 'consistency', 'content_size', 'continue', 'end_offset', 'expressiveness', 'file_path', 'file_size', 'memory', 'metadata', 'processed_chunks', 'rb', 'replace', 'rss_mb', 'skip', 'start_offset', 'stop', 'structural_coherence', 'unknown', 'utf-8', 'vms_mb']

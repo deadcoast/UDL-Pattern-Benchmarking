@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/distributed.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1.0, 300.0, 100, 1024, '*', '*.dsl', '*.ebnf', '*.grammar', '*.udl', 'address', 'auto', 'available_resources', 'backend', 'cluster_resources', 'cpu', 'dask', 'ignore_reinit_error', 'is_connected', 'log_to_driver', 'memory', 'memory_limit', 'n_workers', 'ncores', 'nodes', 'num_cpus', 'pickle', 'ray', 'scheduler_info', 'total_cores', 'total_memory', 'uname', 'unknown', 'utf-8', 'workers']

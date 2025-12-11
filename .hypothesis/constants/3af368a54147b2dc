@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/training/uncertainty_quantification.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1e-10, 0.1, 0.5, 0.95, 1.0, 100, 1000, 'auc_rejection_curve', 'average_accuracy', 'average_confidence', 'bin_accuracies', 'bin_confidences', 'bin_counts', 'calibration_error', 'calibration_metrics', 'change_acceleration', 'change_rate', 'clip', 'confidence', 'confidence_level', 'convergence_distance', 'cpu', 'ctm_neuron_level', 'ctm_synchronization', 'deep_ensemble', 'isotonic', 'mean_confidence', 'mean_correlation', 'mean_uncertainty', 'memory_effectiveness', 'memory_variance', 'method', 'monte_carlo_dropout', 'n_samples', 'neuron_diversity', 'neuron_entropy', 'platt', 'pre_change_magnitude', 'predict', 'prediction', 'reliability_score', 'temporal_instability', 'total_uncertainty', 'unknown']

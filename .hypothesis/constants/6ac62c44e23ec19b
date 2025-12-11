@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/gpu_acceleration.py
+# hypothesis_version: 6.148.7
+
+[128, 256, 512, 1024, 10000, 'Apple Silicon GPU', 'CPU', 'allocated', 'available_devices', 'avg_inference_time', 'avg_memory_usage_mb', 'batch_size', 'cached', 'compile', 'confidence', 'cpu', 'cuda', 'cuda_available', 'cuda_version', 'current_device', 'd_model', 'device', 'error', 'file_path', 'free', 'id', 'iterations', 'max_inference_time', 'max_memory_usage_mb', 'memory_total', 'min_inference_time', 'mps', 'n_synch_out', 'name', 'overall_score', 'raw_certainties', 'sequence_length', 'std_inference_time', 'token_ids', 'torch_version', 'total', 'type', 'udl_idx', 'utf-8', 'vocab_size']
