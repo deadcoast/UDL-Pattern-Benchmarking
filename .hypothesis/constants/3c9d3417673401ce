@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/utils/housekeeping.py
+# hypothesis_version: 6.148.7
+
+['*.py', '/', 'models/**/*.py', 'tasks/**/*.py', 'utils/**/*.py', 'w']

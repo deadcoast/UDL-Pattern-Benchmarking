@@ -28,6 +28,7 @@ dependencies = [
     "hypothesis>=6.0.0",
     "lark>=1.1.0",
     "click>=8.1.0",
+    "tensorboard>=2.20.0",
 ]
 
 [project.optional-dependencies]

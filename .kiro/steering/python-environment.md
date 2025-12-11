@@ -4,24 +4,25 @@ inclusion: always
 
 # Python Environment Requirements
 
-## Virtual Environment Usage
+## UV Usage
 
-**CRITICAL**: Always use the project's virtual environment for all Python commands.
+**CRITICAL**: Always use `uv` for all Python commands in this project.
 
 ### Required Commands:
-- Use `.venv/bin/python` instead of `python`
-- Use `.venv/bin/pip` instead of `pip`
-- Use `.venv/bin/pytest` instead of `pytest`
+- Use `uv run python` instead of `python`
+- Use `uv add` instead of `pip install`
+- Use `uv run pytest` instead of `pytest`
 
 ### Examples:
 ```bash
 # CORRECT
-.venv/bin/python -m pytest tests/
-.venv/bin/python -c "import sys; print(sys.executable)"
-.venv/bin/pip install package
+uv run pytest tests/
+uv run python -c "import sys; print(sys.executable)"
+uv add package
 
 # WRONG - DO NOT USE
 python -m pytest tests/
+.venv/bin/python -m pytest tests/
 python -c "import sys; print(sys.executable)"
 pip install package
 ```
@@ -31,5 +32,6 @@ pip install package
 - Ensures consistent dependency versions
 - Avoids terminal crashes and environment issues
 - Maintains project isolation
+- Uses modern Python package management
 
 **This requirement applies to ALL Python execution in this project.**

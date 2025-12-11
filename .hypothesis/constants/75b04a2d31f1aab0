@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/tasks/rl/plotting.py
+# hypothesis_version: 6.148.7
+
+[0.1, 0.28, 0.3, 0.4, 0.5, 0.9, 1.0, 100, '-', '--', '.gif', 'Agg', 'D', 'L', 'Post-activation', 'Pre-activation', 'R', 'U', 'W', '_frame-1.png', '_frame0.png', '_frame1.png', 'action_log_probs', 'action_logits', 'b', 'b-', 'binary', 'black', 'blue', 'bottom', 'center', 'darkgrid', 'g-', 'grey', 'img_data', 'k', 'off', 'offset points', 'r', 'red', 'reward', 'uint8', 'value']

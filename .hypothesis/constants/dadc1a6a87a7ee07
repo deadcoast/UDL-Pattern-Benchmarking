@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/models/utils.py
+# hypothesis_version: 6.148.7
+
+[300000, '.pt', '\\d+', 'args', 'checkpoint_(\\d+)\\.pt', 'checkpoint_\\d+\\.pt', 'cpu', 'mean', 'test_losses', 'train_losses', 'training_iteration']

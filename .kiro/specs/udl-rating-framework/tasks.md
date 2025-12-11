@@ -119,7 +119,7 @@
   - Test on context-sensitive grammar (Type-1)
   - _Requirements: 3.4_
 
-- [ ] 7. Implement Structural Coherence Metric
+- [x] 7. Implement Structural Coherence Metric
   - Implement StructuralCoherenceMetric class extending QualityMetric
   - Implement Shannon entropy computation for grammar graph
   - Implement graph modularity calculation
@@ -127,20 +127,20 @@
   - Document mathematical formula in LaTeX
   - _Requirements: 1.3, 3.1, 3.5_
 
-- [ ] 7.1 Write property test for structural coherence metric correctness
+- [x] 7.1 Write property test for structural coherence metric correctness
   - **Property 12: Structural Coherence Metric Correctness**
   - **Validates: Requirements 3.5**
   - Generate grammar graphs with varying entropy
   - Verify formula: 1 - H(G)/H_max where H(G) is Shannon entropy
   - _Requirements: 3.5_
 
-- [ ] 7.2 Write unit tests for structural coherence metric
+- [x] 7.2 Write unit tests for structural coherence metric
   - Test on highly organized graph (low entropy)
   - Test on random graph (high entropy)
   - Test entropy calculation correctness
   - _Requirements: 3.5_
 
-- [ ] 8. Implement metric aggregation and confidence calculation
+- [x] 8. Implement metric aggregation and confidence calculation
   - Create MetricAggregator class with weight validation
   - Implement aggregate() method: Q = Σ(wᵢ · mᵢ)
   - Create ConfidenceCalculator class
@@ -148,21 +148,21 @@
   - Validate weight constraints (Σwᵢ = 1, wᵢ ≥ 0)
   - _Requirements: 1.5, 1.6, 3.8, 5.4_
 
-- [ ] 8.1 Write property test for aggregation correctness
+- [x] 8.1 Write property test for aggregation correctness
   - **Property 4: Aggregation Correctness**
   - **Validates: Requirements 1.5, 3.8**
   - Generate random metric values and weights
   - Verify Q = Σ(wᵢ · mᵢ) and Q ∈ [0,1]
   - _Requirements: 1.5, 3.8_
 
-- [ ] 8.2 Write property test for confidence formula correctness
+- [x] 8.2 Write property test for confidence formula correctness
   - **Property 5: Confidence Formula Correctness**
   - **Validates: Requirements 1.6, 5.4**
   - Generate random probability distributions
   - Verify C = 1 - H(p)/H_max
   - _Requirements: 1.6, 5.4_
 
-- [ ] 8.3 Write unit tests for aggregation and confidence
+- [x] 8.3 Write unit tests for aggregation and confidence
   - Test aggregation with various weight configurations
   - Test confidence on uniform distribution (expect low confidence)
   - Test confidence on delta distribution (expect high confidence)

@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/models/lstm_qamnist.py
+# hypothesis_version: 6.148.7
+
+['Invalid step type.', 'qamnist_backbone', 'start_cell_state', 'start_hidden_state']

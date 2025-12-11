@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/models/constants.py
+# hypothesis_version: 6.148.7
+
+[101, 152, 'custom-rotational', 'custom-rotational-1d', 'first-last', 'learnable-fourier', 'parity_backbone', 'random', 'random-pairing', 'shallow-wide']

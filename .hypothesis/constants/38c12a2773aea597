@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/models/resnet.py
+# hypothesis_version: 6.148.7
+
+[64.0, 128, 256, 512, '-', '.pt', '/state_dicts/', '101', '152', '34', '50', 'ResNet', 'cpu', 'resnet101', 'resnet152', 'resnet18', 'resnet34', 'resnet50']

@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/models/ctm_qamnist.py
+# hypothesis_version: 6.148.7
+
+[256, 'Invalid step type.', 'action', 'first-last', 'none', 'out']
