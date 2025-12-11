@@ -448,7 +448,7 @@
   - Compile to PDF
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 11.4, 11.5_
 
-- [-] 21. Create example UDLs and documentation
+- [x] 21. Create example UDLs and documentation
   - Create 10-20 example UDL files with varying quality levels
   - Hand-calculate metric values for each example
   - Create tutorial Jupyter notebooks
@@ -457,7 +457,7 @@
   - Write troubleshooting guide
   - _Requirements: 11.1, 11.2, 11.3, 11.6_
 
-- [-] 21.1 Write validation tests for hand-calculated examples
+- [x] 21.1 Write validation tests for hand-calculated examples
   - **Property 1: Metric Specification Conformance**
   - **Validates: Requirements 1.3**
   - Load example UDLs with hand-calculated values

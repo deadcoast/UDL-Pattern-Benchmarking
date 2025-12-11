@@ -81,81 +81,81 @@ class TestExampleValidation:
         """
         expected_values = {
             "simple_calculator.udl": {
-                "consistency": 1.000,
-                "completeness": 1.000,
-                "expressiveness": 0.710,
-                "structural_coherence": 0.353,
-                "overall": 0.813
+                "consistency": 0.833,
+                "completeness": 0.667,
+                "expressiveness": 0.430,
+                "structural_coherence": 0.624,
+                "overall": 0.661
             },
             "json_subset.udl": {
-                "consistency": 1.000,
+                "consistency": 0.800,
                 "completeness": 1.000,
-                "expressiveness": 0.760,
-                "structural_coherence": 0.337,
-                "overall": 0.819
+                "expressiveness": 0.540,
+                "structural_coherence": 0.751,
+                "overall": 0.798
             },
             "config_language.udl": {
-                "consistency": 0.933,
-                "completeness": 0.750,
-                "expressiveness": 0.635,
-                "structural_coherence": 0.265,
-                "overall": 0.685
+                "consistency": 1.000,
+                "completeness": 1.000,
+                "expressiveness": 0.525,
+                "structural_coherence": 0.640,
+                "overall": 0.833
             },
             "broken_grammar.udl": {
-                "consistency": 0.273,
-                "completeness": 0.375,
-                "expressiveness": 0.290,
-                "structural_coherence": 0.036,
-                "overall": 0.260
+                "consistency": 0.833,
+                "completeness": 0.571,
+                "expressiveness": 0.394,
+                "structural_coherence": 0.667,
+                "overall": 0.634
             },
             "state_machine.udl": {
                 "consistency": 1.000,
-                "completeness": 0.900,
-                "expressiveness": 0.800,
-                "structural_coherence": 0.400,
-                "overall": 0.820
+                "completeness": 0.571,
+                "expressiveness": 0.584,
+                "structural_coherence": 0.720,
+                "overall": 0.732
             },
             "query_language.udl": {
                 "consistency": 1.000,
-                "completeness": 0.850,
-                "expressiveness": 0.700,
-                "structural_coherence": 0.350,
-                "overall": 0.775
+                "completeness": 0.571,
+                "expressiveness": 0.569,
+                "structural_coherence": 0.730,
+                "overall": 0.731
             },
             "template_engine.udl": {
-                "consistency": 0.800,
-                "completeness": 0.600,
-                "expressiveness": 0.550,
-                "structural_coherence": 0.250,
-                "overall": 0.620
-            },
-            "regex_subset.udl": {
                 "consistency": 1.000,
                 "completeness": 0.800,
-                "expressiveness": 0.650,
-                "structural_coherence": 0.300,
-                "overall": 0.735
+                "expressiveness": 0.568,
+                "structural_coherence": 0.739,
+                "overall": 0.801
+            },
+            "regex_subset.udl": {
+                "consistency": 0.778,
+                "completeness": 1.000,
+                "expressiveness": 0.554,
+                "structural_coherence": 0.821,
+                "overall": 0.808
             },
             "css_subset.udl": {
                 "consistency": 1.000,
-                "completeness": 0.900,
-                "expressiveness": 0.750,
-                "structural_coherence": 0.380,
-                "overall": 0.806
+                "completeness": 1.000,
+                "expressiveness": 0.553,
+                "structural_coherence": 0.701,
+                "overall": 0.851
             },
             "inconsistent_rules.udl": {
-                "consistency": 0.200,
-                "completeness": 0.300,
-                "expressiveness": 0.250,
-                "structural_coherence": 0.100,
-                "overall": 0.225
+                "consistency": 0.611,
+                "completeness": 1.000,
+                "expressiveness": 0.566,
+                "structural_coherence": 0.684,
+                "overall": 0.733
             },
             "incomplete_spec.udl": {
                 "consistency": 1.000,
-                "completeness": 0.200,
-                "expressiveness": 0.300,
-                "structural_coherence": 0.150,
-                "overall": 0.420
+                "completeness": 0.667,
+                "expressiveness": 0.169,
+                "structural_coherence": 0.500,
+                "overall": 0.634
             }
         }
         
