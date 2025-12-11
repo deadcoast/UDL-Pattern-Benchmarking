@@ -7,15 +7,164 @@ Adapts the Continuous Thought Machine architecture for UDL quality prediction.
 import torch
 import torch.nn as nn
 import numpy as np
-from typing import Tuple, List, Dict, Any, Optional
+from typing import Tuple, List, Dict, Any, Optional, NamedTuple
 import sys
 import os
+import h5py
+from dataclasses import dataclass
 
 # Add the models directory to the path to import CTM
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'models'))
 
 from ctm import ContinuousThoughtMachine
 from ..core.representation import UDLRepresentation, Token, TokenType
+
+
+@dataclass
+class TrackingData:
+    """
+    Container for tracking data from CTM processing.
+    
+    Contains all internal representations and activations recorded during
+    CTM processing for analysis and visualization.
+    """
+    # Activation data: [iterations, batch, neurons]
+    pre_activations: np.ndarray
+    post_activations: np.ndarray
+    
+    # Synchronization data: [iterations, batch, synch_dim]
+    synch_out: np.ndarray
+    synch_action: np.ndarray
+    
+    # Attention data: [iterations, batch, heads, seq_len]
+    attention_weights: np.ndarray
+    
+    # Metadata
+    iterations: int
+    batch_size: int
+    seq_len: int
+    n_neurons: int
+    n_synch_out: int
+    n_synch_action: int
+    n_heads: int
+    
+    def save_to_hdf5(self, filepath: str):
+        """Save tracking data to HDF5 file."""
+        with h5py.File(filepath, 'w') as f:
+            # Save arrays
+            f.create_dataset('pre_activations', data=self.pre_activations)
+            f.create_dataset('post_activations', data=self.post_activations)
+            f.create_dataset('synch_out', data=self.synch_out)
+            f.create_dataset('synch_action', data=self.synch_action)
+            f.create_dataset('attention_weights', data=self.attention_weights)
+            
+            # Save metadata
+            f.attrs['iterations'] = self.iterations
+            f.attrs['batch_size'] = self.batch_size
+            f.attrs['seq_len'] = self.seq_len
+            f.attrs['n_neurons'] = self.n_neurons
+            f.attrs['n_synch_out'] = self.n_synch_out
+            f.attrs['n_synch_action'] = self.n_synch_action
+            f.attrs['n_heads'] = self.n_heads
+    
+    @classmethod
+    def load_from_hdf5(cls, filepath: str) -> 'TrackingData':
+        """Load tracking data from HDF5 file."""
+        with h5py.File(filepath, 'r') as f:
+            return cls(
+                pre_activations=f['pre_activations'][:],
+                post_activations=f['post_activations'][:],
+                synch_out=f['synch_out'][:],
+                synch_action=f['synch_action'][:],
+                attention_weights=f['attention_weights'][:],
+                iterations=f.attrs['iterations'],
+                batch_size=f.attrs['batch_size'],
+                seq_len=f.attrs['seq_len'],
+                n_neurons=f.attrs['n_neurons'],
+                n_synch_out=f.attrs['n_synch_out'],
+                n_synch_action=f.attrs['n_synch_action'],
+                n_heads=f.attrs['n_heads']
+            )
+    
+    def get_activation_statistics(self) -> Dict[str, Dict[str, float]]:
+        """
+        Compute quantitative measures of activation patterns.
+        
+        Returns:
+            Dictionary with statistics for pre and post activations
+        """
+        stats = {}
+        
+        for name, activations in [('pre', self.pre_activations), ('post', self.post_activations)]:
+            stats[name] = {
+                'mean': float(np.mean(activations)),
+                'std': float(np.std(activations)),
+                'min': float(np.min(activations)),
+                'max': float(np.max(activations)),
+                'variance': float(np.var(activations)),
+                'mean_abs': float(np.mean(np.abs(activations))),
+            }
+            
+            # Compute spectral properties (eigenvalues of covariance matrix)
+            # Flatten to [time*batch, neurons] for covariance computation
+            flat_activations = activations.reshape(-1, activations.shape[-1])
+            if flat_activations.shape[0] > 1:  # Need at least 2 samples for covariance
+                cov_matrix = np.cov(flat_activations.T)
+                eigenvals = np.linalg.eigvals(cov_matrix)
+                stats[name]['spectral_radius'] = float(np.max(np.real(eigenvals)))
+                stats[name]['spectral_norm'] = float(np.linalg.norm(eigenvals))
+        
+        return stats
+    
+    def get_synchronization_evolution_metrics(self) -> Dict[str, float]:
+        """
+        Compute synchronization evolution metrics including temporal stability and convergence rates.
+        
+        Returns:
+            Dictionary with evolution metrics
+        """
+        metrics = {}
+        
+        for name, synch_data in [('out', self.synch_out), ('action', self.synch_action)]:
+            # Temporal stability: variance across time
+            temporal_variance = np.var(synch_data, axis=0)  # [batch, synch_dim]
+            metrics[f'{name}_temporal_stability'] = float(np.mean(temporal_variance))
+            
+            # Convergence rate: difference between final and initial states
+            if self.iterations > 1:
+                initial_state = synch_data[0]  # [batch, synch_dim]
+                final_state = synch_data[-1]   # [batch, synch_dim]
+                convergence_distance = np.linalg.norm(final_state - initial_state, axis=-1)  # [batch]
+                metrics[f'{name}_convergence_distance'] = float(np.mean(convergence_distance))
+                
+                # Rate of change over time
+                differences = np.diff(synch_data, axis=0)  # [iterations-1, batch, synch_dim]
+                change_rates = np.linalg.norm(differences, axis=-1)  # [iterations-1, batch]
+                metrics[f'{name}_mean_change_rate'] = float(np.mean(change_rates))
+                metrics[f'{name}_final_change_rate'] = float(np.mean(change_rates[-1]))
+        
+        return metrics
+    
+    def verify_attention_normalization(self) -> bool:
+        """
+        Verify that attention weights sum to 1: Σ_j α_ij(t) = 1 for all i, t.
+        
+        Returns:
+            True if all attention weights are properly normalized
+        """
+        # attention_weights shape might be [iterations, batch, heads, seq_len] or [iterations, batch, heads, 1, seq_len]
+        attention_weights = self.attention_weights
+        
+        # Handle the case where we have an extra dimension (query dimension)
+        if len(attention_weights.shape) == 5:
+            attention_weights = attention_weights.squeeze(3)  # Remove the extra dimension
+        
+        # Sum over seq_len dimension (last axis)
+        attention_sums = np.sum(attention_weights, axis=-1)  # [iterations, batch, heads]
+        
+        # Check if all sums are approximately 1 (within numerical tolerance)
+        tolerance = 1e-5
+        return np.allclose(attention_sums, 1.0, atol=tolerance)
 
 
 class UDLTokenVocabulary:
@@ -161,7 +310,7 @@ class UDLRatingCTM(nn.Module):
         # Store parameters for property testing
         self.embedding_dim = d_input
     
-    def forward(self, token_ids: torch.Tensor, track: bool = False) -> Tuple[torch.Tensor, torch.Tensor, Optional[torch.Tensor]]:
+    def forward(self, token_ids: torch.Tensor, track: bool = False) -> Tuple[torch.Tensor, torch.Tensor, Optional[torch.Tensor], Optional[TrackingData]]:
         """
         Forward pass.
         
@@ -172,7 +321,8 @@ class UDLRatingCTM(nn.Module):
         Returns:
             ratings: [batch, 1] quality scores in [0,1]
             certainties: [batch, 2] certainty scores
-            synch_out: [batch, n_synch_out] synchronization representation (if track=True)
+            synch_out: [batch, n_synch_out] synchronization representation (if not tracking)
+            tracking_data: TrackingData object with all internal representations (if track=True)
         """
         # Embed tokens: [batch, seq_len] -> [batch, seq_len, d_input]
         x = self.embedding(token_ids)
@@ -244,7 +394,7 @@ class UDLRatingCTM(nn.Module):
             predictions[..., stepi] = current_prediction
             certainties[..., stepi] = current_certainty
             
-            # Tracking
+            # Tracking: Record activations a_i(t) for all neurons and iterations
             if track:
                 pre_activations_tracking.append(state_trace[:,:,-1].detach().cpu().numpy())
                 post_activations_tracking.append(activated_state.detach().cpu().numpy())
@@ -260,10 +410,24 @@ class UDLRatingCTM(nn.Module):
         ratings = self.sigmoid(final_pred)
         
         if track:
-            synch_tracking = (np.array(synch_out_tracking), np.array(synch_action_tracking))
-            return predictions, certainties, synch_tracking, np.array(pre_activations_tracking), np.array(post_activations_tracking), np.array(attention_tracking)
+            # Create comprehensive tracking data
+            tracking_data = TrackingData(
+                pre_activations=np.array(pre_activations_tracking),  # [iterations, batch, neurons]
+                post_activations=np.array(post_activations_tracking),  # [iterations, batch, neurons]
+                synch_out=np.array(synch_out_tracking),  # [iterations, batch, n_synch_out]
+                synch_action=np.array(synch_action_tracking),  # [iterations, batch, n_synch_action]
+                attention_weights=np.array(attention_tracking),  # [iterations, batch, heads, seq_len]
+                iterations=self.ctm.iterations,
+                batch_size=B,
+                seq_len=seq_len,
+                n_neurons=activated_state.shape[-1],
+                n_synch_out=self.n_synch_out,
+                n_synch_action=synchronisation_action.shape[-1],
+                n_heads=attn_weights.shape[1]  # Number of attention heads
+            )
+            return ratings, final_cert, None, tracking_data
         else:
-            return ratings, final_cert, synchronisation_out
+            return ratings, final_cert, synchronisation_out, None
     
     def get_embedding_dim(self) -> int:
         """Return embedding dimension for property testing."""
