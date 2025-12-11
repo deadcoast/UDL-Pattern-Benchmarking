@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/metrics/structural_coherence.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1.0, 2.0, 'additive', 'average_degree', 'betweenness_entropy', 'bounded', 'clustering_entropy', 'continuous', 'degree_entropy', 'density', 'is_weakly_connected', 'modularity', 'monotonic', 'num_edges', 'num_nodes', 'shannon_entropy', 'structural_coherence']

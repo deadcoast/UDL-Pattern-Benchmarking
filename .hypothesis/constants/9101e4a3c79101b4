@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/training/training_pipeline.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1e-06, 0.001, 0.1, 0.3, 0.5, 0.7, 1.0, 100, 512, '<BOS>', '<EOS>', '<PAD>', 'Metric', 'Training completed', 'alpha', 'best_val_correlation', 'best_val_mae', 'beta', 'completed', 'confidence_loss', 'correlation', 'cpu', 'cuda', 'd_input', 'd_model', 'epoch', 'epochs_completed', 'final_train_loss', 'final_val_loss', 'in_progress', 'iterations', 'loss', 'loss_parameters', 'mae', 'model_config', 'model_state_dict', 'n_synch_out', 'not_started', 'optimizer_state_dict', 'rating_loss', 'rmse', 'status', 'train_loss', 'train_rating_loss', 'training_history', 'val_confidence_loss', 'val_correlation', 'val_loss', 'val_mae', 'val_rating_loss', 'val_rmse', 'vocab_size', 'w']

@@ -270,7 +270,7 @@
   - Test with various sequence lengths
   - _Requirements: 4.2, 5.2_
 
-- [ ] 14. Implement training pipeline
+- [x] 14. Implement training pipeline
   - Create TrainingPipeline class
   - Implement ground truth computation using mathematical metrics
   - Implement loss function: L = α·L_rating + β·L_confidence
@@ -279,21 +279,21 @@
   - Add checkpoint saving
   - _Requirements: 4.3, 4.4, 4.5, 4.6_
 
-- [ ] 14.1 Write property test for loss function correctness
+- [x] 14.1 Write property test for loss function correctness
   - **Property 15: Loss Function Correctness**
   - **Validates: Requirements 4.3**
   - Generate random predictions and targets
   - Verify L = α·L_rating + β·L_confidence
   - _Requirements: 4.3_
 
-- [ ] 14.2 Write property test for ground truth consistency
+- [x] 14.2 Write property test for ground truth consistency
   - **Property 16: Ground Truth Consistency**
   - **Validates: Requirements 4.5**
   - Generate UDLs
   - Verify training ground truth equals mathematical metric computation
   - _Requirements: 4.5_
 
-- [ ] 14.3 Write unit tests for training pipeline
+- [x] 14.3 Write unit tests for training pipeline
   - Test training loop runs without errors
   - Test loss decreases over epochs
   - Test checkpoint saving and loading

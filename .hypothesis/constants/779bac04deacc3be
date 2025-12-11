@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/metrics/expressiveness.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.3, 0.33, 0.67, 0.7, 1.0, 2.0, '#', '(', ')', '*', '+', '?', '[', '[\\s::=|(){}[\\]]+', '\\s+', ']', 'additive', 'bounded', 'continuous', 'expressiveness', 'monotonic', 'utf-8', '{', '|', '}']
