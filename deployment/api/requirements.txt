@@ -1,0 +1,27 @@
+# FastAPI and web server dependencies
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+
+# Rate limiting and security
+slowapi>=0.1.9
+python-jose[cryptography]>=3.3.0
+
+# Core dependencies (should match main project)
+numpy>=1.24.0
+torch>=2.0.0
+scipy>=1.10.0
+scikit-learn
+networkx>=3.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+tqdm
+python-dotenv
+statsmodels>=0.14.0
+hypothesis>=6.0.0
+lark>=1.1.0
+click>=8.1.0
+h5py>=3.8.0
+pyyaml>=6.0
+pandas>=1.5.0
+psutil>=7.1.3

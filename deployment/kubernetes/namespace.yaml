@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: udl-rating
+  labels:
+    name: udl-rating
+    app: udl-rating-framework

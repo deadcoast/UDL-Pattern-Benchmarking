@@ -522,7 +522,7 @@ The following tasks could be added for further enhancement but are not required 
   - Grammar dependency flow diagrams
   - _Requirements: 7.6_
 
-- [-] 28. Add model deployment features
+- [x] 28. Add model deployment features
   - REST API for rating service using FastAPI
   - Docker containerization with multi-stage builds
   - Kubernetes deployment manifests
