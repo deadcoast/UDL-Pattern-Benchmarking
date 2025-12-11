@@ -9,16 +9,16 @@ This module provides comprehensive analytics capabilities including:
 - Export to business intelligence tools
 """
 
-from .time_series_analyzer import TimeSeriesAnalyzer
-from .portfolio_analyzer import PortfolioAnalyzer
-from .trend_predictor import TrendPredictor
-from .improvement_advisor import ImprovementAdvisor
 from .bi_exporter import BusinessIntelligenceExporter
+from .improvement_advisor import ImprovementAdvisor
+from .portfolio_analyzer import PortfolioAnalyzer
+from .time_series_analyzer import TimeSeriesAnalyzer
+from .trend_predictor import TrendPredictor
 
 __all__ = [
-    'TimeSeriesAnalyzer',
-    'PortfolioAnalyzer', 
-    'TrendPredictor',
-    'ImprovementAdvisor',
-    'BusinessIntelligenceExporter'
+    "TimeSeriesAnalyzer",
+    "PortfolioAnalyzer",
+    "TrendPredictor",
+    "ImprovementAdvisor",
+    "BusinessIntelligenceExporter",
 ]
