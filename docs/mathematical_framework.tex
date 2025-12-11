@@ -1,0 +1,230 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+\newtheorem{example}{Example}[section]
+
+\title{Mathematical Framework for UDL Rating}
+\author{UDL Rating Framework Team}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This document provides the complete mathematical foundation for the User Defined Language (UDL) Rating Framework. We define the UDL representation space, specify each quality metric as a formal mathematical function, prove key properties, and provide complexity analysis. Every rating computation in the system is traceable to the rigorous definitions presented here.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+The UDL Rating Framework evaluates the quality of User Defined Languages through mathematically-grounded metrics. This document establishes the formal foundations that ensure every rating is objective, reproducible, and traceable.
+
+\subsection{Motivation}
+
+Traditional language quality assessment relies on subjective expert judgment. Our framework replaces this with formal mathematical functions that can be computed algorithmically and verified independently.
+
+\subsection{Overview}
+
+We define:
+\begin{itemize}
+    \item A formal representation space for UDLs
+    \item Four quality metrics: Consistency, Completeness, Expressiveness, and Structural Coherence
+    \item An aggregation function combining metrics into overall quality
+    \item A confidence measure based on prediction entropy
+\end{itemize}
+
+\section{UDL Representation Space}
+
+\begin{definition}[UDL Representation]
+A User Defined Language is represented as a tuple $U = (T, G, S, R)$ where:
+\begin{itemize}
+    \item $T = \{t_1, t_2, \ldots, t_n\}$ is a finite set of tokens (terminal symbols)
+    \item $G = (V, E)$ is a directed graph representing the grammar, with vertices $V$ (non-terminals) and edges $E$ (production rules)
+    \item $S: T \rightarrow \text{Semantics}$ is a semantic mapping function
+    \item $R$ is a set of constraints and rules
+\end{itemize}
+\end{definition}
+
+\subsection{Token Structure}
+
+Each token $t \in T$ is a tuple $(text, type, pos, line, col)$ where:
+\begin{itemize}
+    \item $text \in \Sigma^*$ is the token text (string over alphabet $\Sigma$)
+    \item $type \in \{\text{KEYWORD}, \text{IDENTIFIER}, \text{OPERATOR}, \text{LITERAL}\}$
+    \item $pos, line, col \in \mathbb{N}$ are position indicators
+\end{itemize}
+
+\subsection{Grammar Graph}
+
+The grammar graph $G = (V, E)$ encodes production rules:
+\begin{itemize}
+    \item Each vertex $v \in V$ represents a non-terminal symbol
+    \item Each edge $(v_i, v_j) \in E$ represents a production rule $v_i \rightarrow \alpha$ where $v_j$ appears in $\alpha$
+\end{itemize}
+
+\section{Quality Metrics}
+
+\subsection{Consistency Metric}
+
+\begin{definition}[Consistency]
+The consistency metric measures internal coherence:
+\[
+\text{Consistency}(U) = 1 - \frac{|C| + |Y|}{|R| + 1}
+\]
+where:
+\begin{itemize}
+    \item $C$ is the set of contradictory rule pairs
+    \item $Y$ is the set of cycles in the grammar graph
+    \item $R$ is the set of production rules
+\end{itemize}
+\end{definition}
+
+\begin{theorem}[Consistency Boundedness]
+For any UDL $U$, $0 \leq \text{Consistency}(U) \leq 1$.
+\end{theorem}
+
+\begin{proof}
+To be completed in task 4.
+\end{proof}
+
+\subsection{Completeness Metric}
+
+\begin{definition}[Completeness]
+The completeness metric measures construct coverage:
+\[
+\text{Completeness}(U) = \frac{|D|}{|R_{\text{req}}|}
+\]
+where:
+\begin{itemize}
+    \item $D$ is the set of defined constructs in $U$
+    \item $R_{\text{req}}$ is the set of required constructs for the language class
+\end{itemize}
+\end{definition}
+
+\begin{theorem}[Completeness Boundedness]
+For any UDL $U$, $0 \leq \text{Completeness}(U) \leq 1$.
+\end{theorem}
+
+\begin{proof}
+To be completed in task 5.
+\end{proof}
+
+\subsection{Expressiveness Metric}
+
+\begin{definition}[Expressiveness]
+The expressiveness metric measures language power:
+\[
+\text{Expressiveness}(U) = \frac{\text{Chomsky}(U) + \text{Complexity}(U)}{2}
+\]
+where:
+\begin{itemize}
+    \item $\text{Chomsky}(U) \in \{0, 0.33, 0.67, 1.0\}$ classifies the grammar in the Chomsky hierarchy
+    \item $\text{Complexity}(U)$ approximates Kolmogorov complexity via compression
+\end{itemize}
+\end{definition}
+
+\subsection{Structural Coherence Metric}
+
+\begin{definition}[Structural Coherence]
+The structural coherence metric measures organizational quality:
+\[
+\text{StructuralCoherence}(U) = 1 - \frac{H(G)}{H_{\max}}
+\]
+where:
+\begin{itemize}
+    \item $H(G) = -\sum_{d} p(d) \log_2 p(d)$ is the Shannon entropy of the degree distribution
+    \item $H_{\max} = \log_2 |V|$ is the maximum possible entropy
+\end{itemize}
+\end{definition}
+
+\section{Aggregation Function}
+
+\begin{definition}[Overall Quality]
+The overall quality score is computed as:
+\[
+Q(U) = \sum_{i=1}^{4} w_i \cdot m_i(U)
+\]
+where:
+\begin{itemize}
+    \item $w_i \geq 0$ are weights with $\sum_{i=1}^{4} w_i = 1$
+    \item $m_i$ are the individual metrics
+\end{itemize}
+\end{definition}
+
+\begin{theorem}[Aggregation Boundedness]
+If $m_i(U) \in [0,1]$ for all $i$ and $\sum w_i = 1$ with $w_i \geq 0$, then $Q(U) \in [0,1]$.
+\end{theorem}
+
+\begin{proof}
+To be completed in task 8.
+\end{proof}
+
+\section{Confidence Measure}
+
+\begin{definition}[Confidence]
+The confidence in a quality assessment is:
+\[
+C = 1 - \frac{H(p)}{H_{\max}}
+\]
+where:
+\begin{itemize}
+    \item $H(p) = -\sum_{i} p_i \log p_i$ is the Shannon entropy of the prediction distribution
+    \item $H_{\max} = \log n$ is the maximum entropy for $n$ classes
+\end{itemize}
+\end{definition}
+
+\section{Complexity Analysis}
+
+\subsection{Time Complexity}
+
+To be completed in implementation tasks.
+
+\subsection{Space Complexity}
+
+To be completed in implementation tasks.
+
+\section{Worked Examples}
+
+\subsection{Example 1: Simple Grammar}
+
+To be completed in task 21.
+
+\subsection{Example 2: Complex Grammar}
+
+To be completed in task 21.
+
+\section{Literature References}
+
+\begin{thebibliography}{99}
+
+\bibitem{chomsky1956}
+Chomsky, N. (1956). Three models for the description of language. \emph{IRE Transactions on Information Theory}, 2(3), 113-124.
+
+\bibitem{shannon1948}
+Shannon, C. E. (1948). A mathematical theory of communication. \emph{Bell System Technical Journal}, 27(3), 379-423.
+
+\bibitem{kolmogorov1965}
+Kolmogorov, A. N. (1965). Three approaches to the quantitative definition of information. \emph{Problems of Information Transmission}, 1(1), 1-7.
+
+\end{thebibliography}
+
+\end{document}
