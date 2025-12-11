@@ -12,7 +12,7 @@
   - Test dependency availability
   - _Requirements: 11.7_
 
-- [-] 2. Implement UDL representation and parsing
+- [x] 2. Implement UDL representation and parsing
   - Create Token dataclass with text, type, position, line, column fields
   - Create GrammarRule dataclass with lhs, rhs, constraints, metadata
   - Implement UDLRepresentation class with token extraction, grammar graph construction, and AST conversion
@@ -33,7 +33,7 @@
   - Test AST conversion
   - _Requirements: 1.2, 2.2_
 
-- [ ] 3. Implement metric base class and validation framework
+- [-] 3. Implement metric base class and validation framework
   - Create QualityMetric abstract base class with compute(), get_formula(), get_properties() methods
   - Implement verify_boundedness() method
   - Implement verify_determinism() method

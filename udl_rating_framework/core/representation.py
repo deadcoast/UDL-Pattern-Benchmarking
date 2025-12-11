@@ -75,7 +75,7 @@ class UDLTokenizer:
     
     # Common UDL patterns
     TOKEN_PATTERNS = [
-        (r'#.*$', TokenType.COMMENT),  # Comments
+        (r'#.*', TokenType.COMMENT),  # Comments$', TokenType.COMMENT),  # Comments
         (r'\n', TokenType.NEWLINE),  # Newlines
         (r'\s+', TokenType.WHITESPACE),  # Whitespace
         (r'::=|:=|=', TokenType.OPERATOR),  # Assignment operators
