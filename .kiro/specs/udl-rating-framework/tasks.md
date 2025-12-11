@@ -33,21 +33,21 @@
   - Test AST conversion
   - _Requirements: 1.2, 2.2_
 
-- [-] 3. Implement metric base class and validation framework
+- [x] 3. Implement metric base class and validation framework
   - Create QualityMetric abstract base class with compute(), get_formula(), get_properties() methods
   - Implement verify_boundedness() method
   - Implement verify_determinism() method
   - Create metric registry for plugin architecture
   - _Requirements: 1.3, 1.4, 6.1, 6.4_
 
-- [ ] 3.1 Write property test for metric boundedness
+- [x] 3.1 Write property test for metric boundedness
   - **Property 2: Metric Boundedness**
   - **Validates: Requirements 1.4, 3.7**
   - Generate random UDL representations
   - Verify all metrics produce values in [0,1]
   - _Requirements: 1.4, 3.7_
 
-- [ ] 3.2 Write property test for metric determinism
+- [x] 3.2 Write property test for metric determinism
   - **Property 3: Metric Determinism**
   - **Validates: Requirements 1.4, 6.5**
   - Generate random UDL representations
@@ -55,7 +55,7 @@
   - Verify identical results
   - _Requirements: 1.4, 6.5_
 
-- [ ] 4. Implement Consistency Metric
+- [x] 4. Implement Consistency Metric
   - Implement ConsistencyMetric class extending QualityMetric
   - Implement cycle detection using DFS on grammar graph
   - Implement contradiction detection using constraint analysis
@@ -63,20 +63,20 @@
   - Document mathematical formula in LaTeX
   - _Requirements: 1.3, 3.1, 3.2_
 
-- [ ] 4.1 Write property test for consistency metric correctness
+- [x] 4.1 Write property test for consistency metric correctness
   - **Property 9: Consistency Metric Correctness**
   - **Validates: Requirements 3.2**
   - Generate UDLs with known cycle/contradiction counts
   - Verify formula: 1 - (|Contradictions| + |Cycles|) / (|Rules| + 1)
   - _Requirements: 3.2_
 
-- [ ] 4.2 Write unit tests for consistency metric
+- [x] 4.2 Write unit tests for consistency metric
   - Test on UDL with no contradictions/cycles (expect 1.0)
   - Test on UDL with known contradictions
   - Test on UDL with known cycles
   - _Requirements: 3.2_
 
-- [ ] 5. Implement Completeness Metric
+- [x] 5. Implement Completeness Metric
   - Implement CompletenessMetric class extending QualityMetric
   - Implement extract_defined_constructs() method
   - Implement get_required_constructs() method based on language type
@@ -84,14 +84,14 @@
   - Document mathematical formula in LaTeX
   - _Requirements: 1.3, 3.1, 3.3_
 
-- [ ] 5.1 Write property test for completeness metric correctness
+- [x] 5.1 Write property test for completeness metric correctness
   - **Property 10: Completeness Metric Correctness**
   - **Validates: Requirements 3.3**
   - Generate UDLs with varying construct coverage
   - Verify formula: |Defined_Constructs| / |Required_Constructs|
   - _Requirements: 3.3_
 
-- [ ] 5.2 Write unit tests for completeness metric
+- [x] 5.2 Write unit tests for completeness metric
   - Test on fully complete UDL (expect 1.0)
   - Test on partially complete UDL
   - Test on minimal UDL
