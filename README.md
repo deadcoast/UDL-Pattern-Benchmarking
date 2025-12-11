@@ -176,19 +176,6 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for gui
 
 This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
 
-## Citation
-
-If you use this framework in your research, please cite:
-
-```bibtex
-@software{udl_rating_framework,
-  title = {UDL Rating Framework: Mathematically-Grounded Language Quality Assessment},
-  author = {UDL Rating Framework Team},
-  year = {2024},
-  url = {https://github.com/yourusername/udl-rating-framework}
-}
-```
-
 ## Acknowledgments
 
 Built on the Continuous Thought Machine (CTM) architecture for temporal sequence processing.
@@ -202,7 +189,3 @@ This project is under active development. Current status:
 - [ ] CTM integration
 - [ ] Evaluation utilities
 - [ ] Documentation and examples
-
-## Contact
-
-For questions or issues, please open an issue on GitHub or contact the maintainers.
