@@ -133,7 +133,7 @@ docs/
 
 ## Mathematical Foundation
 
-All metrics are formally defined in [Mathematical Framework](docs/mathematical_framework.pdf). Key definitions:
+All metrics are formally defined in [Mathematical Framework](https://github.com/deadcoast/UDL-Pattern-Benchmarking/blob/main/docs/mathematical_framework.pdf). Key definitions:
 
 ### Consistency Metric
 
@@ -197,7 +197,7 @@ All dependencies are managed through [UV via pyproject.toml](pyproject.toml) [#L
 
 ## Documentation
 
-- [Mathematical Framework](docs/mathematical_framework.pdf) - [#LINKTODO] Complete mathematical specification
+- [Mathematical Framework](https://github.com/deadcoast/UDL-Pattern-Benchmarking/blob/main/docs/mathematical_framework.pdf) - [#LINKTODO] Complete mathematical specification
 - [API Documentation](docs/api_reference.rst) - API reference
 - [Tutorial Notebooks](docs/examples.rst) - Jupyter notebooks with examples
 
