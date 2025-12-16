@@ -1,4 +1,4 @@
-# UDL Rating Framework
+# UDL Pattern Benchmarking
 
 A mathematically-grounded system for evaluating the quality of User Defined Languages (UDLs), built on the Continuous Thought Machine (CTM) architecture.
 
@@ -29,6 +29,9 @@ First, install uv if you haven't already:
 ```bash
 # macOS/Linux
 curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# macOS homebrew
+brew install uv
 
 # Windows
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
@@ -130,23 +133,23 @@ docs/
 
 ## Mathematical Foundation
 
-All metrics are formally defined in `docs/mathematical_framework.pdf`. Key definitions:
+All metrics are formally defined in [Mathematical Framework](docs/mathematical_framework.pdf). Key definitions:
 
 ### Consistency Metric
 
-```
+```math
 Consistency(U) = 1 - (|Contradictions| + |Cycles|) / (|Rules| + 1)
 ```
 
 ### Completeness Metric
 
-```
+```math
 Completeness(U) = |Defined_Constructs| / |Required_Constructs|
 ```
 
 ### Overall Quality Score
 
-```
+```math
 Q(U) = Σᵢ wᵢ · mᵢ(U)
 ```
 
@@ -190,17 +193,17 @@ uv run mypy udl_rating_framework/
 - SciPy 1.10+
 - Hypothesis 6.0+
 
-All dependencies are managed through `pyproject.toml` and installed via uv. The `uv.lock` file ensures reproducible builds across environments.
+All dependencies are managed through [UV via pyproject.toml](pyproject.toml) [#LINKTODO]  and installed via uv. The [UV lock file](uv.lock) [#LINKTODO] ensures reproducible builds across environments.
 
 ## Documentation
 
-- [Mathematical Framework](docs/mathematical_framework.pdf) - Complete mathematical specification
-- [API Documentation](https://udl-rating-framework.readthedocs.io/) - API reference
-- [Tutorial Notebooks](examples/) - Jupyter notebooks with examples
+- [Mathematical Framework](docs/mathematical_framework.pdf) - [#LINKTODO] Complete mathematical specification
+- [API Documentation](docs/api_reference.rst) - API reference
+- [Tutorial Notebooks](docs/examples.rst) - Jupyter notebooks with examples
 
 ## Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Contributions are welcome! Please see [CONTRIBUTING.md](/docs/CONTRIBUTING.md) for guidelines.
 
 ## License
 
@@ -215,7 +218,7 @@ Built on the Continuous Thought Machine (CTM) architecture for temporal sequence
 This project is under active development. Current status:
 
 - [x] Project structure and foundation
-- [ ] Core metrics implementation
+- [x] Core metrics implementation
 - [ ] CTM integration
 - [ ] Evaluation utilities
 - [ ] Documentation and examples

@@ -765,14 +765,14 @@ The following tasks could be added for further enhancement but are not required 
   - Test batch processing and file upload functionality
   - _Requirements: 2.1, 5.7_
 
-- [-] 39. Fix integration features and CLI commands
+- [x] 39. Fix integration features and CLI commands
   - Fix Git hooks installation and uninstall functionality
   - Fix LSP server async function support and protocol implementation
   - Fix CI/CD integration workflow creation and execution
   - Ensure all CLI commands work correctly with proper error handling
   - _Requirements: 2.1, 4.6, 8.1, 10.1_
 
-- [ ] 39.1 Write integration tests for fixed CLI functionality
+- [x] 39.1 Write integration tests for fixed CLI functionality
   - Test all CLI commands end-to-end
   - Test Git hooks integration with real repositories
   - Test CI/CD workflow generation and execution

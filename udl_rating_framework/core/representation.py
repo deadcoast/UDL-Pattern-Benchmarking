@@ -6,7 +6,7 @@ Provides formal representation of UDL structure for mathematical analysis.
 
 import re
 import networkx as nx
-from typing import List, Dict, Set, Any, Optional, Union, Tuple
+from typing import List, Dict, Set, Any, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
 

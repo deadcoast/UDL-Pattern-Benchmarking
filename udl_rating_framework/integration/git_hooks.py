@@ -305,18 +305,18 @@ passed, results = manager.check_staged_files()
 if not passed:
     print('UDL quality check failed!')
     print('Files that failed quality threshold:')
-    for file_path, result in results.items():
+    for fp, result in results.items():
         if not result.get('passed', False):
             score = result.get('score', 'N/A')
-            print(f'  {file_path}: {score:.3f} (threshold: {min_quality_threshold})')
+            print(f'  {{fp}}: {{score:.3f}} (threshold: {min_quality_threshold})')
     print()
     print('Please improve UDL quality or use --no-verify to bypass.')
     sys.exit(1)
 else:
     print('All UDL files passed quality check!')
-    for file_path, result in results.items():
+    for fp, result in results.items():
         if 'score' in result:
-            print(f'  {file_path}: {result[\"score\"]:.3f}')
+            print(f'  {{fp}}: {{result[\"score\"]:.3f}}')
 "
 
 echo "UDL quality check completed successfully."
@@ -350,10 +350,10 @@ passed, results = manager.check_all_udl_files()
 if not passed:
     print('UDL quality check failed!')
     print('Files that failed quality threshold:')
-    for file_path, result in results.items():
+    for fp, result in results.items():
         if not result.get('passed', False):
             score = result.get('score', 'N/A')
-            print(f'  {file_path}: {score:.3f} (threshold: {min_quality_threshold})')
+            print(f'  {{fp}}: {{score:.3f}} (threshold: {min_quality_threshold})')
     print()
     print('Please improve UDL quality or use --no-verify to bypass.')
     sys.exit(1)
@@ -361,7 +361,7 @@ else:
     print('All UDL files passed quality check!')
     total_files = len([r for r in results.values() if 'score' in r])
     avg_score = sum(r['score'] for r in results.values() if 'score' in r) / max(total_files, 1)
-    print(f'Average quality score: {avg_score:.3f}')
+    print(f'Average quality score: {{avg_score:.3f}}')
 "
 
 echo "Comprehensive UDL quality check completed successfully."

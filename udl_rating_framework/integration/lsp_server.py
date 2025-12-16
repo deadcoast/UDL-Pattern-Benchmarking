@@ -149,9 +149,10 @@ class UDLLanguageServer:
         logger.info("Shutting down UDL Language Server")
         self.shutdown_requested = True
         
-        # Cancel all debounce timers
-        for timer in self.debounce_timers.values():
-            timer.cancel()
+        # Cancel all debounce tasks
+        for task in self.debounce_timers.values():
+            if hasattr(task, 'cancel'):
+                task.cancel()
         self.debounce_timers.clear()
     
     async def exit(self, params: Dict[str, Any]) -> None:
@@ -225,9 +226,11 @@ class UDLLanguageServer:
         self.document_versions.pop(uri, None)
         self.quality_cache.pop(uri, None)
         
-        # Cancel debounce timer
+        # Cancel debounce task
         if uri in self.debounce_timers:
-            self.debounce_timers[uri].cancel()
+            task = self.debounce_timers[uri]
+            if hasattr(task, 'cancel'):
+                task.cancel()
             del self.debounce_timers[uri]
         
         logger.info(f"Closed document: {uri}")
@@ -328,13 +331,15 @@ class UDLLanguageServer:
         if uri in self.debounce_timers:
             self.debounce_timers[uri].cancel()
         
-        # Schedule new timer
-        timer = threading.Timer(
-            self.debounce_delay,
-            lambda: asyncio.create_task(self._perform_quality_check(uri))
-        )
-        timer.start()
-        self.debounce_timers[uri] = timer
+        # Use asyncio.sleep for debouncing instead of threading.Timer
+        # This avoids issues with creating tasks from non-async contexts
+        async def debounced_check():
+            await asyncio.sleep(self.debounce_delay)
+            await self._perform_quality_check(uri)
+        
+        # Store the task for potential cancellation
+        task = asyncio.create_task(debounced_check())
+        self.debounce_timers[uri] = task
     
     async def _perform_quality_check(self, uri: str) -> None:
         """Perform quality check on document."""
