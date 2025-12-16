@@ -223,6 +223,9 @@ class RealTimeMetricsVisualizer:
             df = pd.DataFrame(rows)
             df.to_csv(export_path, index=False)
         
+        else:
+            raise ValueError(f"Unsupported export format: {format}")
+        
         return str(export_path)
     
     def _prepare_comparison_data(self, metric_names: List[str]) -> Dict[str, Any]:
