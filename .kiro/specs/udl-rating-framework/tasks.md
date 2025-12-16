@@ -685,7 +685,7 @@ The following tasks could be added for further enhancement but are not required 
   - Test CLI configuration file parsing edge cases
   - _Requirements: CLI robustness_
 
-- [ ] 35.8 Implement property-based tests for uncovered paths
+- [x] 35.8 Implement property-based tests for uncovered paths
   - Use Hypothesis to generate test cases for complex data structures
   - Add property tests for mathematical computations with edge values
   - Test invariants across different code paths
@@ -693,7 +693,7 @@ The following tasks could be added for further enhancement but are not required 
   - Test state machine properties for stateful components
   - _Requirements: Property-based testing_
 
-- [ ] 35.9 Add performance regression tests
+- [x] 35.9 Add performance regression tests
   - Establish performance baselines for critical operations
   - Test memory usage patterns to prevent memory leaks
   - Test computational complexity bounds with large inputs
