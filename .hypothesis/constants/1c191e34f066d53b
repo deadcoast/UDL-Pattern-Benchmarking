@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/visualization/realtime_metrics.py
+# hypothesis_version: 6.148.7
+
+[8765, 'active_computations', 'completed', 'computation_time', 'count', 'csv', 'data', 'duration', 'end_time', 'iteration', 'json', 'latest', 'max', 'mean', 'memory_usage', 'metric_history', 'metric_name', 'metrics', 'metrics_computed', 'min', 'performance_metrics', 'running', 'start_time', 'statistics', 'status', 'std', 'throughput', 'timestamp', 'timestamps', 'udl_file', 'value', 'values', 'w']
