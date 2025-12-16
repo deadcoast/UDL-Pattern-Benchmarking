@@ -2,6 +2,33 @@
 
 A mathematically-grounded system for evaluating the quality of User Defined Languages (UDLs), built on the Continuous Thought Machine (CTM) architecture.
 
+<!-- TOC -->
+- [Overview](#overview)
+- [Features](#features)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [From Source](#from-source)
+  - [Development Installation](#development-installation)
+  - [Using pip (when published)](#using-pip-when-published)
+- [Quick Start](#quick-start)
+  - [Rating a UDL File](#rating-a-udl-file)
+  - [Command-Line Interface](#command-line-interface)
+- [Project Structure](#project-structure)
+- [Mathematical Foundation](#mathematical-foundation)
+  - [Consistency Metric](#consistency-metric)
+  - [Completeness Metric](#completeness-metric)
+  - [Overall Quality Score](#overall-quality-score)
+- [Development](#development)
+  - [Running Tests](#running-tests)
+  - [Code Quality](#code-quality)
+- [Requirements](#requirements)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+- [Status](#status)
+<!-- /TOC -->
+
 ## Overview
 
 The UDL Rating Framework provides objective, reproducible quality assessments of domain-specific languages through formal mathematical metrics. Every rating is traceable to rigorous mathematical foundations, eliminating subjective judgments.
@@ -133,7 +160,7 @@ docs/
 
 ## Mathematical Foundation
 
-All metrics are formally defined in [Mathematical Framework](https://github.com/deadcoast/UDL-Pattern-Benchmarking/blob/main/docs/mathematical_framework.pdf). Key definitions:
+All metrics are formally defined in [Mathematical Framework](docs/mathematical_framework.pdf). Key definitions:
 
 ### Consistency Metric
 
