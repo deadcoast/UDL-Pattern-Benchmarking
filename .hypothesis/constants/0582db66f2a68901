@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/metrics/completeness.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1.0, '(', ')', ':', '<', '=', '>', '[', ']', 'additive', 'associativity', 'attributes', 'basic_grammar', 'bounded', 'branch', 'comments', 'completeness', 'const', 'content', 'continuous', 'control_flow', 'decl', 'declaration', 'else', 'expr', 'expression', 'expression_language', 'expressions', 'factor', 'for', 'function', 'group', 'identifiers', 'if', 'key_value_pairs', 'keywords', 'let', 'literals', 'loop', 'markup_language', 'monotonic', 'nesting', 'non_terminals', 'operators', 'precedence', 'primary', 'production_rules', 'programming_language', 'section', 'sections', 'statement', 'statements', 'stmt', 'tags', 'term', 'terminals', 'then', 'var', 'while', '{', '}']

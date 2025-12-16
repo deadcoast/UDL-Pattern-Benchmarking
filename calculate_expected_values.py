@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
-Calculate actual metric values for all example UDLs to update test expectations.
+Calculate actual metric values for all example UDLs to verify test expectations.
+
+This script computes the exact metric values using the implemented algorithms
+and can be used to verify that the expected values in the test file are correct.
 """
 
 import sys

@@ -713,7 +713,7 @@ The following tasks could be added for further enhancement but are not required 
 
 ### Priority 1: Core Metric Implementation Fixes
 
-- [ ] 36. Fix core metric computation algorithms
+- [x] 36. Fix core metric computation algorithms
   - Fix consistency metric cycle detection and contradiction analysis algorithms
   - Fix completeness metric construct extraction and coverage calculation
   - Fix expressiveness metric Chomsky hierarchy classification and complexity computation
@@ -721,14 +721,14 @@ The following tasks could be added for further enhancement but are not required 
   - Ensure all metrics produce values in [0,1] range as specified in mathematical framework
   - _Requirements: 1.3, 3.1, 3.2, 3.3, 3.4, 3.5_
 
-- [ ] 36.1 Write property test for metric boundedness validation
+- [x] 36.1 Write property test for metric boundedness validation
   - **Property 2: Metric Boundedness**
   - **Validates: Requirements 1.4, 3.7**
   - Generate random UDL representations
   - Verify all metrics produce values in [0,1]
   - _Requirements: 1.4, 3.7_
 
-- [ ] 36.2 Write property test for metric determinism validation
+- [x] 36.2 Write property test for metric determinism validation
   - **Property 3: Metric Determinism**
   - **Validates: Requirements 1.4, 6.5**
   - Generate random UDL representations
@@ -736,14 +736,14 @@ The following tasks could be added for further enhancement but are not required 
   - Verify identical results
   - _Requirements: 1.4, 6.5_
 
-- [ ] 37. Fix example validation and hand-calculated values
+- [x] 37. Fix example validation and hand-calculated values
   - Review and correct hand-calculated metric values for all example UDL files
   - Fix metric computation algorithms to match mathematical specifications exactly
   - Ensure system produces identical results to hand-calculated values (within ε = 1e-6)
   - Update example UDL files if necessary to have consistent expected values
   - _Requirements: 1.3, 11.2_
 
-- [ ] 37.1 Write validation tests for corrected examples
+- [x] 37.1 Write validation tests for corrected examples
   - **Property 1: Metric Specification Conformance**
   - **Validates: Requirements 1.3**
   - Load example UDLs with corrected hand-calculated values
@@ -752,20 +752,20 @@ The following tasks could be added for further enhancement but are not required 
 
 ### Priority 2: Integration and Deployment Fixes
 
-- [ ] 38. Fix deployment and API integration
+- [x] 38. Fix deployment and API integration
   - Fix FastAPI authentication and endpoint validation issues
   - Ensure all API endpoints return correct status codes and responses
   - Fix Docker containerization and deployment scripts
   - Test end-to-end API functionality with proper authentication
   - _Requirements: 2.1, 5.7_
 
-- [ ] 38.1 Write integration tests for fixed API endpoints
+- [x] 38.1 Write integration tests for fixed API endpoints
   - Test all API endpoints with proper authentication
   - Test error handling and validation responses
   - Test batch processing and file upload functionality
   - _Requirements: 2.1, 5.7_
 
-- [ ] 39. Fix integration features and CLI commands
+- [-] 39. Fix integration features and CLI commands
   - Fix Git hooks installation and uninstall functionality
   - Fix LSP server async function support and protocol implementation
   - Fix CI/CD integration workflow creation and execution

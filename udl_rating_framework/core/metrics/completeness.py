@@ -140,6 +140,7 @@ class CompletenessMetric(QualityMetric):
         # Extract constructs from grammar rules
         rules = udl.get_grammar_rules()
         if rules:
+            # Always add production_rules if we have any rules
             constructs.add(Construct("production_rules", "production_rules"))
 
             # Extract non-terminals (LHS of rules)

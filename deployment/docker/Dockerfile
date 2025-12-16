@@ -24,14 +24,14 @@ RUN groupadd -r appuser && useradd -r -g appuser appuser
 WORKDIR /app
 
 # Copy dependency files
-COPY deployment/api/requirements.txt .
+COPY deployment/api/requirements.txt ./api-requirements.txt
 COPY pyproject.toml .
 COPY requirements.txt ./requirements-main.txt
 
 # Install Python dependencies
 RUN uv venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-RUN uv pip install -r requirements.txt
+RUN uv pip install -r api-requirements.txt
 RUN uv pip install -r requirements-main.txt
 
 # Development stage
@@ -105,10 +105,12 @@ RUN addgroup -S appuser && adduser -S appuser -G appuser
 WORKDIR /app
 
 # Copy requirements and install dependencies
-COPY deployment/api/requirements.txt .
+COPY deployment/api/requirements.txt ./api-requirements.txt
+COPY requirements.txt ./requirements-main.txt
 RUN uv venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-RUN uv pip install -r requirements.txt
+RUN uv pip install -r api-requirements.txt
+RUN uv pip install -r requirements-main.txt
 
 # Copy application code
 COPY udl_rating_framework/ ./udl_rating_framework/

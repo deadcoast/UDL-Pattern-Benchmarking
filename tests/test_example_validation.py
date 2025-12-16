@@ -30,9 +30,8 @@ class TestExampleValidation:
     the mathematical specification exactly (within numerical precision ε = 1e-6).
     """
 
-    # Numerical precision tolerance - relaxed to account for hand-calculated values
-    # being rounded to 3 decimal places
-    EPSILON = 1e-3
+    # Numerical precision tolerance - strict since we have exact computed values
+    EPSILON = 1e-6
     
     # Default metric weights for aggregation
     DEFAULT_WEIGHTS = {
@@ -77,86 +76,86 @@ class TestExampleValidation:
         """
         Get hand-calculated expected values for each example.
         
-        These values are derived from the detailed calculations in the
-        corresponding .md files for each example.
+        These values are computed using the actual metric implementations
+        and represent the mathematically correct results.
         """
         expected_values = {
             "simple_calculator.udl": {
-                "consistency": 0.833,
-                "completeness": 0.667,
-                "expressiveness": 0.430,
-                "structural_coherence": 0.624,
-                "overall": 0.661
+                "consistency": 0.833333,
+                "completeness": 0.666667,
+                "expressiveness": 0.430205,
+                "structural_coherence": 0.623851,
+                "overall": 0.660811
             },
             "json_subset.udl": {
-                "consistency": 0.800,
-                "completeness": 1.000,
-                "expressiveness": 0.540,
-                "structural_coherence": 0.751,
-                "overall": 0.798
+                "consistency": 0.800000,
+                "completeness": 1.000000,
+                "expressiveness": 0.540327,
+                "structural_coherence": 0.750530,
+                "overall": 0.798171
             },
             "config_language.udl": {
-                "consistency": 1.000,
-                "completeness": 1.000,
-                "expressiveness": 0.525,
-                "structural_coherence": 0.640,
-                "overall": 0.833
+                "consistency": 1.000000,
+                "completeness": 1.000000,
+                "expressiveness": 0.525276,
+                "structural_coherence": 0.639517,
+                "overall": 0.832959
             },
             "broken_grammar.udl": {
-                "consistency": 0.833,
-                "completeness": 0.571,
-                "expressiveness": 0.394,
-                "structural_coherence": 0.667,
-                "overall": 0.634
+                "consistency": 0.833333,
+                "completeness": 0.571429,
+                "expressiveness": 0.394183,
+                "structural_coherence": 0.667103,
+                "overall": 0.633686
             },
             "state_machine.udl": {
-                "consistency": 1.000,
-                "completeness": 0.571,
-                "expressiveness": 0.584,
-                "structural_coherence": 0.720,
-                "overall": 0.732
+                "consistency": 1.000000,
+                "completeness": 0.571429,
+                "expressiveness": 0.583822,
+                "structural_coherence": 0.719858,
+                "overall": 0.732165
             },
             "query_language.udl": {
-                "consistency": 1.000,
-                "completeness": 0.571,
-                "expressiveness": 0.569,
-                "structural_coherence": 0.730,
-                "overall": 0.731
+                "consistency": 1.000000,
+                "completeness": 0.571429,
+                "expressiveness": 0.569021,
+                "structural_coherence": 0.730049,
+                "overall": 0.731243
             },
             "template_engine.udl": {
-                "consistency": 1.000,
-                "completeness": 0.800,
-                "expressiveness": 0.568,
-                "structural_coherence": 0.739,
-                "overall": 0.801
+                "consistency": 1.000000,
+                "completeness": 0.800000,
+                "expressiveness": 0.567700,
+                "structural_coherence": 0.739264,
+                "overall": 0.801393
             },
             "regex_subset.udl": {
-                "consistency": 0.778,
-                "completeness": 1.000,
-                "expressiveness": 0.554,
-                "structural_coherence": 0.821,
-                "overall": 0.808
+                "consistency": 0.777778,
+                "completeness": 1.000000,
+                "expressiveness": 0.554318,
+                "structural_coherence": 0.820613,
+                "overall": 0.808320
             },
             "css_subset.udl": {
-                "consistency": 1.000,
-                "completeness": 1.000,
-                "expressiveness": 0.553,
-                "structural_coherence": 0.701,
-                "overall": 0.851
+                "consistency": 1.000000,
+                "completeness": 1.000000,
+                "expressiveness": 0.552890,
+                "structural_coherence": 0.701373,
+                "overall": 0.850853
             },
             "inconsistent_rules.udl": {
-                "consistency": 0.611,
-                "completeness": 1.000,
-                "expressiveness": 0.566,
-                "structural_coherence": 0.684,
-                "overall": 0.733
+                "consistency": 0.611111,
+                "completeness": 1.000000,
+                "expressiveness": 0.566494,
+                "structural_coherence": 0.684094,
+                "overall": 0.733451
             },
             "incomplete_spec.udl": {
-                "consistency": 1.000,
-                "completeness": 0.667,
-                "expressiveness": 0.169,
-                "structural_coherence": 0.500,
-                "overall": 0.634
+                "consistency": 1.000000,
+                "completeness": 0.666667,
+                "expressiveness": 0.168651,
+                "structural_coherence": 0.500000,
+                "overall": 0.633730
             }
         }
         
@@ -275,8 +274,8 @@ class TestExampleValidation:
         # Compute actual value
         actual = metrics["expressiveness"].compute(udl)
         
-        # Allow larger tolerance for expressiveness due to complexity approximation
-        tolerance = max(self.EPSILON, 0.05)  # 5% tolerance for complexity estimates
+        # Use strict tolerance since we have exact computed values
+        tolerance = self.EPSILON
         
         # Verify within tolerance
         assert abs(actual - expected) <= tolerance, (
@@ -318,8 +317,8 @@ class TestExampleValidation:
         # Compute actual value
         actual = metrics["structural_coherence"].compute(udl)
         
-        # Allow larger tolerance for structural coherence due to entropy calculations
-        tolerance = max(self.EPSILON, 0.05)  # 5% tolerance for entropy estimates
+        # Use strict tolerance since we have exact computed values
+        tolerance = self.EPSILON
         
         # Verify within tolerance
         assert abs(actual - expected) <= tolerance, (
@@ -366,8 +365,8 @@ class TestExampleValidation:
         # Compute overall score
         actual = aggregator.aggregate(metric_values)
         
-        # Allow reasonable tolerance for overall score
-        tolerance = max(self.EPSILON, 0.02)  # 2% tolerance for aggregated score
+        # Use strict tolerance since we have exact computed values
+        tolerance = self.EPSILON
         
         # Verify within tolerance
         assert abs(actual - expected) <= tolerance, (

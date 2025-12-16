@@ -328,21 +328,22 @@ class UDLRepresentation:
         # Content-based detection for generic extensions
         content_lower = self.source_text.lower()
         
-        # ANTLR patterns
-        if any(pattern in content_lower for pattern in ['grammar ', '@', 'lexer ', 'parser ']):
+        # ANTLR patterns (very specific to avoid false positives in comments)
+        if any(pattern in content_lower for pattern in ['@lexer', '@parser', 'lexer grammar', 'parser grammar']) or \
+           (content_lower.startswith('grammar ') or '\ngrammar ' in content_lower):
             return GrammarFormat.ANTLR
-        
-        # PEG patterns
-        if any(pattern in self.source_text for pattern in ['<-', '&', '~', '/']):
-            return GrammarFormat.PEG
         
         # Yacc/Bison patterns
         if any(pattern in self.source_text for pattern in ['%%', '%token', '%type', '%start']):
             return GrammarFormat.YACC_BISON
         
-        # EBNF patterns
-        if any(pattern in self.source_text for pattern in ['::=', '{ }', '[ ]']):
+        # EBNF patterns (check before PEG since ::= is more specific to EBNF)
+        if '::=' in self.source_text:
             return GrammarFormat.EBNF
+        
+        # PEG patterns (more specific patterns to avoid false positives)
+        if '<-' in self.source_text or ('&' in self.source_text and '~' in self.source_text):
+            return GrammarFormat.PEG
         
         # ABNF patterns (RFC 5234)
         if any(pattern in content_lower for pattern in ['abnf', 'rfc', 'vchar', 'alpha']):
