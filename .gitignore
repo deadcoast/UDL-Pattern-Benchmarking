@@ -1,6 +1,8 @@
 */__pycache__
 logs
 .DS_Store
+
+# file extensions
 *.png
 *.gif
 *.out
@@ -8,6 +10,13 @@ logs
 *.env
 *.pt
 *.mp4
+
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+
 .vscode*
 *outputs*
 data/*
