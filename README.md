@@ -39,14 +39,23 @@ The UDL Rating Framework provides objective, reproducible quality assessments of
 ## Features
 
 - **Mathematical Rigor**: All metrics are formally defined with proven properties
-- **Four Quality Dimensions**:
+- **Core Quality Dimensions**:
   - **Consistency**: Internal coherence using graph-theoretic analysis
   - **Completeness**: Construct coverage using set theory
   - **Expressiveness**: Language power via Chomsky hierarchy classification
   - **Structural Coherence**: Organizational quality using information theory
+- **Advanced Metrics**:
+  - **Semantic Similarity**: Cross-language semantic comparison
+  - **Readability**: Code readability assessment
+  - **Maintainability**: Long-term maintenance cost estimation
+  - **Cross-Language Compatibility**: Multi-language support analysis
+  - **Evolution Tracking**: Version-to-version change analysis
 - **Confidence Scores**: Entropy-based certainty measures
-- **CTM Integration**: Neural approximation for fast inference
-- **Comprehensive Testing**: Property-based and unit testing
+- **CTM Integration**: Neural approximation for fast inference via CTM adapter
+- **Comprehensive Testing**: Property-based and unit testing (652+ tests)
+- **Analytics & Visualization**: Real-time metrics, web dashboards, and WebGL visualizations
+- **Training Pipeline**: Active learning, ensemble methods, hyperparameter optimization
+- **Integration Tools**: CI/CD, Git hooks, IDE plugins, LSP server
 
 ## Installation
 
@@ -108,32 +117,55 @@ pip install continuous-thought-machines
 
 ```python
 from udl_rating_framework import UDLRepresentation
-from udl_rating_framework.core.metrics import ConsistencyMetric
+from udl_rating_framework.core.metrics import ConsistencyMetric, CompletenessMetric
 
-# Load a UDL
-with open("my_language.udl", "r") as f:
-    udl = UDLRepresentation(f.read(), "my_language.udl")
+# Define a simple UDL grammar
+udl_content = """
+grammar MyLanguage;
+program: statement+;
+statement: assignment | expression;
+assignment: ID '=' expression;
+expression: term (('+' | '-') term)*;
+term: factor (('*' | '/') factor)*;
+factor: ID | NUMBER | '(' expression ')';
+ID: [a-zA-Z_][a-zA-Z0-9_]*;
+NUMBER: [0-9]+;
+"""
 
-# Compute consistency
-metric = ConsistencyMetric()
-score = metric.compute(udl)
-print(f"Consistency: {score:.3f}")
+# Create UDL representation
+udl = UDLRepresentation(udl_content, "my_language.udl")
+
+# Compute metrics
+consistency = ConsistencyMetric()
+completeness = CompletenessMetric()
+
+print(f"Consistency: {consistency.compute(udl):.3f}")
+print(f"Completeness: {completeness.compute(udl):.3f}")
 ```
 
 ### Command-Line Interface
 
 ```bash
+# Show available commands
+udl-rating --help
+
 # Rate a directory of UDL files
-udl-rate --directory ./my_udls --output report.json
+udl-rating rate --directory ./my_udls --output report.json
 
 # Train a CTM model
-udl-train --dataset ./training_data --epochs 50 --output model.pt
+udl-rating train --dataset ./training_data --epochs 50 --output model.pt
 
 # Compare multiple UDLs
-udl-compare --files udl_v1.dsl udl_v2.dsl --output comparison.html
+udl-rating compare --files udl_v1.dsl udl_v2.dsl --output comparison.html
 
 # Evaluate model performance
-udl-evaluate --model model.pt --test-set ./test_data
+udl-rating evaluate --model model.pt --test-set ./test_data
+
+# Analytics commands
+udl-rating analytics --help
+
+# Integration commands (CI/CD, Git hooks)
+udl-rating integration --help
 ```
 
 ## Project Structure
@@ -142,23 +174,52 @@ udl-evaluate --model model.pt --test-set ./test_data
 udl_rating_framework/
 ├── core/                  # Core components
 │   ├── representation.py  # UDL representation
-│   ├── metrics/          # Quality metrics
+│   ├── metrics/          # Quality metrics (consistency, completeness, etc.)
 │   ├── aggregation.py    # Metric aggregation
-│   └── confidence.py     # Confidence calculation
+│   ├── confidence.py     # Confidence calculation
+│   ├── caching.py        # Result caching
+│   ├── pipeline.py       # Processing pipeline
+│   └── performance.py    # Performance utilities
 ├── models/               # CTM model components
+│   └── ctm_adapter.py    # CTM integration adapter
 ├── io/                   # Input/output handling
+│   ├── file_discovery.py # File discovery utilities
+│   ├── input_validation.py # Input validation
+│   └── report_generator.py # Report generation
 ├── evaluation/           # Evaluation utilities
+│   ├── comparison.py     # UDL comparison
+│   └── evaluation_suite.py # Evaluation suite
+├── analytics/            # Analytics and reporting
+│   ├── portfolio_analyzer.py # Portfolio analysis
+│   ├── trend_predictor.py # Trend prediction
+│   └── bi_exporter.py    # BI tool export
+├── training/             # ML training components
+│   ├── training_pipeline.py # Training pipeline
+│   ├── active_learning.py # Active learning
+│   └── ensemble_methods.py # Ensemble methods
+├── visualization/        # Visualization tools
+│   ├── web_visualizer.py # Web dashboards
+│   ├── realtime_metrics.py # Real-time metrics
+│   └── webgl_visualizer.py # WebGL 3D visualizations
+├── integration/          # Integration tools
+│   ├── cicd.py           # CI/CD integration
+│   ├── git_hooks.py      # Git hooks
+│   └── lsp_server.py     # LSP server
+├── validation/           # Validation utilities
+├── benchmarks/           # Performance benchmarks
 ├── utils/                # Utility functions
 └── cli/                  # Command-line interface
+    └── commands/         # CLI commands
 
 tests/
 ├── unit/                 # Unit tests
-├── property/             # Property-based tests
-├── integration/          # Integration tests
-└── performance/          # Performance benchmarks
+├── test_*.py             # Test modules (property-based, integration, etc.)
+└── conftest.py           # Test configuration
 
 docs/
-└── mathematical_framework.tex  # Mathematical specification
+├── mathematical_framework.tex  # Mathematical specification
+├── api_reference.rst     # API documentation
+└── examples.rst          # Tutorial examples
 ```
 
 ## Mathematical Foundation
@@ -223,11 +284,11 @@ uv run mypy udl_rating_framework/
 - SciPy 1.10+
 - Hypothesis 6.0+
 
-All dependencies are managed through [UV via pyproject.toml](pyproject.toml) [#LINKTODO]  and installed via uv. The [UV lock file](uv.lock) [#LINKTODO] ensures reproducible builds across environments.
+All dependencies are managed through [pyproject.toml](pyproject.toml) and installed via uv. The [uv.lock](uv.lock) file ensures reproducible builds across environments.
 
 ## Documentation
 
-- [Mathematical Framework](https://github.com/deadcoast/UDL-Pattern-Benchmarking/blob/main/docs/mathematical_framework.pdf) - [#LINKTODO] Complete mathematical specification
+- [Mathematical Framework](docs/mathematical_framework.pdf) - Complete mathematical specification
 - [API Documentation](docs/api_reference.rst) - API reference
 - [Tutorial Notebooks](docs/examples.rst) - Jupyter notebooks with examples
 
@@ -248,7 +309,13 @@ Built on the Continuous Thought Machine (CTM) architecture for temporal sequence
 This project is under active development. Current status:
 
 - [x] Project structure and foundation
-- [x] Core metrics implementation
-- [ ] CTM integration
-- [ ] Evaluation utilities
-- [ ] Documentation and examples
+- [x] Core metrics implementation (Consistency, Completeness, Expressiveness, Structural Coherence)
+- [x] Advanced metrics (Semantic Similarity, Readability, Maintainability, Cross-Language Compatibility, Evolution Tracking)
+- [x] CTM integration (CTM adapter)
+- [x] Evaluation utilities (Comparison, Evaluation Suite)
+- [x] Training pipeline (Active Learning, Ensemble Methods, Hyperparameter Optimization)
+- [x] Analytics (Portfolio Analyzer, Trend Predictor, BI Exporter)
+- [x] Visualization (Web, WebGL, Real-time Metrics)
+- [x] Integration tools (CI/CD, Git Hooks, LSP Server)
+- [x] Comprehensive testing (652+ tests, 66% coverage, 40 correctness properties)
+- [ ] Documentation polish and validation (in progress)
