@@ -552,11 +552,14 @@ class UDLRepresentation:
         tokens = [t for t in self._tokens if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE]]
         i = 0
         
+        # Valid operators for BNF/EBNF rules
+        valid_operators = ["::=", ":=", "="]
+        
         while i < len(tokens):
-            # Look for rule patterns: identifier ::= expression OR identifier = expression (ABNF)
+            # Look for rule patterns: identifier ::= expression OR identifier := expression OR identifier = expression (ABNF)
             if (i + 1 < len(tokens) and 
                 tokens[i].type == TokenType.IDENTIFIER and 
-                i + 1 < len(tokens) and tokens[i + 1].text in ["::=", "="]):
+                i + 1 < len(tokens) and tokens[i + 1].text in valid_operators):
                 
                 lhs = tokens[i].text
                 operator = tokens[i + 1].text
@@ -567,7 +570,7 @@ class UDLRepresentation:
                 while i < len(tokens) and not (
                     tokens[i].type == TokenType.IDENTIFIER and 
                     i + 1 < len(tokens) and 
-                    tokens[i + 1].text in ["::=", "="]
+                    tokens[i + 1].text in valid_operators
                 ):
                     if tokens[i].type not in [TokenType.COMMENT, TokenType.EOF]:
                         rhs.append(tokens[i].text)

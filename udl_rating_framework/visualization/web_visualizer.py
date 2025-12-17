@@ -333,7 +333,8 @@ class WebVisualizer:
         # Compute topological ordering (if DAG)
         try:
             topo_order = list(nx.topological_sort(graph))
-        except nx.NetworkXError:
+        except (nx.NetworkXError, nx.NetworkXUnfeasible):
+            # Graph has cycles, use node list instead
             topo_order = list(graph.nodes())
         
         return {

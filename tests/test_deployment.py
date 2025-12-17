@@ -21,15 +21,30 @@ if deployment_api_path not in sys.path:
     sys.path.insert(0, deployment_api_path)
 
 try:
-    from main import app
+    from main import app, limiter
 except ImportError:
     # Create a mock app for testing if the real app can't be imported
     from fastapi import FastAPI
     app = FastAPI()
+    limiter = None
     
     @app.get("/health")
     def mock_health():
         return {"status": "healthy", "version": "1.0.0", "model_loaded": False, "uptime": 0.0}
+
+
+@pytest.fixture(autouse=True)
+def disable_rate_limiter():
+    """Disable rate limiter for tests to avoid rate limit issues."""
+    if limiter is not None:
+        # Store original enabled state
+        original_enabled = getattr(limiter, 'enabled', True)
+        limiter.enabled = False
+        yield
+        # Restore original state
+        limiter.enabled = original_enabled
+    else:
+        yield
 
 
 class TestFastAPIDeployment:
