@@ -23,6 +23,8 @@ from queue import Queue, Empty
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.pipeline import RatingPipeline, QualityReport
 from udl_rating_framework.core.caching import get_udl_cache
+# Import metrics to ensure they are registered in the MetricRegistry
+import udl_rating_framework.core.metrics  # noqa: F401
 
 logger = logging.getLogger(__name__)
 

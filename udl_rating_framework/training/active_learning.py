@@ -350,7 +350,15 @@ class DiversitySampling(QueryStrategy):
                 token_ids = token_ids.unsqueeze(0).to(self.device)
                 
                 # Get synchronization representation as features
-                _, _, synch_out = model(token_ids)
+                # Model returns (predictions, certainties, synch_out, tracking_data)
+                result = model(token_ids)
+                if len(result) == 4:
+                    _, _, synch_out, _ = result
+                elif len(result) == 3:
+                    _, _, synch_out = result
+                else:
+                    synch_out = None
+                    
                 if synch_out is not None:
                     features.append(synch_out.squeeze().cpu().numpy())
                 else:
@@ -488,7 +496,7 @@ class HybridSampling(QueryStrategy):
         self.uncertainty_weight = uncertainty_weight
         self.diversity_weight = diversity_weight
         
-        self.uncertainty_sampler = UncertaintySampling(uncertainty_method, device)
+        self.uncertainty_sampler = CTMUncertaintySampling(uncertainty_method, device)
         self.diversity_sampler = DiversitySampling(diversity_method, device=device)
     
     def select_samples(self,

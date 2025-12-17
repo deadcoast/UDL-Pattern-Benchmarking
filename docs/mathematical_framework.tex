@@ -235,17 +235,22 @@ Since all components are deterministic functions of the input, $\text{Consistenc
 \subsection{Completeness Metric}
 
 \begin{definition}[Completeness Metric]
-The completeness metric measures construct coverage:
+The completeness metric measures construct coverage using set intersection:
 \[
-m_2(U) = \text{Completeness}(U) = \frac{|D(U)|}{|R_{\text{req}}(\tau(U))|}
+m_2(U) = \text{Completeness}(U) = \frac{|D(U) \cap R_{\text{req}}(\tau(U))|}{|R_{\text{req}}(\tau(U))|}
 \]
 where:
 \begin{itemize}
     \item $D(U) = \{c : c \text{ is a construct defined in } U\}$ is the set of defined constructs
     \item $\tau(U)$ is the inferred language type of $U$
     \item $R_{\text{req}}(\tau) = \{c : c \text{ is required for language type } \tau\}$ is the set of required constructs
+    \item The intersection $D(U) \cap R_{\text{req}}(\tau)$ represents constructs that are both defined and required
 \end{itemize}
 \end{definition}
+
+\begin{remark}[Implementation Note]
+The implementation extracts construct types from the UDL (e.g., \texttt{production\_rules}, \texttt{terminals}, \texttt{operators}) and computes the intersection with the required construct types for the inferred language type. This ensures that only relevant constructs contribute to the completeness score.
+\end{remark}
 
 \begin{theorem}[Completeness Boundedness]
 For any UDL $U \in \mathcal{U}$, $0 \leq \text{Completeness}(U) \leq 1$.
@@ -254,19 +259,36 @@ For any UDL $U \in \mathcal{U}$, $0 \leq \text{Completeness}(U) \leq 1$.
 \begin{proof}
 Let $U \in \mathcal{U}$ be arbitrary with language type $\tau = \tau(U)$.
 
-\textbf{Lower bound:} Since $|D(U)| \geq 0$ and $|R_{\text{req}}(\tau)| > 0$ (by definition of language types), we have:
+\textbf{Lower bound:} Since $|D(U) \cap R_{\text{req}}(\tau)| \geq 0$ and $|R_{\text{req}}(\tau)| > 0$ (by definition of language types), we have:
 \[
-\text{Completeness}(U) = \frac{|D(U)|}{|R_{\text{req}}(\tau)|} \geq 0
+\text{Completeness}(U) = \frac{|D(U) \cap R_{\text{req}}(\tau)|}{|R_{\text{req}}(\tau)|} \geq 0
 \]
 
-\textbf{Upper bound:} By definition, $D(U) \subseteq \mathcal{C}$ where $\mathcal{C}$ is the universal set of possible constructs. The required constructs $R_{\text{req}}(\tau) \subseteq \mathcal{C}$ are chosen such that $|D(U) \cap R_{\text{req}}(\tau)| \leq |R_{\text{req}}(\tau)|$.
+\textbf{Upper bound:} By set theory, $D(U) \cap R_{\text{req}}(\tau) \subseteq R_{\text{req}}(\tau)$, therefore:
+\[
+|D(U) \cap R_{\text{req}}(\tau)| \leq |R_{\text{req}}(\tau)|
+\]
 
-Therefore:
+Thus:
 \[
 \text{Completeness}(U) = \frac{|D(U) \cap R_{\text{req}}(\tau)|}{|R_{\text{req}}(\tau)|} \leq \frac{|R_{\text{req}}(\tau)|}{|R_{\text{req}}(\tau)|} = 1
 \]
 
 Hence, $0 \leq \text{Completeness}(U) \leq 1$. \qed
+\end{proof}
+
+\begin{theorem}[Completeness Determinism]
+For any UDL $U \in \mathcal{U}$, repeated computation of $\text{Completeness}(U)$ yields identical results.
+\end{theorem}
+
+\begin{proof}
+The completeness metric depends only on:
+\begin{itemize}
+    \item Construct extraction from tokens and rules (deterministic parsing)
+    \item Language type inference (deterministic heuristics)
+    \item Set intersection and cardinality (deterministic operations)
+\end{itemize}
+Since all components are deterministic functions of the input, $\text{Completeness}(U)$ is deterministic. \qed
 \end{proof}
 
 \subsection{Expressiveness Metric}
@@ -296,24 +318,47 @@ For a UDL $U$ with grammar $G$, the Chomsky classification is:
 \end{definition}
 
 \begin{definition}[Complexity Approximation]
-The complexity approximation uses compression ratio:
+The complexity approximation uses compression ratio to estimate Kolmogorov complexity:
 \[
 \text{Complexity}(U) = \max\left(0, \min\left(1, \frac{1 - \rho(U)}{0.7}\right)\right)
 \]
-where $\rho(U) = \frac{|\text{compress}(\text{clean}(U))|}{|\text{clean}(U)|}$ is the compression ratio of the cleaned source text.
+where $\rho(U) = \frac{|\text{compress}(\text{clean}(U))|}{|\text{clean}(U)|}$ is the compression ratio of the cleaned source text using zlib (deflate algorithm).
 \end{definition}
+
+\begin{remark}[Complexity Normalization]
+The normalization factor of 0.7 is chosen because typical text compresses to 30-70\% of its original size. The formula maps:
+\begin{itemize}
+    \item $\rho \leq 0.3$ (highly compressible, low complexity) $\rightarrow$ score $= 1.0$
+    \item $\rho = 0.7$ (moderately compressible) $\rightarrow$ score $\approx 0.43$
+    \item $\rho \geq 1.0$ (incompressible, high complexity) $\rightarrow$ score $= 0.0$
+\end{itemize}
+\end{remark}
 
 \begin{theorem}[Expressiveness Boundedness]
 For any UDL $U \in \mathcal{U}$, $0 \leq \text{Expressiveness}(U) \leq 1$.
 \end{theorem}
 
 \begin{proof}
-By definition, $\text{Chomsky}(U) \in [0,1]$ and $\text{Complexity}(U) \in [0,1]$.
+By definition, $\text{Chomsky}(U) \in \{0, \frac{1}{3}, \frac{2}{3}, 1\} \subset [0,1]$ and $\text{Complexity}(U) \in [0,1]$ (enforced by the $\max$ and $\min$ operations).
 Therefore:
 \[
 \text{Expressiveness}(U) = \frac{\text{Chomsky}(U) + \text{Complexity}(U)}{2} \in \left[\frac{0+0}{2}, \frac{1+1}{2}\right] = [0,1]
 \]
 \qed
+\end{proof}
+
+\begin{theorem}[Expressiveness Determinism]
+For any UDL $U \in \mathcal{U}$, repeated computation of $\text{Expressiveness}(U)$ yields identical results.
+\end{theorem}
+
+\begin{proof}
+The expressiveness metric depends only on:
+\begin{itemize}
+    \item Chomsky hierarchy classification (deterministic rule analysis)
+    \item Compression using zlib (deterministic algorithm)
+    \item Arithmetic operations (deterministic)
+\end{itemize}
+Since all components are deterministic functions of the input, $\text{Expressiveness}(U)$ is deterministic. \qed
 \end{proof}
 
 \subsection{Structural Coherence Metric}
@@ -352,6 +397,20 @@ Let $G = (V,E)$ be the grammar graph of $U$ with $|V| > 1$.
 For the edge case $|V| = 1$, we define $\text{StructuralCoherence}(U) = 1$ (perfect coherence).
 
 Hence, $0 \leq \text{StructuralCoherence}(U) \leq 1$. \qed
+\end{proof}
+
+\begin{theorem}[Structural Coherence Determinism]
+For any UDL $U \in \mathcal{U}$, repeated computation of $\text{StructuralCoherence}(U)$ yields identical results.
+\end{theorem}
+
+\begin{proof}
+The structural coherence metric depends only on:
+\begin{itemize}
+    \item Grammar graph construction (deterministic from rules)
+    \item Degree computation for each vertex (deterministic graph operation)
+    \item Shannon entropy calculation (deterministic arithmetic)
+\end{itemize}
+Since all components are deterministic functions of the input, $\text{StructuralCoherence}(U)$ is deterministic. \qed
 \end{proof}
 
 \section{Aggregation Function}
@@ -416,6 +475,20 @@ Q(\alpha U_1 + \beta U_2) = \sum_{i=1}^{4} w_i \cdot m_i(\alpha U_1 + \beta U_2)
 This follows from the linearity of the weighted sum operation. \qed
 \end{proof}
 
+\begin{theorem}[Aggregation Determinism]
+For any UDL $U \in \mathcal{U}$ and fixed weights $\{w_i\}$, repeated computation of $Q(U)$ yields identical results.
+\end{theorem}
+
+\begin{proof}
+The aggregation function depends only on:
+\begin{itemize}
+    \item Individual metric values $m_i(U)$ (each proven deterministic)
+    \item Fixed weights $w_i$ (constants)
+    \item Weighted sum operation (deterministic arithmetic)
+\end{itemize}
+Since all components are deterministic, $Q(U)$ is deterministic. \qed
+\end{proof}
+
 \section{Confidence Measure}
 
 \begin{definition}[Confidence Score]
@@ -474,6 +547,20 @@ C(p) = 1 - \frac{H(p)}{H_{\max}} > 1 - \frac{H(q)}{H_{\max}} = C(q)
 \]
 
 Therefore, lower entropy implies higher confidence. \qed
+\end{proof}
+
+\begin{theorem}[Confidence Determinism]
+For any probability distribution $p$, repeated computation of $C(p)$ yields identical results.
+\end{theorem}
+
+\begin{proof}
+The confidence calculation depends only on:
+\begin{itemize}
+    \item Shannon entropy computation $H(p) = -\sum_i p_i \log p_i$ (deterministic arithmetic)
+    \item Maximum entropy $H_{\max} = \log n$ (deterministic)
+    \item Division and subtraction (deterministic operations)
+\end{itemize}
+Since all components are deterministic functions of the input distribution, $C(p)$ is deterministic. \qed
 \end{proof}
 
 \begin{definition}[Calibration]
@@ -566,6 +653,32 @@ Computing the structural coherence metric requires $O(v + e)$ time and $O(v)$ sp
 \textbf{Entropy calculation:} Computing degree distribution and Shannon entropy: $O(v)$.
 
 \textbf{Space:} Storing degree counts and probabilities: $O(v)$. \qed
+\end{proof}
+
+\subsection{Aggregation Complexity}
+
+\begin{theorem}[Aggregation Computation Complexity]
+Computing the aggregated quality score from $k$ individual metrics requires $O(k)$ time and $O(k)$ space.
+\end{theorem}
+
+\begin{proof}
+\textbf{Time complexity:} The weighted sum $Q = \sum_{i=1}^{k} w_i \cdot m_i$ requires $k$ multiplications and $k-1$ additions: $O(k)$.
+
+\textbf{Space complexity:} Storing $k$ weights and $k$ metric values: $O(k)$.
+
+Since $k = 4$ (fixed number of metrics), this is effectively $O(1)$. \qed
+\end{proof}
+
+\subsection{Confidence Calculation Complexity}
+
+\begin{theorem}[Confidence Computation Complexity]
+Computing the confidence score from a probability distribution over $n$ classes requires $O(n)$ time and $O(1)$ space.
+\end{theorem}
+
+\begin{proof}
+\textbf{Time complexity:} Computing Shannon entropy $H(p) = -\sum_{i=1}^{n} p_i \log p_i$ requires $n$ logarithm computations and $n$ multiplications: $O(n)$.
+
+\textbf{Space complexity:} Only scalar values (entropy, max entropy, confidence) need to be stored: $O(1)$. \qed
 \end{proof}
 
 \subsection{Overall Framework Complexity}
@@ -663,9 +776,12 @@ $|R_{\text{req}}| = 6$
 \textbf{Defined Constructs:} $D(U) = \{$production\_rules, terminals, non\_terminals, operators, precedence, associativity$\}$
 $|D(U)| = 6$ (all required constructs are present)
 
+\textbf{Intersection:} $D(U) \cap R_{\text{req}} = \{$production\_rules, terminals, non\_terminals, operators, precedence, associativity$\}$
+$|D(U) \cap R_{\text{req}}| = 6$
+
 \textbf{Completeness Score:}
 \[
-\text{Completeness}(U) = \frac{|D(U)|}{|R_{\text{req}}|} = \frac{6}{6} = 1.0
+\text{Completeness}(U) = \frac{|D(U) \cap R_{\text{req}}|}{|R_{\text{req}}|} = \frac{6}{6} = 1.0
 \]
 
 \subsubsection{Step 4: Expressiveness Metric Calculation}
@@ -744,19 +860,127 @@ string ::= '"' char* '"'
 boolean ::= 'true' | 'false'
 \end{lstlisting}
 
+\subsubsection{Step 1: UDL Representation}
+
+\textbf{Grammar Rules:} $|R| = 6$ rules
+
+\textbf{Grammar Graph:} $G = (V, E)$ with $|V| = 6$ vertices (config, section, property, value, string, boolean)
+
+\subsubsection{Step 2: Consistency Metric Calculation}
+
+\textbf{Cycle Detection:} No cycles detected (no recursive rules)
+$|Y(G)| = 0$
+
+\textbf{Contradiction Detection:} No contradictions found
+$|C(U)| = 0$
+
+\textbf{Consistency Score:}
+\[
+\text{Consistency}(U) = 1 - \frac{0 + 0}{6 + 1} = 1 - 0 = 1.0
+\]
+
+\subsubsection{Step 3: Completeness Metric Calculation}
+
+\textbf{Language Type Inference:} Configuration language
+
+\textbf{Required Constructs:} $R_{\text{req}} = \{$production\_rules, terminals, non\_terminals, key\_value\_pairs, sections, comments$\}$
+$|R_{\text{req}}| = 6$
+
+\textbf{Defined Constructs:} $D(U) = \{$production\_rules, terminals, non\_terminals, key\_value\_pairs, sections$\}$
+$|D(U)| = 5$ (missing comments)
+
+\textbf{Intersection:} $|D(U) \cap R_{\text{req}}| = 5$
+
+\textbf{Completeness Score:}
+\[
+\text{Completeness}(U) = \frac{5}{6} \approx 0.833
+\]
+
+\subsubsection{Step 4: Expressiveness Metric Calculation}
+
+\textbf{Chomsky Classification:} Context-free (Type-2)
+$\text{Chomsky}(U) = \frac{1}{3} \approx 0.333$
+
+\textbf{Complexity Approximation:} Compression ratio $\rho \approx 0.5$
+\[
+\text{Complexity}(U) = \frac{1 - 0.5}{0.7} \approx 0.714
+\]
+
+\textbf{Expressiveness Score:}
+\[
+\text{Expressiveness}(U) = \frac{0.333 + 0.714}{2} \approx 0.524
+\]
+
+\subsubsection{Step 5: Structural Coherence Calculation}
+
+\textbf{Degree Distribution:} More uniform distribution due to hierarchical structure
+
+\textbf{Shannon Entropy:} $H(G) \approx 1.0$ (lower than Example 1)
+
+\textbf{Maximum Entropy:} $H_{\max} = \log_2 6 \approx 2.585$
+
+\textbf{Structural Coherence Score:}
+\[
+\text{StructuralCoherence}(U) = 1 - \frac{1.0}{2.585} \approx 0.613
+\]
+
+\subsubsection{Step 6: Overall Quality Score}
+
+Using equal weights: $w_1 = w_2 = w_3 = w_4 = 0.25$
+
+\[
+Q(U) = 0.25 \times 1.0 + 0.25 \times 0.833 + 0.25 \times 0.524 + 0.25 \times 0.613
+\]
+\[
+= 0.25 + 0.208 + 0.131 + 0.153 = 0.742
+\]
+
+\textbf{Final Result:} The configuration language achieves $Q = 0.742$, higher than the arithmetic grammar due to perfect consistency and better structural organization.
+
+\subsection{Example 3: Minimal Grammar (Edge Case)}
+
+Consider a minimal UDL with a single rule:
+
+\begin{lstlisting}
+start ::= 'hello'
+\end{lstlisting}
+
 \subsubsection{Metric Calculations}
 
-Following the same methodology:
+\textbf{Consistency:}
+\begin{itemize}
+    \item $|Y(G)| = 0$ (no cycles)
+    \item $|C(U)| = 0$ (no contradictions)
+    \item $\text{Consistency}(U) = 1 - \frac{0}{1+1} = 1.0$
+\end{itemize}
 
-\textbf{Consistency:} No cycles or contradictions $\Rightarrow$ Consistency = 1.0
+\textbf{Completeness:}
+\begin{itemize}
+    \item Language type: basic\_grammar
+    \item $R_{\text{req}} = \{$production\_rules, terminals, non\_terminals$\}$, $|R_{\text{req}}| = 3$
+    \item $D(U) = \{$production\_rules, terminals, non\_terminals$\}$, $|D(U) \cap R_{\text{req}}| = 3$
+    \item $\text{Completeness}(U) = \frac{3}{3} = 1.0$
+\end{itemize}
 
-\textbf{Completeness:} Configuration language with all required constructs $\Rightarrow$ Completeness = 1.0
+\textbf{Expressiveness:}
+\begin{itemize}
+    \item Chomsky type: Regular (Type-3), $\text{Chomsky}(U) = 0$
+    \item Complexity: Very low (highly compressible), $\text{Complexity}(U) \approx 0.1$
+    \item $\text{Expressiveness}(U) = \frac{0 + 0.1}{2} = 0.05$
+\end{itemize}
 
-\textbf{Expressiveness:} Context-free grammar with low complexity $\Rightarrow$ Expressiveness $\approx$ 0.4
+\textbf{Structural Coherence:}
+\begin{itemize}
+    \item Single node graph: $|V| = 1$
+    \item By definition: $\text{StructuralCoherence}(U) = 1.0$ (perfect coherence for trivial graph)
+\end{itemize}
 
-\textbf{Structural Coherence:} Well-organized hierarchy $\Rightarrow$ Structural Coherence $\approx$ 0.8
+\textbf{Overall Quality:}
+\[
+Q(U) = 0.25 \times 1.0 + 0.25 \times 1.0 + 0.25 \times 0.05 + 0.25 \times 1.0 = 0.7625
+\]
 
-\textbf{Overall Quality:} $Q \approx 0.8$ (higher than the arithmetic grammar due to better organization)
+\textbf{Final Result:} The minimal grammar achieves $Q = 0.7625$, demonstrating that simple grammars can score well on consistency and coherence but poorly on expressiveness
 
 \section{Appendix: Mathematical Properties}
 

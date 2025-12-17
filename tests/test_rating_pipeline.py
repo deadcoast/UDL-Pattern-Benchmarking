@@ -34,8 +34,11 @@ class TestRatingPipeline:
         MetricRegistry.register("completeness", CompletenessMetric)
 
     def teardown_method(self):
-        """Clean up after tests."""
+        """Clean up after tests and re-register default metrics."""
         MetricRegistry.clear()
+        # Re-register default metrics for other tests
+        from udl_rating_framework.core.metrics import _register_default_metrics
+        _register_default_metrics()
 
     def create_test_udl(self, content: str = None) -> UDLRepresentation:
         """Create a test UDL representation."""
@@ -177,8 +180,11 @@ class TestIndependentMetricComputation:
         MetricRegistry.register("expressiveness", ExpressivenessMetric)
 
     def teardown_method(self):
-        """Clean up after tests."""
+        """Clean up after tests and re-register default metrics."""
         MetricRegistry.clear()
+        # Re-register default metrics for other tests
+        from udl_rating_framework.core.metrics import _register_default_metrics
+        _register_default_metrics()
 
     def create_test_udl_from_content(self, content: str) -> UDLRepresentation:
         """Create a test UDL representation from content."""
@@ -408,8 +414,11 @@ class TestResultAggregation:
         MetricRegistry.register("expressiveness", ExpressivenessMetric)
 
     def teardown_method(self):
-        """Clean up after tests."""
+        """Clean up after tests and re-register default metrics."""
         MetricRegistry.clear()
+        # Re-register default metrics for other tests
+        from udl_rating_framework.core.metrics import _register_default_metrics
+        _register_default_metrics()
 
     def create_test_udl_from_content(self, content: str) -> UDLRepresentation:
         """Create a test UDL representation from content."""
@@ -680,8 +689,11 @@ class TestRatingPipelineUnits:
         MetricRegistry.register("completeness", CompletenessMetric)
 
     def teardown_method(self):
-        """Clean up after tests."""
+        """Clean up after tests and re-register default metrics."""
         MetricRegistry.clear()
+        # Re-register default metrics for other tests
+        from udl_rating_framework.core.metrics import _register_default_metrics
+        _register_default_metrics()
 
     def create_sample_udl(self) -> UDLRepresentation:
         """Create a sample UDL for testing."""

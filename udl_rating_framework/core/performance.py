@@ -16,6 +16,8 @@ import asyncio
 
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.pipeline import QualityReport
+# Import metrics to ensure they are registered in the MetricRegistry
+import udl_rating_framework.core.metrics  # noqa: F401
 
 # Import performance modules
 try:

@@ -60,6 +60,10 @@ def _process_single_udl(args: Tuple[str, str, List[str], Optional[Dict[str, floa
     start_time = time.time()
     
     try:
+        # Validate input content
+        if not content or not content.strip():
+            raise ValueError(f"Empty or invalid content for file: {file_path}")
+        
         # Create UDL representation
         udl = UDLRepresentation(content, file_path)
         
@@ -81,10 +85,35 @@ def _process_single_udl(args: Tuple[str, str, List[str], Optional[Dict[str, floa
             processing_time=processing_time,
             worker_id=worker_id
         )
+    
+    except MemoryError as e:
+        processing_time = time.time() - start_time
+        error_msg = f"MemoryError processing {file_path}: {str(e)}"
+        logger.error(error_msg)
+        
+        return ProcessingResult(
+            success=False,
+            error=error_msg,
+            processing_time=processing_time,
+            worker_id=worker_id
+        )
+    
+    except (OSError, IOError) as e:
+        processing_time = time.time() - start_time
+        error_msg = f"IOError processing {file_path}: {str(e)}"
+        logger.error(error_msg)
+        
+        return ProcessingResult(
+            success=False,
+            error=error_msg,
+            processing_time=processing_time,
+            worker_id=worker_id
+        )
         
     except Exception as e:
         processing_time = time.time() - start_time
-        error_msg = f"Error processing {file_path}: {str(e)}\n{traceback.format_exc()}"
+        error_type = type(e).__name__
+        error_msg = f"{error_type} processing {file_path}: {str(e)}\n{traceback.format_exc()}"
         logger.error(error_msg)
         
         return ProcessingResult(

@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/core/performance.py
+# hypothesis_version: 6.148.7
+
+[0.0, 0.5, 0.9, 1.0, -500, 100, 200, 500, 512, 1000, 1024, 4096, '*', '*.dsl', '*.ebnf', '*.grammar', '*.udl', 'auto', 'average_throughput', 'avg_cache_hit_ratio', 'avg_file_size_mb', 'avg_processing_time', 'avg_success_rate', 'avg_throughput', 'cache_hit_ratio', 'confidence', 'distributed', 'error', 'file_count', 'file_path', 'gpu', 'has_large_files', 'incremental', 'incremental_results', 'inf', 'is_large_workload', 'max_file_size_mb', 'memory_mapped', 'message', 'overall_score', 'parallel', 'processing_time', 'recommendations', 'sequential', 'stats', 'strategy', 'strategy_statistics', 'streaming', 'success_rate', 'successful_runs', 'throughput', 'timestamp', 'total_runs', 'usage_count', 'utf-8']

@@ -22,6 +22,8 @@ import difflib
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.pipeline import QualityReport, RatingPipeline
 from udl_rating_framework.core.caching import get_udl_cache, get_metric_cache
+# Import metrics to ensure they are registered in the MetricRegistry
+import udl_rating_framework.core.metrics  # noqa: F401
 
 logger = logging.getLogger(__name__)
 

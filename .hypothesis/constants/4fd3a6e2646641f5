@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/training/hyperparameter_optimization.py
+# hypothesis_version: 6.148.7
+
+[-1000.0, 0.0, 1e-06, 1e-05, 0.001, 0.01, 0.1, 0.2, 0.3, 0.5, 0.9, 1.0, 100, 128, 256, 512, 'HyperparameterSpace', 'OptimizationResult', 'aggregator', 'alpha', 'bayesian', 'best_model_path', 'best_params', 'best_score', 'best_val_correlation', 'beta', 'cpu', 'cuda', 'd_input', 'd_model', 'device', 'dropout', 'final_train_loss', 'final_val_loss', 'first-last', 'grid', 'heads', 'inf', 'iterations', 'learning_rate', 'maximize', 'memory', 'memory_hidden_dims', 'memory_length', 'metrics', 'model', 'n_synch_action', 'n_synch_out', 'optimization_history', 'optimization_time', 'params', 'r', 'random', 'random-pairing', 'score', 'synapse_depth', 'synchronization', 'temporal', 'total_trials', 'train_loss', 'val_correlation', 'val_loss', 'vocab_size', 'w', 'weight_decay']

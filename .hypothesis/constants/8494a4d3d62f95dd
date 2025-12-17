@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/deployment/api/main.py
+# hypothesis_version: 6.148.7
+
+[0.8, 0.9, 8000, '*', '.dsl', '.ebnf', '.grammar', '.txt', '.udl', '/health', '/metrics', '/rate', '/rate/batch', '/rate/file', '0.0.0.0', '1.0.0', '10/minute', '2/minute', '5/minute', 'API_TOKEN', 'Bearer', 'CTM_MODEL_PATH', 'CompletenessMetric', 'Computation trace', 'ConsistencyMetric', 'ENVIRONMENT', 'List of UDLs to rate', 'N/A', 'Optional filename', 'PORT', 'Process in parallel', 'UDL content to rate', 'WWW-Authenticate', '__main__', 'additive', 'bounded', 'continuous', 'ctm', 'development', 'formula', 'get_formula', 'get_properties', 'healthy', 'main:app', 'mathematical', 'metrics', 'monotonic', 'name', 'operation', 'output', 'properties', 'step', 'temp.udl', 'utf-8', 'w']

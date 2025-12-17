@@ -222,16 +222,18 @@ class TestEnsembleMethods:
             model.eval = Mock()
             model.to = Mock(return_value=model)
             
-            # Mock forward pass with different outputs
-            def mock_forward(token_ids, track=False):
-                batch_size = token_ids.shape[0]
-                predictions = torch.full((batch_size, 1), 0.5 + i * 0.1)  # Different predictions
-                certainties = torch.rand(batch_size, 2)
-                synch_out = torch.rand(batch_size, 32)
-                tracking_data = None
-                return predictions, certainties, synch_out, tracking_data
+            # Create closure to capture i value properly
+            def create_mock_forward(idx):
+                def mock_forward(token_ids, track=False):
+                    batch_size = token_ids.shape[0]
+                    predictions = torch.full((batch_size, 1), 0.5 + idx * 0.1)  # Different predictions
+                    certainties = torch.rand(batch_size, 2)
+                    synch_out = torch.rand(batch_size, 32)
+                    tracking_data = None
+                    return predictions, certainties, synch_out, tracking_data
+                return mock_forward
             
-            model.forward = mock_forward
+            model.side_effect = create_mock_forward(i)
             members.append(EnsembleMember(model=model, weight=1.0))
         
         ensemble = EnsemblePredictor(members, method='simple_average')
@@ -255,15 +257,18 @@ class TestEnsembleMethods:
             model.eval = Mock()
             model.to = Mock(return_value=model)
             
-            def mock_forward(token_ids, track=False):
-                batch_size = token_ids.shape[0]
-                predictions = torch.full((batch_size, 1), 0.5 + i * 0.1)
-                certainties = torch.rand(batch_size, 2)
-                synch_out = torch.rand(batch_size, 32)
-                tracking_data = None
-                return predictions, certainties, synch_out, tracking_data
+            # Create closure to capture i value properly
+            def create_mock_forward(idx):
+                def mock_forward(token_ids, track=False):
+                    batch_size = token_ids.shape[0]
+                    predictions = torch.full((batch_size, 1), 0.5 + idx * 0.1)
+                    certainties = torch.rand(batch_size, 2)
+                    synch_out = torch.rand(batch_size, 32)
+                    tracking_data = None
+                    return predictions, certainties, synch_out, tracking_data
+                return mock_forward
             
-            model.forward = mock_forward
+            model.side_effect = create_mock_forward(i)
             members.append(EnsembleMember(model=model, weight=weight))
         
         ensemble = EnsemblePredictor(members, method='weighted_average')
@@ -318,7 +323,7 @@ class TestActiveLearning:
             tracking_data = None
             return predictions, certainties, synch_out, tracking_data
         
-        mock_model.forward = mock_forward
+        mock_model.side_effect = mock_forward
         mock_model.eval = Mock()
         
         selected_indices = sampler.select_samples(
@@ -370,7 +375,7 @@ class TestActiveLearning:
             tracking_data = None
             return predictions, certainties, synch_out, tracking_data
         
-        mock_model.forward = mock_forward
+        mock_model.side_effect = mock_forward
         mock_model.eval = Mock()
         mock_model.embedding = Mock(return_value=torch.rand(1, 128, 64))
         
@@ -428,7 +433,7 @@ class TestUncertaintyQuantification:
             tracking_data = None
             return predictions, certainties, synch_out, tracking_data
         
-        mock_model.forward = mock_forward
+        mock_model.side_effect = mock_forward
         
         token_ids = torch.randint(0, 1000, (1, 128))
         estimate = sync_uncertainty.estimate_uncertainty(mock_model, token_ids)
@@ -481,7 +486,7 @@ class TestUncertaintyQuantification:
             tracking_data = None
             return predictions, certainties, synch_out, tracking_data
         
-        mock_model.forward = mock_forward
+        mock_model.side_effect = mock_forward
         
         token_ids = torch.randint(0, 1000, (1, 128))
         estimate = predictor.predict_with_uncertainty(token_ids)
@@ -568,15 +573,18 @@ class TestIntegration:
             model.eval = Mock()
             model.to = Mock(return_value=model)
             
-            def mock_forward(token_ids, track=False):
-                batch_size = token_ids.shape[0]
-                predictions = torch.full((batch_size, 1), 0.5 + i * 0.05)
-                certainties = torch.rand(batch_size, 2)
-                synch_out = torch.rand(batch_size, 32)
-                tracking_data = None
-                return predictions, certainties, synch_out, tracking_data
+            # Create closure to capture i value properly
+            def create_mock_forward(idx):
+                def mock_forward(token_ids, track=False):
+                    batch_size = token_ids.shape[0]
+                    predictions = torch.full((batch_size, 1), 0.5 + idx * 0.05)
+                    certainties = torch.rand(batch_size, 2)
+                    synch_out = torch.rand(batch_size, 32)
+                    tracking_data = None
+                    return predictions, certainties, synch_out, tracking_data
+                return mock_forward
             
-            model.forward = mock_forward
+            model.side_effect = create_mock_forward(i)
             members.append(EnsembleMember(model=model))
         
         # Create ensemble

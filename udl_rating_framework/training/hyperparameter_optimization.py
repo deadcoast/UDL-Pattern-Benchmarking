@@ -386,11 +386,15 @@ class CTMHyperparameterOptimizer:
             
             for name, value in self.param_space.to_dict().items():
                 if isinstance(value, (list, tuple)) and len(value) == 2 and isinstance(value[0], (int, float)):
-                    # Continuous parameter
-                    if isinstance(value[0], int):
-                        params[name] = np.random.randint(value[0], value[1] + 1)
+                    # Continuous parameter - check if it's a valid range
+                    if value[0] < value[1]:
+                        if isinstance(value[0], int):
+                            params[name] = np.random.randint(value[0], value[1] + 1)
+                        else:
+                            params[name] = np.random.uniform(value[0], value[1])
                     else:
-                        params[name] = np.random.uniform(value[0], value[1])
+                        # If range is invalid (low >= high), use the first value
+                        params[name] = value[0]
                 elif isinstance(value, list):
                     params[name] = np.random.choice(value)
                 else:

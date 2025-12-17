@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  11 DEC 2025 01:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.8)  16 DEC 2025 19:19
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**mathematical_framework.tex
-(./mathematical_framework.tex
+**docs/mathematical_framework.tex
+(./docs/mathematical_framework.tex
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
 (/usr/local/texlive/2025/texmf-dist/tex/latex/base/article.cls
@@ -393,7 +393,7 @@ File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count316
 \l__pdf_internal_box=\box60
 )
-(./mathematical_framework.aux)
+(docs/mathematical_framework.aux)
 \openout1 = `mathematical_framework.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 42.
@@ -439,7 +439,7 @@ e
 ))
 Package hyperref Info: Link coloring OFF on input line 42.
 
-(./mathematical_framework.out) (./mathematical_framework.out)
+(docs/mathematical_framework.out) (docs/mathematical_framework.out)
 \@outlinefile=\write3
 \openout3 = `mathematical_framework.out'.
 
@@ -456,7 +456,7 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 45.
 (/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-(./mathematical_framework.toc
+(docs/mathematical_framework.toc
 
 [1
 
@@ -498,23 +498,37 @@ OMS/cmsy/m/n/12 2 T[]\OML/cmm/m/it/12 ; category \OMS/cmsy/m/n/12 2 C\OML/cmm/m
 [6]
 
 [7]
-Overfull \hbox (4.46205pt too wide) in paragraph at lines 311--313
-[]\OT1/cmr/m/n/12 By def-i-ni-tion, $[](\OML/cmm/m/it/12 U\OT1/cmr/m/n/12 ) \OM
-S/cmsy/m/n/12 2 \OT1/cmr/m/n/12 [0\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 1]$ and $[
-](\OML/cmm/m/it/12 U\OT1/cmr/m/n/12 ) \OMS/cmsy/m/n/12 2 \OT1/cmr/m/n/12 [0\OML
-/cmm/m/it/12 ; \OT1/cmr/m/n/12 1]$. There-
- []
-
-
-Overfull \hbox (8.93996pt too wide) detected at line 315
-[]\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 U\OT1/cmr/m/n/12 ) = [] \OMS/cmsy/m/n/12 2 
-[] \OT1/cmr/m/n/12 = [0\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 1]
+Overfull \hbox (7.567pt too wide) in paragraph at lines 291--292
+\OT1/cmr/m/n/12 Since all com-po-nents are de-ter-min-is-tic func-tions of the 
+in-put, $[](\OML/cmm/m/it/12 U\OT1/cmr/m/n/12 )$
  []
 
 
 
 [8]
-Overfull \hbox (8.55135pt too wide) in paragraph at lines 347--348
+Overfull \hbox (4.43384pt too wide) in paragraph at lines 342--344
+[]\OT1/cmr/m/n/12 By def-i-ni-tion, $[](\OML/cmm/m/it/12 U\OT1/cmr/m/n/12 ) \OM
+S/cmsy/m/n/12 2 f\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 ; []; []; \OT1/cmr/m/n/12 1\
+OMS/cmsy/m/n/12 g ^^Z \OT1/cmr/m/n/12 [0\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 1]$ 
+and $[](\OML/cmm/m/it/12 U\OT1/cmr/m/n/12 ) \OMS/cmsy/m/n/12 2
+ []
+
+
+Overfull \hbox (8.93996pt too wide) detected at line 346
+[]\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 U\OT1/cmr/m/n/12 ) = [] \OMS/cmsy/m/n/12 2 
+[] \OT1/cmr/m/n/12 = [0\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 1]
+ []
+
+
+Overfull \hbox (12.75446pt too wide) in paragraph at lines 361--362
+\OT1/cmr/m/n/12 Since all com-po-nents are de-ter-min-is-tic func-tions of the 
+in-put, $[](\OML/cmm/m/it/12 U\OT1/cmr/m/n/12 )$
+ []
+
+
+
+[9]
+Overfull \hbox (8.55135pt too wide) in paragraph at lines 392--393
 []\OT1/cmr/bx/n/12 Upper bound: \OT1/cmr/m/n/12 By the prop-er-ties of Shan-non
  en-tropy, $\OML/cmm/m/it/12 H\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 G\OT1/cmr/m/n/1
 2 ) \OMS/cmsy/m/n/12 ^^T \OML/cmm/m/it/12 H[]\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 
@@ -523,37 +537,34 @@ G\OT1/cmr/m/n/12 ) =
 
 
 
-[9]
-
 [10]
+Overfull \hbox (42.68608pt too wide) in paragraph at lines 413--414
+\OT1/cmr/m/n/12 Since all com-po-nents are de-ter-min-is-tic func-tions of the 
+in-put, $[](\OML/cmm/m/it/12 U\OT1/cmr/m/n/12 )$
+ []
+
+
 
 [11]
 
 [12]
-Overfull \hbox (28.03326pt too wide) in paragraph at lines 552--553
-[]\OT1/cmr/bx/n/12 Complexity ap-prox-i-ma-tion: \OT1/cmr/m/n/12 Text com-pres-
-sion us-ing zlib re-quires $\OML/cmm/m/it/12 O\OT1/cmr/m/n/12 (\OML/cmm/m/it/12
- n [] n\OT1/cmr/m/n/12 )$
- []
-
-
 
 [13]
 
 [14]
 
 [15]
-Overfull \hbox (18.10242pt too wide) in paragraph at lines 660--662
-[]\OT1/cmr/bx/n/12 Required Con-structs: $\OML/cmm/m/it/12 R[] \OT1/cmr/m/n/12 
-= \OMS/cmsy/m/n/12 f$\OT1/cmr/m/n/12 production[]rules, ter-mi-nals, non[]termi
-nals,
+Overfull \hbox (28.03326pt too wide) in paragraph at lines 639--640
+[]\OT1/cmr/bx/n/12 Complexity ap-prox-i-ma-tion: \OT1/cmr/m/n/12 Text com-pres-
+sion us-ing zlib re-quires $\OML/cmm/m/it/12 O\OT1/cmr/m/n/12 (\OML/cmm/m/it/12
+ n [] n\OT1/cmr/m/n/12 )$
  []
 
 
-Overfull \hbox (16.92569pt too wide) in paragraph at lines 663--665
-[]\OT1/cmr/bx/n/12 Defined Con-structs: $\OML/cmm/m/it/12 D\OT1/cmr/m/n/12 (\OM
-L/cmm/m/it/12 U\OT1/cmr/m/n/12 ) = \OMS/cmsy/m/n/12 f$\OT1/cmr/m/n/12 productio
-n[]rules, ter-mi-nals, non[]terminals,
+Overfull \hbox (20.96254pt too wide) in paragraph at lines 679--680
+[]\OT1/cmr/bx/n/12 Time com-plex-ity: \OT1/cmr/m/n/12 Com-put-ing Shan-non en-t
+ropy $\OML/cmm/m/it/12 H\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 p\OT1/cmr/m/n/12 ) = 
+\OMS/cmsy/m/n/12 ^^@ [][] \OML/cmm/m/it/12 p[] [] p[]$
  []
 
 
@@ -561,45 +572,94 @@ n[]rules, ter-mi-nals, non[]terminals,
 [16]
 
 [17]
-Overfull \hbox (106.10773pt too wide) in paragraph at lines 767--778
- [][] 
+
+[18]
+Overfull \hbox (18.10242pt too wide) in paragraph at lines 773--775
+[]\OT1/cmr/bx/n/12 Required Con-structs: $\OML/cmm/m/it/12 R[] \OT1/cmr/m/n/12 
+= \OMS/cmsy/m/n/12 f$\OT1/cmr/m/n/12 production[]rules, ter-mi-nals, non[]termi
+nals,
+ []
+
+
+Overfull \hbox (16.92569pt too wide) in paragraph at lines 776--778
+[]\OT1/cmr/bx/n/12 Defined Con-structs: $\OML/cmm/m/it/12 D\OT1/cmr/m/n/12 (\OM
+L/cmm/m/it/12 U\OT1/cmr/m/n/12 ) = \OMS/cmsy/m/n/12 f$\OT1/cmr/m/n/12 productio
+n[]rules, ter-mi-nals, non[]terminals,
+ []
+
+
+Overfull \hbox (3.42632pt too wide) in paragraph at lines 779--781
+[]\OT1/cmr/bx/n/12 Intersection: $\OML/cmm/m/it/12 D\OT1/cmr/m/n/12 (\OML/cmm/m
+/it/12 U\OT1/cmr/m/n/12 ) \OMS/cmsy/m/n/12 \ \OML/cmm/m/it/12 R[] \OT1/cmr/m/n/
+12 = \OMS/cmsy/m/n/12 f$\OT1/cmr/m/n/12 production[]rules, ter-mi-nals, non[]te
+rminals,
  []
 
 
 
-[18
+[19]
+
+[20]
+Overfull \hbox (18.10242pt too wide) in paragraph at lines 886--888
+[]\OT1/cmr/bx/n/12 Required Con-structs: $\OML/cmm/m/it/12 R[] \OT1/cmr/m/n/12 
+= \OMS/cmsy/m/n/12 f$\OT1/cmr/m/n/12 production[]rules, ter-mi-nals, non[]termi
+nals,
+ []
+
+
+Overfull \hbox (16.92569pt too wide) in paragraph at lines 889--891
+[]\OT1/cmr/bx/n/12 Defined Con-structs: $\OML/cmm/m/it/12 D\OT1/cmr/m/n/12 (\OM
+L/cmm/m/it/12 U\OT1/cmr/m/n/12 ) = \OMS/cmsy/m/n/12 f$\OT1/cmr/m/n/12 productio
+n[]rules, ter-mi-nals, non[]terminals,
+ []
+
+
+
+[21]
+
+[22]
+Overfull \hbox (106.10773pt too wide) in paragraph at lines 991--1002
+ [][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[23
 pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.809 \bibitem{shannon1948}
-                           
+l.1041 
+       ]
+
+[24
 pdfTeX warning (ext4): destination with the same identifier (name{table.2}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.809 \bibitem{shannon1948}
-                           ]
+l.1069 \bibitem{niculescu2005}
+                              ]
 
-[19]
-
-[20] (./mathematical_framework.aux)
+[25] (docs/mathematical_framework.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `mathematical_framework.out' has not changed.
 
-(rerunfilecheck)             Checksum: 05829A39E07D3DBE5D1155602C9EBB33;7049.
+(rerunfilecheck)             Checksum: F77D601E7B1112AE51F93A68B98E2321;9260.
  ) 
 Here is how much of TeX's memory you used:
- 12708 strings out of 473190
- 189213 string characters out of 5715801
- 865249 words of memory out of 5000000
- 35667 multiletter control sequences out of 15000+600000
+ 12746 strings out of 473190
+ 189833 string characters out of 5715801
+ 864249 words of memory out of 5000000
+ 35679 multiletter control sequences out of 15000+600000
  569874 words of font info for 79 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,15n,79p,569b,1268s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,15n,79p,574b,1267s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
@@ -613,13 +673,14 @@ exlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/te
 xlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texl
 ive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texli
 ve/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texliv
-e/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/te
-xlive/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/loca
-l/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb>
-Output written on mathematical_framework.pdf (20 pages, 252928 bytes).
+e/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texlive
+/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/tex
+live/2025/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local
+/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb>
+Output written on docs/mathematical_framework.pdf (25 pages, 271011 bytes).
 PDF statistics:
- 471 PDF objects out of 1000 (max. 8388607)
- 412 compressed objects within 5 object streams
- 134 named destinations out of 1000 (max. 500000)
- 305 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 558 PDF objects out of 1000 (max. 8388607)
+ 492 compressed objects within 5 object streams
+ 159 named destinations out of 1000 (max. 500000)
+ 377 words of extra memory for PDF output out of 10000 (max. 10000000)
 

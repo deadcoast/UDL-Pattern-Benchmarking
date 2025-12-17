@@ -424,10 +424,14 @@ def process_udl_task_dask(task: DistributedTask) -> DistributedResult:
 
 
 def _process_udl_task_impl(task: DistributedTask) -> DistributedResult:
-    """Implementation of UDL task processing."""
+    """Implementation of UDL task processing with fault tolerance."""
     start_time = time.time()
     
     try:
+        # Validate input
+        if not task.content or not task.content.strip():
+            raise ValueError(f"Empty or invalid content for task: {task.task_id}")
+        
         # Create UDL representation
         udl = UDLRepresentation(task.content, task.file_path)
         
@@ -447,19 +451,61 @@ def _process_udl_task_impl(task: DistributedTask) -> DistributedResult:
             success=True,
             result=report,
             processing_time=processing_time,
-            worker_id=os.getpid(),
+            worker_id=str(os.getpid()),
+            node_id=os.uname().nodename if hasattr(os, 'uname') else 'unknown'
+        )
+    
+    except MemoryError as e:
+        processing_time = time.time() - start_time
+        logger.error(f"MemoryError in task {task.task_id}: {e}")
+        
+        return DistributedResult(
+            task_id=task.task_id,
+            success=False,
+            error=f"MemoryError: {str(e)}",
+            processing_time=processing_time,
+            worker_id=str(os.getpid()),
+            node_id=os.uname().nodename if hasattr(os, 'uname') else 'unknown'
+        )
+    
+    except (OSError, IOError) as e:
+        processing_time = time.time() - start_time
+        logger.error(f"IOError in task {task.task_id}: {e}")
+        
+        return DistributedResult(
+            task_id=task.task_id,
+            success=False,
+            error=f"IOError: {str(e)}",
+            processing_time=processing_time,
+            worker_id=str(os.getpid()),
+            node_id=os.uname().nodename if hasattr(os, 'uname') else 'unknown'
+        )
+    
+    except (ConnectionError, TimeoutError) as e:
+        processing_time = time.time() - start_time
+        error_type = type(e).__name__
+        logger.error(f"{error_type} in task {task.task_id}: {e}")
+        
+        return DistributedResult(
+            task_id=task.task_id,
+            success=False,
+            error=f"{error_type}: {str(e)}",
+            processing_time=processing_time,
+            worker_id=str(os.getpid()),
             node_id=os.uname().nodename if hasattr(os, 'uname') else 'unknown'
         )
         
     except Exception as e:
         processing_time = time.time() - start_time
+        error_type = type(e).__name__
+        logger.error(f"{error_type} in task {task.task_id}: {e}")
         
         return DistributedResult(
             task_id=task.task_id,
             success=False,
-            error=str(e),
+            error=f"{error_type}: {str(e)}",
             processing_time=processing_time,
-            worker_id=os.getpid(),
+            worker_id=str(os.getpid()),
             node_id=os.uname().nodename if hasattr(os, 'uname') else 'unknown'
         )
 

@@ -42,8 +42,11 @@ class TestMetricComputationPerformance:
         MetricRegistry.register("expressiveness", ExpressivenessMetric)
     
     def teardown_method(self):
-        """Clean up after tests."""
+        """Clean up after tests and re-register default metrics."""
         MetricRegistry.clear()
+        # Re-register default metrics for other tests
+        from udl_rating_framework.core.metrics import _register_default_metrics
+        _register_default_metrics()
     
     def generate_udl_content(self, num_rules: int) -> str:
         """Generate UDL content with specified number of rules."""
@@ -351,8 +354,11 @@ class TestBatchProcessingPerformance:
         MetricRegistry.register("completeness", CompletenessMetric)
     
     def teardown_method(self):
-        """Clean up after tests."""
+        """Clean up after tests and re-register default metrics."""
         MetricRegistry.clear()
+        # Re-register default metrics for other tests
+        from udl_rating_framework.core.metrics import _register_default_metrics
+        _register_default_metrics()
     
     def generate_test_files(self, count: int) -> List[tuple]:
         """Generate test UDL files."""
@@ -527,8 +533,11 @@ class TestPerformanceBenchmarkIntegration:
         MetricRegistry.register("completeness", CompletenessMetric)
     
     def teardown_method(self):
-        """Clean up after tests."""
+        """Clean up after tests and re-register default metrics."""
         MetricRegistry.clear()
+        # Re-register default metrics for other tests
+        from udl_rating_framework.core.metrics import _register_default_metrics
+        _register_default_metrics()
     
     def test_benchmark_metric_computation(self):
         """

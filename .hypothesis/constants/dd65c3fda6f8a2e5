@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/integration/git_hooks.py
+# hypothesis_version: 6.148.7
+
+[0.7, 493, '--cached', '--config', '--name-only', '--repo-path', '--threshold', '.dsl', '.ebnf', '.git', '.grammar', '.udl', 'No UDL files found', 'No UDL files staged', 'UDL Git Hook Manager', 'UDL_RATING_HOOK', '__main__', 'action', 'check-all', 'check-staged', 'completeness', 'confidence', 'consistency', 'diff', 'error', 'expressiveness', 'git', 'hooks', 'install', 'message', 'metrics', 'passed', 'pre-commit', 'pre-push', 'score', 'show', 'structural_coherence', 'uninstall', 'utf-8', 'w']

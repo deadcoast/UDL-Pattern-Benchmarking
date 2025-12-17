@@ -166,8 +166,11 @@ class TestMetricBoundedness:
         MetricRegistry.register("test_completeness", TestCompletenessMetric)
 
     def teardown_method(self):
-        """Clean up after tests."""
+        """Clean up after tests and re-register default metrics."""
         MetricRegistry.clear()
+        # Re-register default metrics for other tests
+        from udl_rating_framework.core.metrics import _register_default_metrics
+        _register_default_metrics()
 
     @given(udl_text_strategy())
     @settings(max_examples=100, deadline=None)
@@ -223,8 +226,11 @@ class TestMetricDeterminism:
         MetricRegistry.register("test_completeness", TestCompletenessMetric)
 
     def teardown_method(self):
-        """Clean up after tests."""
+        """Clean up after tests and re-register default metrics."""
         MetricRegistry.clear()
+        # Re-register default metrics for other tests
+        from udl_rating_framework.core.metrics import _register_default_metrics
+        _register_default_metrics()
 
     @given(udl_text_strategy())
     @settings(max_examples=100, deadline=None)
@@ -291,8 +297,11 @@ class TestMetricRegistry:
         MetricRegistry.clear()
 
     def teardown_method(self):
-        """Clean registry after each test."""
+        """Clean registry after each test and re-register default metrics."""
         MetricRegistry.clear()
+        # Re-register default metrics for other tests
+        from udl_rating_framework.core.metrics import _register_default_metrics
+        _register_default_metrics()
 
     def test_metric_registration(self):
         """Test basic metric registration."""
