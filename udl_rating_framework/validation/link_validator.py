@@ -174,13 +174,104 @@ class LinkValidator:
             resolved_path=resolved_path
         )
     
+    def extract_headings_from_file(self, file_path: Path) -> List[str]:
+        """
+        Extract all headings from a markdown file and convert to anchor format.
+        
+        Markdown heading to anchor conversion rules:
+        - Convert to lowercase
+        - Replace spaces with hyphens
+        - Remove special characters except hyphens and underscores
+        - Remove leading/trailing hyphens
+        """
+        headings = []
+        try:
+            content = file_path.read_text(encoding='utf-8')
+        except (IOError, UnicodeDecodeError):
+            return headings
+        
+        # Pattern for markdown headings: # Heading, ## Heading, etc.
+        heading_pattern = re.compile(r'^#{1,6}\s+(.+)$', re.MULTILINE)
+        
+        for match in heading_pattern.finditer(content):
+            heading_text = match.group(1).strip()
+            anchor = self._heading_to_anchor(heading_text)
+            headings.append(anchor)
+        
+        return headings
+    
+    def _heading_to_anchor(self, heading: str) -> str:
+        """
+        Convert a heading text to its anchor format.
+        
+        GitHub/CommonMark anchor generation rules:
+        - Convert to lowercase
+        - Replace spaces with hyphens
+        - Remove characters that aren't alphanumeric, hyphens, underscores, or spaces
+        - Remove leading/trailing hyphens
+        """
+        # Convert to lowercase
+        anchor = heading.lower()
+        
+        # Remove special characters except alphanumeric, spaces, hyphens, underscores
+        anchor = re.sub(r'[^\w\s-]', '', anchor)
+        
+        # Replace spaces with hyphens
+        anchor = re.sub(r'\s+', '-', anchor)
+        
+        # Remove leading/trailing hyphens
+        anchor = anchor.strip('-')
+        
+        return anchor
+    
     def validate_anchor_link(self, link: Link) -> ValidationResult:
-        """Verify anchor points to valid heading in the same document."""
-        # For now, we'll mark anchor links as valid (task 4.3 handles these)
+        """
+        Verify anchor points to valid heading in the same document.
+        
+        **Feature: documentation-validation, Property 2: Link Target Resolution**
+        **Validates: Requirements 2.3**
+        """
+        # Extract the anchor (remove the leading #)
+        anchor = link.link_target.lstrip('#')
+        
+        if not anchor:
+            return ValidationResult(
+                link=link,
+                is_valid=False,
+                message="Empty anchor link"
+            )
+        
+        # Get all headings from the source file
+        headings = self.extract_headings_from_file(link.source_file)
+        
+        if not headings:
+            return ValidationResult(
+                link=link,
+                is_valid=False,
+                message=f"No headings found in {link.source_file.name}"
+            )
+        
+        # Check if the anchor matches any heading
+        if anchor in headings:
+            return ValidationResult(
+                link=link,
+                is_valid=True,
+                message=f"Anchor '{anchor}' found in document"
+            )
+        
+        # Try to find similar headings for helpful error message
+        similar = [h for h in headings if anchor in h or h in anchor]
+        if similar:
+            return ValidationResult(
+                link=link,
+                is_valid=False,
+                message=f"Anchor '#{anchor}' not found. Similar headings: {similar[:3]}"
+            )
+        
         return ValidationResult(
             link=link,
-            is_valid=True,
-            message="Anchor link (validation deferred to task 4.3)"
+            is_valid=False,
+            message=f"Anchor '#{anchor}' not found in document. Available: {headings[:5]}..."
         )
     
     def validate_link(self, link: Link) -> ValidationResult:
@@ -255,6 +346,26 @@ class LinkValidator:
             for link in links:
                 if link.link_type == LinkType.FILE_REFERENCE:
                     result = self.validate_file_link(link)
+                    report.add_result(result)
+        
+        return report
+    
+    def validate_anchor_links_only(self) -> LinkValidationReport:
+        """
+        Validate only anchor links (not file references or external URLs).
+        
+        **Feature: documentation-validation, Property 2: Link Target Resolution**
+        **Validates: Requirements 2.3**
+        """
+        report = LinkValidationReport()
+        
+        doc_files = self.scan_documentation_files()
+        
+        for doc_file in doc_files:
+            links = self.extract_links_from_file(doc_file)
+            for link in links:
+                if link.link_type == LinkType.ANCHOR_LINK:
+                    result = self.validate_anchor_link(link)
                     report.add_result(result)
         
         return report
