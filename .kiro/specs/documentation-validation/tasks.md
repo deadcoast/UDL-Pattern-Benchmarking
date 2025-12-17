@@ -61,7 +61,7 @@ This implementation plan focuses on validating documentation against source code
     - **Property 2: Link Target Resolution**
     - **Validates: Requirements 2.2, 2.3, 2.4**
     - _Requirements: 2.2_
-  - [-] 4.3 Validate anchor links
+  - [ ] 4.3 Validate anchor links
     - Check each `[text](#heading)` points to valid heading
     - Fix broken anchor links
     - _Requirements: 2.3_
@@ -72,8 +72,8 @@ This implementation plan focuses on validating documentation against source code
 
 ## Phase 3: API Documentation Validation
 
-- [ ] 5. Validate API documentation against source code
-  - [ ] 5.1 Extract public API from udl_rating_framework package
+- [-] 5. Validate API documentation against source code
+  - [-] 5.1 Extract public API from udl_rating_framework package
     - Enumerate all public classes, functions, methods
     - Build API inventory with signatures
     - _Requirements: 3.1_
