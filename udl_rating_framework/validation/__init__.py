@@ -4,21 +4,38 @@ Validation module for UDL Rating Framework.
 This module provides comprehensive quality assurance and validation capabilities including:
 - Formal verification of metric properties
 - Benchmarking against academic datasets
-- Cross-validation with expert ratings
-- Robustness testing with adversarial examples
-- Reproducibility validation across platforms
+- Link validation for documentation
+- API validation for documentation accuracy
 """
 
-from .formal_verification import FormalVerifier
-from .dataset_benchmark import DatasetBenchmark
-from .expert_validation import ExpertValidator
-from .robustness_testing import RobustnessTest
-from .reproducibility_validator import ReproducibilityValidator
+# Import only modules that exist
+try:
+    from .formal_verification import FormalVerifier
+except ImportError:
+    FormalVerifier = None
+
+try:
+    from .dataset_benchmark import DatasetBenchmark
+except ImportError:
+    DatasetBenchmark = None
+
+try:
+    from .link_validator import LinkValidator
+except ImportError:
+    LinkValidator = None
+
+try:
+    from .api_validator import APIValidator, APIExtractor, APIValidationReport
+except ImportError:
+    APIValidator = None
+    APIExtractor = None
+    APIValidationReport = None
 
 __all__ = [
     'FormalVerifier',
-    'DatasetBenchmark', 
-    'ExpertValidator',
-    'RobustnessTest',
-    'ReproducibilityValidator'
+    'DatasetBenchmark',
+    'LinkValidator',
+    'APIValidator',
+    'APIExtractor',
+    'APIValidationReport',
 ]

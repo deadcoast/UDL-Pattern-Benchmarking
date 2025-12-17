@@ -757,7 +757,7 @@ Commands
 Rate Command
 ^^^^^^^^^^^^
 
-.. automodule:: udl_rating_framework.cli.rate
+.. automodule:: udl_rating_framework.cli.commands.rate
    :members:
    :undoc-members:
    :show-inheritance:
@@ -765,7 +765,7 @@ Rate Command
 Train Command
 ^^^^^^^^^^^^^
 
-.. automodule:: udl_rating_framework.cli.train
+.. automodule:: udl_rating_framework.cli.commands.train
    :members:
    :undoc-members:
    :show-inheritance:
@@ -773,7 +773,7 @@ Train Command
 Compare Command
 ^^^^^^^^^^^^^^^
 
-.. automodule:: udl_rating_framework.cli.compare
+.. automodule:: udl_rating_framework.cli.commands.compare
    :members:
    :undoc-members:
    :show-inheritance:
@@ -781,7 +781,7 @@ Compare Command
 Evaluate Command
 ^^^^^^^^^^^^^^^^
 
-.. automodule:: udl_rating_framework.cli.evaluate
+.. automodule:: udl_rating_framework.cli.commands.evaluate
    :members:
    :undoc-members:
    :show-inheritance:
@@ -789,7 +789,7 @@ Evaluate Command
 Analytics Command
 ^^^^^^^^^^^^^^^^^
 
-.. automodule:: udl_rating_framework.cli.analytics
+.. automodule:: udl_rating_framework.cli.commands.analytics
    :members:
    :undoc-members:
    :show-inheritance:
@@ -797,7 +797,7 @@ Analytics Command
 Integration Command
 ^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: udl_rating_framework.cli.integration
+.. automodule:: udl_rating_framework.cli.commands.integration
    :members:
    :undoc-members:
    :show-inheritance:
