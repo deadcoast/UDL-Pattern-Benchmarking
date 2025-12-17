@@ -23,17 +23,62 @@ The following modules are documented in `api_reference.rst` but do not exist at 
 
 **Status**: ✅ RESOLVED - All CLI command module paths have been corrected in `docs/api_reference.rst`.
 
-### 2. Undocumented Modules
+### 1b. Broken Import in formal_verification.py
 
-The following modules exist in the codebase but are not documented in `api_reference.rst`:
+| File | Issue | Fix Applied |
+|------|-------|-------------|
+| `udl_rating_framework/validation/formal_verification.py` | Import from `..core.base` (doesn't exist) | Changed to `..core.metrics.base` |
+
+**Status**: ✅ RESOLVED - Import path corrected.
+
+### 2. Previously Undocumented Modules (Now Documented)
+
+The following modules were added to `api_reference.rst`:
 
 | Module | Status |
 |--------|--------|
-| `udl_rating_framework.core.performance` | ❌ NOT DOCUMENTED |
-| `udl_rating_framework.validation.link_validator` | ❌ NOT DOCUMENTED |
-| `udl_rating_framework.validation.api_validator` | ❌ NOT DOCUMENTED |
+| `udl_rating_framework.core.performance` | ✅ ADDED |
+| `udl_rating_framework.validation.link_validator` | ✅ ADDED |
+| `udl_rating_framework.validation.api_validator` | ✅ ADDED |
 
-**Severity**: Minor - These are utility/validation modules that may not need public documentation.
+**Status**: ✅ RESOLVED - All modules are now documented.
+
+### 3. Undocumented Public APIs (Classes and Functions)
+
+Static analysis found the following undocumented public APIs:
+
+#### Undocumented Classes (1)
+
+| Location | Class Name |
+|----------|------------|
+| `udl_rating_framework/analytics/trend_predictor.py:443` | `PolynomialModel` |
+
+#### Undocumented Functions (20)
+
+Most are `__init__` methods or internal callbacks:
+
+| Location | Function Name | Type |
+|----------|---------------|------|
+| `trend_predictor.py:444` | `__init__` | init method |
+| `trend_predictor.py:448` | `predict` | method |
+| `trend_predictor.py:453` | `coef_` | property |
+| `performance_benchmarks.py:24` | `memory_profile` | decorator |
+| `integration.py:297` | `progress_callback` | callback |
+| `distributed.py:670` | `progress_callback` | callback |
+| `distributed.py:715` | `progress_callback` | callback |
+| `memory_mapping.py:284` | `no_lock` | context manager |
+| `completeness.py:15` | `__init__` | init method |
+| `expressiveness.py:21` | `__init__` | init method |
+| `multiprocessing.py:434` | `progress_callback` | callback |
+| `representation.py:71` | `__init__` | init method |
+| `representation.py:139` | `__init__` | init method |
+| `batch_processor.py:635` | `progress_callback` | callback |
+| `ctm_adapter.py:177` | `__init__` | init method |
+| `hyperparameter_optimization.py:460` | `objective` | internal |
+| `api_validator.py:65,221,256` | `__init__` | init methods |
+| `formal_verification.py:100` | `__init__` | init method |
+
+**Severity**: Minor - Most are `__init__` methods (which often don't need docstrings) or internal callbacks.
 
 ### 3. Module Path Corrections Required
 

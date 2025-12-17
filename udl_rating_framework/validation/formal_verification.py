@@ -11,7 +11,7 @@ from typing import List, Dict, Any, Tuple, Optional, Callable
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 
-from ..core.base import QualityMetric
+from ..core.metrics.base import QualityMetric
 from ..core.representation import UDLRepresentation
 
 

@@ -671,6 +671,16 @@ Incremental Computation
 
 Incremental computation for updated UDLs.
 
+Performance Utilities
+~~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: udl_rating_framework.core.performance
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Performance monitoring and optimization utilities.
+
 Validation Modules
 ------------------
 
@@ -693,6 +703,26 @@ Dataset Benchmark
    :show-inheritance:
 
 Benchmark against academic UDL quality datasets.
+
+Link Validator
+~~~~~~~~~~~~~~
+
+.. automodule:: udl_rating_framework.validation.link_validator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Validates internal and external links in documentation.
+
+API Validator
+~~~~~~~~~~~~~
+
+.. automodule:: udl_rating_framework.validation.api_validator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Validates API documentation against actual source code.
 
 CLI Interface
 -------------
