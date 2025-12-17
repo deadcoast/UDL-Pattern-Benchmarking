@@ -139,3 +139,65 @@ You can download the data and checkpoints from here:
 - maze data: https://drive.google.com/file/d/1cBgqhaUUtsrll8-o2VY42hPpyBcfFv86/view?usp=drivesdk
 
 Checkpoints go in the `checkpoints` folder. For instance, when properly populated, the checkpoints folder will have the maze checkpoint in `checkpoints/mazes/...`
+
+## UDL Rating Framework Integration
+
+The UDL Rating Framework integrates with CTM through the `udl_rating_framework/models/ctm_adapter.py` module. This adapter enables neural approximation for fast UDL quality inference.
+
+### Integration Architecture
+
+The CTM adapter provides:
+
+1. **UDLRatingCTM**: A PyTorch module that adapts CTM for UDL quality prediction
+   - Token embedding layer for UDL text processing
+   - Integration with `ContinuousThoughtMachine` from `models/ctm.py`
+   - Rating head that maps synchronization to quality scores in [0,1]
+
+2. **UDLTokenVocabulary**: Vocabulary management for UDL tokens
+   - Maps tokens to integer indices for embedding lookup
+   - Supports special tokens: `<PAD>`, `<UNK>`, `<BOS>`, `<EOS>`
+
+3. **TrackingData**: Container for CTM internal representations
+   - Pre/post activations, synchronization data, attention weights
+   - HDF5 serialization for analysis and visualization
+   - Activation statistics and synchronization evolution metrics
+
+### Usage Example
+
+```python
+from udl_rating_framework.models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary, create_udl_rating_model
+from udl_rating_framework.core.representation import UDLRepresentation
+
+# Create vocabulary and model
+vocab = UDLTokenVocabulary()
+udl = UDLRepresentation(udl_content, "example.udl")
+vocab.add_tokens_from_udl(udl)
+
+model = create_udl_rating_model(vocab_size=len(vocab))
+
+# Tokenize and rate
+token_ids = model.tokenize_udl(udl, vocab)
+ratings, certainties, synch_out, _ = model(token_ids.unsqueeze(0))
+print(f"Quality rating: {ratings.item():.3f}")
+```
+
+### Key Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `d_model` | 256 | Core dimensionality of CTM latent space |
+| `d_input` | 64 | Dimensionality of projected attention outputs |
+| `iterations` | 20 | Number of internal 'thought' ticks |
+| `n_synch_out` | 32 | Number of neurons for output synchronization |
+| `heads` | 8 | Number of attention heads |
+| `memory_length` | 10 | History length for Neuron-Level Models |
+
+### Mathematical Definition
+
+Given a UDL represented as token sequence (t₁, t₂, ..., tₙ):
+
+1. **Embed**: xᵢ = E(tᵢ) ∈ ℝᵈ
+2. **Process**: S(T) = CTM(x₁, x₂, ..., xₙ)
+3. **Rate**: q = σ(W·S(T) + b) ∈ [0,1]
+
+The model leverages CTM's temporal processing and neural synchronization to produce quality ratings with associated certainty scores.
