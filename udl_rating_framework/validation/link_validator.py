@@ -11,7 +11,7 @@ Supports markdown link syntax: [text](path/to/file)
 import re
 from pathlib import Path
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Tuple
+from typing import List, Optional, Tuple
 from enum import Enum
 
 
@@ -103,7 +103,7 @@ class LinkValidator:
         links = []
         try:
             content = file_path.read_text(encoding='utf-8')
-        except (IOError, UnicodeDecodeError) as e:
+        except (IOError, UnicodeDecodeError):
             return links
         
         for line_num, line in enumerate(content.split('\n'), start=1):
@@ -444,7 +444,7 @@ if __name__ == "__main__":
     all_results = []
     for doc_file in doc_files:
         links = validator.extract_links_from_file(doc_file)
-        file_links = [l for l in links if l.link_type == LinkType.FILE_REFERENCE]
+        file_links = [link for link in links if link.link_type == LinkType.FILE_REFERENCE]
         if file_links:
             try:
                 rel_path = doc_file.relative_to(Path('.').resolve())
@@ -461,7 +461,7 @@ if __name__ == "__main__":
     valid_count = sum(1 for r in all_results if r.is_valid)
     broken_count = sum(1 for r in all_results if not r.is_valid)
     
-    print(f"\n--- Summary ---")
+    print("\n--- Summary ---")
     print(f"Total file reference links: {len(all_results)}")
     print(f"Valid: {valid_count}")
     print(f"Broken: {broken_count}")

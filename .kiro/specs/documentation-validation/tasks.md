@@ -61,7 +61,7 @@ This implementation plan focuses on validating documentation against source code
     - **Property 2: Link Target Resolution**
     - **Validates: Requirements 2.2, 2.3, 2.4**
     - _Requirements: 2.2_
-  - [-] 4.3 Validate anchor links
+  - [x] 4.3 Validate anchor links
     - Check each `[text](#heading)` points to valid heading
     - Fix broken anchor links
     - _Requirements: 2.3_
@@ -106,12 +106,12 @@ This implementation plan focuses on validating documentation against source code
 
 ## Phase 4: Mathematical Framework Validation
 
-- [ ] 7. Validate mathematical_framework.tex against implementations
-  - [ ] 7.1 Extract formulas from LaTeX document
+- [x] 7. Validate mathematical_framework.tex against implementations
+  - [x] 7.1 Extract formulas from LaTeX document
     - Parse mathematical_framework.tex for formula definitions
     - Create formula inventory with locations
     - _Requirements: 4.1_
-  - [ ] 7.2 Compare formulas to code implementations
+  - [x] 7.2 Compare formulas to code implementations
     - Consistency formula vs `core/metrics/consistency.py`
     - Completeness formula vs `core/metrics/completeness.py`
     - Expressiveness formula vs `core/metrics/expressiveness.py`
@@ -121,19 +121,19 @@ This implementation plan focuses on validating documentation against source code
     - **Property 7: Mathematical Formula Consistency**
     - **Validates: Requirements 4.1, 8.5**
     - _Requirements: 4.1_
-  - [ ] 7.3 Validate worked examples
+  - [x] 7.3 Validate worked examples
     - Execute each worked example computation
     - Verify results match documented values (within ε = 1e-6)
     - **Property 8: Worked Example Correctness**
     - **Validates: Requirements 4.2, 5.2**
     - _Requirements: 4.2_
-  - [ ] 7.4 Verify code file references
+  - [x] 7.4 Verify code file references
     - Check all referenced code files exist
     - Update paths if files have moved
     - **Property 9: Code File Reference Validity**
     - **Validates: Requirements 4.4**
     - _Requirements: 4.4_
-  - [ ] 7.5 Recompile PDF and verify no errors
+  - [x] 7.5 Recompile PDF and verify no errors
     - Run `pdflatex docs/mathematical_framework.tex`
     - Fix any compilation errors
     - _Requirements: 4.5_

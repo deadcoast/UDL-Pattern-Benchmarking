@@ -342,3 +342,254 @@ class TestRealProjectValidation:
                 f"Broken link in README.md line {link.source_line}: "
                 f"[{link.link_text}]({link.link_target}) - {result.message}"
             )
+
+
+class TestAnchorLinkValidation:
+    """
+    Test anchor link validation.
+    
+    **Feature: documentation-validation, Property 2: Link Target Resolution**
+    **Validates: Requirements 2.3**
+    """
+    
+    def test_valid_anchor_link(self):
+        """Valid anchor links should pass validation."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            source = Path(tmpdir) / "source.md"
+            source.write_text("""# My Heading
+
+Some content here.
+
+[Link to heading](#my-heading)
+""")
+            
+            validator = LinkValidator(Path(tmpdir))
+            links = validator.extract_links_from_file(source)
+            anchor_links = [l for l in links if l.link_type == LinkType.ANCHOR_LINK]
+            
+            assert len(anchor_links) == 1
+            result = validator.validate_anchor_link(anchor_links[0])
+            assert result.is_valid is True
+    
+    def test_broken_anchor_link(self):
+        """Broken anchor links should fail validation."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            source = Path(tmpdir) / "source.md"
+            source.write_text("""# My Heading
+
+[Link to nonexistent](#nonexistent-heading)
+""")
+            
+            validator = LinkValidator(Path(tmpdir))
+            links = validator.extract_links_from_file(source)
+            anchor_links = [l for l in links if l.link_type == LinkType.ANCHOR_LINK]
+            
+            assert len(anchor_links) == 1
+            result = validator.validate_anchor_link(anchor_links[0])
+            assert result.is_valid is False
+    
+    def test_heading_to_anchor_conversion(self):
+        """Test heading to anchor conversion rules."""
+        validator = LinkValidator(Path("."))
+        
+        # Basic conversion
+        assert validator._heading_to_anchor("My Heading") == "my-heading"
+        
+        # Special characters removed
+        assert validator._heading_to_anchor("Hello, World!") == "hello-world"
+        
+        # Multiple spaces become single hyphen
+        assert validator._heading_to_anchor("Multiple   Spaces") == "multiple-spaces"
+        
+        # Underscores preserved
+        assert validator._heading_to_anchor("with_underscore") == "with_underscore"
+        
+        # Numbers preserved
+        assert validator._heading_to_anchor("Version 2.0") == "version-20"
+    
+    def test_multiple_headings_same_level(self):
+        """Multiple headings at same level should all be extractable."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            source = Path(tmpdir) / "source.md"
+            source.write_text("""# First Heading
+
+## Second Heading
+
+## Third Heading
+
+[Link 1](#first-heading)
+[Link 2](#second-heading)
+[Link 3](#third-heading)
+""")
+            
+            validator = LinkValidator(Path(tmpdir))
+            headings = validator.extract_headings_from_file(source)
+            
+            assert "first-heading" in headings
+            assert "second-heading" in headings
+            assert "third-heading" in headings
+    
+    def test_nested_headings(self):
+        """Nested headings (h1, h2, h3, etc.) should all be extractable."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            source = Path(tmpdir) / "source.md"
+            source.write_text("""# Level 1
+
+## Level 2
+
+### Level 3
+
+#### Level 4
+
+##### Level 5
+
+###### Level 6
+""")
+            
+            validator = LinkValidator(Path(tmpdir))
+            headings = validator.extract_headings_from_file(source)
+            
+            assert len(headings) == 6
+            assert "level-1" in headings
+            assert "level-6" in headings
+    
+    def test_empty_anchor_link(self):
+        """Empty anchor links should fail validation."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            source = Path(tmpdir) / "source.md"
+            source.write_text("""# Heading
+
+[Empty anchor](#)
+""")
+            
+            validator = LinkValidator(Path(tmpdir))
+            links = validator.extract_links_from_file(source)
+            anchor_links = [l for l in links if l.link_type == LinkType.ANCHOR_LINK]
+            
+            if anchor_links:  # Only if the empty anchor was extracted
+                result = validator.validate_anchor_link(anchor_links[0])
+                assert result.is_valid is False
+
+
+class TestPropertyBasedAnchorValidation:
+    """
+    Property-based tests for anchor link validation.
+    
+    **Feature: documentation-validation, Property 2: Link Target Resolution**
+    **Validates: Requirements 2.3**
+    """
+    
+    @given(st.text(alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ", min_size=1, max_size=30))
+    @settings(max_examples=100)
+    def test_heading_anchor_roundtrip(self, heading_text):
+        """
+        Property: For any heading text, converting to anchor and linking should validate.
+        
+        **Feature: documentation-validation, Property 2: Link Target Resolution**
+        **Validates: Requirements 2.3**
+        """
+        # Filter out problematic inputs
+        assume(heading_text.strip() != "")
+        assume(not heading_text.isspace())
+        
+        with tempfile.TemporaryDirectory() as tmpdir:
+            validator = LinkValidator(Path(tmpdir))
+            
+            # Convert heading to anchor
+            anchor = validator._heading_to_anchor(heading_text)
+            assume(anchor != "")  # Skip if anchor becomes empty
+            
+            # Create file with heading and link to it
+            source = Path(tmpdir) / "source.md"
+            source.write_text(f"# {heading_text}\n\n[Link](#{anchor})\n")
+            
+            links = validator.extract_links_from_file(source)
+            anchor_links = [l for l in links if l.link_type == LinkType.ANCHOR_LINK]
+            
+            if anchor_links:
+                result = validator.validate_anchor_link(anchor_links[0])
+                assert result.is_valid is True, f"Heading '{heading_text}' -> anchor '{anchor}' should validate"
+    
+    @given(st.lists(
+        st.text(alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ", min_size=1, max_size=20),
+        min_size=1, max_size=5
+    ))
+    @settings(max_examples=100)
+    def test_all_headings_are_linkable(self, heading_texts):
+        """
+        Property: For any set of headings, all should be linkable via anchors.
+        
+        **Feature: documentation-validation, Property 2: Link Target Resolution**
+        **Validates: Requirements 2.3**
+        """
+        # Filter out problematic inputs
+        valid_headings = [h for h in heading_texts if h.strip() and not h.isspace()]
+        assume(len(valid_headings) > 0)
+        
+        with tempfile.TemporaryDirectory() as tmpdir:
+            validator = LinkValidator(Path(tmpdir))
+            
+            # Build document with headings
+            content_lines = []
+            for heading in valid_headings:
+                content_lines.append(f"# {heading}")
+                content_lines.append("")
+            
+            # Add links to all headings
+            for heading in valid_headings:
+                anchor = validator._heading_to_anchor(heading)
+                if anchor:
+                    content_lines.append(f"[Link to {heading}](#{anchor})")
+            
+            source = Path(tmpdir) / "source.md"
+            source.write_text("\n".join(content_lines))
+            
+            links = validator.extract_links_from_file(source)
+            anchor_links = [l for l in links if l.link_type == LinkType.ANCHOR_LINK]
+            
+            for link in anchor_links:
+                result = validator.validate_anchor_link(link)
+                assert result.is_valid is True, f"Link {link.link_target} should be valid"
+
+
+class TestRealProjectAnchorValidation:
+    """Test anchor validation against the actual project."""
+    
+    def test_project_anchor_links_are_valid(self):
+        """
+        All anchor links in the project documentation should be valid.
+        
+        **Feature: documentation-validation, Property 2: Link Target Resolution**
+        **Validates: Requirements 2.3**
+        """
+        project_root = Path(__file__).parent.parent
+        validator = LinkValidator(project_root)
+        report = validator.validate_anchor_links_only()
+        
+        # All anchor links should be valid
+        assert report.broken_links == 0, (
+            f"Found {report.broken_links} broken anchor links:\n" +
+            "\n".join(
+                f"  {r.link.source_file}:{r.link.source_line} - [{r.link.link_text}]({r.link.link_target}) - {r.message}"
+                for r in report.broken_link_details
+            )
+        )
+    
+    def test_readme_anchor_links_are_valid(self):
+        """README.md anchor links should all be valid."""
+        project_root = Path(__file__).parent.parent
+        readme = project_root / "README.md"
+        
+        if not readme.exists():
+            pytest.skip("README.md not found")
+        
+        validator = LinkValidator(project_root)
+        links = validator.extract_links_from_file(readme)
+        anchor_links = [l for l in links if l.link_type == LinkType.ANCHOR_LINK]
+        
+        for link in anchor_links:
+            result = validator.validate_anchor_link(link)
+            assert result.is_valid, (
+                f"Broken anchor in README.md line {link.source_line}: "
+                f"[{link.link_text}]({link.link_target}) - {result.message}"
+            )
