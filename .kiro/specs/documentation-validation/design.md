@@ -708,23 +708,36 @@ When errors occur, the system should:
 
 ### Test Organization
 
+The test suite uses a flat structure with descriptive naming conventions:
+
 ```
 tests/
-├── test_doc_validation/
-│   ├── test_link_validator.py
-│   ├── test_api_validator.py
-│   ├── test_example_executor.py
-│   ├── test_structure_validator.py
-│   ├── test_config_validator.py
-│   └── test_audit_reporter.py
-├── test_doc_validation_properties/
-│   ├── test_link_properties.py
-│   ├── test_api_properties.py
-│   └── test_finding_properties.py
-└── test_doc_validation_integration/
-    ├── test_full_audit.py
-    └── test_incremental_validation.py
+├── unit/                                    # Unit tests for project setup
+│   ├── test_project_setup.py
+│   └── test_project_setup_minimal.py
+├── test_link_validation_properties.py       # Link validation (Property 2)
+├── test_docstring_validation.py             # Docstring validation (Property 19)
+├── test_api_integration.py                  # API validation (Properties 4, 5, 6)
+├── test_example_validation.py               # Example validation (Properties 10, 11, 12)
+├── test_notebook_validation.py              # Notebook validation (Property 11)
+├── test_udl_example_processing.py           # UDL example processing (Property 10)
+├── test_file_discovery.py                   # File discovery (Property 6, 7)
+├── test_metric_properties.py                # Metric properties (Properties 2, 3)
+├── test_mathematical_formula_validation.py  # Formula validation (Property 7)
+├── test_worked_examples_validation.py       # Worked examples (Property 8)
+├── test_code_file_references.py             # Code file references (Property 9)
+├── test_cli_option_accuracy.py              # CLI validation (Property 20)
+├── test_requirement_reference_validity.py   # Requirement refs (Property 23)
+├── test_final_integration.py                # Integration tests
+├── test_cli_integration.py                  # CLI integration tests
+└── ... (additional test files)
 ```
+
+**Naming Convention:**
+- `test_*_properties.py` - Property-based tests
+- `test_*_validation.py` - Validation tests
+- `test_*_integration.py` - Integration tests
+- `test_*_metric.py` - Metric-specific tests
 
 ## Implementation Notes
 

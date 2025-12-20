@@ -1,0 +1,158 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-12-19T17:17:12.712218",
+    "generator_version": "1.0.0",
+    "total_reports": 1,
+    "format": "JSON"
+  },
+  "reports": [
+    {
+      "udl_file": "examples/udl_examples/simple_calculator.udl",
+      "timestamp": "2025-12-19T17:17:12.711348",
+      "overall_score": 0.6385140870532554,
+      "confidence": 0.01872505909999067,
+      "metric_scores": {
+        "consistency": 0.8333333333333334,
+        "completeness": 0.6666666666666666,
+        "expressiveness": 0.43020509193776524,
+        "structural_coherence": 0.6238512562752564
+      },
+      "metric_formulas": {
+        "consistency": "Consistency(U) = 1 - \\frac{|Contradictions| + |Cycles|}{|Rules| + 1}",
+        "completeness": "Completeness(U) = \\frac{|Defined\\_Constructs|}{|Required\\_Constructs|}",
+        "expressiveness": "Expressiveness(U) = \\frac{Chomsky\\_Level + Complexity\\_Score}{2}",
+        "structural_coherence": "Structural\\_Coherence(U) = 1 - \\frac{H(G)}{H_{max}} \\text{ where } H(G) = -\\sum_{i} p_i \\log_2(p_i)"
+      },
+      "error_bounds": {
+        "consistency": {
+          "lower": 0.7833333333333333,
+          "upper": 0.8833333333333334
+        },
+        "completeness": {
+          "lower": 0.6166666666666666,
+          "upper": 0.7166666666666667
+        },
+        "expressiveness": {
+          "lower": 0.38020509193776525,
+          "upper": 0.4802050919377652
+        },
+        "structural_coherence": {
+          "lower": 0.5738512562752563,
+          "upper": 0.6738512562752564
+        },
+        "overall": {
+          "lower": 0.5885140870532554,
+          "upper": 0.6885140870532555
+        }
+      },
+      "errors": [],
+      "warnings": [],
+      "computation_trace": [
+        {
+          "step_number": 1,
+          "operation": "Initialize metric computation",
+          "formula": "",
+          "inputs": {
+            "udl_file": "examples/udl_examples/simple_calculator.udl",
+            "metrics": [
+              "consistency",
+              "completeness",
+              "expressiveness",
+              "structural_coherence"
+            ]
+          },
+          "output": "Starting independent metric computation",
+          "intermediate_values": {}
+        },
+        {
+          "step_number": 2,
+          "operation": "Compute consistency metric",
+          "formula": "Consistency(U) = 1 - \\frac{|Contradictions| + |Cycles|}{|Rules| + 1}",
+          "inputs": {
+            "udl": "examples/udl_examples/simple_calculator.udl"
+          },
+          "output": "0.8333333333333334",
+          "intermediate_values": {
+            "consistency": 0.8333333333333334
+          }
+        },
+        {
+          "step_number": 3,
+          "operation": "Compute completeness metric",
+          "formula": "Completeness(U) = \\frac{|Defined\\_Constructs|}{|Required\\_Constructs|}",
+          "inputs": {
+            "udl": "examples/udl_examples/simple_calculator.udl"
+          },
+          "output": "0.6666666666666666",
+          "intermediate_values": {
+            "completeness": 0.6666666666666666
+          }
+        },
+        {
+          "step_number": 4,
+          "operation": "Compute expressiveness metric",
+          "formula": "Expressiveness(U) = \\frac{Chomsky\\_Level + Complexity\\_Score}{2}",
+          "inputs": {
+            "udl": "examples/udl_examples/simple_calculator.udl"
+          },
+          "output": "0.43020509193776524",
+          "intermediate_values": {
+            "expressiveness": 0.43020509193776524
+          }
+        },
+        {
+          "step_number": 5,
+          "operation": "Compute structural_coherence metric",
+          "formula": "Structural\\_Coherence(U) = 1 - \\frac{H(G)}{H_{max}} \\text{ where } H(G) = -\\sum_{i} p_i \\log_2(p_i)",
+          "inputs": {
+            "udl": "examples/udl_examples/simple_calculator.udl"
+          },
+          "output": "0.6238512562752564",
+          "intermediate_values": {
+            "structural_coherence": 0.6238512562752564
+          }
+        },
+        {
+          "step_number": 6,
+          "operation": "Aggregate metrics",
+          "formula": "Q = \\sum_{i} w_i \\cdot m_i",
+          "inputs": {
+            "weights": {
+              "consistency": 0.25,
+              "completeness": 0.25,
+              "expressiveness": 0.25,
+              "structural_coherence": 0.25
+            },
+            "metric_values": {
+              "consistency": 0.8333333333333334,
+              "completeness": 0.6666666666666666,
+              "expressiveness": 0.43020509193776524,
+              "structural_coherence": 0.6238512562752564
+            }
+          },
+          "output": "0.6385140870532554",
+          "intermediate_values": {
+            "overall_score": 0.6385140870532554
+          }
+        },
+        {
+          "step_number": 7,
+          "operation": "Compute confidence",
+          "formula": "C = 1 - \\frac{H(p)}{H_{max}}",
+          "inputs": {
+            "prediction_probs": [
+              0.32627836653501624,
+              0.26102269322801297,
+              0.16843993760700063,
+              0.24425900262997013
+            ]
+          },
+          "output": "0.01872505909999067",
+          "intermediate_values": {
+            "confidence": 0.01872505909999067
+          }
+        }
+      ]
+    }
+  ]
+}

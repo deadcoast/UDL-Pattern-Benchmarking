@@ -149,17 +149,26 @@ print(f"Completeness: {completeness.compute(udl):.3f}")
 # Show available commands
 udl-rating --help
 
-# Rate a directory of UDL files
-udl-rating rate --directory ./my_udls --output report.json
+# Rate a single UDL file
+udl-rating rate my_language.udl
+
+# Rate a directory of UDL files (recursively)
+udl-rating rate ./my_udls --recursive --output report.json
+
+# Rate with custom metric weights
+udl-rating rate ./my_udls --consistency-weight 0.4 --output results.json
 
 # Train a CTM model
-udl-rating train --dataset ./training_data --epochs 50 --output model.pt
+udl-rating train ./training_data --epochs 50 --output-dir ./checkpoints
 
 # Compare multiple UDLs
-udl-rating compare --files udl_v1.dsl udl_v2.dsl --output comparison.html
+udl-rating compare udl_v1.dsl udl_v2.dsl --output comparison.json
+
+# Compare directories of UDLs
+udl-rating compare ./lang1_versions/ ./lang2_versions/ --recursive
 
 # Evaluate model performance
-udl-rating evaluate --model model.pt --test-set ./test_data
+udl-rating evaluate ./checkpoints/model.pt ./test_data --output evaluation.json
 
 # Analytics commands
 udl-rating analytics --help
@@ -317,5 +326,5 @@ This project is under active development. Current status:
 - [x] Analytics (Portfolio Analyzer, Trend Predictor, BI Exporter)
 - [x] Visualization (Web, WebGL, Real-time Metrics)
 - [x] Integration tools (CI/CD, Git Hooks, LSP Server)
-- [x] Comprehensive testing (652+ tests, 66% coverage, 40 correctness properties)
+- [x] Comprehensive testing (650+ tests, 59-66% coverage, 40 correctness properties)
 - [ ] Documentation polish and validation (in progress)

@@ -271,44 +271,44 @@ This implementation plan focuses on validating documentation against source code
 
 ## Phase 9: CLI Validation
 
-- [ ] 16. Validate CLI help and commands
-  - [ ] 16.1 Verify all documented commands exist
+- [x] 16. Validate CLI help and commands
+  - [x] 16.1 Verify all documented commands exist
     - Test each command mentioned in documentation
     - Update docs for removed commands
     - _Requirements: 9.1_
-  - [ ] 16.2 Verify command options are accurate
+  - [x] 16.2 Verify command options are accurate
     - Check each option description matches behavior
     - Fix inaccurate option descriptions
     - **Property 20: CLI Option Accuracy**
     - **Validates: Requirements 9.2**
     - _Requirements: 9.2_
-  - [ ] 16.3 Test example commands from documentation
+  - [x] 16.3 Test example commands from documentation
     - Execute each example command
     - Fix broken examples
     - _Requirements: 9.3_
-  - [ ] 16.4 Verify config file format documentation
+  - [x] 16.4 Verify config file format documentation
     - Check config_example.yaml matches actual parsing
     - Update documentation if format has changed
     - _Requirements: 9.5_
 
 ## Phase 10: Test Documentation Validation
 
-- [ ] 17. Validate test documentation
-  - [ ] 17.1 Verify test docstrings describe tested behavior
+- [x] 17. Validate test documentation
+  - [x] 17.1 Verify test docstrings describe tested behavior
     - Check each test has meaningful docstring
     - Add missing docstrings
     - _Requirements: 11.1_
-  - [ ] 17.2 Verify property test requirement references
+  - [x] 17.2 Verify property test requirement references
     - Check each "Validates: Requirements X.Y" reference is valid
     - Fix invalid references
     - **Property 23: Test Requirement Reference Validity**
     - **Validates: Requirements 11.2, 11.4**
     - _Requirements: 11.2, 11.4_
-  - [ ] 17.3 Verify test organization matches documented strategy
+  - [x] 17.3 Verify test organization matches documented strategy
     - Compare test directory structure to design document
     - Reorganize or update documentation as needed
     - _Requirements: 11.3_
-  - [ ] 17.4 Verify coverage claims
+  - [x] 17.4 Verify coverage claims
     - Run coverage report and compare to documented claims
     - Update documented coverage numbers
     - _Requirements: 11.5_

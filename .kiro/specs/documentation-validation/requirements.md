@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document specifies the requirements for a comprehensive documentation validation and project polish initiative for the UDL Rating Framework. The system has completed its core implementation (652 passing tests, 66% coverage, all 40 correctness properties validated). This spec focuses on validating that all documentation accurately reflects the source code, ensuring structural consistency, completing integration points, and establishing a validated baseline for future development.
+This document specifies the requirements for a comprehensive documentation validation and project polish initiative for the UDL Rating Framework. The system has completed its core implementation (650+ passing tests, 59-66% coverage depending on test configuration, all 40 correctness properties validated). This spec focuses on validating that all documentation accurately reflects the source code, ensuring structural consistency, completing integration points, and establishing a validated baseline for future development.
 
 The goal is to audit the entire project front-to-back: documentation to source code, ensuring every claim in documentation is verifiable, every feature is documented, and the project structure is coherent and maintainable.
 
