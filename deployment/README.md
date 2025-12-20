@@ -90,7 +90,8 @@ deployment/
 ├── scripts/              # Deployment scripts
 │   ├── build.sh         # Build Docker images
 │   ├── deploy.sh        # Deploy to environment
-│   └── cleanup.sh       # Cleanup deployment
+│   ├── cleanup.sh       # Cleanup deployment
+│   └── validate_deployment.sh # Validate all deployment configs
 ├── client/              # API clients
 │   ├── python_client.py # Python client library
 │   └── javascript_client.js # JavaScript client
@@ -377,6 +378,39 @@ For deployment issues:
 3. Verify configuration settings
 4. Test with minimal examples
 5. Check resource availability (CPU, memory, disk)
+
+## Validation
+
+### Deployment Script Validation
+
+Before deploying, you can validate all deployment configurations using the validation script:
+
+```bash
+# Run full validation
+./deployment/scripts/validate_deployment.sh
+```
+
+This script performs the following checks:
+
+1. **Bash Syntax**: Validates syntax of all shell scripts
+2. **Help Options**: Ensures --help works for deploy and cleanup scripts
+3. **Required Files**: Verifies all necessary deployment files exist
+4. **Dockerfile**: Checks Dockerfile syntax and multi-stage build configuration
+5. **Docker Compose**: Validates docker-compose.yml configuration
+6. **Kubernetes Manifests**: Runs `kubectl --dry-run=client` on all manifests
+7. **Script Permissions**: Checks scripts are readable/executable
+
+### Dry-Run Mode
+
+Test deployments without making changes:
+
+```bash
+# Kubernetes dry-run
+DRY_RUN=true ./deployment/scripts/deploy.sh kubernetes
+
+# Validate individual manifests
+kubectl apply -f deployment/kubernetes/deployment.yaml --dry-run=client
+```
 
 ## License
 
