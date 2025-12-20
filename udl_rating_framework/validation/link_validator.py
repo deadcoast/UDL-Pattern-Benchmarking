@@ -99,17 +99,46 @@ class LinkValidator:
             return LinkType.FILE_REFERENCE
     
     def extract_links_from_file(self, file_path: Path) -> List[Link]:
-        """Extract all links from a documentation file."""
+        """Extract all links from a documentation file.
+        
+        Skips links that are inside inline code (backticks) or code blocks.
+        """
         links = []
         try:
             content = file_path.read_text(encoding='utf-8')
         except (IOError, UnicodeDecodeError):
             return links
         
+        # Track if we're inside a code block
+        in_code_block = False
+        
         for line_num, line in enumerate(content.split('\n'), start=1):
+            # Check for code block markers
+            if line.strip().startswith('```'):
+                in_code_block = not in_code_block
+                continue
+            
+            # Skip lines inside code blocks
+            if in_code_block:
+                continue
+            
             for match in self.MARKDOWN_LINK_PATTERN.finditer(line):
                 link_text = match.group(1)
                 link_target = match.group(2)
+                
+                # Check if this link is inside inline code (backticks)
+                # Find the position of the match in the line
+                match_start = match.start()
+                match_end = match.end()
+                
+                # Count backticks before the match
+                text_before = line[:match_start]
+                backticks_before = text_before.count('`')
+                
+                # If odd number of backticks before, we're inside inline code
+                if backticks_before % 2 == 1:
+                    continue
+                
                 link_type = self.classify_link(link_target)
                 
                 links.append(Link(

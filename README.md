@@ -181,54 +181,122 @@ udl-rating integration --help
 
 ```
 udl_rating_framework/
-├── core/                  # Core components
-│   ├── representation.py  # UDL representation
-│   ├── metrics/          # Quality metrics (consistency, completeness, etc.)
+├── __init__.py           # Package initialization and exports
+├── core/                 # Core components
+│   ├── __init__.py
+│   ├── representation.py # UDL representation
+│   ├── pipeline.py       # Processing pipeline
 │   ├── aggregation.py    # Metric aggregation
 │   ├── confidence.py     # Confidence calculation
 │   ├── caching.py        # Result caching
-│   ├── pipeline.py       # Processing pipeline
-│   └── performance.py    # Performance utilities
+│   ├── performance.py    # Performance utilities
+│   ├── multiprocessing.py # Parallel processing
+│   ├── distributed.py    # Distributed computing
+│   ├── streaming.py      # Streaming processing
+│   ├── incremental.py    # Incremental updates
+│   ├── memory_mapping.py # Memory-mapped files
+│   ├── gpu_acceleration.py # GPU acceleration
+│   └── metrics/          # Quality metrics
+│       ├── __init__.py
+│       ├── base.py       # Base metric class and registry
+│       ├── consistency.py
+│       ├── completeness.py
+│       ├── expressiveness.py
+│       ├── structural_coherence.py
+│       ├── semantic_similarity.py
+│       ├── readability.py
+│       ├── maintainability.py
+│       ├── cross_language_compatibility.py
+│       └── evolution_tracking.py
 ├── models/               # CTM model components
+│   ├── __init__.py
 │   └── ctm_adapter.py    # CTM integration adapter
 ├── io/                   # Input/output handling
+│   ├── __init__.py
 │   ├── file_discovery.py # File discovery utilities
 │   ├── input_validation.py # Input validation
 │   └── report_generator.py # Report generation
 ├── evaluation/           # Evaluation utilities
+│   ├── __init__.py
 │   ├── comparison.py     # UDL comparison
 │   └── evaluation_suite.py # Evaluation suite
 ├── analytics/            # Analytics and reporting
+│   ├── __init__.py
 │   ├── portfolio_analyzer.py # Portfolio analysis
 │   ├── trend_predictor.py # Trend prediction
+│   ├── time_series_analyzer.py # Time series analysis
+│   ├── improvement_advisor.py # Improvement suggestions
 │   └── bi_exporter.py    # BI tool export
 ├── training/             # ML training components
+│   ├── __init__.py
 │   ├── training_pipeline.py # Training pipeline
 │   ├── active_learning.py # Active learning
-│   └── ensemble_methods.py # Ensemble methods
+│   ├── ensemble_methods.py # Ensemble methods
+│   ├── hyperparameter_optimization.py # Hyperparameter tuning
+│   ├── transfer_learning.py # Transfer learning
+│   └── uncertainty_quantification.py # Uncertainty estimation
 ├── visualization/        # Visualization tools
+│   ├── __init__.py
 │   ├── web_visualizer.py # Web dashboards
 │   ├── realtime_metrics.py # Real-time metrics
-│   └── webgl_visualizer.py # WebGL 3D visualizations
+│   ├── webgl_visualizer.py # WebGL 3D visualizations
+│   ├── activation_visualizer.py # Activation visualization
+│   └── synchronization_visualizer.py # Sync visualization
 ├── integration/          # Integration tools
+│   ├── __init__.py
 │   ├── cicd.py           # CI/CD integration
 │   ├── git_hooks.py      # Git hooks
-│   └── lsp_server.py     # LSP server
+│   ├── lsp_server.py     # LSP server
+│   ├── ide_plugin.py     # IDE plugin support
+│   └── batch_processor.py # Batch processing
 ├── validation/           # Validation utilities
+│   ├── __init__.py
+│   ├── formal_verification.py # Formal verification
+│   ├── dataset_benchmark.py # Dataset benchmarks
+│   ├── api_validator.py  # API validation
+│   ├── link_validator.py # Link validation
+│   ├── docstring_validator.py # Docstring validation
+│   └── audit_reporter.py # Audit reporting
 ├── benchmarks/           # Performance benchmarks
+│   ├── __init__.py
+│   └── performance_benchmarks.py
 ├── utils/                # Utility functions
+│   └── __init__.py
 └── cli/                  # Command-line interface
+    ├── __init__.py
+    ├── main.py           # CLI entry point
+    ├── config.py         # CLI configuration
     └── commands/         # CLI commands
+        ├── __init__.py
+        ├── rate.py       # Rate command
+        ├── train.py      # Train command
+        ├── compare.py    # Compare command
+        ├── evaluate.py   # Evaluate command
+        ├── analytics.py  # Analytics command
+        └── integration.py # Integration command
 
 tests/
+├── __init__.py
+├── conftest.py           # Test configuration
 ├── unit/                 # Unit tests
 ├── test_*.py             # Test modules (property-based, integration, etc.)
-└── conftest.py           # Test configuration
+└── README.md             # Test documentation
 
 docs/
-├── mathematical_framework.tex  # Mathematical specification
-├── api_reference.rst     # API documentation
-└── examples.rst          # Tutorial examples
+├── math_framework/       # Mathematical specification
+│   └── mathematical_framework.pdf
+├── api/                  # API documentation
+│   └── api_reference.rst
+├── udl/                  # UDL documentation
+│   └── examples.rst
+├── AUDIT_REPORT.md       # Documentation audit report
+├── STRUCTURE_VALIDATION_REPORT.md # Structure validation
+└── CONTRIBUTING.md       # Contribution guidelines
+
+examples/
+├── notebooks/            # Jupyter notebooks
+├── udl_examples/         # Example UDL files
+└── *.py                  # Example scripts
 ```
 
 ## Mathematical Foundation
@@ -299,7 +367,8 @@ All dependencies are managed through [pyproject.toml](pyproject.toml) and instal
 
 - [Mathematical Framework](docs/math_framework/mathematical_framework.pdf) - Complete mathematical specification
 - [API Documentation](docs/api/api_reference.rst) - API reference
-- [Tutorial Notebooks](docs/udl/examples.rst.rst) - Jupyter notebooks with examples
+- [Tutorial Notebooks](examples/notebooks/) - Jupyter notebooks with examples
+- [UDL Examples](docs/udl/examples.rst) - Example UDL files and documentation
 
 ## Contributing
 

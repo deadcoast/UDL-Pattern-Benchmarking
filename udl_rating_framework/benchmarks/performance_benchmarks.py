@@ -22,6 +22,18 @@ try:
 except ImportError:
     # Memory profiler is optional
     def memory_profile(func):
+        """Fallback decorator when memory_profiler is not installed.
+        
+        This is a no-op decorator that simply returns the function unchanged.
+        It allows code to use @memory_profile without requiring the
+        memory_profiler package to be installed.
+        
+        Args:
+            func: The function to decorate.
+            
+        Returns:
+            The original function unchanged.
+        """
         return func
 
 from udl_rating_framework.core.representation import UDLRepresentation

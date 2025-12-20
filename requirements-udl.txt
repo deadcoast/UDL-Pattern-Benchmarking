@@ -1,39 +1,30 @@
-# UDL Rating Framework Dependencies
-
-# Deep Learning
-torch>=2.0.0
-
-# Graph Analysis
-networkx>=3.0
-
-# Numerical Computing
-numpy>=1.24.0
-scipy>=1.10.0
-
-# Property-Based Testing
-hypothesis>=6.0.0
-
-# Parsing (will be used in later tasks)
-lark-parser>=1.1.0
-
-# Statistical Analysis
-statsmodels>=0.14.0
-
-# Visualization
-matplotlib>=3.7.0
-seaborn>=0.12.0
-
-# CLI
-click>=8.1.0
-
-# Documentation
-sphinx>=6.0.0
+# UDL Rating Framework Development Dependencies
+# Primary configuration is in pyproject.toml
+# Use: uv sync --extra dev (recommended)
 
 # Testing
 pytest>=7.3.0
 pytest-cov>=4.1.0
+hypothesis>=6.0.0
 
 # Code Quality
 black>=23.0.0
 flake8>=6.0.0
 mypy>=1.3.0
+
+# Documentation
+sphinx>=6.0.0
+
+# Optional: Distributed Computing
+# ray>=2.0.0
+# dask>=2023.1.0
+
+# Optional: GPU Acceleration
+# cupy>=12.0.0
+
+# Optional: ML Extensions
+# optuna>=3.0.0
+# transformers>=4.30.0
+
+# Optional: Animation
+# manim>=0.17.0
