@@ -132,6 +132,8 @@ curl -X POST "http://localhost:8000/rate/file" \
 
 ### Environment Variables
 
+#### API Configuration
+
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `API_TOKEN` | Authentication token | None (no auth) |
@@ -139,6 +141,24 @@ curl -X POST "http://localhost:8000/rate/file" \
 | `ENVIRONMENT` | Environment (development/production) | `production` |
 | `LOG_LEVEL` | Logging level | `INFO` |
 | `PORT` | API port | `8000` |
+
+#### Coverage Monitoring (CI/CD)
+
+These variables are used by the coverage monitoring script (`scripts/coverage_monitor.py`) for sending email alerts:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `SMTP_SERVER` | SMTP server hostname for email alerts | `localhost` |
+| `SMTP_PORT` | SMTP server port | `587` |
+| `SMTP_USER` | SMTP authentication username | None |
+| `SMTP_PASSWORD` | SMTP authentication password | None |
+| `COVERAGE_ALERT_RECIPIENTS` | Comma-separated list of email recipients for coverage alerts | None |
+
+#### Docker Compose Specific
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `GRAFANA_PASSWORD` | Grafana admin password | `admin` |
 
 ### Docker Compose Configuration
 

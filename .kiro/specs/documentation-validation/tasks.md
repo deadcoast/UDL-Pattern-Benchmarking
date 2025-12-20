@@ -331,13 +331,13 @@ This implementation plan focuses on validating documentation against source code
     - **Property 24: API Endpoint Documentation**
     - **Validates: Requirements 12.3**
     - _Requirements: 12.3_
-  - [ ] 18.4 Verify environment variable documentation
+  - [x] 18.4 Verify environment variable documentation
     - Find all env var reads in code
     - Ensure each is documented
     - **Property 25: Environment Variable Documentation**
     - **Validates: Requirements 12.4**
     - _Requirements: 12.4_
-  - [ ] 18.5 Test deployment scripts
+  - [-] 18.5 Test deployment scripts
     - Execute deployment scripts in dry-run mode
     - Fix any script errors
     - _Requirements: 12.5_
