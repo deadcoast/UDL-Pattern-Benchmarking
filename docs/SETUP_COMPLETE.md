@@ -122,7 +122,7 @@ docs/
   - Dependency specifications
   - Package metadata
 
-- **setup.py**: Package installation configuration (legacy support)
+- **setup.py**: Minimal shim for backward compatibility with older pip versions (all configuration is in pyproject.toml)
 
 - **pytest.ini**: Test configuration
   - Test discovery patterns

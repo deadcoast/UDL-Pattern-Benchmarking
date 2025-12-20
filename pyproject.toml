@@ -5,18 +5,22 @@ description = "UDL Rating Framework - A mathematically-grounded system for evalu
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    # Core scientific computing
     "numpy>=1.24.0",
     "torch>=2.0.0",
     "torchvision",
     "scipy>=1.10.0",
     "scikit-learn",
     "networkx>=3.0",
+    "pandas>=1.5.0",
+    # Visualization
     "matplotlib>=3.7.0",
     "seaborn>=0.12.0",
+    "pillow>=10.0.0",
+    # Image/video processing
     "opencv-python",
     "imageio",
-    "tqdm",
-    "python-dotenv",
+    # ML/AI frameworks
     "umap-learn",
     "gymnasium",
     "minigrid",
@@ -24,22 +28,28 @@ dependencies = [
     "autoclip",
     "huggingface_hub",
     "safetensors",
-    "statsmodels>=0.14.0",
+    # Testing
     "hypothesis>=6.0.0",
-    "lark>=1.1.0",
+    # CLI and config
     "click>=8.1.0",
-    "tensorboard>=2.20.0",
-    "h5py>=3.8.0",
     "pyyaml>=6.0",
-    "pandas>=1.5.0",
+    # Utilities
+    "tqdm",
+    "h5py>=3.8.0",
     "psutil>=7.1.3",
     "memory-profiler>=0.61.0",
+    # Tensorboard for RL training
+    "tensorboard>=2.20.0",
     # Deployment dependencies
     "fastapi>=0.104.0",
     "uvicorn[standard]>=0.24.0",
     "python-multipart>=0.0.6",
     "slowapi>=0.1.9",
-    "python-jose[cryptography]>=3.3.0",
+    "pydantic>=2.0.0",
+    "requests>=2.31.0",
+    # Notebook execution
+    "nbformat>=5.10.4",
+    "nbclient>=0.10.2",
 ]
 
 [project.scripts]
@@ -58,6 +68,30 @@ docs = [
     "sphinx>=6.0.0",
 ]
 
+# Optional dependencies for advanced features
+distributed = [
+    "ray>=2.0.0",
+    "dask>=2023.1.0",
+    "dask[distributed]>=2023.1.0",
+]
+
+gpu = [
+    "cupy>=12.0.0",
+]
+
+ml = [
+    "optuna>=3.0.0",
+    "transformers>=4.30.0",
+]
+
+animation = [
+    "manim>=0.17.0",
+]
+
+all = [
+    "continuous-thought-machines[distributed,gpu,ml,animation]",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -70,6 +104,13 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+addopts = "-v --strict-markers --tb=short"
+markers = [
+    "unit: Unit tests",
+    "property: Property-based tests",
+    "integration: Integration tests",
+    "performance: Performance tests",
+]
 
 [tool.black]
 line-length = 88

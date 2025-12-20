@@ -502,3 +502,81 @@ class TestConfigValidation:
 
 if __name__ == '__main__':
     pytest.main([__file__])
+
+
+class TestEntryPointValidity:
+    """
+    Property-based tests for entry point validity.
+    
+    **Feature: documentation-validation, Property 18: Entry Point Validity**
+    **Validates: Requirements 7.3**
+    
+    For any entry point defined in pyproject.toml, invoking it should not 
+    raise an import error.
+    """
+    
+    def test_udl_rating_entry_point_exists(self, runner):
+        """
+        Test that the udl-rating entry point is accessible.
+        
+        **Feature: documentation-validation, Property 18: Entry Point Validity**
+        **Validates: Requirements 7.3**
+        """
+        result = runner.invoke(cli, ['--help'])
+        assert result.exit_code == 0
+        assert 'UDL Rating Framework' in result.output
+    
+    def test_all_commands_accessible(self, runner):
+        """
+        Test that all documented CLI commands are accessible.
+        
+        **Feature: documentation-validation, Property 18: Entry Point Validity**
+        **Validates: Requirements 7.3**
+        """
+        # Main commands
+        main_commands = ['rate', 'train', 'compare', 'evaluate', 'integration', 'analytics']
+        
+        for command in main_commands:
+            result = runner.invoke(cli, [command, '--help'])
+            assert result.exit_code == 0, f"Command '{command}' failed with exit code {result.exit_code}"
+            assert '--help' not in result.output or 'Options:' in result.output
+    
+    def test_integration_subcommands_accessible(self, runner):
+        """
+        Test that integration subcommands are accessible.
+        
+        **Feature: documentation-validation, Property 18: Entry Point Validity**
+        **Validates: Requirements 7.3**
+        """
+        subcommands = ['batch-process', 'cicd', 'git', 'ide', 'lsp-server']
+        
+        for subcommand in subcommands:
+            result = runner.invoke(cli, ['integration', subcommand, '--help'])
+            assert result.exit_code == 0, f"Subcommand 'integration {subcommand}' failed"
+    
+    def test_analytics_subcommands_accessible(self, runner):
+        """
+        Test that analytics subcommands are accessible.
+        
+        **Feature: documentation-validation, Property 18: Entry Point Validity**
+        **Validates: Requirements 7.3**
+        """
+        subcommands = ['dashboard', 'export', 'improve', 'portfolio', 'predict', 'timeseries']
+        
+        for subcommand in subcommands:
+            result = runner.invoke(cli, ['analytics', subcommand, '--help'])
+            assert result.exit_code == 0, f"Subcommand 'analytics {subcommand}' failed"
+    
+    def test_entry_point_import(self):
+        """
+        Test that the entry point module can be imported without errors.
+        
+        **Feature: documentation-validation, Property 18: Entry Point Validity**
+        **Validates: Requirements 7.3**
+        """
+        # This tests that the import chain works
+        from udl_rating_framework.cli import main
+        assert callable(main)
+        
+        from udl_rating_framework.cli import cli
+        assert cli is not None

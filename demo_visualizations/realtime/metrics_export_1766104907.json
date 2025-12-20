@@ -1,0 +1,4311 @@
+{
+  "metric_history": {
+    "consistency": [
+      {
+        "timestamp": 1766104907.914342,
+        "metric_name": "consistency",
+        "value": 0.2981025184876983,
+        "udl_file": "calculator.udl",
+        "iteration": 0
+      },
+      {
+        "timestamp": 1766104907.9143481,
+        "metric_name": "consistency",
+        "value": 0.2704657085812104,
+        "udl_file": "parser.udl",
+        "iteration": 0
+      },
+      {
+        "timestamp": 1766104907.914351,
+        "metric_name": "consistency",
+        "value": 0.7301218859075936,
+        "udl_file": "query_lang.udl",
+        "iteration": 0
+      },
+      {
+        "timestamp": 1766104907.914368,
+        "metric_name": "consistency",
+        "value": 0.5695702543570821,
+        "udl_file": "calculator.udl",
+        "iteration": 1
+      },
+      {
+        "timestamp": 1766104907.914369,
+        "metric_name": "consistency",
+        "value": 0.7602847874803493,
+        "udl_file": "parser.udl",
+        "iteration": 1
+      },
+      {
+        "timestamp": 1766104907.914371,
+        "metric_name": "consistency",
+        "value": 0.708044619845897,
+        "udl_file": "query_lang.udl",
+        "iteration": 1
+      },
+      {
+        "timestamp": 1766104907.9143832,
+        "metric_name": "consistency",
+        "value": 0.8412938490493815,
+        "udl_file": "calculator.udl",
+        "iteration": 2
+      },
+      {
+        "timestamp": 1766104907.914384,
+        "metric_name": "consistency",
+        "value": 0.5459221432326573,
+        "udl_file": "parser.udl",
+        "iteration": 2
+      },
+      {
+        "timestamp": 1766104907.9143848,
+        "metric_name": "consistency",
+        "value": 0.7415140650595433,
+        "udl_file": "query_lang.udl",
+        "iteration": 2
+      },
+      {
+        "timestamp": 1766104907.914397,
+        "metric_name": "consistency",
+        "value": 0.33547393470211984,
+        "udl_file": "calculator.udl",
+        "iteration": 3
+      },
+      {
+        "timestamp": 1766104907.914399,
+        "metric_name": "consistency",
+        "value": 0.8400551897742711,
+        "udl_file": "parser.udl",
+        "iteration": 3
+      },
+      {
+        "timestamp": 1766104907.9144,
+        "metric_name": "consistency",
+        "value": 0.5424424685330482,
+        "udl_file": "query_lang.udl",
+        "iteration": 3
+      },
+      {
+        "timestamp": 1766104907.914412,
+        "metric_name": "consistency",
+        "value": 0.2737808211505906,
+        "udl_file": "calculator.udl",
+        "iteration": 4
+      },
+      {
+        "timestamp": 1766104907.914413,
+        "metric_name": "consistency",
+        "value": 0.806424491962354,
+        "udl_file": "parser.udl",
+        "iteration": 4
+      },
+      {
+        "timestamp": 1766104907.9144142,
+        "metric_name": "consistency",
+        "value": 0.27804228198918696,
+        "udl_file": "query_lang.udl",
+        "iteration": 4
+      },
+      {
+        "timestamp": 1766104907.914426,
+        "metric_name": "consistency",
+        "value": 0.8917119187453022,
+        "udl_file": "calculator.udl",
+        "iteration": 5
+      },
+      {
+        "timestamp": 1766104907.9144268,
+        "metric_name": "consistency",
+        "value": 0.7026866846051766,
+        "udl_file": "parser.udl",
+        "iteration": 5
+      },
+      {
+        "timestamp": 1766104907.914428,
+        "metric_name": "consistency",
+        "value": 0.8130966847502659,
+        "udl_file": "query_lang.udl",
+        "iteration": 5
+      },
+      {
+        "timestamp": 1766104907.91444,
+        "metric_name": "consistency",
+        "value": 0.7353500540459476,
+        "udl_file": "calculator.udl",
+        "iteration": 6
+      },
+      {
+        "timestamp": 1766104907.9144409,
+        "metric_name": "consistency",
+        "value": 0.7681551766957683,
+        "udl_file": "parser.udl",
+        "iteration": 6
+      },
+      {
+        "timestamp": 1766104907.914443,
+        "metric_name": "consistency",
+        "value": 0.7513104598106598,
+        "udl_file": "query_lang.udl",
+        "iteration": 6
+      },
+      {
+        "timestamp": 1766104907.914454,
+        "metric_name": "consistency",
+        "value": 0.7756656421764547,
+        "udl_file": "calculator.udl",
+        "iteration": 7
+      },
+      {
+        "timestamp": 1766104907.9144561,
+        "metric_name": "consistency",
+        "value": 0.2013349132223469,
+        "udl_file": "parser.udl",
+        "iteration": 7
+      },
+      {
+        "timestamp": 1766104907.914457,
+        "metric_name": "consistency",
+        "value": 0.40127159232103515,
+        "udl_file": "query_lang.udl",
+        "iteration": 7
+      },
+      {
+        "timestamp": 1766104907.914469,
+        "metric_name": "consistency",
+        "value": 0.6209376219103379,
+        "udl_file": "calculator.udl",
+        "iteration": 8
+      },
+      {
+        "timestamp": 1766104907.91447,
+        "metric_name": "consistency",
+        "value": 0.866077766669347,
+        "udl_file": "parser.udl",
+        "iteration": 8
+      },
+      {
+        "timestamp": 1766104907.914471,
+        "metric_name": "consistency",
+        "value": 0.4199925434073621,
+        "udl_file": "query_lang.udl",
+        "iteration": 8
+      },
+      {
+        "timestamp": 1766104907.9144828,
+        "metric_name": "consistency",
+        "value": 0.23233715720146297,
+        "udl_file": "calculator.udl",
+        "iteration": 9
+      },
+      {
+        "timestamp": 1766104907.914484,
+        "metric_name": "consistency",
+        "value": 0.8663059603391348,
+        "udl_file": "parser.udl",
+        "iteration": 9
+      },
+      {
+        "timestamp": 1766104907.914486,
+        "metric_name": "consistency",
+        "value": 0.8097017784775664,
+        "udl_file": "query_lang.udl",
+        "iteration": 9
+      },
+      {
+        "timestamp": 1766104907.914498,
+        "metric_name": "consistency",
+        "value": 0.6654457850035951,
+        "udl_file": "calculator.udl",
+        "iteration": 10
+      },
+      {
+        "timestamp": 1766104907.914499,
+        "metric_name": "consistency",
+        "value": 0.635559065233037,
+        "udl_file": "parser.udl",
+        "iteration": 10
+      },
+      {
+        "timestamp": 1766104907.9145,
+        "metric_name": "consistency",
+        "value": 0.41372319155755893,
+        "udl_file": "query_lang.udl",
+        "iteration": 10
+      },
+      {
+        "timestamp": 1766104907.914512,
+        "metric_name": "consistency",
+        "value": 0.5165986729411303,
+        "udl_file": "calculator.udl",
+        "iteration": 11
+      },
+      {
+        "timestamp": 1766104907.9145129,
+        "metric_name": "consistency",
+        "value": 0.20141049815729167,
+        "udl_file": "parser.udl",
+        "iteration": 11
+      },
+      {
+        "timestamp": 1766104907.914515,
+        "metric_name": "consistency",
+        "value": 0.6144370181390745,
+        "udl_file": "query_lang.udl",
+        "iteration": 11
+      },
+      {
+        "timestamp": 1766104907.914527,
+        "metric_name": "consistency",
+        "value": 0.30181650215553574,
+        "udl_file": "calculator.udl",
+        "iteration": 12
+      },
+      {
+        "timestamp": 1766104907.914528,
+        "metric_name": "consistency",
+        "value": 0.8032411919318972,
+        "udl_file": "parser.udl",
+        "iteration": 12
+      },
+      {
+        "timestamp": 1766104907.914529,
+        "metric_name": "consistency",
+        "value": 0.6379093766748212,
+        "udl_file": "query_lang.udl",
+        "iteration": 12
+      },
+      {
+        "timestamp": 1766104907.914541,
+        "metric_name": "consistency",
+        "value": 0.4205886746841065,
+        "udl_file": "calculator.udl",
+        "iteration": 13
+      },
+      {
+        "timestamp": 1766104907.9145422,
+        "metric_name": "consistency",
+        "value": 0.7005768748593314,
+        "udl_file": "parser.udl",
+        "iteration": 13
+      },
+      {
+        "timestamp": 1766104907.9145432,
+        "metric_name": "consistency",
+        "value": 0.319066384606118,
+        "udl_file": "query_lang.udl",
+        "iteration": 13
+      },
+      {
+        "timestamp": 1766104907.9145548,
+        "metric_name": "consistency",
+        "value": 0.630170464935317,
+        "udl_file": "calculator.udl",
+        "iteration": 14
+      },
+      {
+        "timestamp": 1766104907.914557,
+        "metric_name": "consistency",
+        "value": 0.7371715831952059,
+        "udl_file": "parser.udl",
+        "iteration": 14
+      },
+      {
+        "timestamp": 1766104907.914558,
+        "metric_name": "consistency",
+        "value": 0.5063353528161391,
+        "udl_file": "query_lang.udl",
+        "iteration": 14
+      },
+      {
+        "timestamp": 1766104907.91457,
+        "metric_name": "consistency",
+        "value": 0.282869412537346,
+        "udl_file": "calculator.udl",
+        "iteration": 15
+      },
+      {
+        "timestamp": 1766104907.914571,
+        "metric_name": "consistency",
+        "value": 0.8491806934156425,
+        "udl_file": "parser.udl",
+        "iteration": 15
+      },
+      {
+        "timestamp": 1766104907.914572,
+        "metric_name": "consistency",
+        "value": 0.7645354238635272,
+        "udl_file": "query_lang.udl",
+        "iteration": 15
+      },
+      {
+        "timestamp": 1766104907.9145842,
+        "metric_name": "consistency",
+        "value": 0.47453919522562105,
+        "udl_file": "calculator.udl",
+        "iteration": 16
+      },
+      {
+        "timestamp": 1766104907.914585,
+        "metric_name": "consistency",
+        "value": 0.37656862229667676,
+        "udl_file": "parser.udl",
+        "iteration": 16
+      },
+      {
+        "timestamp": 1766104907.914586,
+        "metric_name": "consistency",
+        "value": 0.40503552618256866,
+        "udl_file": "query_lang.udl",
+        "iteration": 16
+      },
+      {
+        "timestamp": 1766104907.914598,
+        "metric_name": "consistency",
+        "value": 0.29967744520464895,
+        "udl_file": "calculator.udl",
+        "iteration": 17
+      },
+      {
+        "timestamp": 1766104907.914599,
+        "metric_name": "consistency",
+        "value": 0.6021450037334901,
+        "udl_file": "parser.udl",
+        "iteration": 17
+      },
+      {
+        "timestamp": 1766104907.9146008,
+        "metric_name": "consistency",
+        "value": 0.2871286346300181,
+        "udl_file": "query_lang.udl",
+        "iteration": 17
+      },
+      {
+        "timestamp": 1766104907.914613,
+        "metric_name": "consistency",
+        "value": 0.2782109493771214,
+        "udl_file": "calculator.udl",
+        "iteration": 18
+      },
+      {
+        "timestamp": 1766104907.914614,
+        "metric_name": "consistency",
+        "value": 0.4459723971733112,
+        "udl_file": "parser.udl",
+        "iteration": 18
+      },
+      {
+        "timestamp": 1766104907.9146152,
+        "metric_name": "consistency",
+        "value": 0.42240302576927646,
+        "udl_file": "query_lang.udl",
+        "iteration": 18
+      },
+      {
+        "timestamp": 1766104907.914627,
+        "metric_name": "consistency",
+        "value": 0.502631724783976,
+        "udl_file": "calculator.udl",
+        "iteration": 19
+      },
+      {
+        "timestamp": 1766104907.914628,
+        "metric_name": "consistency",
+        "value": 0.7795165641734394,
+        "udl_file": "parser.udl",
+        "iteration": 19
+      },
+      {
+        "timestamp": 1766104907.9146292,
+        "metric_name": "consistency",
+        "value": 0.7688837065945783,
+        "udl_file": "query_lang.udl",
+        "iteration": 19
+      },
+      {
+        "timestamp": 1766104907.914641,
+        "metric_name": "consistency",
+        "value": 0.5163575705030489,
+        "udl_file": "calculator.udl",
+        "iteration": 20
+      },
+      {
+        "timestamp": 1766104907.9146419,
+        "metric_name": "consistency",
+        "value": 0.3306832472682049,
+        "udl_file": "parser.udl",
+        "iteration": 20
+      },
+      {
+        "timestamp": 1766104907.914643,
+        "metric_name": "consistency",
+        "value": 0.44342576183203697,
+        "udl_file": "query_lang.udl",
+        "iteration": 20
+      },
+      {
+        "timestamp": 1766104907.914655,
+        "metric_name": "consistency",
+        "value": 0.3161755322330366,
+        "udl_file": "calculator.udl",
+        "iteration": 21
+      },
+      {
+        "timestamp": 1766104907.914656,
+        "metric_name": "consistency",
+        "value": 0.70054667035969,
+        "udl_file": "parser.udl",
+        "iteration": 21
+      },
+      {
+        "timestamp": 1766104907.914658,
+        "metric_name": "consistency",
+        "value": 0.42085346114367495,
+        "udl_file": "query_lang.udl",
+        "iteration": 21
+      },
+      {
+        "timestamp": 1766104907.91467,
+        "metric_name": "consistency",
+        "value": 0.6265804340935345,
+        "udl_file": "calculator.udl",
+        "iteration": 22
+      },
+      {
+        "timestamp": 1766104907.9146712,
+        "metric_name": "consistency",
+        "value": 0.5848316896237806,
+        "udl_file": "parser.udl",
+        "iteration": 22
+      },
+      {
+        "timestamp": 1766104907.9146721,
+        "metric_name": "consistency",
+        "value": 0.7244892004269124,
+        "udl_file": "query_lang.udl",
+        "iteration": 22
+      },
+      {
+        "timestamp": 1766104907.9146838,
+        "metric_name": "consistency",
+        "value": 0.3513494111264494,
+        "udl_file": "calculator.udl",
+        "iteration": 23
+      },
+      {
+        "timestamp": 1766104907.914685,
+        "metric_name": "consistency",
+        "value": 0.4141620298323394,
+        "udl_file": "parser.udl",
+        "iteration": 23
+      },
+      {
+        "timestamp": 1766104907.914686,
+        "metric_name": "consistency",
+        "value": 0.6127093818732299,
+        "udl_file": "query_lang.udl",
+        "iteration": 23
+      },
+      {
+        "timestamp": 1766104907.914698,
+        "metric_name": "consistency",
+        "value": 0.4574107931082524,
+        "udl_file": "calculator.udl",
+        "iteration": 24
+      },
+      {
+        "timestamp": 1766104907.9147,
+        "metric_name": "consistency",
+        "value": 0.35495244921032204,
+        "udl_file": "parser.udl",
+        "iteration": 24
+      },
+      {
+        "timestamp": 1766104907.914701,
+        "metric_name": "consistency",
+        "value": 0.8725682652536956,
+        "udl_file": "query_lang.udl",
+        "iteration": 24
+      },
+      {
+        "timestamp": 1766104907.914712,
+        "metric_name": "consistency",
+        "value": 0.729460277460019,
+        "udl_file": "calculator.udl",
+        "iteration": 25
+      },
+      {
+        "timestamp": 1766104907.9147131,
+        "metric_name": "consistency",
+        "value": 0.74094805671641,
+        "udl_file": "parser.udl",
+        "iteration": 25
+      },
+      {
+        "timestamp": 1766104907.9147148,
+        "metric_name": "consistency",
+        "value": 0.43391531005216377,
+        "udl_file": "query_lang.udl",
+        "iteration": 25
+      },
+      {
+        "timestamp": 1766104907.914731,
+        "metric_name": "consistency",
+        "value": 0.39021323656339185,
+        "udl_file": "calculator.udl",
+        "iteration": 26
+      },
+      {
+        "timestamp": 1766104907.914732,
+        "metric_name": "consistency",
+        "value": 0.3190629264465779,
+        "udl_file": "parser.udl",
+        "iteration": 26
+      },
+      {
+        "timestamp": 1766104907.9147332,
+        "metric_name": "consistency",
+        "value": 0.39129299354934655,
+        "udl_file": "query_lang.udl",
+        "iteration": 26
+      },
+      {
+        "timestamp": 1766104907.914745,
+        "metric_name": "consistency",
+        "value": 0.43625536635425427,
+        "udl_file": "calculator.udl",
+        "iteration": 27
+      },
+      {
+        "timestamp": 1766104907.914746,
+        "metric_name": "consistency",
+        "value": 0.29586983318041477,
+        "udl_file": "parser.udl",
+        "iteration": 27
+      },
+      {
+        "timestamp": 1766104907.9147468,
+        "metric_name": "consistency",
+        "value": 0.7354778596476861,
+        "udl_file": "query_lang.udl",
+        "iteration": 27
+      },
+      {
+        "timestamp": 1766104907.914759,
+        "metric_name": "consistency",
+        "value": 0.6743172631034435,
+        "udl_file": "calculator.udl",
+        "iteration": 28
+      },
+      {
+        "timestamp": 1766104907.9147599,
+        "metric_name": "consistency",
+        "value": 0.8856274965782324,
+        "udl_file": "parser.udl",
+        "iteration": 28
+      },
+      {
+        "timestamp": 1766104907.914762,
+        "metric_name": "consistency",
+        "value": 0.30938712711301003,
+        "udl_file": "query_lang.udl",
+        "iteration": 28
+      },
+      {
+        "timestamp": 1766104907.914774,
+        "metric_name": "consistency",
+        "value": 0.8023058392814232,
+        "udl_file": "calculator.udl",
+        "iteration": 29
+      },
+      {
+        "timestamp": 1766104907.9147751,
+        "metric_name": "consistency",
+        "value": 0.6810215205353871,
+        "udl_file": "parser.udl",
+        "iteration": 29
+      },
+      {
+        "timestamp": 1766104907.914776,
+        "metric_name": "consistency",
+        "value": 0.6132498577701808,
+        "udl_file": "query_lang.udl",
+        "iteration": 29
+      },
+      {
+        "timestamp": 1766104907.914788,
+        "metric_name": "consistency",
+        "value": 0.40186670099499583,
+        "udl_file": "calculator.udl",
+        "iteration": 30
+      },
+      {
+        "timestamp": 1766104907.9147892,
+        "metric_name": "consistency",
+        "value": 0.44409573573941513,
+        "udl_file": "parser.udl",
+        "iteration": 30
+      },
+      {
+        "timestamp": 1766104907.91479,
+        "metric_name": "consistency",
+        "value": 0.8358505578436839,
+        "udl_file": "query_lang.udl",
+        "iteration": 30
+      },
+      {
+        "timestamp": 1766104907.914804,
+        "metric_name": "consistency",
+        "value": 0.4262591357087705,
+        "udl_file": "calculator.udl",
+        "iteration": 31
+      },
+      {
+        "timestamp": 1766104907.914805,
+        "metric_name": "consistency",
+        "value": 0.5365348940700735,
+        "udl_file": "parser.udl",
+        "iteration": 31
+      },
+      {
+        "timestamp": 1766104907.9148061,
+        "metric_name": "consistency",
+        "value": 0.7907315227939153,
+        "udl_file": "query_lang.udl",
+        "iteration": 31
+      },
+      {
+        "timestamp": 1766104907.914818,
+        "metric_name": "consistency",
+        "value": 0.22908331986824337,
+        "udl_file": "calculator.udl",
+        "iteration": 32
+      },
+      {
+        "timestamp": 1766104907.914819,
+        "metric_name": "consistency",
+        "value": 0.7660319648159498,
+        "udl_file": "parser.udl",
+        "iteration": 32
+      },
+      {
+        "timestamp": 1766104907.9148202,
+        "metric_name": "consistency",
+        "value": 0.8509344019844477,
+        "udl_file": "query_lang.udl",
+        "iteration": 32
+      },
+      {
+        "timestamp": 1766104907.9148319,
+        "metric_name": "consistency",
+        "value": 0.600731882691577,
+        "udl_file": "calculator.udl",
+        "iteration": 33
+      },
+      {
+        "timestamp": 1766104907.9148328,
+        "metric_name": "consistency",
+        "value": 0.4404117270892147,
+        "udl_file": "parser.udl",
+        "iteration": 33
+      },
+      {
+        "timestamp": 1766104907.914834,
+        "metric_name": "consistency",
+        "value": 0.7433788277160708,
+        "udl_file": "query_lang.udl",
+        "iteration": 33
+      },
+      {
+        "timestamp": 1766104907.914846,
+        "metric_name": "consistency",
+        "value": 0.31832701816392206,
+        "udl_file": "calculator.udl",
+        "iteration": 34
+      },
+      {
+        "timestamp": 1766104907.914847,
+        "metric_name": "consistency",
+        "value": 0.7245178677060896,
+        "udl_file": "parser.udl",
+        "iteration": 34
+      },
+      {
+        "timestamp": 1766104907.914848,
+        "metric_name": "consistency",
+        "value": 0.4941171081829978,
+        "udl_file": "query_lang.udl",
+        "iteration": 34
+      },
+      {
+        "timestamp": 1766104907.91486,
+        "metric_name": "consistency",
+        "value": 0.5666382572442786,
+        "udl_file": "calculator.udl",
+        "iteration": 35
+      },
+      {
+        "timestamp": 1766104907.914861,
+        "metric_name": "consistency",
+        "value": 0.4836033875833893,
+        "udl_file": "parser.udl",
+        "iteration": 35
+      },
+      {
+        "timestamp": 1766104907.9148622,
+        "metric_name": "consistency",
+        "value": 0.732096409209311,
+        "udl_file": "query_lang.udl",
+        "iteration": 35
+      },
+      {
+        "timestamp": 1766104907.9148731,
+        "metric_name": "consistency",
+        "value": 0.8335828348832004,
+        "udl_file": "calculator.udl",
+        "iteration": 36
+      },
+      {
+        "timestamp": 1766104907.914874,
+        "metric_name": "consistency",
+        "value": 0.3521707282999806,
+        "udl_file": "parser.udl",
+        "iteration": 36
+      },
+      {
+        "timestamp": 1766104907.9148748,
+        "metric_name": "consistency",
+        "value": 0.673442455180477,
+        "udl_file": "query_lang.udl",
+        "iteration": 36
+      },
+      {
+        "timestamp": 1766104907.914886,
+        "metric_name": "consistency",
+        "value": 0.3844136960939463,
+        "udl_file": "calculator.udl",
+        "iteration": 37
+      },
+      {
+        "timestamp": 1766104907.914887,
+        "metric_name": "consistency",
+        "value": 0.46900366946563415,
+        "udl_file": "parser.udl",
+        "iteration": 37
+      },
+      {
+        "timestamp": 1766104907.914888,
+        "metric_name": "consistency",
+        "value": 0.49118252956908903,
+        "udl_file": "query_lang.udl",
+        "iteration": 37
+      },
+      {
+        "timestamp": 1766104907.9149,
+        "metric_name": "consistency",
+        "value": 0.43077739613224847,
+        "udl_file": "calculator.udl",
+        "iteration": 38
+      },
+      {
+        "timestamp": 1766104907.914901,
+        "metric_name": "consistency",
+        "value": 0.8401864987943978,
+        "udl_file": "parser.udl",
+        "iteration": 38
+      },
+      {
+        "timestamp": 1766104907.914902,
+        "metric_name": "consistency",
+        "value": 0.43787485029270057,
+        "udl_file": "query_lang.udl",
+        "iteration": 38
+      },
+      {
+        "timestamp": 1766104907.914913,
+        "metric_name": "consistency",
+        "value": 0.3303810732221483,
+        "udl_file": "calculator.udl",
+        "iteration": 39
+      },
+      {
+        "timestamp": 1766104907.9149141,
+        "metric_name": "consistency",
+        "value": 0.7712908743471053,
+        "udl_file": "parser.udl",
+        "iteration": 39
+      },
+      {
+        "timestamp": 1766104907.914915,
+        "metric_name": "consistency",
+        "value": 0.5770163750064953,
+        "udl_file": "query_lang.udl",
+        "iteration": 39
+      },
+      {
+        "timestamp": 1766104907.914926,
+        "metric_name": "consistency",
+        "value": 0.7289532930433481,
+        "udl_file": "calculator.udl",
+        "iteration": 40
+      },
+      {
+        "timestamp": 1766104907.914927,
+        "metric_name": "consistency",
+        "value": 0.750023402810416,
+        "udl_file": "parser.udl",
+        "iteration": 40
+      },
+      {
+        "timestamp": 1766104907.9149282,
+        "metric_name": "consistency",
+        "value": 0.6174841556844418,
+        "udl_file": "query_lang.udl",
+        "iteration": 40
+      },
+      {
+        "timestamp": 1766104907.914939,
+        "metric_name": "consistency",
+        "value": 0.6546533878359007,
+        "udl_file": "calculator.udl",
+        "iteration": 41
+      },
+      {
+        "timestamp": 1766104907.9149399,
+        "metric_name": "consistency",
+        "value": 0.47933687977501765,
+        "udl_file": "parser.udl",
+        "iteration": 41
+      },
+      {
+        "timestamp": 1766104907.9149408,
+        "metric_name": "consistency",
+        "value": 0.6921751501901622,
+        "udl_file": "query_lang.udl",
+        "iteration": 41
+      },
+      {
+        "timestamp": 1766104907.9149508,
+        "metric_name": "consistency",
+        "value": 0.32436634344492454,
+        "udl_file": "calculator.udl",
+        "iteration": 42
+      },
+      {
+        "timestamp": 1766104907.914952,
+        "metric_name": "consistency",
+        "value": 0.815198201123799,
+        "udl_file": "parser.udl",
+        "iteration": 42
+      },
+      {
+        "timestamp": 1766104907.914954,
+        "metric_name": "consistency",
+        "value": 0.48340379187250276,
+        "udl_file": "query_lang.udl",
+        "iteration": 42
+      },
+      {
+        "timestamp": 1766104907.914965,
+        "metric_name": "consistency",
+        "value": 0.48854877894240456,
+        "udl_file": "calculator.udl",
+        "iteration": 43
+      },
+      {
+        "timestamp": 1766104907.914966,
+        "metric_name": "consistency",
+        "value": 0.2076393569269236,
+        "udl_file": "parser.udl",
+        "iteration": 43
+      },
+      {
+        "timestamp": 1766104907.914967,
+        "metric_name": "consistency",
+        "value": 0.22138080455413564,
+        "udl_file": "query_lang.udl",
+        "iteration": 43
+      },
+      {
+        "timestamp": 1766104907.914978,
+        "metric_name": "consistency",
+        "value": 0.4419291967842869,
+        "udl_file": "calculator.udl",
+        "iteration": 44
+      },
+      {
+        "timestamp": 1766104907.914979,
+        "metric_name": "consistency",
+        "value": 0.5297544338172371,
+        "udl_file": "parser.udl",
+        "iteration": 44
+      },
+      {
+        "timestamp": 1766104907.9149802,
+        "metric_name": "consistency",
+        "value": 0.7957674266222496,
+        "udl_file": "query_lang.udl",
+        "iteration": 44
+      },
+      {
+        "timestamp": 1766104907.9149911,
+        "metric_name": "consistency",
+        "value": 0.7233734507828437,
+        "udl_file": "calculator.udl",
+        "iteration": 45
+      },
+      {
+        "timestamp": 1766104907.914992,
+        "metric_name": "consistency",
+        "value": 0.4261724811178455,
+        "udl_file": "parser.udl",
+        "iteration": 45
+      },
+      {
+        "timestamp": 1766104907.9149928,
+        "metric_name": "consistency",
+        "value": 0.3077402255999844,
+        "udl_file": "query_lang.udl",
+        "iteration": 45
+      },
+      {
+        "timestamp": 1766104907.9150028,
+        "metric_name": "consistency",
+        "value": 0.8818341801379967,
+        "udl_file": "calculator.udl",
+        "iteration": 46
+      },
+      {
+        "timestamp": 1766104907.915004,
+        "metric_name": "consistency",
+        "value": 0.2718743300355099,
+        "udl_file": "parser.udl",
+        "iteration": 46
+      },
+      {
+        "timestamp": 1766104907.915005,
+        "metric_name": "consistency",
+        "value": 0.7980132753613114,
+        "udl_file": "query_lang.udl",
+        "iteration": 46
+      },
+      {
+        "timestamp": 1766104907.915016,
+        "metric_name": "consistency",
+        "value": 0.7780029355657412,
+        "udl_file": "calculator.udl",
+        "iteration": 47
+      },
+      {
+        "timestamp": 1766104907.915017,
+        "metric_name": "consistency",
+        "value": 0.5580592479148334,
+        "udl_file": "parser.udl",
+        "iteration": 47
+      },
+      {
+        "timestamp": 1766104907.915018,
+        "metric_name": "consistency",
+        "value": 0.5022355625207481,
+        "udl_file": "query_lang.udl",
+        "iteration": 47
+      },
+      {
+        "timestamp": 1766104907.9150321,
+        "metric_name": "consistency",
+        "value": 0.6950154778899142,
+        "udl_file": "calculator.udl",
+        "iteration": 48
+      },
+      {
+        "timestamp": 1766104907.915033,
+        "metric_name": "consistency",
+        "value": 0.483862811113345,
+        "udl_file": "parser.udl",
+        "iteration": 48
+      },
+      {
+        "timestamp": 1766104907.915034,
+        "metric_name": "consistency",
+        "value": 0.28806629732153094,
+        "udl_file": "query_lang.udl",
+        "iteration": 48
+      },
+      {
+        "timestamp": 1766104907.915045,
+        "metric_name": "consistency",
+        "value": 0.5981936631494269,
+        "udl_file": "calculator.udl",
+        "iteration": 49
+      },
+      {
+        "timestamp": 1766104907.915046,
+        "metric_name": "consistency",
+        "value": 0.44829963026001834,
+        "udl_file": "parser.udl",
+        "iteration": 49
+      },
+      {
+        "timestamp": 1766104907.915048,
+        "metric_name": "consistency",
+        "value": 0.6633146751238032,
+        "udl_file": "query_lang.udl",
+        "iteration": 49
+      }
+    ],
+    "completeness": [
+      {
+        "timestamp": 1766104907.914353,
+        "metric_name": "completeness",
+        "value": 0.7616564895126323,
+        "udl_file": "calculator.udl",
+        "iteration": 0
+      },
+      {
+        "timestamp": 1766104907.914356,
+        "metric_name": "completeness",
+        "value": 0.4460601520909038,
+        "udl_file": "parser.udl",
+        "iteration": 0
+      },
+      {
+        "timestamp": 1766104907.914357,
+        "metric_name": "completeness",
+        "value": 0.7170677264475431,
+        "udl_file": "query_lang.udl",
+        "iteration": 0
+      },
+      {
+        "timestamp": 1766104907.9143722,
+        "metric_name": "completeness",
+        "value": 0.5425179543896772,
+        "udl_file": "calculator.udl",
+        "iteration": 1
+      },
+      {
+        "timestamp": 1766104907.9143732,
+        "metric_name": "completeness",
+        "value": 0.7893221790112265,
+        "udl_file": "parser.udl",
+        "iteration": 1
+      },
+      {
+        "timestamp": 1766104907.9143739,
+        "metric_name": "completeness",
+        "value": 0.8984458885766471,
+        "udl_file": "query_lang.udl",
+        "iteration": 1
+      },
+      {
+        "timestamp": 1766104907.914387,
+        "metric_name": "completeness",
+        "value": 0.27994465048785294,
+        "udl_file": "calculator.udl",
+        "iteration": 2
+      },
+      {
+        "timestamp": 1766104907.914388,
+        "metric_name": "completeness",
+        "value": 0.6944184133908816,
+        "udl_file": "parser.udl",
+        "iteration": 2
+      },
+      {
+        "timestamp": 1766104907.914389,
+        "metric_name": "completeness",
+        "value": 0.8630533192078594,
+        "udl_file": "query_lang.udl",
+        "iteration": 2
+      },
+      {
+        "timestamp": 1766104907.914401,
+        "metric_name": "completeness",
+        "value": 0.7833637286360953,
+        "udl_file": "calculator.udl",
+        "iteration": 3
+      },
+      {
+        "timestamp": 1766104907.914402,
+        "metric_name": "completeness",
+        "value": 0.5931103903053646,
+        "udl_file": "parser.udl",
+        "iteration": 3
+      },
+      {
+        "timestamp": 1766104907.914403,
+        "metric_name": "completeness",
+        "value": 0.6564179871100078,
+        "udl_file": "query_lang.udl",
+        "iteration": 3
+      },
+      {
+        "timestamp": 1766104907.9144151,
+        "metric_name": "completeness",
+        "value": 0.571282612690783,
+        "udl_file": "calculator.udl",
+        "iteration": 4
+      },
+      {
+        "timestamp": 1766104907.914416,
+        "metric_name": "completeness",
+        "value": 0.8351662350371404,
+        "udl_file": "parser.udl",
+        "iteration": 4
+      },
+      {
+        "timestamp": 1766104907.9144168,
+        "metric_name": "completeness",
+        "value": 0.5569190541985035,
+        "udl_file": "query_lang.udl",
+        "iteration": 4
+      },
+      {
+        "timestamp": 1766104907.914429,
+        "metric_name": "completeness",
+        "value": 0.7457396555803024,
+        "udl_file": "calculator.udl",
+        "iteration": 5
+      },
+      {
+        "timestamp": 1766104907.914431,
+        "metric_name": "completeness",
+        "value": 0.347528510796743,
+        "udl_file": "parser.udl",
+        "iteration": 5
+      },
+      {
+        "timestamp": 1766104907.914432,
+        "metric_name": "completeness",
+        "value": 0.5083231495568047,
+        "udl_file": "query_lang.udl",
+        "iteration": 5
+      },
+      {
+        "timestamp": 1766104907.914444,
+        "metric_name": "completeness",
+        "value": 0.856274832256002,
+        "udl_file": "calculator.udl",
+        "iteration": 6
+      },
+      {
+        "timestamp": 1766104907.9144452,
+        "metric_name": "completeness",
+        "value": 0.4215952705822841,
+        "udl_file": "parser.udl",
+        "iteration": 6
+      },
+      {
+        "timestamp": 1766104907.914446,
+        "metric_name": "completeness",
+        "value": 0.6351313561579265,
+        "udl_file": "query_lang.udl",
+        "iteration": 6
+      },
+      {
+        "timestamp": 1766104907.914458,
+        "metric_name": "completeness",
+        "value": 0.634806752314247,
+        "udl_file": "calculator.udl",
+        "iteration": 7
+      },
+      {
+        "timestamp": 1766104907.914459,
+        "metric_name": "completeness",
+        "value": 0.8088411097328239,
+        "udl_file": "parser.udl",
+        "iteration": 7
+      },
+      {
+        "timestamp": 1766104907.91446,
+        "metric_name": "completeness",
+        "value": 0.4478611364220687,
+        "udl_file": "query_lang.udl",
+        "iteration": 7
+      },
+      {
+        "timestamp": 1766104907.9144719,
+        "metric_name": "completeness",
+        "value": 0.6704021585826982,
+        "udl_file": "calculator.udl",
+        "iteration": 8
+      },
+      {
+        "timestamp": 1766104907.914474,
+        "metric_name": "completeness",
+        "value": 0.2829870811019082,
+        "udl_file": "parser.udl",
+        "iteration": 8
+      },
+      {
+        "timestamp": 1766104907.914475,
+        "metric_name": "completeness",
+        "value": 0.867859573648376,
+        "udl_file": "query_lang.udl",
+        "iteration": 8
+      },
+      {
+        "timestamp": 1766104907.9144871,
+        "metric_name": "completeness",
+        "value": 0.8627550407220589,
+        "udl_file": "calculator.udl",
+        "iteration": 9
+      },
+      {
+        "timestamp": 1766104907.914488,
+        "metric_name": "completeness",
+        "value": 0.7784373815407336,
+        "udl_file": "parser.udl",
+        "iteration": 9
+      },
+      {
+        "timestamp": 1766104907.914489,
+        "metric_name": "completeness",
+        "value": 0.25746106916082045,
+        "udl_file": "query_lang.udl",
+        "iteration": 9
+      },
+      {
+        "timestamp": 1766104907.9145012,
+        "metric_name": "completeness",
+        "value": 0.7972901786592317,
+        "udl_file": "calculator.udl",
+        "iteration": 10
+      },
+      {
+        "timestamp": 1766104907.914502,
+        "metric_name": "completeness",
+        "value": 0.6667901137755478,
+        "udl_file": "parser.udl",
+        "iteration": 10
+      },
+      {
+        "timestamp": 1766104907.914504,
+        "metric_name": "completeness",
+        "value": 0.3399585899105818,
+        "udl_file": "query_lang.udl",
+        "iteration": 10
+      },
+      {
+        "timestamp": 1766104907.914516,
+        "metric_name": "completeness",
+        "value": 0.23103783143863618,
+        "udl_file": "calculator.udl",
+        "iteration": 11
+      },
+      {
+        "timestamp": 1766104907.914517,
+        "metric_name": "completeness",
+        "value": 0.227049706723568,
+        "udl_file": "parser.udl",
+        "iteration": 11
+      },
+      {
+        "timestamp": 1766104907.914518,
+        "metric_name": "completeness",
+        "value": 0.8842437480187311,
+        "udl_file": "query_lang.udl",
+        "iteration": 11
+      },
+      {
+        "timestamp": 1766104907.91453,
+        "metric_name": "completeness",
+        "value": 0.410401164727764,
+        "udl_file": "calculator.udl",
+        "iteration": 12
+      },
+      {
+        "timestamp": 1766104907.914531,
+        "metric_name": "completeness",
+        "value": 0.2327847484523016,
+        "udl_file": "parser.udl",
+        "iteration": 12
+      },
+      {
+        "timestamp": 1766104907.9145322,
+        "metric_name": "completeness",
+        "value": 0.7213882841138565,
+        "udl_file": "query_lang.udl",
+        "iteration": 12
+      },
+      {
+        "timestamp": 1766104907.914544,
+        "metric_name": "completeness",
+        "value": 0.8699411475743586,
+        "udl_file": "calculator.udl",
+        "iteration": 13
+      },
+      {
+        "timestamp": 1766104907.914546,
+        "metric_name": "completeness",
+        "value": 0.2835535917540533,
+        "udl_file": "parser.udl",
+        "iteration": 13
+      },
+      {
+        "timestamp": 1766104907.914547,
+        "metric_name": "completeness",
+        "value": 0.6913651291329321,
+        "udl_file": "query_lang.udl",
+        "iteration": 13
+      },
+      {
+        "timestamp": 1766104907.914559,
+        "metric_name": "completeness",
+        "value": 0.5417620679142572,
+        "udl_file": "calculator.udl",
+        "iteration": 14
+      },
+      {
+        "timestamp": 1766104907.91456,
+        "metric_name": "completeness",
+        "value": 0.4315576278872579,
+        "udl_file": "parser.udl",
+        "iteration": 14
+      },
+      {
+        "timestamp": 1766104907.914561,
+        "metric_name": "completeness",
+        "value": 0.4023160294117261,
+        "udl_file": "query_lang.udl",
+        "iteration": 14
+      },
+      {
+        "timestamp": 1766104907.914573,
+        "metric_name": "completeness",
+        "value": 0.8478256680837146,
+        "udl_file": "calculator.udl",
+        "iteration": 15
+      },
+      {
+        "timestamp": 1766104907.914575,
+        "metric_name": "completeness",
+        "value": 0.3347565992554418,
+        "udl_file": "parser.udl",
+        "iteration": 15
+      },
+      {
+        "timestamp": 1766104907.9145758,
+        "metric_name": "completeness",
+        "value": 0.3848664253060059,
+        "udl_file": "query_lang.udl",
+        "iteration": 15
+      },
+      {
+        "timestamp": 1766104907.914588,
+        "metric_name": "completeness",
+        "value": 0.5627087404603905,
+        "udl_file": "calculator.udl",
+        "iteration": 16
+      },
+      {
+        "timestamp": 1766104907.914589,
+        "metric_name": "completeness",
+        "value": 0.829118906385497,
+        "udl_file": "parser.udl",
+        "iteration": 16
+      },
+      {
+        "timestamp": 1766104907.91459,
+        "metric_name": "completeness",
+        "value": 0.8466385477493983,
+        "udl_file": "query_lang.udl",
+        "iteration": 16
+      },
+      {
+        "timestamp": 1766104907.914602,
+        "metric_name": "completeness",
+        "value": 0.6829826185610777,
+        "udl_file": "calculator.udl",
+        "iteration": 17
+      },
+      {
+        "timestamp": 1766104907.914603,
+        "metric_name": "completeness",
+        "value": 0.5402250121222872,
+        "udl_file": "parser.udl",
+        "iteration": 17
+      },
+      {
+        "timestamp": 1766104907.914604,
+        "metric_name": "completeness",
+        "value": 0.5063972623696948,
+        "udl_file": "query_lang.udl",
+        "iteration": 17
+      },
+      {
+        "timestamp": 1766104907.914616,
+        "metric_name": "completeness",
+        "value": 0.4763912629382206,
+        "udl_file": "calculator.udl",
+        "iteration": 18
+      },
+      {
+        "timestamp": 1766104907.914617,
+        "metric_name": "completeness",
+        "value": 0.37736064995812446,
+        "udl_file": "parser.udl",
+        "iteration": 18
+      },
+      {
+        "timestamp": 1766104907.914619,
+        "metric_name": "completeness",
+        "value": 0.3586455003762393,
+        "udl_file": "query_lang.udl",
+        "iteration": 18
+      },
+      {
+        "timestamp": 1766104907.91463,
+        "metric_name": "completeness",
+        "value": 0.28156488931410556,
+        "udl_file": "calculator.udl",
+        "iteration": 19
+      },
+      {
+        "timestamp": 1766104907.9146318,
+        "metric_name": "completeness",
+        "value": 0.7381717557925317,
+        "udl_file": "parser.udl",
+        "iteration": 19
+      },
+      {
+        "timestamp": 1766104907.914633,
+        "metric_name": "completeness",
+        "value": 0.31837389767760105,
+        "udl_file": "query_lang.udl",
+        "iteration": 19
+      },
+      {
+        "timestamp": 1766104907.914644,
+        "metric_name": "completeness",
+        "value": 0.4734780361223282,
+        "udl_file": "calculator.udl",
+        "iteration": 20
+      },
+      {
+        "timestamp": 1766104907.914646,
+        "metric_name": "completeness",
+        "value": 0.8487291032756276,
+        "udl_file": "parser.udl",
+        "iteration": 20
+      },
+      {
+        "timestamp": 1766104907.914647,
+        "metric_name": "completeness",
+        "value": 0.3895591586258436,
+        "udl_file": "query_lang.udl",
+        "iteration": 20
+      },
+      {
+        "timestamp": 1766104907.914659,
+        "metric_name": "completeness",
+        "value": 0.41888391075053455,
+        "udl_file": "calculator.udl",
+        "iteration": 21
+      },
+      {
+        "timestamp": 1766104907.91466,
+        "metric_name": "completeness",
+        "value": 0.5628496458210662,
+        "udl_file": "parser.udl",
+        "iteration": 21
+      },
+      {
+        "timestamp": 1766104907.9146612,
+        "metric_name": "completeness",
+        "value": 0.594580310324827,
+        "udl_file": "query_lang.udl",
+        "iteration": 21
+      },
+      {
+        "timestamp": 1766104907.9146738,
+        "metric_name": "completeness",
+        "value": 0.48526106699090027,
+        "udl_file": "calculator.udl",
+        "iteration": 22
+      },
+      {
+        "timestamp": 1766104907.914675,
+        "metric_name": "completeness",
+        "value": 0.45081500193163543,
+        "udl_file": "parser.udl",
+        "iteration": 22
+      },
+      {
+        "timestamp": 1766104907.914676,
+        "metric_name": "completeness",
+        "value": 0.8591138856442405,
+        "udl_file": "query_lang.udl",
+        "iteration": 22
+      },
+      {
+        "timestamp": 1766104907.914688,
+        "metric_name": "completeness",
+        "value": 0.26191931643637634,
+        "udl_file": "calculator.udl",
+        "iteration": 23
+      },
+      {
+        "timestamp": 1766104907.914689,
+        "metric_name": "completeness",
+        "value": 0.6461910029395848,
+        "udl_file": "parser.udl",
+        "iteration": 23
+      },
+      {
+        "timestamp": 1766104907.91469,
+        "metric_name": "completeness",
+        "value": 0.4494806647342739,
+        "udl_file": "query_lang.udl",
+        "iteration": 23
+      },
+      {
+        "timestamp": 1766104907.9147022,
+        "metric_name": "completeness",
+        "value": 0.879040875507804,
+        "udl_file": "calculator.udl",
+        "iteration": 24
+      },
+      {
+        "timestamp": 1766104907.9147031,
+        "metric_name": "completeness",
+        "value": 0.7562304664370822,
+        "udl_file": "parser.udl",
+        "iteration": 24
+      },
+      {
+        "timestamp": 1766104907.9147038,
+        "metric_name": "completeness",
+        "value": 0.6982940339055195,
+        "udl_file": "query_lang.udl",
+        "iteration": 24
+      },
+      {
+        "timestamp": 1766104907.914716,
+        "metric_name": "completeness",
+        "value": 0.8243599945063159,
+        "udl_file": "calculator.udl",
+        "iteration": 25
+      },
+      {
+        "timestamp": 1766104907.914717,
+        "metric_name": "completeness",
+        "value": 0.2929807804679154,
+        "udl_file": "parser.udl",
+        "iteration": 25
+      },
+      {
+        "timestamp": 1766104907.9147189,
+        "metric_name": "completeness",
+        "value": 0.31434754506883256,
+        "udl_file": "query_lang.udl",
+        "iteration": 25
+      },
+      {
+        "timestamp": 1766104907.9147341,
+        "metric_name": "completeness",
+        "value": 0.27580202991974345,
+        "udl_file": "calculator.udl",
+        "iteration": 26
+      },
+      {
+        "timestamp": 1766104907.914736,
+        "metric_name": "completeness",
+        "value": 0.45852491353627606,
+        "udl_file": "parser.udl",
+        "iteration": 26
+      },
+      {
+        "timestamp": 1766104907.914737,
+        "metric_name": "completeness",
+        "value": 0.39845186714015834,
+        "udl_file": "query_lang.udl",
+        "iteration": 26
+      },
+      {
+        "timestamp": 1766104907.914749,
+        "metric_name": "completeness",
+        "value": 0.20160417438498085,
+        "udl_file": "calculator.udl",
+        "iteration": 27
+      },
+      {
+        "timestamp": 1766104907.9147499,
+        "metric_name": "completeness",
+        "value": 0.23398836809696952,
+        "udl_file": "parser.udl",
+        "iteration": 27
+      },
+      {
+        "timestamp": 1766104907.914751,
+        "metric_name": "completeness",
+        "value": 0.5864018152180153,
+        "udl_file": "query_lang.udl",
+        "iteration": 27
+      },
+      {
+        "timestamp": 1766104907.914763,
+        "metric_name": "completeness",
+        "value": 0.540032388757865,
+        "udl_file": "calculator.udl",
+        "iteration": 28
+      },
+      {
+        "timestamp": 1766104907.914764,
+        "metric_name": "completeness",
+        "value": 0.3030900257504659,
+        "udl_file": "parser.udl",
+        "iteration": 28
+      },
+      {
+        "timestamp": 1766104907.9147651,
+        "metric_name": "completeness",
+        "value": 0.45914003058020614,
+        "udl_file": "query_lang.udl",
+        "iteration": 28
+      },
+      {
+        "timestamp": 1766104907.914777,
+        "metric_name": "completeness",
+        "value": 0.8209837634737175,
+        "udl_file": "calculator.udl",
+        "iteration": 29
+      },
+      {
+        "timestamp": 1766104907.914778,
+        "metric_name": "completeness",
+        "value": 0.673268267109309,
+        "udl_file": "parser.udl",
+        "iteration": 29
+      },
+      {
+        "timestamp": 1766104907.914779,
+        "metric_name": "completeness",
+        "value": 0.892284680113043,
+        "udl_file": "query_lang.udl",
+        "iteration": 29
+      },
+      {
+        "timestamp": 1766104907.9147909,
+        "metric_name": "completeness",
+        "value": 0.32212591790988243,
+        "udl_file": "calculator.udl",
+        "iteration": 30
+      },
+      {
+        "timestamp": 1766104907.9147918,
+        "metric_name": "completeness",
+        "value": 0.6352593493367841,
+        "udl_file": "parser.udl",
+        "iteration": 30
+      },
+      {
+        "timestamp": 1766104907.914794,
+        "metric_name": "completeness",
+        "value": 0.3610400717349199,
+        "udl_file": "query_lang.udl",
+        "iteration": 30
+      },
+      {
+        "timestamp": 1766104907.914807,
+        "metric_name": "completeness",
+        "value": 0.6252756001691213,
+        "udl_file": "calculator.udl",
+        "iteration": 31
+      },
+      {
+        "timestamp": 1766104907.914808,
+        "metric_name": "completeness",
+        "value": 0.21051469426308575,
+        "udl_file": "parser.udl",
+        "iteration": 31
+      },
+      {
+        "timestamp": 1766104907.914809,
+        "metric_name": "completeness",
+        "value": 0.41963544527601526,
+        "udl_file": "query_lang.udl",
+        "iteration": 31
+      },
+      {
+        "timestamp": 1766104907.9148211,
+        "metric_name": "completeness",
+        "value": 0.777520928325965,
+        "udl_file": "calculator.udl",
+        "iteration": 32
+      },
+      {
+        "timestamp": 1766104907.9148219,
+        "metric_name": "completeness",
+        "value": 0.37926498932350083,
+        "udl_file": "parser.udl",
+        "iteration": 32
+      },
+      {
+        "timestamp": 1766104907.914824,
+        "metric_name": "completeness",
+        "value": 0.8233473206454365,
+        "udl_file": "query_lang.udl",
+        "iteration": 32
+      },
+      {
+        "timestamp": 1766104907.914835,
+        "metric_name": "completeness",
+        "value": 0.5527396288223472,
+        "udl_file": "calculator.udl",
+        "iteration": 33
+      },
+      {
+        "timestamp": 1766104907.914836,
+        "metric_name": "completeness",
+        "value": 0.4876281484968497,
+        "udl_file": "parser.udl",
+        "iteration": 33
+      },
+      {
+        "timestamp": 1766104907.914838,
+        "metric_name": "completeness",
+        "value": 0.7715743692889712,
+        "udl_file": "query_lang.udl",
+        "iteration": 33
+      },
+      {
+        "timestamp": 1766104907.914849,
+        "metric_name": "completeness",
+        "value": 0.46115129687879286,
+        "udl_file": "calculator.udl",
+        "iteration": 34
+      },
+      {
+        "timestamp": 1766104907.91485,
+        "metric_name": "completeness",
+        "value": 0.40709184918931357,
+        "udl_file": "parser.udl",
+        "iteration": 34
+      },
+      {
+        "timestamp": 1766104907.9148521,
+        "metric_name": "completeness",
+        "value": 0.49362364163723677,
+        "udl_file": "query_lang.udl",
+        "iteration": 34
+      },
+      {
+        "timestamp": 1766104907.914863,
+        "metric_name": "completeness",
+        "value": 0.8801000748505764,
+        "udl_file": "calculator.udl",
+        "iteration": 35
+      },
+      {
+        "timestamp": 1766104907.914864,
+        "metric_name": "completeness",
+        "value": 0.7467788937492941,
+        "udl_file": "parser.udl",
+        "iteration": 35
+      },
+      {
+        "timestamp": 1766104907.9148648,
+        "metric_name": "completeness",
+        "value": 0.6863034955762868,
+        "udl_file": "query_lang.udl",
+        "iteration": 35
+      },
+      {
+        "timestamp": 1766104907.914876,
+        "metric_name": "completeness",
+        "value": 0.34967105292159395,
+        "udl_file": "calculator.udl",
+        "iteration": 36
+      },
+      {
+        "timestamp": 1766104907.914877,
+        "metric_name": "completeness",
+        "value": 0.5089897745709289,
+        "udl_file": "parser.udl",
+        "iteration": 36
+      },
+      {
+        "timestamp": 1766104907.914878,
+        "metric_name": "completeness",
+        "value": 0.655970534334308,
+        "udl_file": "query_lang.udl",
+        "iteration": 36
+      },
+      {
+        "timestamp": 1766104907.9148889,
+        "metric_name": "completeness",
+        "value": 0.7385364151119644,
+        "udl_file": "calculator.udl",
+        "iteration": 37
+      },
+      {
+        "timestamp": 1766104907.91489,
+        "metric_name": "completeness",
+        "value": 0.4941489673952029,
+        "udl_file": "parser.udl",
+        "iteration": 37
+      },
+      {
+        "timestamp": 1766104907.914891,
+        "metric_name": "completeness",
+        "value": 0.7065969311318923,
+        "udl_file": "query_lang.udl",
+        "iteration": 37
+      },
+      {
+        "timestamp": 1766104907.914903,
+        "metric_name": "completeness",
+        "value": 0.7663131982370004,
+        "udl_file": "calculator.udl",
+        "iteration": 38
+      },
+      {
+        "timestamp": 1766104907.914904,
+        "metric_name": "completeness",
+        "value": 0.8180148979624482,
+        "udl_file": "parser.udl",
+        "iteration": 38
+      },
+      {
+        "timestamp": 1766104907.914906,
+        "metric_name": "completeness",
+        "value": 0.6391140072041728,
+        "udl_file": "query_lang.udl",
+        "iteration": 38
+      },
+      {
+        "timestamp": 1766104907.914916,
+        "metric_name": "completeness",
+        "value": 0.28170295764095954,
+        "udl_file": "calculator.udl",
+        "iteration": 39
+      },
+      {
+        "timestamp": 1766104907.9149172,
+        "metric_name": "completeness",
+        "value": 0.863001939299044,
+        "udl_file": "parser.udl",
+        "iteration": 39
+      },
+      {
+        "timestamp": 1766104907.914918,
+        "metric_name": "completeness",
+        "value": 0.27004374422048144,
+        "udl_file": "query_lang.udl",
+        "iteration": 39
+      },
+      {
+        "timestamp": 1766104907.914929,
+        "metric_name": "completeness",
+        "value": 0.7938514914724061,
+        "udl_file": "calculator.udl",
+        "iteration": 40
+      },
+      {
+        "timestamp": 1766104907.9149299,
+        "metric_name": "completeness",
+        "value": 0.5737277863035183,
+        "udl_file": "parser.udl",
+        "iteration": 40
+      },
+      {
+        "timestamp": 1766104907.914931,
+        "metric_name": "completeness",
+        "value": 0.25569769193913694,
+        "udl_file": "query_lang.udl",
+        "iteration": 40
+      },
+      {
+        "timestamp": 1766104907.914942,
+        "metric_name": "completeness",
+        "value": 0.698793170778002,
+        "udl_file": "calculator.udl",
+        "iteration": 41
+      },
+      {
+        "timestamp": 1766104907.914943,
+        "metric_name": "completeness",
+        "value": 0.8875999463648859,
+        "udl_file": "parser.udl",
+        "iteration": 41
+      },
+      {
+        "timestamp": 1766104907.914944,
+        "metric_name": "completeness",
+        "value": 0.3578185962140779,
+        "udl_file": "query_lang.udl",
+        "iteration": 41
+      },
+      {
+        "timestamp": 1766104907.914955,
+        "metric_name": "completeness",
+        "value": 0.45511576189857517,
+        "udl_file": "calculator.udl",
+        "iteration": 42
+      },
+      {
+        "timestamp": 1766104907.914956,
+        "metric_name": "completeness",
+        "value": 0.6422628089662089,
+        "udl_file": "parser.udl",
+        "iteration": 42
+      },
+      {
+        "timestamp": 1766104907.914957,
+        "metric_name": "completeness",
+        "value": 0.371477076588107,
+        "udl_file": "query_lang.udl",
+        "iteration": 42
+      },
+      {
+        "timestamp": 1766104907.914968,
+        "metric_name": "completeness",
+        "value": 0.731281977764982,
+        "udl_file": "calculator.udl",
+        "iteration": 43
+      },
+      {
+        "timestamp": 1766104907.9149692,
+        "metric_name": "completeness",
+        "value": 0.5656055635620985,
+        "udl_file": "parser.udl",
+        "iteration": 43
+      },
+      {
+        "timestamp": 1766104907.9149702,
+        "metric_name": "completeness",
+        "value": 0.7253507506717412,
+        "udl_file": "query_lang.udl",
+        "iteration": 43
+      },
+      {
+        "timestamp": 1766104907.9149811,
+        "metric_name": "completeness",
+        "value": 0.24101345453626782,
+        "udl_file": "calculator.udl",
+        "iteration": 44
+      },
+      {
+        "timestamp": 1766104907.9149818,
+        "metric_name": "completeness",
+        "value": 0.6041311745314115,
+        "udl_file": "parser.udl",
+        "iteration": 44
+      },
+      {
+        "timestamp": 1766104907.9149828,
+        "metric_name": "completeness",
+        "value": 0.6997765854015465,
+        "udl_file": "query_lang.udl",
+        "iteration": 44
+      },
+      {
+        "timestamp": 1766104907.914994,
+        "metric_name": "completeness",
+        "value": 0.879261502468357,
+        "udl_file": "calculator.udl",
+        "iteration": 45
+      },
+      {
+        "timestamp": 1766104907.914995,
+        "metric_name": "completeness",
+        "value": 0.4464495241872826,
+        "udl_file": "parser.udl",
+        "iteration": 45
+      },
+      {
+        "timestamp": 1766104907.914996,
+        "metric_name": "completeness",
+        "value": 0.6648345583809497,
+        "udl_file": "query_lang.udl",
+        "iteration": 45
+      },
+      {
+        "timestamp": 1766104907.915006,
+        "metric_name": "completeness",
+        "value": 0.707194386548286,
+        "udl_file": "calculator.udl",
+        "iteration": 46
+      },
+      {
+        "timestamp": 1766104907.9150069,
+        "metric_name": "completeness",
+        "value": 0.4771511238622364,
+        "udl_file": "parser.udl",
+        "iteration": 46
+      },
+      {
+        "timestamp": 1766104907.915008,
+        "metric_name": "completeness",
+        "value": 0.812938126233602,
+        "udl_file": "query_lang.udl",
+        "iteration": 46
+      },
+      {
+        "timestamp": 1766104907.91502,
+        "metric_name": "completeness",
+        "value": 0.789170461378487,
+        "udl_file": "calculator.udl",
+        "iteration": 47
+      },
+      {
+        "timestamp": 1766104907.915021,
+        "metric_name": "completeness",
+        "value": 0.6015297841953444,
+        "udl_file": "parser.udl",
+        "iteration": 47
+      },
+      {
+        "timestamp": 1766104907.9150221,
+        "metric_name": "completeness",
+        "value": 0.3322449784928187,
+        "udl_file": "query_lang.udl",
+        "iteration": 47
+      },
+      {
+        "timestamp": 1766104907.915036,
+        "metric_name": "completeness",
+        "value": 0.4419594511524577,
+        "udl_file": "calculator.udl",
+        "iteration": 48
+      },
+      {
+        "timestamp": 1766104907.915037,
+        "metric_name": "completeness",
+        "value": 0.8957818164730403,
+        "udl_file": "parser.udl",
+        "iteration": 48
+      },
+      {
+        "timestamp": 1766104907.9150379,
+        "metric_name": "completeness",
+        "value": 0.7606064826377035,
+        "udl_file": "query_lang.udl",
+        "iteration": 48
+      },
+      {
+        "timestamp": 1766104907.915049,
+        "metric_name": "completeness",
+        "value": 0.5425631959789361,
+        "udl_file": "calculator.udl",
+        "iteration": 49
+      },
+      {
+        "timestamp": 1766104907.91505,
+        "metric_name": "completeness",
+        "value": 0.5443614017523005,
+        "udl_file": "parser.udl",
+        "iteration": 49
+      },
+      {
+        "timestamp": 1766104907.915051,
+        "metric_name": "completeness",
+        "value": 0.34298295723025307,
+        "udl_file": "query_lang.udl",
+        "iteration": 49
+      }
+    ],
+    "expressiveness": [
+      {
+        "timestamp": 1766104907.914359,
+        "metric_name": "expressiveness",
+        "value": 0.2668736052061718,
+        "udl_file": "calculator.udl",
+        "iteration": 0
+      },
+      {
+        "timestamp": 1766104907.914361,
+        "metric_name": "expressiveness",
+        "value": 0.8549921675589558,
+        "udl_file": "parser.udl",
+        "iteration": 0
+      },
+      {
+        "timestamp": 1766104907.9143622,
+        "metric_name": "expressiveness",
+        "value": 0.7559971769187321,
+        "udl_file": "query_lang.udl",
+        "iteration": 0
+      },
+      {
+        "timestamp": 1766104907.914376,
+        "metric_name": "expressiveness",
+        "value": 0.47461494207289184,
+        "udl_file": "calculator.udl",
+        "iteration": 1
+      },
+      {
+        "timestamp": 1766104907.914377,
+        "metric_name": "expressiveness",
+        "value": 0.32921339208743633,
+        "udl_file": "parser.udl",
+        "iteration": 1
+      },
+      {
+        "timestamp": 1766104907.914378,
+        "metric_name": "expressiveness",
+        "value": 0.8880370517543434,
+        "udl_file": "query_lang.udl",
+        "iteration": 1
+      },
+      {
+        "timestamp": 1766104907.91439,
+        "metric_name": "expressiveness",
+        "value": 0.34120316276595314,
+        "udl_file": "calculator.udl",
+        "iteration": 2
+      },
+      {
+        "timestamp": 1766104907.914391,
+        "metric_name": "expressiveness",
+        "value": 0.8858498687464581,
+        "udl_file": "parser.udl",
+        "iteration": 2
+      },
+      {
+        "timestamp": 1766104907.9143932,
+        "metric_name": "expressiveness",
+        "value": 0.4219041936860332,
+        "udl_file": "query_lang.udl",
+        "iteration": 2
+      },
+      {
+        "timestamp": 1766104907.914405,
+        "metric_name": "expressiveness",
+        "value": 0.3305613790771206,
+        "udl_file": "calculator.udl",
+        "iteration": 3
+      },
+      {
+        "timestamp": 1766104907.9144058,
+        "metric_name": "expressiveness",
+        "value": 0.8842410750711459,
+        "udl_file": "parser.udl",
+        "iteration": 3
+      },
+      {
+        "timestamp": 1766104907.914407,
+        "metric_name": "expressiveness",
+        "value": 0.336916759852607,
+        "udl_file": "query_lang.udl",
+        "iteration": 3
+      },
+      {
+        "timestamp": 1766104907.914419,
+        "metric_name": "expressiveness",
+        "value": 0.4609916116020224,
+        "udl_file": "calculator.udl",
+        "iteration": 4
+      },
+      {
+        "timestamp": 1766104907.91442,
+        "metric_name": "expressiveness",
+        "value": 0.4564508007675822,
+        "udl_file": "parser.udl",
+        "iteration": 4
+      },
+      {
+        "timestamp": 1766104907.914421,
+        "metric_name": "expressiveness",
+        "value": 0.628868795717406,
+        "udl_file": "query_lang.udl",
+        "iteration": 4
+      },
+      {
+        "timestamp": 1766104907.914433,
+        "metric_name": "expressiveness",
+        "value": 0.2889656856468068,
+        "udl_file": "calculator.udl",
+        "iteration": 5
+      },
+      {
+        "timestamp": 1766104907.914434,
+        "metric_name": "expressiveness",
+        "value": 0.6254969608389064,
+        "udl_file": "parser.udl",
+        "iteration": 5
+      },
+      {
+        "timestamp": 1766104907.9144351,
+        "metric_name": "expressiveness",
+        "value": 0.44786724771353614,
+        "udl_file": "query_lang.udl",
+        "iteration": 5
+      },
+      {
+        "timestamp": 1766104907.914447,
+        "metric_name": "expressiveness",
+        "value": 0.3618574214671647,
+        "udl_file": "calculator.udl",
+        "iteration": 6
+      },
+      {
+        "timestamp": 1766104907.9144478,
+        "metric_name": "expressiveness",
+        "value": 0.8788373439074302,
+        "udl_file": "parser.udl",
+        "iteration": 6
+      },
+      {
+        "timestamp": 1766104907.91445,
+        "metric_name": "expressiveness",
+        "value": 0.5874600598990996,
+        "udl_file": "query_lang.udl",
+        "iteration": 6
+      },
+      {
+        "timestamp": 1766104907.914461,
+        "metric_name": "expressiveness",
+        "value": 0.22595801645295352,
+        "udl_file": "calculator.udl",
+        "iteration": 7
+      },
+      {
+        "timestamp": 1766104907.914463,
+        "metric_name": "expressiveness",
+        "value": 0.5166855338020826,
+        "udl_file": "parser.udl",
+        "iteration": 7
+      },
+      {
+        "timestamp": 1766104907.914464,
+        "metric_name": "expressiveness",
+        "value": 0.3307658894656936,
+        "udl_file": "query_lang.udl",
+        "iteration": 7
+      },
+      {
+        "timestamp": 1766104907.914476,
+        "metric_name": "expressiveness",
+        "value": 0.3739093692642464,
+        "udl_file": "calculator.udl",
+        "iteration": 8
+      },
+      {
+        "timestamp": 1766104907.914477,
+        "metric_name": "expressiveness",
+        "value": 0.27703016475035624,
+        "udl_file": "parser.udl",
+        "iteration": 8
+      },
+      {
+        "timestamp": 1766104907.914478,
+        "metric_name": "expressiveness",
+        "value": 0.5387927558600496,
+        "udl_file": "query_lang.udl",
+        "iteration": 8
+      },
+      {
+        "timestamp": 1766104907.9144902,
+        "metric_name": "expressiveness",
+        "value": 0.29255079822796093,
+        "udl_file": "calculator.udl",
+        "iteration": 9
+      },
+      {
+        "timestamp": 1766104907.914492,
+        "metric_name": "expressiveness",
+        "value": 0.6810604990817879,
+        "udl_file": "parser.udl",
+        "iteration": 9
+      },
+      {
+        "timestamp": 1766104907.9144928,
+        "metric_name": "expressiveness",
+        "value": 0.26220960475591326,
+        "udl_file": "query_lang.udl",
+        "iteration": 9
+      },
+      {
+        "timestamp": 1766104907.914505,
+        "metric_name": "expressiveness",
+        "value": 0.4324169186961355,
+        "udl_file": "calculator.udl",
+        "iteration": 10
+      },
+      {
+        "timestamp": 1766104907.914506,
+        "metric_name": "expressiveness",
+        "value": 0.2664181303391391,
+        "udl_file": "parser.udl",
+        "iteration": 10
+      },
+      {
+        "timestamp": 1766104907.914507,
+        "metric_name": "expressiveness",
+        "value": 0.6404645865500049,
+        "udl_file": "query_lang.udl",
+        "iteration": 10
+      },
+      {
+        "timestamp": 1766104907.914519,
+        "metric_name": "expressiveness",
+        "value": 0.8428467376568891,
+        "udl_file": "calculator.udl",
+        "iteration": 11
+      },
+      {
+        "timestamp": 1766104907.914521,
+        "metric_name": "expressiveness",
+        "value": 0.6070710653300607,
+        "udl_file": "parser.udl",
+        "iteration": 11
+      },
+      {
+        "timestamp": 1766104907.9145222,
+        "metric_name": "expressiveness",
+        "value": 0.2041761564000871,
+        "udl_file": "query_lang.udl",
+        "iteration": 11
+      },
+      {
+        "timestamp": 1766104907.9145339,
+        "metric_name": "expressiveness",
+        "value": 0.5538553787155296,
+        "udl_file": "calculator.udl",
+        "iteration": 12
+      },
+      {
+        "timestamp": 1766104907.9145348,
+        "metric_name": "expressiveness",
+        "value": 0.8508936098315217,
+        "udl_file": "parser.udl",
+        "iteration": 12
+      },
+      {
+        "timestamp": 1766104907.914536,
+        "metric_name": "expressiveness",
+        "value": 0.7105502162773373,
+        "udl_file": "query_lang.udl",
+        "iteration": 12
+      },
+      {
+        "timestamp": 1766104907.914548,
+        "metric_name": "expressiveness",
+        "value": 0.2710267851305845,
+        "udl_file": "calculator.udl",
+        "iteration": 13
+      },
+      {
+        "timestamp": 1766104907.9145489,
+        "metric_name": "expressiveness",
+        "value": 0.5106696293119041,
+        "udl_file": "parser.udl",
+        "iteration": 13
+      },
+      {
+        "timestamp": 1766104907.914551,
+        "metric_name": "expressiveness",
+        "value": 0.48023286287018985,
+        "udl_file": "query_lang.udl",
+        "iteration": 13
+      },
+      {
+        "timestamp": 1766104907.9145632,
+        "metric_name": "expressiveness",
+        "value": 0.660412217748418,
+        "udl_file": "calculator.udl",
+        "iteration": 14
+      },
+      {
+        "timestamp": 1766104907.9145641,
+        "metric_name": "expressiveness",
+        "value": 0.5941151930330444,
+        "udl_file": "parser.udl",
+        "iteration": 14
+      },
+      {
+        "timestamp": 1766104907.914565,
+        "metric_name": "expressiveness",
+        "value": 0.4872923194148795,
+        "udl_file": "query_lang.udl",
+        "iteration": 14
+      },
+      {
+        "timestamp": 1766104907.914577,
+        "metric_name": "expressiveness",
+        "value": 0.5971914049768057,
+        "udl_file": "calculator.udl",
+        "iteration": 15
+      },
+      {
+        "timestamp": 1766104907.914578,
+        "metric_name": "expressiveness",
+        "value": 0.6856972909866301,
+        "udl_file": "parser.udl",
+        "iteration": 15
+      },
+      {
+        "timestamp": 1766104907.914579,
+        "metric_name": "expressiveness",
+        "value": 0.6065952983535794,
+        "udl_file": "query_lang.udl",
+        "iteration": 15
+      },
+      {
+        "timestamp": 1766104907.914591,
+        "metric_name": "expressiveness",
+        "value": 0.4473435929340345,
+        "udl_file": "calculator.udl",
+        "iteration": 16
+      },
+      {
+        "timestamp": 1766104907.914592,
+        "metric_name": "expressiveness",
+        "value": 0.7962474331346678,
+        "udl_file": "parser.udl",
+        "iteration": 16
+      },
+      {
+        "timestamp": 1766104907.914594,
+        "metric_name": "expressiveness",
+        "value": 0.8101338473797851,
+        "udl_file": "query_lang.udl",
+        "iteration": 16
+      },
+      {
+        "timestamp": 1766104907.914606,
+        "metric_name": "expressiveness",
+        "value": 0.5247601487391226,
+        "udl_file": "calculator.udl",
+        "iteration": 17
+      },
+      {
+        "timestamp": 1766104907.914607,
+        "metric_name": "expressiveness",
+        "value": 0.3160983555444854,
+        "udl_file": "parser.udl",
+        "iteration": 17
+      },
+      {
+        "timestamp": 1766104907.9146082,
+        "metric_name": "expressiveness",
+        "value": 0.26127457980694063,
+        "udl_file": "query_lang.udl",
+        "iteration": 17
+      },
+      {
+        "timestamp": 1766104907.91462,
+        "metric_name": "expressiveness",
+        "value": 0.7351964045963795,
+        "udl_file": "calculator.udl",
+        "iteration": 18
+      },
+      {
+        "timestamp": 1766104907.9146209,
+        "metric_name": "expressiveness",
+        "value": 0.20145058483609235,
+        "udl_file": "parser.udl",
+        "iteration": 18
+      },
+      {
+        "timestamp": 1766104907.914622,
+        "metric_name": "expressiveness",
+        "value": 0.6515616865729946,
+        "udl_file": "query_lang.udl",
+        "iteration": 18
+      },
+      {
+        "timestamp": 1766104907.914634,
+        "metric_name": "expressiveness",
+        "value": 0.39995090237571695,
+        "udl_file": "calculator.udl",
+        "iteration": 19
+      },
+      {
+        "timestamp": 1766104907.914635,
+        "metric_name": "expressiveness",
+        "value": 0.7939639275847812,
+        "udl_file": "parser.udl",
+        "iteration": 19
+      },
+      {
+        "timestamp": 1766104907.9146361,
+        "metric_name": "expressiveness",
+        "value": 0.3606316785039058,
+        "udl_file": "query_lang.udl",
+        "iteration": 19
+      },
+      {
+        "timestamp": 1766104907.914648,
+        "metric_name": "expressiveness",
+        "value": 0.3520901847985914,
+        "udl_file": "calculator.udl",
+        "iteration": 20
+      },
+      {
+        "timestamp": 1766104907.914649,
+        "metric_name": "expressiveness",
+        "value": 0.6627496838197012,
+        "udl_file": "parser.udl",
+        "iteration": 20
+      },
+      {
+        "timestamp": 1766104907.9146502,
+        "metric_name": "expressiveness",
+        "value": 0.5663742194340371,
+        "udl_file": "query_lang.udl",
+        "iteration": 20
+      },
+      {
+        "timestamp": 1766104907.914662,
+        "metric_name": "expressiveness",
+        "value": 0.6147664708856828,
+        "udl_file": "calculator.udl",
+        "iteration": 21
+      },
+      {
+        "timestamp": 1766104907.914664,
+        "metric_name": "expressiveness",
+        "value": 0.5260907475782268,
+        "udl_file": "parser.udl",
+        "iteration": 21
+      },
+      {
+        "timestamp": 1766104907.914665,
+        "metric_name": "expressiveness",
+        "value": 0.6467248052405702,
+        "udl_file": "query_lang.udl",
+        "iteration": 21
+      },
+      {
+        "timestamp": 1766104907.914677,
+        "metric_name": "expressiveness",
+        "value": 0.22499020483035684,
+        "udl_file": "calculator.udl",
+        "iteration": 22
+      },
+      {
+        "timestamp": 1766104907.914678,
+        "metric_name": "expressiveness",
+        "value": 0.7821956290500993,
+        "udl_file": "parser.udl",
+        "iteration": 22
+      },
+      {
+        "timestamp": 1766104907.914679,
+        "metric_name": "expressiveness",
+        "value": 0.30009809243007035,
+        "udl_file": "query_lang.udl",
+        "iteration": 22
+      },
+      {
+        "timestamp": 1766104907.914691,
+        "metric_name": "expressiveness",
+        "value": 0.5391439507076103,
+        "udl_file": "calculator.udl",
+        "iteration": 23
+      },
+      {
+        "timestamp": 1766104907.9146922,
+        "metric_name": "expressiveness",
+        "value": 0.2025604544595908,
+        "udl_file": "parser.udl",
+        "iteration": 23
+      },
+      {
+        "timestamp": 1766104907.9146938,
+        "metric_name": "expressiveness",
+        "value": 0.5978194868741294,
+        "udl_file": "query_lang.udl",
+        "iteration": 23
+      },
+      {
+        "timestamp": 1766104907.9147048,
+        "metric_name": "expressiveness",
+        "value": 0.7884600233220851,
+        "udl_file": "calculator.udl",
+        "iteration": 24
+      },
+      {
+        "timestamp": 1766104907.914707,
+        "metric_name": "expressiveness",
+        "value": 0.5410819728043178,
+        "udl_file": "parser.udl",
+        "iteration": 24
+      },
+      {
+        "timestamp": 1766104907.914708,
+        "metric_name": "expressiveness",
+        "value": 0.44129615693118834,
+        "udl_file": "query_lang.udl",
+        "iteration": 24
+      },
+      {
+        "timestamp": 1766104907.91472,
+        "metric_name": "expressiveness",
+        "value": 0.7686471310085609,
+        "udl_file": "calculator.udl",
+        "iteration": 25
+      },
+      {
+        "timestamp": 1766104907.914721,
+        "metric_name": "expressiveness",
+        "value": 0.22124606373973732,
+        "udl_file": "parser.udl",
+        "iteration": 25
+      },
+      {
+        "timestamp": 1766104907.914722,
+        "metric_name": "expressiveness",
+        "value": 0.49377401385263064,
+        "udl_file": "query_lang.udl",
+        "iteration": 25
+      },
+      {
+        "timestamp": 1766104907.914738,
+        "metric_name": "expressiveness",
+        "value": 0.29028506889462685,
+        "udl_file": "calculator.udl",
+        "iteration": 26
+      },
+      {
+        "timestamp": 1766104907.914739,
+        "metric_name": "expressiveness",
+        "value": 0.5549332016136558,
+        "udl_file": "parser.udl",
+        "iteration": 26
+      },
+      {
+        "timestamp": 1766104907.91474,
+        "metric_name": "expressiveness",
+        "value": 0.6547259584257586,
+        "udl_file": "query_lang.udl",
+        "iteration": 26
+      },
+      {
+        "timestamp": 1766104907.914752,
+        "metric_name": "expressiveness",
+        "value": 0.20407367835522358,
+        "udl_file": "calculator.udl",
+        "iteration": 27
+      },
+      {
+        "timestamp": 1766104907.914753,
+        "metric_name": "expressiveness",
+        "value": 0.32711930393740773,
+        "udl_file": "parser.udl",
+        "iteration": 27
+      },
+      {
+        "timestamp": 1766104907.9147542,
+        "metric_name": "expressiveness",
+        "value": 0.21010714123041727,
+        "udl_file": "query_lang.udl",
+        "iteration": 27
+      },
+      {
+        "timestamp": 1766104907.914766,
+        "metric_name": "expressiveness",
+        "value": 0.561499881185424,
+        "udl_file": "calculator.udl",
+        "iteration": 28
+      },
+      {
+        "timestamp": 1766104907.914767,
+        "metric_name": "expressiveness",
+        "value": 0.5916188109545444,
+        "udl_file": "parser.udl",
+        "iteration": 28
+      },
+      {
+        "timestamp": 1766104907.914769,
+        "metric_name": "expressiveness",
+        "value": 0.36672037603261703,
+        "udl_file": "query_lang.udl",
+        "iteration": 28
+      },
+      {
+        "timestamp": 1766104907.9147809,
+        "metric_name": "expressiveness",
+        "value": 0.7933496919968547,
+        "udl_file": "calculator.udl",
+        "iteration": 29
+      },
+      {
+        "timestamp": 1766104907.914782,
+        "metric_name": "expressiveness",
+        "value": 0.2680833265571131,
+        "udl_file": "parser.udl",
+        "iteration": 29
+      },
+      {
+        "timestamp": 1766104907.914783,
+        "metric_name": "expressiveness",
+        "value": 0.6451524114409924,
+        "udl_file": "query_lang.udl",
+        "iteration": 29
+      },
+      {
+        "timestamp": 1766104907.914795,
+        "metric_name": "expressiveness",
+        "value": 0.44120024276521286,
+        "udl_file": "calculator.udl",
+        "iteration": 30
+      },
+      {
+        "timestamp": 1766104907.914796,
+        "metric_name": "expressiveness",
+        "value": 0.7441748822767532,
+        "udl_file": "parser.udl",
+        "iteration": 30
+      },
+      {
+        "timestamp": 1766104907.914797,
+        "metric_name": "expressiveness",
+        "value": 0.8319813112891788,
+        "udl_file": "query_lang.udl",
+        "iteration": 30
+      },
+      {
+        "timestamp": 1766104907.914811,
+        "metric_name": "expressiveness",
+        "value": 0.6726478073479826,
+        "udl_file": "calculator.udl",
+        "iteration": 31
+      },
+      {
+        "timestamp": 1766104907.9148118,
+        "metric_name": "expressiveness",
+        "value": 0.5877043570730696,
+        "udl_file": "parser.udl",
+        "iteration": 31
+      },
+      {
+        "timestamp": 1766104907.914813,
+        "metric_name": "expressiveness",
+        "value": 0.41302353156677785,
+        "udl_file": "query_lang.udl",
+        "iteration": 31
+      },
+      {
+        "timestamp": 1766104907.914825,
+        "metric_name": "expressiveness",
+        "value": 0.36854750837940486,
+        "udl_file": "calculator.udl",
+        "iteration": 32
+      },
+      {
+        "timestamp": 1766104907.914826,
+        "metric_name": "expressiveness",
+        "value": 0.3145701338205853,
+        "udl_file": "parser.udl",
+        "iteration": 32
+      },
+      {
+        "timestamp": 1766104907.914827,
+        "metric_name": "expressiveness",
+        "value": 0.24016722535071605,
+        "udl_file": "query_lang.udl",
+        "iteration": 32
+      },
+      {
+        "timestamp": 1766104907.914839,
+        "metric_name": "expressiveness",
+        "value": 0.6781205940932844,
+        "udl_file": "calculator.udl",
+        "iteration": 33
+      },
+      {
+        "timestamp": 1766104907.91484,
+        "metric_name": "expressiveness",
+        "value": 0.6350567053390267,
+        "udl_file": "parser.udl",
+        "iteration": 33
+      },
+      {
+        "timestamp": 1766104907.9148412,
+        "metric_name": "expressiveness",
+        "value": 0.3186641714048052,
+        "udl_file": "query_lang.udl",
+        "iteration": 33
+      },
+      {
+        "timestamp": 1766104907.914853,
+        "metric_name": "expressiveness",
+        "value": 0.6316496930523752,
+        "udl_file": "calculator.udl",
+        "iteration": 34
+      },
+      {
+        "timestamp": 1766104907.9148538,
+        "metric_name": "expressiveness",
+        "value": 0.36000183132963276,
+        "udl_file": "parser.udl",
+        "iteration": 34
+      },
+      {
+        "timestamp": 1766104907.914855,
+        "metric_name": "expressiveness",
+        "value": 0.5393389901438649,
+        "udl_file": "query_lang.udl",
+        "iteration": 34
+      },
+      {
+        "timestamp": 1766104907.914866,
+        "metric_name": "expressiveness",
+        "value": 0.5164953162729874,
+        "udl_file": "calculator.udl",
+        "iteration": 35
+      },
+      {
+        "timestamp": 1766104907.914867,
+        "metric_name": "expressiveness",
+        "value": 0.3726931157971598,
+        "udl_file": "parser.udl",
+        "iteration": 35
+      },
+      {
+        "timestamp": 1766104907.9148679,
+        "metric_name": "expressiveness",
+        "value": 0.314786022830384,
+        "udl_file": "query_lang.udl",
+        "iteration": 35
+      },
+      {
+        "timestamp": 1766104907.914879,
+        "metric_name": "expressiveness",
+        "value": 0.27455829246545577,
+        "udl_file": "calculator.udl",
+        "iteration": 36
+      },
+      {
+        "timestamp": 1766104907.91488,
+        "metric_name": "expressiveness",
+        "value": 0.5045304656136974,
+        "udl_file": "parser.udl",
+        "iteration": 36
+      },
+      {
+        "timestamp": 1766104907.914882,
+        "metric_name": "expressiveness",
+        "value": 0.42584133178017325,
+        "udl_file": "query_lang.udl",
+        "iteration": 36
+      },
+      {
+        "timestamp": 1766104907.914892,
+        "metric_name": "expressiveness",
+        "value": 0.39622115089711424,
+        "udl_file": "calculator.udl",
+        "iteration": 37
+      },
+      {
+        "timestamp": 1766104907.9148932,
+        "metric_name": "expressiveness",
+        "value": 0.43202290279680616,
+        "udl_file": "parser.udl",
+        "iteration": 37
+      },
+      {
+        "timestamp": 1766104907.9148958,
+        "metric_name": "expressiveness",
+        "value": 0.4741180682189159,
+        "udl_file": "query_lang.udl",
+        "iteration": 37
+      },
+      {
+        "timestamp": 1766104907.914907,
+        "metric_name": "expressiveness",
+        "value": 0.28889418363268293,
+        "udl_file": "calculator.udl",
+        "iteration": 38
+      },
+      {
+        "timestamp": 1766104907.914908,
+        "metric_name": "expressiveness",
+        "value": 0.6124214557574721,
+        "udl_file": "parser.udl",
+        "iteration": 38
+      },
+      {
+        "timestamp": 1766104907.914909,
+        "metric_name": "expressiveness",
+        "value": 0.3566937824535015,
+        "udl_file": "query_lang.udl",
+        "iteration": 38
+      },
+      {
+        "timestamp": 1766104907.914919,
+        "metric_name": "expressiveness",
+        "value": 0.727981661746731,
+        "udl_file": "calculator.udl",
+        "iteration": 39
+      },
+      {
+        "timestamp": 1766104907.9149199,
+        "metric_name": "expressiveness",
+        "value": 0.8039188727578706,
+        "udl_file": "parser.udl",
+        "iteration": 39
+      },
+      {
+        "timestamp": 1766104907.914921,
+        "metric_name": "expressiveness",
+        "value": 0.22157448253958972,
+        "udl_file": "query_lang.udl",
+        "iteration": 39
+      },
+      {
+        "timestamp": 1766104907.914932,
+        "metric_name": "expressiveness",
+        "value": 0.2553079854917533,
+        "udl_file": "calculator.udl",
+        "iteration": 40
+      },
+      {
+        "timestamp": 1766104907.914933,
+        "metric_name": "expressiveness",
+        "value": 0.8219675482230312,
+        "udl_file": "parser.udl",
+        "iteration": 40
+      },
+      {
+        "timestamp": 1766104907.914934,
+        "metric_name": "expressiveness",
+        "value": 0.7645817894749269,
+        "udl_file": "query_lang.udl",
+        "iteration": 40
+      },
+      {
+        "timestamp": 1766104907.9149451,
+        "metric_name": "expressiveness",
+        "value": 0.899379721228152,
+        "udl_file": "calculator.udl",
+        "iteration": 41
+      },
+      {
+        "timestamp": 1766104907.914946,
+        "metric_name": "expressiveness",
+        "value": 0.33692721016408744,
+        "udl_file": "parser.udl",
+        "iteration": 41
+      },
+      {
+        "timestamp": 1766104907.914947,
+        "metric_name": "expressiveness",
+        "value": 0.7873884383288118,
+        "udl_file": "query_lang.udl",
+        "iteration": 41
+      },
+      {
+        "timestamp": 1766104907.914958,
+        "metric_name": "expressiveness",
+        "value": 0.2030720604964679,
+        "udl_file": "calculator.udl",
+        "iteration": 42
+      },
+      {
+        "timestamp": 1766104907.9149592,
+        "metric_name": "expressiveness",
+        "value": 0.5855686006424428,
+        "udl_file": "parser.udl",
+        "iteration": 42
+      },
+      {
+        "timestamp": 1766104907.91496,
+        "metric_name": "expressiveness",
+        "value": 0.6850470178367879,
+        "udl_file": "query_lang.udl",
+        "iteration": 42
+      },
+      {
+        "timestamp": 1766104907.9149709,
+        "metric_name": "expressiveness",
+        "value": 0.8059360277666996,
+        "udl_file": "calculator.udl",
+        "iteration": 43
+      },
+      {
+        "timestamp": 1766104907.9149718,
+        "metric_name": "expressiveness",
+        "value": 0.6493880103627696,
+        "udl_file": "parser.udl",
+        "iteration": 43
+      },
+      {
+        "timestamp": 1766104907.914973,
+        "metric_name": "expressiveness",
+        "value": 0.8814335019433202,
+        "udl_file": "query_lang.udl",
+        "iteration": 43
+      },
+      {
+        "timestamp": 1766104907.914984,
+        "metric_name": "expressiveness",
+        "value": 0.29673948187671834,
+        "udl_file": "calculator.udl",
+        "iteration": 44
+      },
+      {
+        "timestamp": 1766104907.914985,
+        "metric_name": "expressiveness",
+        "value": 0.4318547597522117,
+        "udl_file": "parser.udl",
+        "iteration": 44
+      },
+      {
+        "timestamp": 1766104907.914986,
+        "metric_name": "expressiveness",
+        "value": 0.5082253939311087,
+        "udl_file": "query_lang.udl",
+        "iteration": 44
+      },
+      {
+        "timestamp": 1766104907.914997,
+        "metric_name": "expressiveness",
+        "value": 0.8449474975340351,
+        "udl_file": "calculator.udl",
+        "iteration": 45
+      },
+      {
+        "timestamp": 1766104907.914998,
+        "metric_name": "expressiveness",
+        "value": 0.45865159615512313,
+        "udl_file": "parser.udl",
+        "iteration": 45
+      },
+      {
+        "timestamp": 1766104907.914999,
+        "metric_name": "expressiveness",
+        "value": 0.3290587007202639,
+        "udl_file": "query_lang.udl",
+        "iteration": 45
+      },
+      {
+        "timestamp": 1766104907.91501,
+        "metric_name": "expressiveness",
+        "value": 0.7617042479112034,
+        "udl_file": "calculator.udl",
+        "iteration": 46
+      },
+      {
+        "timestamp": 1766104907.9150112,
+        "metric_name": "expressiveness",
+        "value": 0.8459536099521887,
+        "udl_file": "parser.udl",
+        "iteration": 46
+      },
+      {
+        "timestamp": 1766104907.9150121,
+        "metric_name": "expressiveness",
+        "value": 0.8662802357478121,
+        "udl_file": "query_lang.udl",
+        "iteration": 46
+      },
+      {
+        "timestamp": 1766104907.9150238,
+        "metric_name": "expressiveness",
+        "value": 0.8621722179214367,
+        "udl_file": "calculator.udl",
+        "iteration": 47
+      },
+      {
+        "timestamp": 1766104907.915025,
+        "metric_name": "expressiveness",
+        "value": 0.8943320061969956,
+        "udl_file": "parser.udl",
+        "iteration": 47
+      },
+      {
+        "timestamp": 1766104907.915026,
+        "metric_name": "expressiveness",
+        "value": 0.638393864612083,
+        "udl_file": "query_lang.udl",
+        "iteration": 47
+      },
+      {
+        "timestamp": 1766104907.915039,
+        "metric_name": "expressiveness",
+        "value": 0.649507020750558,
+        "udl_file": "calculator.udl",
+        "iteration": 48
+      },
+      {
+        "timestamp": 1766104907.91504,
+        "metric_name": "expressiveness",
+        "value": 0.6741639230709625,
+        "udl_file": "parser.udl",
+        "iteration": 48
+      },
+      {
+        "timestamp": 1766104907.915041,
+        "metric_name": "expressiveness",
+        "value": 0.49405185200340285,
+        "udl_file": "query_lang.udl",
+        "iteration": 48
+      },
+      {
+        "timestamp": 1766104907.915052,
+        "metric_name": "expressiveness",
+        "value": 0.3296428094138078,
+        "udl_file": "calculator.udl",
+        "iteration": 49
+      },
+      {
+        "timestamp": 1766104907.9150531,
+        "metric_name": "expressiveness",
+        "value": 0.37067655599273175,
+        "udl_file": "parser.udl",
+        "iteration": 49
+      },
+      {
+        "timestamp": 1766104907.915054,
+        "metric_name": "expressiveness",
+        "value": 0.5539680566511378,
+        "udl_file": "query_lang.udl",
+        "iteration": 49
+      }
+    ],
+    "structural_coherence": [
+      {
+        "timestamp": 1766104907.9143639,
+        "metric_name": "structural_coherence",
+        "value": 0.4427161846651456,
+        "udl_file": "calculator.udl",
+        "iteration": 0
+      },
+      {
+        "timestamp": 1766104907.9143648,
+        "metric_name": "structural_coherence",
+        "value": 0.24784242487908664,
+        "udl_file": "parser.udl",
+        "iteration": 0
+      },
+      {
+        "timestamp": 1766104907.914367,
+        "metric_name": "structural_coherence",
+        "value": 0.3164935219217936,
+        "udl_file": "query_lang.udl",
+        "iteration": 0
+      },
+      {
+        "timestamp": 1766104907.9143791,
+        "metric_name": "structural_coherence",
+        "value": 0.24615600413437944,
+        "udl_file": "calculator.udl",
+        "iteration": 1
+      },
+      {
+        "timestamp": 1766104907.914381,
+        "metric_name": "structural_coherence",
+        "value": 0.4667666439792062,
+        "udl_file": "parser.udl",
+        "iteration": 1
+      },
+      {
+        "timestamp": 1766104907.914382,
+        "metric_name": "structural_coherence",
+        "value": 0.42824861403159953,
+        "udl_file": "query_lang.udl",
+        "iteration": 1
+      },
+      {
+        "timestamp": 1766104907.9143941,
+        "metric_name": "structural_coherence",
+        "value": 0.6712992741792427,
+        "udl_file": "calculator.udl",
+        "iteration": 2
+      },
+      {
+        "timestamp": 1766104907.9143949,
+        "metric_name": "structural_coherence",
+        "value": 0.5448521948243202,
+        "udl_file": "parser.udl",
+        "iteration": 2
+      },
+      {
+        "timestamp": 1766104907.9143958,
+        "metric_name": "structural_coherence",
+        "value": 0.7776584146473702,
+        "udl_file": "query_lang.udl",
+        "iteration": 2
+      },
+      {
+        "timestamp": 1766104907.914408,
+        "metric_name": "structural_coherence",
+        "value": 0.392392962333209,
+        "udl_file": "calculator.udl",
+        "iteration": 3
+      },
+      {
+        "timestamp": 1766104907.914409,
+        "metric_name": "structural_coherence",
+        "value": 0.3731887933014773,
+        "udl_file": "parser.udl",
+        "iteration": 3
+      },
+      {
+        "timestamp": 1766104907.9144099,
+        "metric_name": "structural_coherence",
+        "value": 0.7404717064202416,
+        "udl_file": "query_lang.udl",
+        "iteration": 3
+      },
+      {
+        "timestamp": 1766104907.914422,
+        "metric_name": "structural_coherence",
+        "value": 0.768472499314957,
+        "udl_file": "calculator.udl",
+        "iteration": 4
+      },
+      {
+        "timestamp": 1766104907.914423,
+        "metric_name": "structural_coherence",
+        "value": 0.5874234957992271,
+        "udl_file": "parser.udl",
+        "iteration": 4
+      },
+      {
+        "timestamp": 1766104907.9144251,
+        "metric_name": "structural_coherence",
+        "value": 0.5626095742553284,
+        "udl_file": "query_lang.udl",
+        "iteration": 4
+      },
+      {
+        "timestamp": 1766104907.914436,
+        "metric_name": "structural_coherence",
+        "value": 0.6448906317336968,
+        "udl_file": "calculator.udl",
+        "iteration": 5
+      },
+      {
+        "timestamp": 1766104907.9144378,
+        "metric_name": "structural_coherence",
+        "value": 0.6679415866030328,
+        "udl_file": "parser.udl",
+        "iteration": 5
+      },
+      {
+        "timestamp": 1766104907.914439,
+        "metric_name": "structural_coherence",
+        "value": 0.8064789437807454,
+        "udl_file": "query_lang.udl",
+        "iteration": 5
+      },
+      {
+        "timestamp": 1766104907.914451,
+        "metric_name": "structural_coherence",
+        "value": 0.7470271607711269,
+        "udl_file": "calculator.udl",
+        "iteration": 6
+      },
+      {
+        "timestamp": 1766104907.914452,
+        "metric_name": "structural_coherence",
+        "value": 0.2560496673480876,
+        "udl_file": "parser.udl",
+        "iteration": 6
+      },
+      {
+        "timestamp": 1766104907.914453,
+        "metric_name": "structural_coherence",
+        "value": 0.7733681187308798,
+        "udl_file": "query_lang.udl",
+        "iteration": 6
+      },
+      {
+        "timestamp": 1766104907.914465,
+        "metric_name": "structural_coherence",
+        "value": 0.37976970416688166,
+        "udl_file": "calculator.udl",
+        "iteration": 7
+      },
+      {
+        "timestamp": 1766104907.9144661,
+        "metric_name": "structural_coherence",
+        "value": 0.8169148194053948,
+        "udl_file": "parser.udl",
+        "iteration": 7
+      },
+      {
+        "timestamp": 1766104907.914467,
+        "metric_name": "structural_coherence",
+        "value": 0.4954664239876094,
+        "udl_file": "query_lang.udl",
+        "iteration": 7
+      },
+      {
+        "timestamp": 1766104907.9144802,
+        "metric_name": "structural_coherence",
+        "value": 0.22976299104122233,
+        "udl_file": "calculator.udl",
+        "iteration": 8
+      },
+      {
+        "timestamp": 1766104907.914481,
+        "metric_name": "structural_coherence",
+        "value": 0.30735652048689055,
+        "udl_file": "parser.udl",
+        "iteration": 8
+      },
+      {
+        "timestamp": 1766104907.9144819,
+        "metric_name": "structural_coherence",
+        "value": 0.4924126693317118,
+        "udl_file": "query_lang.udl",
+        "iteration": 8
+      },
+      {
+        "timestamp": 1766104907.914494,
+        "metric_name": "structural_coherence",
+        "value": 0.8026421690571884,
+        "udl_file": "calculator.udl",
+        "iteration": 9
+      },
+      {
+        "timestamp": 1766104907.914495,
+        "metric_name": "structural_coherence",
+        "value": 0.5233932055225594,
+        "udl_file": "parser.udl",
+        "iteration": 9
+      },
+      {
+        "timestamp": 1766104907.914496,
+        "metric_name": "structural_coherence",
+        "value": 0.2798191956508662,
+        "udl_file": "query_lang.udl",
+        "iteration": 9
+      },
+      {
+        "timestamp": 1766104907.914509,
+        "metric_name": "structural_coherence",
+        "value": 0.5790554083422602,
+        "udl_file": "calculator.udl",
+        "iteration": 10
+      },
+      {
+        "timestamp": 1766104907.91451,
+        "metric_name": "structural_coherence",
+        "value": 0.7505114322065561,
+        "udl_file": "parser.udl",
+        "iteration": 10
+      },
+      {
+        "timestamp": 1766104907.9145112,
+        "metric_name": "structural_coherence",
+        "value": 0.2043075253620958,
+        "udl_file": "query_lang.udl",
+        "iteration": 10
+      },
+      {
+        "timestamp": 1766104907.914523,
+        "metric_name": "structural_coherence",
+        "value": 0.43714083406080445,
+        "udl_file": "calculator.udl",
+        "iteration": 11
+      },
+      {
+        "timestamp": 1766104907.9145238,
+        "metric_name": "structural_coherence",
+        "value": 0.4035019952418244,
+        "udl_file": "parser.udl",
+        "iteration": 11
+      },
+      {
+        "timestamp": 1766104907.914525,
+        "metric_name": "structural_coherence",
+        "value": 0.23594226841471558,
+        "udl_file": "query_lang.udl",
+        "iteration": 11
+      },
+      {
+        "timestamp": 1766104907.914537,
+        "metric_name": "structural_coherence",
+        "value": 0.4805132735509302,
+        "udl_file": "calculator.udl",
+        "iteration": 12
+      },
+      {
+        "timestamp": 1766104907.914538,
+        "metric_name": "structural_coherence",
+        "value": 0.5869825766117412,
+        "udl_file": "parser.udl",
+        "iteration": 12
+      },
+      {
+        "timestamp": 1766104907.914539,
+        "metric_name": "structural_coherence",
+        "value": 0.5102387828321328,
+        "udl_file": "query_lang.udl",
+        "iteration": 12
+      },
+      {
+        "timestamp": 1766104907.914552,
+        "metric_name": "structural_coherence",
+        "value": 0.44809509762995237,
+        "udl_file": "calculator.udl",
+        "iteration": 13
+      },
+      {
+        "timestamp": 1766104907.9145532,
+        "metric_name": "structural_coherence",
+        "value": 0.2822437627365875,
+        "udl_file": "parser.udl",
+        "iteration": 13
+      },
+      {
+        "timestamp": 1766104907.914554,
+        "metric_name": "structural_coherence",
+        "value": 0.7404488596307012,
+        "udl_file": "query_lang.udl",
+        "iteration": 13
+      },
+      {
+        "timestamp": 1766104907.9145658,
+        "metric_name": "structural_coherence",
+        "value": 0.47905059225520513,
+        "udl_file": "calculator.udl",
+        "iteration": 14
+      },
+      {
+        "timestamp": 1766104907.914567,
+        "metric_name": "structural_coherence",
+        "value": 0.8448372162006668,
+        "udl_file": "parser.udl",
+        "iteration": 14
+      },
+      {
+        "timestamp": 1766104907.914569,
+        "metric_name": "structural_coherence",
+        "value": 0.26381081618529323,
+        "udl_file": "query_lang.udl",
+        "iteration": 14
+      },
+      {
+        "timestamp": 1766104907.914581,
+        "metric_name": "structural_coherence",
+        "value": 0.4638060868479311,
+        "udl_file": "calculator.udl",
+        "iteration": 15
+      },
+      {
+        "timestamp": 1766104907.914582,
+        "metric_name": "structural_coherence",
+        "value": 0.42754167353726463,
+        "udl_file": "parser.udl",
+        "iteration": 15
+      },
+      {
+        "timestamp": 1766104907.914583,
+        "metric_name": "structural_coherence",
+        "value": 0.5388607850326732,
+        "udl_file": "query_lang.udl",
+        "iteration": 15
+      },
+      {
+        "timestamp": 1766104907.9145951,
+        "metric_name": "structural_coherence",
+        "value": 0.2812094320865704,
+        "udl_file": "calculator.udl",
+        "iteration": 16
+      },
+      {
+        "timestamp": 1766104907.914596,
+        "metric_name": "structural_coherence",
+        "value": 0.6833413655997101,
+        "udl_file": "parser.udl",
+        "iteration": 16
+      },
+      {
+        "timestamp": 1766104907.914597,
+        "metric_name": "structural_coherence",
+        "value": 0.4199491887666693,
+        "udl_file": "query_lang.udl",
+        "iteration": 16
+      },
+      {
+        "timestamp": 1766104907.914609,
+        "metric_name": "structural_coherence",
+        "value": 0.8658427063576176,
+        "udl_file": "calculator.udl",
+        "iteration": 17
+      },
+      {
+        "timestamp": 1766104907.91461,
+        "metric_name": "structural_coherence",
+        "value": 0.7604644122607084,
+        "udl_file": "parser.udl",
+        "iteration": 17
+      },
+      {
+        "timestamp": 1766104907.9146109,
+        "metric_name": "structural_coherence",
+        "value": 0.53985293402886,
+        "udl_file": "query_lang.udl",
+        "iteration": 17
+      },
+      {
+        "timestamp": 1766104907.914623,
+        "metric_name": "structural_coherence",
+        "value": 0.8102492940191309,
+        "udl_file": "calculator.udl",
+        "iteration": 18
+      },
+      {
+        "timestamp": 1766104907.914624,
+        "metric_name": "structural_coherence",
+        "value": 0.700948083371137,
+        "udl_file": "parser.udl",
+        "iteration": 18
+      },
+      {
+        "timestamp": 1766104907.9146261,
+        "metric_name": "structural_coherence",
+        "value": 0.4848739102148622,
+        "udl_file": "query_lang.udl",
+        "iteration": 18
+      },
+      {
+        "timestamp": 1766104907.914637,
+        "metric_name": "structural_coherence",
+        "value": 0.8660338194998283,
+        "udl_file": "calculator.udl",
+        "iteration": 19
+      },
+      {
+        "timestamp": 1766104907.914638,
+        "metric_name": "structural_coherence",
+        "value": 0.4837500516030609,
+        "udl_file": "parser.udl",
+        "iteration": 19
+      },
+      {
+        "timestamp": 1766104907.91464,
+        "metric_name": "structural_coherence",
+        "value": 0.856054792113144,
+        "udl_file": "query_lang.udl",
+        "iteration": 19
+      },
+      {
+        "timestamp": 1766104907.914651,
+        "metric_name": "structural_coherence",
+        "value": 0.7256123399213344,
+        "udl_file": "calculator.udl",
+        "iteration": 20
+      },
+      {
+        "timestamp": 1766104907.9146528,
+        "metric_name": "structural_coherence",
+        "value": 0.2973645241478884,
+        "udl_file": "parser.udl",
+        "iteration": 20
+      },
+      {
+        "timestamp": 1766104907.914654,
+        "metric_name": "structural_coherence",
+        "value": 0.6880566819317231,
+        "udl_file": "query_lang.udl",
+        "iteration": 20
+      },
+      {
+        "timestamp": 1766104907.914666,
+        "metric_name": "structural_coherence",
+        "value": 0.6120424840022101,
+        "udl_file": "calculator.udl",
+        "iteration": 21
+      },
+      {
+        "timestamp": 1766104907.914667,
+        "metric_name": "structural_coherence",
+        "value": 0.218389510150795,
+        "udl_file": "parser.udl",
+        "iteration": 21
+      },
+      {
+        "timestamp": 1766104907.914669,
+        "metric_name": "structural_coherence",
+        "value": 0.3431560170062343,
+        "udl_file": "query_lang.udl",
+        "iteration": 21
+      },
+      {
+        "timestamp": 1766104907.9146812,
+        "metric_name": "structural_coherence",
+        "value": 0.5118755771544191,
+        "udl_file": "calculator.udl",
+        "iteration": 22
+      },
+      {
+        "timestamp": 1766104907.9146821,
+        "metric_name": "structural_coherence",
+        "value": 0.4833734940763269,
+        "udl_file": "parser.udl",
+        "iteration": 22
+      },
+      {
+        "timestamp": 1766104907.9146829,
+        "metric_name": "structural_coherence",
+        "value": 0.29642352039244746,
+        "udl_file": "query_lang.udl",
+        "iteration": 22
+      },
+      {
+        "timestamp": 1766104907.914695,
+        "metric_name": "structural_coherence",
+        "value": 0.7729346673998151,
+        "udl_file": "calculator.udl",
+        "iteration": 23
+      },
+      {
+        "timestamp": 1766104907.914696,
+        "metric_name": "structural_coherence",
+        "value": 0.6454592636168969,
+        "udl_file": "parser.udl",
+        "iteration": 23
+      },
+      {
+        "timestamp": 1766104907.914697,
+        "metric_name": "structural_coherence",
+        "value": 0.7221949973839824,
+        "udl_file": "query_lang.udl",
+        "iteration": 23
+      },
+      {
+        "timestamp": 1766104907.914709,
+        "metric_name": "structural_coherence",
+        "value": 0.7508199584984959,
+        "udl_file": "calculator.udl",
+        "iteration": 24
+      },
+      {
+        "timestamp": 1766104907.91471,
+        "metric_name": "structural_coherence",
+        "value": 0.656589889132784,
+        "udl_file": "parser.udl",
+        "iteration": 24
+      },
+      {
+        "timestamp": 1766104907.914711,
+        "metric_name": "structural_coherence",
+        "value": 0.36344336121459764,
+        "udl_file": "query_lang.udl",
+        "iteration": 24
+      },
+      {
+        "timestamp": 1766104907.914724,
+        "metric_name": "structural_coherence",
+        "value": 0.433282856537963,
+        "udl_file": "calculator.udl",
+        "iteration": 25
+      },
+      {
+        "timestamp": 1766104907.914725,
+        "metric_name": "structural_coherence",
+        "value": 0.34049327806170265,
+        "udl_file": "parser.udl",
+        "iteration": 25
+      },
+      {
+        "timestamp": 1766104907.9147289,
+        "metric_name": "structural_coherence",
+        "value": 0.6402357096508975,
+        "udl_file": "query_lang.udl",
+        "iteration": 25
+      },
+      {
+        "timestamp": 1766104907.914741,
+        "metric_name": "structural_coherence",
+        "value": 0.8497172315006016,
+        "udl_file": "calculator.udl",
+        "iteration": 26
+      },
+      {
+        "timestamp": 1766104907.914743,
+        "metric_name": "structural_coherence",
+        "value": 0.8392124578736042,
+        "udl_file": "parser.udl",
+        "iteration": 26
+      },
+      {
+        "timestamp": 1766104907.9147441,
+        "metric_name": "structural_coherence",
+        "value": 0.692361104334812,
+        "udl_file": "query_lang.udl",
+        "iteration": 26
+      },
+      {
+        "timestamp": 1766104907.914756,
+        "metric_name": "structural_coherence",
+        "value": 0.3657514510057293,
+        "udl_file": "calculator.udl",
+        "iteration": 27
+      },
+      {
+        "timestamp": 1766104907.914757,
+        "metric_name": "structural_coherence",
+        "value": 0.4222463354497679,
+        "udl_file": "parser.udl",
+        "iteration": 27
+      },
+      {
+        "timestamp": 1766104907.914758,
+        "metric_name": "structural_coherence",
+        "value": 0.6410239020172586,
+        "udl_file": "query_lang.udl",
+        "iteration": 27
+      },
+      {
+        "timestamp": 1766104907.91477,
+        "metric_name": "structural_coherence",
+        "value": 0.7745517539543881,
+        "udl_file": "calculator.udl",
+        "iteration": 28
+      },
+      {
+        "timestamp": 1766104907.9147708,
+        "metric_name": "structural_coherence",
+        "value": 0.2693083834918673,
+        "udl_file": "parser.udl",
+        "iteration": 28
+      },
+      {
+        "timestamp": 1766104907.914772,
+        "metric_name": "structural_coherence",
+        "value": 0.27993998880262116,
+        "udl_file": "query_lang.udl",
+        "iteration": 28
+      },
+      {
+        "timestamp": 1766104907.914784,
+        "metric_name": "structural_coherence",
+        "value": 0.5134357763958332,
+        "udl_file": "calculator.udl",
+        "iteration": 29
+      },
+      {
+        "timestamp": 1766104907.914785,
+        "metric_name": "structural_coherence",
+        "value": 0.5907962503303634,
+        "udl_file": "parser.udl",
+        "iteration": 29
+      },
+      {
+        "timestamp": 1766104907.914786,
+        "metric_name": "structural_coherence",
+        "value": 0.5370091044765077,
+        "udl_file": "query_lang.udl",
+        "iteration": 29
+      },
+      {
+        "timestamp": 1766104907.9148002,
+        "metric_name": "structural_coherence",
+        "value": 0.22245012202486952,
+        "udl_file": "calculator.udl",
+        "iteration": 30
+      },
+      {
+        "timestamp": 1766104907.914801,
+        "metric_name": "structural_coherence",
+        "value": 0.751631641845531,
+        "udl_file": "parser.udl",
+        "iteration": 30
+      },
+      {
+        "timestamp": 1766104907.9148018,
+        "metric_name": "structural_coherence",
+        "value": 0.6640328385971441,
+        "udl_file": "query_lang.udl",
+        "iteration": 30
+      },
+      {
+        "timestamp": 1766104907.914814,
+        "metric_name": "structural_coherence",
+        "value": 0.4237940033869475,
+        "udl_file": "calculator.udl",
+        "iteration": 31
+      },
+      {
+        "timestamp": 1766104907.914815,
+        "metric_name": "structural_coherence",
+        "value": 0.31322836356615513,
+        "udl_file": "parser.udl",
+        "iteration": 31
+      },
+      {
+        "timestamp": 1766104907.914816,
+        "metric_name": "structural_coherence",
+        "value": 0.30477092984713305,
+        "udl_file": "query_lang.udl",
+        "iteration": 31
+      },
+      {
+        "timestamp": 1766104907.914828,
+        "metric_name": "structural_coherence",
+        "value": 0.43568700717679365,
+        "udl_file": "calculator.udl",
+        "iteration": 32
+      },
+      {
+        "timestamp": 1766104907.914829,
+        "metric_name": "structural_coherence",
+        "value": 0.21291873008341944,
+        "udl_file": "parser.udl",
+        "iteration": 32
+      },
+      {
+        "timestamp": 1766104907.9148312,
+        "metric_name": "structural_coherence",
+        "value": 0.811508905341663,
+        "udl_file": "query_lang.udl",
+        "iteration": 32
+      },
+      {
+        "timestamp": 1766104907.9148421,
+        "metric_name": "structural_coherence",
+        "value": 0.21709132534863362,
+        "udl_file": "calculator.udl",
+        "iteration": 33
+      },
+      {
+        "timestamp": 1766104907.9148428,
+        "metric_name": "structural_coherence",
+        "value": 0.6020620324728022,
+        "udl_file": "parser.udl",
+        "iteration": 33
+      },
+      {
+        "timestamp": 1766104907.914845,
+        "metric_name": "structural_coherence",
+        "value": 0.8394717680956285,
+        "udl_file": "query_lang.udl",
+        "iteration": 33
+      },
+      {
+        "timestamp": 1766104907.914856,
+        "metric_name": "structural_coherence",
+        "value": 0.5316124204592275,
+        "udl_file": "calculator.udl",
+        "iteration": 34
+      },
+      {
+        "timestamp": 1766104907.914857,
+        "metric_name": "structural_coherence",
+        "value": 0.36709576899765445,
+        "udl_file": "parser.udl",
+        "iteration": 34
+      },
+      {
+        "timestamp": 1766104907.914859,
+        "metric_name": "structural_coherence",
+        "value": 0.5847476909429123,
+        "udl_file": "query_lang.udl",
+        "iteration": 34
+      },
+      {
+        "timestamp": 1766104907.914869,
+        "metric_name": "structural_coherence",
+        "value": 0.5114836616598272,
+        "udl_file": "calculator.udl",
+        "iteration": 35
+      },
+      {
+        "timestamp": 1766104907.91487,
+        "metric_name": "structural_coherence",
+        "value": 0.5883189566868459,
+        "udl_file": "parser.udl",
+        "iteration": 35
+      },
+      {
+        "timestamp": 1766104907.9148722,
+        "metric_name": "structural_coherence",
+        "value": 0.7664471120266133,
+        "udl_file": "query_lang.udl",
+        "iteration": 35
+      },
+      {
+        "timestamp": 1766104907.9148831,
+        "metric_name": "structural_coherence",
+        "value": 0.2139697640967745,
+        "udl_file": "calculator.udl",
+        "iteration": 36
+      },
+      {
+        "timestamp": 1766104907.914884,
+        "metric_name": "structural_coherence",
+        "value": 0.23166108501988245,
+        "udl_file": "parser.udl",
+        "iteration": 36
+      },
+      {
+        "timestamp": 1766104907.914885,
+        "metric_name": "structural_coherence",
+        "value": 0.671680158447035,
+        "udl_file": "query_lang.udl",
+        "iteration": 36
+      },
+      {
+        "timestamp": 1766104907.914897,
+        "metric_name": "structural_coherence",
+        "value": 0.6025063510871871,
+        "udl_file": "calculator.udl",
+        "iteration": 37
+      },
+      {
+        "timestamp": 1766104907.914898,
+        "metric_name": "structural_coherence",
+        "value": 0.676152913704217,
+        "udl_file": "parser.udl",
+        "iteration": 37
+      },
+      {
+        "timestamp": 1766104907.9148989,
+        "metric_name": "structural_coherence",
+        "value": 0.28949694306165036,
+        "udl_file": "query_lang.udl",
+        "iteration": 37
+      },
+      {
+        "timestamp": 1766104907.9149098,
+        "metric_name": "structural_coherence",
+        "value": 0.7049639213996286,
+        "udl_file": "calculator.udl",
+        "iteration": 38
+      },
+      {
+        "timestamp": 1766104907.914911,
+        "metric_name": "structural_coherence",
+        "value": 0.2801379223925335,
+        "udl_file": "parser.udl",
+        "iteration": 38
+      },
+      {
+        "timestamp": 1766104907.914912,
+        "metric_name": "structural_coherence",
+        "value": 0.6791890380708043,
+        "udl_file": "query_lang.udl",
+        "iteration": 38
+      },
+      {
+        "timestamp": 1766104907.914923,
+        "metric_name": "structural_coherence",
+        "value": 0.39138656922046683,
+        "udl_file": "calculator.udl",
+        "iteration": 39
+      },
+      {
+        "timestamp": 1766104907.9149241,
+        "metric_name": "structural_coherence",
+        "value": 0.888083681225161,
+        "udl_file": "parser.udl",
+        "iteration": 39
+      },
+      {
+        "timestamp": 1766104907.914925,
+        "metric_name": "structural_coherence",
+        "value": 0.30383941445040075,
+        "udl_file": "query_lang.udl",
+        "iteration": 39
+      },
+      {
+        "timestamp": 1766104907.914935,
+        "metric_name": "structural_coherence",
+        "value": 0.7671566536450668,
+        "udl_file": "calculator.udl",
+        "iteration": 40
+      },
+      {
+        "timestamp": 1766104907.914936,
+        "metric_name": "structural_coherence",
+        "value": 0.5522784407059638,
+        "udl_file": "parser.udl",
+        "iteration": 40
+      },
+      {
+        "timestamp": 1766104907.914937,
+        "metric_name": "structural_coherence",
+        "value": 0.47849593673483076,
+        "udl_file": "query_lang.udl",
+        "iteration": 40
+      },
+      {
+        "timestamp": 1766104907.914948,
+        "metric_name": "structural_coherence",
+        "value": 0.27753786808593006,
+        "udl_file": "calculator.udl",
+        "iteration": 41
+      },
+      {
+        "timestamp": 1766104907.9149492,
+        "metric_name": "structural_coherence",
+        "value": 0.3711633124883229,
+        "udl_file": "parser.udl",
+        "iteration": 41
+      },
+      {
+        "timestamp": 1766104907.91495,
+        "metric_name": "structural_coherence",
+        "value": 0.8819127545057396,
+        "udl_file": "query_lang.udl",
+        "iteration": 41
+      },
+      {
+        "timestamp": 1766104907.9149609,
+        "metric_name": "structural_coherence",
+        "value": 0.7689128245370929,
+        "udl_file": "calculator.udl",
+        "iteration": 42
+      },
+      {
+        "timestamp": 1766104907.914963,
+        "metric_name": "structural_coherence",
+        "value": 0.2463753008859357,
+        "udl_file": "parser.udl",
+        "iteration": 42
+      },
+      {
+        "timestamp": 1766104907.914964,
+        "metric_name": "structural_coherence",
+        "value": 0.24537859655328262,
+        "udl_file": "query_lang.udl",
+        "iteration": 42
+      },
+      {
+        "timestamp": 1766104907.914975,
+        "metric_name": "structural_coherence",
+        "value": 0.24369362648109352,
+        "udl_file": "calculator.udl",
+        "iteration": 43
+      },
+      {
+        "timestamp": 1766104907.914976,
+        "metric_name": "structural_coherence",
+        "value": 0.5639857978634434,
+        "udl_file": "parser.udl",
+        "iteration": 43
+      },
+      {
+        "timestamp": 1766104907.914977,
+        "metric_name": "structural_coherence",
+        "value": 0.632959730424562,
+        "udl_file": "query_lang.udl",
+        "iteration": 43
+      },
+      {
+        "timestamp": 1766104907.914987,
+        "metric_name": "structural_coherence",
+        "value": 0.5732279313283343,
+        "udl_file": "calculator.udl",
+        "iteration": 44
+      },
+      {
+        "timestamp": 1766104907.914988,
+        "metric_name": "structural_coherence",
+        "value": 0.7684854444779753,
+        "udl_file": "parser.udl",
+        "iteration": 44
+      },
+      {
+        "timestamp": 1766104907.9149902,
+        "metric_name": "structural_coherence",
+        "value": 0.25585178921873886,
+        "udl_file": "query_lang.udl",
+        "iteration": 44
+      },
+      {
+        "timestamp": 1766104907.915,
+        "metric_name": "structural_coherence",
+        "value": 0.5565350946372574,
+        "udl_file": "calculator.udl",
+        "iteration": 45
+      },
+      {
+        "timestamp": 1766104907.9150012,
+        "metric_name": "structural_coherence",
+        "value": 0.5086722632492524,
+        "udl_file": "parser.udl",
+        "iteration": 45
+      },
+      {
+        "timestamp": 1766104907.915002,
+        "metric_name": "structural_coherence",
+        "value": 0.6163950573963907,
+        "udl_file": "query_lang.udl",
+        "iteration": 45
+      },
+      {
+        "timestamp": 1766104907.915013,
+        "metric_name": "structural_coherence",
+        "value": 0.4440292322350486,
+        "udl_file": "calculator.udl",
+        "iteration": 46
+      },
+      {
+        "timestamp": 1766104907.9150138,
+        "metric_name": "structural_coherence",
+        "value": 0.6270182254701386,
+        "udl_file": "parser.udl",
+        "iteration": 46
+      },
+      {
+        "timestamp": 1766104907.915015,
+        "metric_name": "structural_coherence",
+        "value": 0.796903959183315,
+        "udl_file": "query_lang.udl",
+        "iteration": 46
+      },
+      {
+        "timestamp": 1766104907.9150279,
+        "metric_name": "structural_coherence",
+        "value": 0.5086690798345054,
+        "udl_file": "calculator.udl",
+        "iteration": 47
+      },
+      {
+        "timestamp": 1766104907.915029,
+        "metric_name": "structural_coherence",
+        "value": 0.7444278940352684,
+        "udl_file": "parser.udl",
+        "iteration": 47
+      },
+      {
+        "timestamp": 1766104907.91503,
+        "metric_name": "structural_coherence",
+        "value": 0.3477435143500526,
+        "udl_file": "query_lang.udl",
+        "iteration": 47
+      },
+      {
+        "timestamp": 1766104907.9150422,
+        "metric_name": "structural_coherence",
+        "value": 0.8557428473767897,
+        "udl_file": "calculator.udl",
+        "iteration": 48
+      },
+      {
+        "timestamp": 1766104907.915043,
+        "metric_name": "structural_coherence",
+        "value": 0.3210655598468586,
+        "udl_file": "parser.udl",
+        "iteration": 48
+      },
+      {
+        "timestamp": 1766104907.915044,
+        "metric_name": "structural_coherence",
+        "value": 0.5453746050641326,
+        "udl_file": "query_lang.udl",
+        "iteration": 48
+      },
+      {
+        "timestamp": 1766104907.915057,
+        "metric_name": "structural_coherence",
+        "value": 0.4137117411955786,
+        "udl_file": "calculator.udl",
+        "iteration": 49
+      },
+      {
+        "timestamp": 1766104907.915058,
+        "metric_name": "structural_coherence",
+        "value": 0.8531883379631097,
+        "udl_file": "parser.udl",
+        "iteration": 49
+      },
+      {
+        "timestamp": 1766104907.9150589,
+        "metric_name": "structural_coherence",
+        "value": 0.7426351713173549,
+        "udl_file": "query_lang.udl",
+        "iteration": 49
+      }
+    ]
+  },
+  "active_computations": {},
+  "performance_metrics": {
+    "computation_time": [
+      0.5480058373122193,
+      0.8954865067150157,
+      0.04209424967145924,
+      0.454500913272775,
+      1.575825201805531,
+      0.33620160460212534,
+      0.6045447304705929,
+      4.038771901732046,
+      1.4206280951977024,
+      3.0498971920977334,
+      1.6163337648877583,
+      1.3421844587879739,
+      0.729077511699994,
+      1.802259669726853,
+      1.3424859934417477,
+      6.325704909792869,
+      1.6090694955237923,
+      1.085907085721629,
+      1.630624201862109,
+      2.9257290057980234,
+      0.7227212738275339,
+      1.9377968661659453,
+      0.07789932242714441,
+      2.320627087303766,
+      0.028951998098926433,
+      4.9795815642368355,
+      0.35682297298176396,
+      0.6073873826690549,
+      1.2082146599334624,
+      1.5763791677200807
+    ],
+    "memory_usage": [
+      101842505.01272139,
+      108247366.55829915,
+      90144553.3299251,
+      103957480.93367484,
+      115452265.42688186,
+      128500588.05725324,
+      103413722.99427272,
+      149786571.79579443,
+      128310948.67571495,
+      103304315.22511263,
+      106098381.36274463,
+      128685189.89337142,
+      83807161.28902362,
+      111232548.19997498,
+      91803127.66291799,
+      112607152.55016203,
+      111485097.9500288,
+      131341757.31654593,
+      122482625.26331976,
+      77107810.87528156,
+      92519958.64407587,
+      108990293.54832008,
+      109280612.90968001,
+      81425718.63840377,
+      144808382.46885347,
+      142274261.24988008,
+      113082217.15362799,
+      115117538.58595704,
+      117462169.74752629,
+      102410650.40257108
+    ],
+    "throughput": [
+      5,
+      6,
+      2,
+      5,
+      4,
+      4,
+      6,
+      3,
+      2,
+      2,
+      1,
+      6,
+      6,
+      8,
+      6,
+      3,
+      5,
+      5,
+      11,
+      5,
+      3,
+      4,
+      3,
+      6,
+      4,
+      8,
+      4,
+      3,
+      5,
+      5
+    ]
+  }
+}
