@@ -47,6 +47,27 @@ except ImportError:
     validate_docstrings = None
     find_undocumented_public_apis = None
 
+try:
+    from .audit_reporter import (
+        AuditReporter,
+        AuditReport,
+        Finding,
+        FindingCategory,
+        Severity,
+        ResolutionStatus,
+        SourceLocation,
+        FixSuggestionGenerator,
+    )
+except ImportError:
+    AuditReporter = None
+    AuditReport = None
+    Finding = None
+    FindingCategory = None
+    Severity = None
+    ResolutionStatus = None
+    SourceLocation = None
+    FixSuggestionGenerator = None
+
 __all__ = [
     'FormalVerifier',
     'DatasetBenchmark',
@@ -59,4 +80,12 @@ __all__ = [
     'DocstringValidationReport',
     'validate_docstrings',
     'find_undocumented_public_apis',
+    'AuditReporter',
+    'AuditReport',
+    'Finding',
+    'FindingCategory',
+    'Severity',
+    'ResolutionStatus',
+    'SourceLocation',
+    'FixSuggestionGenerator',
 ]
