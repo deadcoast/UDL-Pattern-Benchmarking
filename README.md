@@ -224,7 +224,7 @@ docs/
 
 ## Mathematical Foundation
 
-All metrics are formally defined in [Mathematical Framework](docs/mathematical_framework.pdf). Key definitions:
+All metrics are formally defined in [Mathematical Framework](docs/math_framework/mathematical_framework.pdf). Key definitions:
 
 ### Consistency Metric
 
@@ -288,9 +288,9 @@ All dependencies are managed through [pyproject.toml](pyproject.toml) and instal
 
 ## Documentation
 
-- [Mathematical Framework](docs/mathematical_framework.pdf) - Complete mathematical specification
-- [API Documentation](docs/api_reference.rst) - API reference
-- [Tutorial Notebooks](docs/examples.rst) - Jupyter notebooks with examples
+- [Mathematical Framework](docs/math_framework/mathematical_framework.pdf) - Complete mathematical specification
+- [API Documentation](docs/api/api_reference.rst) - API reference
+- [Tutorial Notebooks](docs/udl/examples.rst.rst) - Jupyter notebooks with examples
 
 ## Contributing
 

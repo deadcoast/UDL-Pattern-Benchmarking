@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/validation/formal_verification.py
+# hypothesis_version: 6.148.7
+
+[0.0, 1e-10, 1.0, 'Boundedness', 'Computation failed', 'Continuity', 'Determinism', 'Monotonicity', 'Test', 'computed_value', 'error', 'file_path', 'test_case', 'udl_file', 'values', 'violation', '✓ PASSED', '✗ FAILED']

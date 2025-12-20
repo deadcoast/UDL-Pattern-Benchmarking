@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/validation/link_validator.py
+# hypothesis_version: 6.148.7
+
+['\n--- Summary ---', '#', '## Broken Links', '## Result', '## Summary', '**/*.md', '**/*.rst', '-', '.', './', '.git', '.hypothesis', '.kiro', '.md', '.venv', '/', 'Anchor-only link', 'Empty anchor link', 'File exists', 'Unknown link type', '[^\\w\\s-]', '\\s+', '^#', '^#{1,6}\\s+(.+)$', '^https?://', '__main__', '__pycache__', 'anchor_link', 'build', 'code_reference', 'dist', 'external_url', 'file_reference', 'node_modules', 'utf-8', '✓', '✗']

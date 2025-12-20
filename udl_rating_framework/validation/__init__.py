@@ -6,6 +6,7 @@ This module provides comprehensive quality assurance and validation capabilities
 - Benchmarking against academic datasets
 - Link validation for documentation
 - API validation for documentation accuracy
+- Docstring validation for signature accuracy
 """
 
 # Import only modules that exist
@@ -31,6 +32,21 @@ except ImportError:
     APIExtractor = None
     APIValidationReport = None
 
+try:
+    from .docstring_validator import (
+        DocstringValidator,
+        DocstringParser,
+        DocstringValidationReport,
+        validate_docstrings,
+        find_undocumented_public_apis,
+    )
+except ImportError:
+    DocstringValidator = None
+    DocstringParser = None
+    DocstringValidationReport = None
+    validate_docstrings = None
+    find_undocumented_public_apis = None
+
 __all__ = [
     'FormalVerifier',
     'DatasetBenchmark',
@@ -38,4 +54,9 @@ __all__ = [
     'APIValidator',
     'APIExtractor',
     'APIValidationReport',
+    'DocstringValidator',
+    'DocstringParser',
+    'DocstringValidationReport',
+    'validate_docstrings',
+    'find_undocumented_public_apis',
 ]

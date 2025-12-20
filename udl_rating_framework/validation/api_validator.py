@@ -63,6 +63,11 @@ class APIExtractor:
     """Extracts public API from Python packages."""
     
     def __init__(self, package_name: str = "udl_rating_framework"):
+        """Initialize the API extractor.
+        
+        Args:
+            package_name: Name of the Python package to extract APIs from.
+        """
         self.package_name = package_name
         self.public_apis: List[APIElement] = []
         
@@ -219,6 +224,11 @@ class DocumentedAPIExtractor:
     """Extracts documented APIs from RST documentation."""
     
     def __init__(self, docs_path: Path):
+        """Initialize the documented API extractor.
+        
+        Args:
+            docs_path: Path to the documentation directory.
+        """
         self.docs_path = docs_path
         self.documented_modules: Set[str] = set()
         
@@ -255,6 +265,12 @@ class APIValidator:
     
     def __init__(self, package_name: str = "udl_rating_framework", 
                  docs_path: Optional[Path] = None):
+        """Initialize the API validator.
+        
+        Args:
+            package_name: Name of the Python package to validate.
+            docs_path: Path to the documentation directory.
+        """
         self.package_name = package_name
         self.docs_path = docs_path or Path("docs")
         self.extractor = APIExtractor(package_name)

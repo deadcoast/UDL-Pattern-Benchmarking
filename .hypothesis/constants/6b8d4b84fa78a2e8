@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/validation/dataset_benchmark.py
+# hypothesis_version: 6.148.7
+
+[0.8, 0.85, 0.9, 'completeness', 'consistency', 'loaded']

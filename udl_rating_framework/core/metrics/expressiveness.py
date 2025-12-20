@@ -19,6 +19,11 @@ class Grammar:
     """Represents a formal grammar for Chomsky hierarchy classification."""
 
     def __init__(self, rules: List[GrammarRule]):
+        """Initialize a grammar from a list of production rules.
+        
+        Args:
+            rules: List of GrammarRule objects defining the grammar.
+        """
         self.rules = rules
         self.terminals = set()
         self.non_terminals = set()

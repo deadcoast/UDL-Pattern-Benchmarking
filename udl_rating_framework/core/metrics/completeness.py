@@ -13,6 +13,13 @@ class Construct:
     """Represents a language construct that can be defined or required."""
 
     def __init__(self, name: str, construct_type: str, metadata: Dict[str, Any] = None):
+        """Initialize a language construct.
+        
+        Args:
+            name: The name of the construct.
+            construct_type: The type of construct (e.g., 'production_rule', 'terminal').
+            metadata: Optional metadata dictionary for additional information.
+        """
         self.name = name
         self.construct_type = (
             construct_type  # e.g., 'production_rule', 'terminal', 'operator'

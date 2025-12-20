@@ -69,6 +69,13 @@ class AST:
     """Simple Abstract Syntax Tree representation."""
 
     def __init__(self, node_type: str, value: Any = None, children: List["AST"] = None):
+        """Initialize an AST node.
+        
+        Args:
+            node_type: The type of this AST node (e.g., 'rule', 'terminal').
+            value: The value associated with this node.
+            children: List of child AST nodes.
+        """
         self.node_type = node_type
         self.value = value
         self.children = children or []
@@ -137,6 +144,7 @@ class UDLTokenizer:
     ]
 
     def __init__(self):
+        """Initialize the UDL tokenizer with compiled regex patterns."""
         self.compiled_patterns = [
             (re.compile(pattern, re.MULTILINE), token_type)
             for pattern, token_type in self.TOKEN_PATTERNS

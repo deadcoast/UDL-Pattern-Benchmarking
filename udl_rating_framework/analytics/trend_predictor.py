@@ -441,16 +441,41 @@ class TrendPredictor:
             
             # Wrap model to handle polynomial transformation
             class PolynomialModel:
+                """Wrapper for polynomial regression model with feature transformation.
+                
+                This class wraps a linear regression model with polynomial feature
+                transformation to provide a consistent interface for prediction.
+                """
+                
                 def __init__(self, model, poly_features):
+                    """Initialize the polynomial model wrapper.
+                    
+                    Args:
+                        model: The underlying linear regression model.
+                        poly_features: The polynomial feature transformer.
+                    """
                     self.model = model
                     self.poly_features = poly_features
                 
                 def predict(self, X):
+                    """Make predictions using the polynomial model.
+                    
+                    Args:
+                        X: Input features to transform and predict.
+                        
+                    Returns:
+                        Predicted values.
+                    """
                     X_poly = self.poly_features.transform(X)
                     return self.model.predict(X_poly)
                 
                 @property
                 def coef_(self):
+                    """Get the model coefficients.
+                    
+                    Returns:
+                        The coefficients of the underlying linear model.
+                    """
                     return self.model.coef_
             
             model = PolynomialModel(model, poly_features)

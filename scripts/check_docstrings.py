@@ -33,7 +33,8 @@ def check_docstrings():
                         # Check if first statement is a docstring
                         has_doc = (node.body and 
                                   isinstance(node.body[0], ast.Expr) and 
-                                  isinstance(node.body[0].value, (ast.Str, ast.Constant)))
+                                  isinstance(node.body[0].value, ast.Constant) and
+                                  isinstance(node.body[0].value.value, str))
                         if not has_doc:
                             undocumented_classes.append((filepath, node.lineno, node.name))
                     
@@ -44,7 +45,8 @@ def check_docstrings():
                         # Check if first statement is a docstring
                         has_doc = (node.body and 
                                   isinstance(node.body[0], ast.Expr) and 
-                                  isinstance(node.body[0].value, (ast.Str, ast.Constant)))
+                                  isinstance(node.body[0].value, ast.Constant) and
+                                  isinstance(node.body[0].value.value, str))
                         if not has_doc:
                             undocumented_functions.append((filepath, node.lineno, node.name))
             except Exception as e:

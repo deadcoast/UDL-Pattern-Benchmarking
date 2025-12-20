@@ -1,0 +1,4 @@
+# file: /Users/deadcoast/github/continuous-thought-machines/udl_rating_framework/validation/docstring_validator.py
+# hypothesis_version: 6.148.7
+
+['.', '.py', '/', '\\$([^$]+)\\$', '_', '__init__', '__main__', '__module__', '__name__', '__path__', '__pycache__', 'array', 'bool', 'boolean', 'class', 'cls', 'decimal', 'dict', 'dictionary', 'extra_param', 'float', 'function', 'int', 'integer', 'list', 'mapping', 'missing_param', 'none', 'nothing', 'null', 'number', 'self', 'sequence', 'str', 'string', 'text', 'type_mismatch', 'udl_rating_framework']
