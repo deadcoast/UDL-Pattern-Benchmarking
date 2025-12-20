@@ -321,11 +321,11 @@ This implementation plan focuses on validating documentation against source code
     - Run `docker build` on Dockerfile
     - Fix any build errors
     - _Requirements: 12.1_
-  - [-] 18.2 Validate Kubernetes manifests
+  - [x] 18.2 Validate Kubernetes manifests
     - Run `kubectl --dry-run` on manifests
     - Fix any validation errors
     - _Requirements: 12.2_
-  - [ ] 18.3 Verify API documentation matches endpoints
+  - [x] 18.3 Verify API documentation matches endpoints
     - Compare documented endpoints to FastAPI routes
     - Update documentation for changed endpoints
     - **Property 24: API Endpoint Documentation**
