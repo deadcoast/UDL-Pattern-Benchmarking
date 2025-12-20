@@ -5,10 +5,11 @@ Provides formal representation of UDL structure for mathematical analysis.
 """
 
 import re
-import networkx as nx
-from typing import List, Dict, Set, Any, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any, Dict, List, Optional, Set, Tuple
+
+import networkx as nx
 
 
 class TokenType(Enum):
@@ -48,7 +49,8 @@ class Constraint:
     def __post_init__(self):
         # Convert dict to tuple of tuples for hashability
         if isinstance(self.metadata, dict):
-            object.__setattr__(self, "metadata", tuple(sorted(self.metadata.items())))
+            object.__setattr__(self, "metadata", tuple(
+                sorted(self.metadata.items())))
 
     def get_metadata_dict(self) -> Dict[str, Any]:
         """Convert metadata back to dict for easier access."""
@@ -70,7 +72,7 @@ class AST:
 
     def __init__(self, node_type: str, value: Any = None, children: List["AST"] = None):
         """Initialize an AST node.
-        
+
         Args:
             node_type: The type of this AST node (e.g., 'rule', 'terminal').
             value: The value associated with this node.
@@ -92,55 +94,49 @@ class UDLTokenizer:
     # Common UDL patterns - enhanced for multiple formats
     TOKEN_PATTERNS = [
         # Special tokens (must come before comments)
-        (r"%%", TokenType.DELIMITER),        # Yacc/Bison section separator
+        (r"%%", TokenType.DELIMITER),  # Yacc/Bison section separator
         (r"%[a-zA-Z_][a-zA-Z0-9_]*", TokenType.KEYWORD),  # Yacc directives
         (r"@[a-zA-Z_][a-zA-Z0-9_]*", TokenType.KEYWORD),  # ANTLR annotations
-        
         # Comments (various formats)
         (r"//.*", TokenType.COMMENT),  # C++ style comments (ANTLR, etc.)
         (r"/\*.*?\*/", TokenType.COMMENT),  # C style block comments
         (r"#.*", TokenType.COMMENT),  # Shell/Python style comments
-        (r"%.*", TokenType.COMMENT),  # Yacc/Bison comments (catch-all for other % patterns)$', TokenType.COMMENT),  # Comments
+        (
+            r"%.*",
+            TokenType.COMMENT,
+        ),  # Yacc/Bison comments (catch-all for other % patterns)$', TokenType.COMMENT),  # Comments
         (r"\n", TokenType.NEWLINE),  # Newlines
         (r"\s+", TokenType.WHITESPACE),  # Whitespace
-        
         # Assignment/production operators (various formats)
-        (r"<-", TokenType.OPERATOR),   # PEG (must come before individual < and -)
+        (r"<-", TokenType.OPERATOR),  # PEG (must come before individual < and -)
         (r"::=", TokenType.OPERATOR),  # EBNF/BNF
-        (r":=", TokenType.OPERATOR),   # Some DSL formats
-        (r"->", TokenType.OPERATOR),   # ANTLR
-        (r"=", TokenType.OPERATOR),    # Simple assignment
-        (r":", TokenType.OPERATOR),    # Yacc/Bison
-        
+        (r":=", TokenType.OPERATOR),  # Some DSL formats
+        (r"->", TokenType.OPERATOR),  # ANTLR
+        (r"=", TokenType.OPERATOR),  # Simple assignment
+        (r":", TokenType.OPERATOR),  # Yacc/Bison
         # Alternation and grouping
-        (r"\|", TokenType.OPERATOR),   # Alternation
-        (r"/", TokenType.OPERATOR),    # PEG ordered choice
-        
+        (r"\|", TokenType.OPERATOR),  # Alternation
+        (r"/", TokenType.OPERATOR),  # PEG ordered choice
         # Brackets and delimiters
         (r"[(){}[\]]", TokenType.DELIMITER),  # Standard brackets
         (r"<>", TokenType.DELIMITER),  # Angle brackets (some formats)
-        
         # Repetition and quantifiers
         (r"[*+?]", TokenType.OPERATOR),  # Standard repetition
-        (r"\.\.\.", TokenType.OPERATOR), # Ellipsis (some formats)
-        (r"~", TokenType.OPERATOR),      # PEG not-predicate
-        (r"&", TokenType.OPERATOR),      # PEG and-predicate
-        (r"!", TokenType.OPERATOR),      # Negation/not
-        
+        (r"\.\.\.", TokenType.OPERATOR),  # Ellipsis (some formats)
+        (r"~", TokenType.OPERATOR),  # PEG not-predicate
+        (r"&", TokenType.OPERATOR),  # PEG and-predicate
+        (r"!", TokenType.OPERATOR),  # Negation/not
         # String literals (various quote styles)
-        (r'"[^"]*"', TokenType.LITERAL),     # Double quotes
-        (r"'[^']*'", TokenType.LITERAL),     # Single quotes
-        (r"`[^`]*`", TokenType.LITERAL),     # Backticks (some formats)
-        
-
-        
+        (r'"[^"]*"', TokenType.LITERAL),  # Double quotes
+        (r"'[^']*'", TokenType.LITERAL),  # Single quotes
+        (r"`[^`]*`", TokenType.LITERAL),  # Backticks (some formats)
         # Identifiers and keywords
         (r"[a-zA-Z_][a-zA-Z0-9_]*", TokenType.IDENTIFIER),  # Standard identifiers
-        (r"[0-9]+", TokenType.LITERAL),      # Numbers
-        (r"\$[0-9]+", TokenType.IDENTIFIER), # Yacc/Bison positional parameters
-        
+        (r"[0-9]+", TokenType.LITERAL),  # Numbers
+        # Yacc/Bison positional parameters
+        (r"\$[0-9]+", TokenType.IDENTIFIER),
         # Catch-all for other operators
-        (r"[^\s\w]", TokenType.OPERATOR)
+        (r"[^\s\w]", TokenType.OPERATOR),
     ]
 
     def __init__(self):
@@ -236,7 +232,7 @@ class UDLTokenizer:
 
 class GrammarFormat(Enum):
     """Supported grammar format types."""
-    
+
     GENERIC = "generic"
     ANTLR = "antlr"
     PEG = "peg"
@@ -257,7 +253,7 @@ class UDLRepresentation:
     - G: Grammar graph G = (V, E) with vertices V (non-terminals) and edges E (production rules)
     - S: Semantic mapping S: T → Semantics
     - R: Set of constraints/rules
-    
+
     Enhanced for Task 26: Support for multiple grammar formats including
     ANTLR (.g4), PEG (.peg), Yacc/Bison (.y, .yacc), EBNF variants, and Railroad diagrams.
     """
@@ -267,7 +263,7 @@ class UDLRepresentation:
         self.source_text = source_text
         self.file_path = file_path
         self.tokenizer = UDLTokenizer()
-        
+
         # Detect grammar format based on file extension and content
         self.format = self._detect_format()
 
@@ -297,7 +293,7 @@ class UDLRepresentation:
     def get_grammar_rules(self) -> List[GrammarRule]:
         """Return extracted grammar rules."""
         return self._grammar_rules
-    
+
     def get_format(self) -> GrammarFormat:
         """Return detected grammar format."""
         return self.format
@@ -305,58 +301,67 @@ class UDLRepresentation:
     def _detect_format(self) -> GrammarFormat:
         """
         Detect grammar format based on file extension and content patterns.
-        
+
         Returns:
             GrammarFormat enum value
         """
         from pathlib import Path
-        
+
         file_path = Path(self.file_path)
         extension = file_path.suffix.lower()
-        
+
         # Format detection based on file extension
         extension_map = {
-            '.g4': GrammarFormat.ANTLR,
-            '.peg': GrammarFormat.PEG,
-            '.y': GrammarFormat.YACC_BISON,
-            '.yacc': GrammarFormat.YACC_BISON,
-            '.ebnf': GrammarFormat.EBNF,
-            '.bnf': GrammarFormat.BNF,
-            '.abnf': GrammarFormat.ABNF,
-            '.xbnf': GrammarFormat.EBNF,
-            '.wsn': GrammarFormat.EBNF,
-            '.wirth': GrammarFormat.EBNF,
-            '.rr': GrammarFormat.RAILROAD,
-            '.railroad': GrammarFormat.RAILROAD,
+            ".g4": GrammarFormat.ANTLR,
+            ".peg": GrammarFormat.PEG,
+            ".y": GrammarFormat.YACC_BISON,
+            ".yacc": GrammarFormat.YACC_BISON,
+            ".ebnf": GrammarFormat.EBNF,
+            ".bnf": GrammarFormat.BNF,
+            ".abnf": GrammarFormat.ABNF,
+            ".xbnf": GrammarFormat.EBNF,
+            ".wsn": GrammarFormat.EBNF,
+            ".wirth": GrammarFormat.EBNF,
+            ".rr": GrammarFormat.RAILROAD,
+            ".railroad": GrammarFormat.RAILROAD,
         }
-        
+
         if extension in extension_map:
             return extension_map[extension]
-        
+
         # Content-based detection for generic extensions
         content_lower = self.source_text.lower()
-        
+
         # ANTLR patterns (very specific to avoid false positives in comments)
-        if any(pattern in content_lower for pattern in ['@lexer', '@parser', 'lexer grammar', 'parser grammar']) or \
-           (content_lower.startswith('grammar ') or '\ngrammar ' in content_lower):
+        if any(
+            pattern in content_lower
+            for pattern in ["@lexer", "@parser", "lexer grammar", "parser grammar"]
+        ) or (content_lower.startswith("grammar ") or "\ngrammar " in content_lower):
             return GrammarFormat.ANTLR
-        
+
         # Yacc/Bison patterns
-        if any(pattern in self.source_text for pattern in ['%%', '%token', '%type', '%start']):
+        if any(
+            pattern in self.source_text
+            for pattern in ["%%", "%token", "%type", "%start"]
+        ):
             return GrammarFormat.YACC_BISON
-        
+
         # EBNF patterns (check before PEG since ::= is more specific to EBNF)
-        if '::=' in self.source_text:
+        if "::=" in self.source_text:
             return GrammarFormat.EBNF
-        
+
         # PEG patterns (more specific patterns to avoid false positives)
-        if '<-' in self.source_text or ('&' in self.source_text and '~' in self.source_text):
+        if "<-" in self.source_text or (
+            "&" in self.source_text and "~" in self.source_text
+        ):
             return GrammarFormat.PEG
-        
+
         # ABNF patterns (RFC 5234)
-        if any(pattern in content_lower for pattern in ['abnf', 'rfc', 'vchar', 'alpha']):
+        if any(
+            pattern in content_lower for pattern in ["abnf", "rfc", "vchar", "alpha"]
+        ):
             return GrammarFormat.ABNF
-        
+
         # Default to generic
         return GrammarFormat.GENERIC
 
@@ -406,7 +411,7 @@ class UDLRepresentation:
             return self._extract_railroad_rules()
         else:
             return self._extract_generic_rules()
-    
+
     def _extract_generic_rules(self) -> List[GrammarRule]:
         """Extract grammar rules using generic pattern matching."""
         rules = []
@@ -419,7 +424,13 @@ class UDLRepresentation:
         ]
 
         while i < len(tokens):
-            if i + 2 < len(tokens) and tokens[i + 1].text in ["::=", ":=", "=", "->", ":"]:
+            if i + 2 < len(tokens) and tokens[i + 1].text in [
+                "::=",
+                ":=",
+                "=",
+                "->",
+                ":",
+            ]:
                 # Found a production rule
                 lhs = tokens[i].text
                 operator = tokens[i + 1].text
@@ -428,199 +439,236 @@ class UDLRepresentation:
                 rhs = []
                 i += 2
                 while i < len(tokens) and not (
-                    i + 1 < len(tokens) and tokens[i + 1].text in ["::=", ":=", "=", "->", ":"]
+                    i + 1 < len(tokens)
+                    and tokens[i + 1].text in ["::=", ":=", "=", "->", ":"]
                 ):
                     if tokens[i].type != TokenType.EOF:
                         rhs.append(tokens[i].text)
                     i += 1
 
                 rule = GrammarRule(
-                    lhs=lhs, rhs=rhs, constraints=[], 
-                    metadata={"operator": operator, "format": "generic"}
+                    lhs=lhs,
+                    rhs=rhs,
+                    constraints=[],
+                    metadata={"operator": operator, "format": "generic"},
                 )
                 rules.append(rule)
             else:
                 i += 1
 
         return rules
-    
+
     def _extract_antlr_rules(self) -> List[GrammarRule]:
         """Extract ANTLR grammar rules (.g4 format)."""
         rules = []
-        tokens = [t for t in self._tokens if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE]]
+        tokens = [
+            t
+            for t in self._tokens
+            if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE]
+        ]
         i = 0
-        
+
         while i < len(tokens):
             # Look for rule pattern: identifier : alternatives ;
-            if (i + 2 < len(tokens) and 
-                tokens[i].type == TokenType.IDENTIFIER and 
-                tokens[i + 1].text == ":"):
-                
+            if (
+                i + 2 < len(tokens)
+                and tokens[i].type == TokenType.IDENTIFIER
+                and tokens[i + 1].text == ":"
+            ):
                 lhs = tokens[i].text
                 i += 2  # Skip identifier and ':'
-                
+
                 # Collect alternatives until semicolon
                 rhs = []
                 while i < len(tokens) and tokens[i].text != ";":
                     if tokens[i].type != TokenType.COMMENT:
                         rhs.append(tokens[i].text)
                     i += 1
-                
+
                 rule = GrammarRule(
-                    lhs=lhs, rhs=rhs, constraints=[],
-                    metadata={"operator": ":", "format": "antlr"}
+                    lhs=lhs,
+                    rhs=rhs,
+                    constraints=[],
+                    metadata={"operator": ":", "format": "antlr"},
                 )
                 rules.append(rule)
-            
+
             i += 1
-        
+
         return rules
-    
+
     def _extract_peg_rules(self) -> List[GrammarRule]:
         """Extract PEG grammar rules (.peg format)."""
         rules = []
-        tokens = [t for t in self._tokens if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE]]
+        tokens = [
+            t
+            for t in self._tokens
+            if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE]
+        ]
         i = 0
-        
+
         while i < len(tokens):
             # Look for rule pattern: identifier <- expression
-            if (i + 1 < len(tokens) and 
-                tokens[i].type == TokenType.IDENTIFIER and 
-                i + 1 < len(tokens) and tokens[i + 1].text == "<-"):
-                
+            if (
+                i + 1 < len(tokens)
+                and tokens[i].type == TokenType.IDENTIFIER
+                and i + 1 < len(tokens)
+                and tokens[i + 1].text == "<-"
+            ):
                 lhs = tokens[i].text
                 i += 2  # Skip identifier and '<-'
-                
+
                 # Collect expression until next rule or EOF
                 rhs = []
                 while i < len(tokens) and not (
-                    tokens[i].type == TokenType.IDENTIFIER and 
-                    i + 1 < len(tokens) and 
-                    tokens[i + 1].text == "<-"
+                    tokens[i].type == TokenType.IDENTIFIER
+                    and i + 1 < len(tokens)
+                    and tokens[i + 1].text == "<-"
                 ):
                     if tokens[i].type not in [TokenType.COMMENT, TokenType.EOF]:
                         rhs.append(tokens[i].text)
                     i += 1
-                
+
                 rule = GrammarRule(
-                    lhs=lhs, rhs=rhs, constraints=[],
-                    metadata={"operator": "<-", "format": "peg"}
+                    lhs=lhs,
+                    rhs=rhs,
+                    constraints=[],
+                    metadata={"operator": "<-", "format": "peg"},
                 )
                 rules.append(rule)
             else:
                 i += 1
-        
+
         return rules
-    
+
     def _extract_yacc_rules(self) -> List[GrammarRule]:
         """Extract Yacc/Bison grammar rules (.y, .yacc format)."""
         rules = []
-        tokens = [t for t in self._tokens if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE]]
+        tokens = [
+            t
+            for t in self._tokens
+            if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE]
+        ]
         i = 0
-        
+
         # Skip header section (until %%)
         while i < len(tokens) and tokens[i].text != "%%":
             i += 1
         if i < len(tokens):
             i += 1  # Skip %%
-        
+
         while i < len(tokens):
             # Look for rule pattern: identifier : alternatives ;
-            if (i + 1 < len(tokens) and 
-                tokens[i].type == TokenType.IDENTIFIER and 
-                i + 1 < len(tokens) and tokens[i + 1].text == ":"):
-                
+            if (
+                i + 1 < len(tokens)
+                and tokens[i].type == TokenType.IDENTIFIER
+                and i + 1 < len(tokens)
+                and tokens[i + 1].text == ":"
+            ):
                 lhs = tokens[i].text
                 i += 2  # Skip identifier and ':'
-                
+
                 # Collect alternatives until semicolon
                 rhs = []
                 while i < len(tokens) and tokens[i].text != ";":
                     if tokens[i].type not in [TokenType.COMMENT, TokenType.EOF]:
                         rhs.append(tokens[i].text)
                     i += 1
-                
+
                 rule = GrammarRule(
-                    lhs=lhs, rhs=rhs, constraints=[],
-                    metadata={"operator": ":", "format": "yacc"}
+                    lhs=lhs,
+                    rhs=rhs,
+                    constraints=[],
+                    metadata={"operator": ":", "format": "yacc"},
                 )
                 rules.append(rule)
-                
+
                 # Skip the semicolon
                 if i < len(tokens) and tokens[i].text == ";":
                     i += 1
             else:
                 i += 1
-        
+
         return rules
-    
+
     def _extract_bnf_ebnf_rules(self) -> List[GrammarRule]:
         """Extract BNF/EBNF grammar rules."""
         rules = []
-        tokens = [t for t in self._tokens if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE]]
+        tokens = [
+            t
+            for t in self._tokens
+            if t.type not in [TokenType.WHITESPACE, TokenType.NEWLINE]
+        ]
         i = 0
-        
+
         # Valid operators for BNF/EBNF rules
         valid_operators = ["::=", ":=", "="]
-        
+
         while i < len(tokens):
             # Look for rule patterns: identifier ::= expression OR identifier := expression OR identifier = expression (ABNF)
-            if (i + 1 < len(tokens) and 
-                tokens[i].type == TokenType.IDENTIFIER and 
-                i + 1 < len(tokens) and tokens[i + 1].text in valid_operators):
-                
+            if (
+                i + 1 < len(tokens)
+                and tokens[i].type == TokenType.IDENTIFIER
+                and i + 1 < len(tokens)
+                and tokens[i + 1].text in valid_operators
+            ):
                 lhs = tokens[i].text
                 operator = tokens[i + 1].text
                 i += 2  # Skip identifier and operator
-                
+
                 # Collect expression until next rule or EOF
                 rhs = []
                 while i < len(tokens) and not (
-                    tokens[i].type == TokenType.IDENTIFIER and 
-                    i + 1 < len(tokens) and 
-                    tokens[i + 1].text in valid_operators
+                    tokens[i].type == TokenType.IDENTIFIER
+                    and i + 1 < len(tokens)
+                    and tokens[i + 1].text in valid_operators
                 ):
                     if tokens[i].type not in [TokenType.COMMENT, TokenType.EOF]:
                         rhs.append(tokens[i].text)
                     i += 1
-                
+
                 rule = GrammarRule(
-                    lhs=lhs, rhs=rhs, constraints=[],
-                    metadata={"operator": operator, "format": self.format.value}
+                    lhs=lhs,
+                    rhs=rhs,
+                    constraints=[],
+                    metadata={"operator": operator,
+                              "format": self.format.value},
                 )
                 rules.append(rule)
             else:
                 i += 1
-        
+
         return rules
-    
+
     def _extract_railroad_rules(self) -> List[GrammarRule]:
         """Extract rules from railroad diagram format (simplified text representation)."""
         # Railroad diagrams are typically visual, but we can parse text descriptions
         rules = []
-        lines = self.source_text.split('\n')
-        
+        lines = self.source_text.split("\n")
+
         for line in lines:
             line = line.strip()
-            if not line or line.startswith('#'):
+            if not line or line.startswith("#"):
                 continue
-            
+
             # Look for patterns like "rule_name: description"
-            if ':' in line:
-                parts = line.split(':', 1)
+            if ":" in line:
+                parts = line.split(":", 1)
                 if len(parts) == 2:
                     lhs = parts[0].strip()
                     rhs_text = parts[1].strip()
-                    
+
                     # Simple tokenization of RHS
                     rhs = rhs_text.split() if rhs_text else []
-                    
+
                     rule = GrammarRule(
-                        lhs=lhs, rhs=rhs, constraints=[],
-                        metadata={"operator": ":", "format": "railroad"}
+                        lhs=lhs,
+                        rhs=rhs,
+                        constraints=[],
+                        metadata={"operator": ":", "format": "railroad"},
                     )
                     rules.append(rule)
-        
+
         return rules
 
     def _build_grammar_graph(self) -> nx.DiGraph:
@@ -650,13 +698,16 @@ class UDLRepresentation:
 
         for token in self._tokens:
             if token.type == TokenType.IDENTIFIER:
-                semantic_map[token] = {"type": "symbol", "category": "non_terminal"}
+                semantic_map[token] = {
+                    "type": "symbol", "category": "non_terminal"}
             elif token.type == TokenType.LITERAL:
                 semantic_map[token] = {"type": "terminal", "value": token.text}
             elif token.type == TokenType.OPERATOR:
-                semantic_map[token] = {"type": "operator", "function": token.text}
+                semantic_map[token] = {
+                    "type": "operator", "function": token.text}
             elif token.type == TokenType.KEYWORD:
-                semantic_map[token] = {"type": "keyword", "meaning": token.text}
+                semantic_map[token] = {
+                    "type": "keyword", "meaning": token.text}
 
         return semantic_map
 
@@ -669,7 +720,8 @@ class UDLRepresentation:
             if token.type == TokenType.COMMENT:
                 # Simple constraint extraction from comments
                 if "constraint:" in token.text.lower():
-                    constraint_text = token.text.split("constraint:", 1)[1].strip()
+                    constraint_text = token.text.split(
+                        "constraint:", 1)[1].strip()
                     constraint = Constraint(
                         type="comment_constraint",
                         condition=constraint_text,
