@@ -390,7 +390,6 @@ def is_main_process(rank):
 
 
 if __name__ == "__main__":
-
     args = parse_args()
 
     rank, world_size, local_rank = setup_ddp()
@@ -767,7 +766,6 @@ if __name__ == "__main__":
     iterator = iter(trainloader)
 
     for bi in range(start_iter, args.training_iterations):
-
         # Set sampler epoch (important for shuffling in DistributedSampler)
         if not args.use_custom_sampler and hasattr(train_sampler, "set_epoch"):
             train_sampler.set_epoch(bi)
@@ -855,22 +853,20 @@ if __name__ == "__main__":
                 where_certain_tensor = (
                     where_most_certain.float()
                 )  # Use rank 0's tensor for stats
-                pbar_desc = f"Timing; d={(time_end_data-time_start_data):0.3f}, f={(time_end_forward-time_start_forward):0.3f}, b={(time_end_backward-time_start_backward):0.3f}. Loss(avg)={loss_log.item():.3f} Acc(loc)={accuracy_local:.3f} LR={current_lr:.6f} WhereCert(loc)={where_certain_tensor.mean().item():.2f}"
+                pbar_desc = f"Timing; d={(time_end_data - time_start_data):0.3f}, f={(time_end_forward - time_start_forward):0.3f}, b={(time_end_backward - time_start_backward):0.3f}. Loss(avg)={loss_log.item():.3f} Acc(loc)={accuracy_local:.3f} LR={current_lr:.6f} WhereCert(loc)={where_certain_tensor.mean().item():.2f}"
             elif args.model == "ff":
                 accuracy_local = (
                     (predictions.argmax(1) == targets).float().mean().item()
                 )
-                pbar_desc = f"Timing; d={(time_end_data-time_start_data):0.3f}, f={(time_end_forward-time_start_forward):0.3f}, b={(time_end_backward-time_start_backward):0.3f}. Loss(avg)={loss_log.item():.3f} Acc(loc)={accuracy_local:.3f} LR={current_lr:.6f}"
+                pbar_desc = f"Timing; d={(time_end_data - time_start_data):0.3f}, f={(time_end_forward - time_start_forward):0.3f}, b={(time_end_backward - time_start_backward):0.3f}. Loss(avg)={loss_log.item():.3f} Acc(loc)={accuracy_local:.3f} LR={current_lr:.6f}"
 
             pbar.set_description(f"{args.model.upper()} {pbar_desc}")
         # --- End Aggregation and Logging ---
 
         # --- Evaluation and Plotting (Rank 0 + Aggregation) ---
         if bi % args.track_every == 0 and (bi != 0 or args.reload_model_only):
-
             model.eval()
             with torch.inference_mode():
-
                 # --- Distributed Evaluation ---
                 iters.append(bi)
 

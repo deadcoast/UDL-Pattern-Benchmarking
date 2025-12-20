@@ -20,7 +20,6 @@ def make_qamnist_gif(
     filename,
     question_readable=None,
 ):
-
     # Config
     batch_index = 0
     n_neurons_to_visualise = 16

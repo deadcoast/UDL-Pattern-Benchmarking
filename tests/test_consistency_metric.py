@@ -125,9 +125,9 @@ class TestConsistencyMetricProperties:
             )
 
             # Verify boundedness
-            assert (
-                0.0 <= computed_score <= 1.0
-            ), f"Consistency score {computed_score} not in [0,1] for case ({num_rules}, {num_cycles}, {num_contradictions})"
+            assert 0.0 <= computed_score <= 1.0, (
+                f"Consistency score {computed_score} not in [0,1] for case ({num_rules}, {num_cycles}, {num_contradictions})"
+            )
 
 
 class TestConsistencyMetricUnits:
@@ -172,9 +172,9 @@ class TestConsistencyMetricUnits:
         # Should detect the contradiction between 'true' and 'false'
         # Formula: 1 - (1 + 0) / (2 + 1) = 1 - 1/3 = 2/3 ≈ 0.667
         expected_score = 1.0 - (1 + 0) / (2 + 1)
-        assert (
-            abs(score - expected_score) < 1e-6
-        ), f"Expected consistency {expected_score}, got {score}"
+        assert abs(score - expected_score) < 1e-6, (
+            f"Expected consistency {expected_score}, got {score}"
+        )
 
     def test_grammar_with_known_cycles(self):
         """Test on UDL with known cycles."""
@@ -190,9 +190,9 @@ class TestConsistencyMetricUnits:
         # Should detect the cycle between expr and term
         # Formula: 1 - (0 + 1) / (2 + 1) = 1 - 1/3 = 2/3 ≈ 0.667
         expected_score = 1.0 - (0 + 1) / (2 + 1)
-        assert (
-            abs(score - expected_score) < 1e-6
-        ), f"Expected consistency {expected_score}, got {score}"
+        assert abs(score - expected_score) < 1e-6, (
+            f"Expected consistency {expected_score}, got {score}"
+        )
 
     def test_grammar_with_cycles_and_contradictions(self):
         """Test on UDL with both cycles and contradictions."""
@@ -210,9 +210,9 @@ class TestConsistencyMetricUnits:
         # Should detect 1 cycle and 1 contradiction
         # Formula: 1 - (1 + 1) / (4 + 1) = 1 - 2/5 = 3/5 = 0.6
         expected_score = 1.0 - (1 + 1) / (4 + 1)
-        assert (
-            abs(score - expected_score) < 1e-6
-        ), f"Expected consistency {expected_score}, got {score}"
+        assert abs(score - expected_score) < 1e-6, (
+            f"Expected consistency {expected_score}, got {score}"
+        )
 
     def test_cycle_detection_method(self):
         """Test the cycle detection method directly."""
@@ -237,9 +237,9 @@ class TestConsistencyMetricUnits:
             cycle_nodes.update(cycle)
 
         expected_cycle_nodes = {"A", "B", "C"}
-        assert expected_cycle_nodes.issubset(
-            cycle_nodes
-        ), f"Expected cycle nodes {expected_cycle_nodes} not found in {cycle_nodes}"
+        assert expected_cycle_nodes.issubset(cycle_nodes), (
+            f"Expected cycle nodes {expected_cycle_nodes} not found in {cycle_nodes}"
+        )
 
     def test_contradiction_detection_method(self):
         """Test the contradiction detection method directly."""
@@ -255,9 +255,9 @@ class TestConsistencyMetricUnits:
         contradictions = metric.find_contradictions(rules)
 
         # Should find contradiction between 'true' and 'false' rules
-        assert (
-            len(contradictions) >= 1
-        ), f"Expected at least 1 contradiction, found {len(contradictions)}"
+        assert len(contradictions) >= 1, (
+            f"Expected at least 1 contradiction, found {len(contradictions)}"
+        )
 
         # Verify the contradiction involves the expected rules
         contradiction_lhs = set()
@@ -265,9 +265,9 @@ class TestConsistencyMetricUnits:
             contradiction_lhs.add(rule1.lhs)
             contradiction_lhs.add(rule2.lhs)
 
-        assert (
-            "value" in contradiction_lhs
-        ), f"Expected 'value' in contradiction LHS, got {contradiction_lhs}"
+        assert "value" in contradiction_lhs, (
+            f"Expected 'value' in contradiction LHS, got {contradiction_lhs}"
+        )
 
     def test_metric_properties(self):
         """Test that the metric reports correct mathematical properties."""
@@ -287,9 +287,9 @@ class TestConsistencyMetricUnits:
         expected_formula = (
             r"Consistency(U) = 1 - \frac{|Contradictions| + |Cycles|}{|Rules| + 1}"
         )
-        assert (
-            formula == expected_formula
-        ), f"Expected formula {expected_formula}, got {formula}"
+        assert formula == expected_formula, (
+            f"Expected formula {expected_formula}, got {formula}"
+        )
 
     def test_boundedness_verification(self):
         """Test that the metric satisfies boundedness property."""
@@ -306,14 +306,14 @@ class TestConsistencyMetricUnits:
             udl = UDLRepresentation(udl_text, "test.udl")
             score = metric.compute(udl)
 
-            assert (
-                0.0 <= score <= 1.0
-            ), f"Score {score} not in [0,1] for UDL: {repr(udl_text)}"
+            assert 0.0 <= score <= 1.0, (
+                f"Score {score} not in [0,1] for UDL: {repr(udl_text)}"
+            )
 
             # Also test the verification method
-            assert metric.verify_boundedness(
-                udl
-            ), f"Boundedness verification failed for UDL: {repr(udl_text)}"
+            assert metric.verify_boundedness(udl), (
+                f"Boundedness verification failed for UDL: {repr(udl_text)}"
+            )
 
     def test_determinism_verification(self):
         """Test that the metric satisfies determinism property."""

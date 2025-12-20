@@ -211,7 +211,6 @@ def run_umap(model, testloader):
 
 
 def run_model_and_make_gif(checkpoint_path, save_path, device):
-
     parity_sequence_length = 64
     iterations = 75
 
@@ -253,7 +252,6 @@ def run_model_and_make_gif(checkpoint_path, save_path, device):
 
 
 if __name__ == "__main__":
-
     CHECKPOINT_PATH = "checkpoints/parity/run1/ctm_75_25/checkpoint_200000.pt"
     SAVE_PATH = f"tasks/parity/analysis/outputs/blog_gifs/"
     os.makedirs(SAVE_PATH, exist_ok=True)

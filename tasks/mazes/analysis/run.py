@@ -159,7 +159,7 @@ def _load_ctm_model(checkpoint_path, device):
 
     # Handle legacy arguments for model_args
     if not hasattr(model_args, "backbone_type") and hasattr(model_args, "resnet_type"):
-        model_args.backbone_type = f'{model_args.resnet_type}-{getattr(model_args, "resnet_feature_scales", [4])[-1]}'
+        model_args.backbone_type = f"{model_args.resnet_type}-{getattr(model_args, 'resnet_feature_scales', [4])[-1]}"
 
     # Ensure prediction_reshaper is derived correctly
     # Assuming out_dims exists and is used for this
@@ -639,7 +639,6 @@ if __name__ == "__main__":
                     and stepi < attention_tracking.shape[0]
                     and maze_i < attention_tracking.shape[1]
                 ):
-
                     # Attention for current step (stepi) and current maze in batch (maze_i), average over heads
                     attn = attention_tracking[stepi, maze_i].mean(0)
                     attn_resized = cv2.resize(

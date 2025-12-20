@@ -109,7 +109,9 @@ class RatingPipeline:
             self.udl_cache = None
             self.metric_cache = None
 
-        logger.info(f"Initialized pipeline with metrics: {metric_names}, caching: {enable_caching}")
+        logger.info(
+            f"Initialized pipeline with metrics: {metric_names}, caching: {enable_caching}"
+        )
 
     def compute_rating(self, udl: UDLRepresentation) -> QualityReport:
         """
@@ -175,7 +177,7 @@ class RatingPipeline:
                     # Compute metric value if not cached
                     if value is None:
                         value = metric.compute(udl)
-                        
+
                         # Cache the result if enabled
                         if self.enable_caching and self.metric_cache and udl_hash:
                             self.metric_cache.put_metric(udl_hash, name, value)
@@ -348,7 +350,7 @@ class RatingPipeline:
         reports = []
         for i, udl in enumerate(udls):
             try:
-                logger.debug(f"Processing UDL {i+1}/{len(udls)}: {udl.file_path}")
+                logger.debug(f"Processing UDL {i + 1}/{len(udls)}: {udl.file_path}")
                 report = self.compute_rating(udl)
                 reports.append(report)
             except Exception as e:
@@ -456,15 +458,15 @@ class RatingPipeline:
     def _compute_udl_hash(self, udl: UDLRepresentation) -> str:
         """
         Compute hash of UDL for caching.
-        
+
         Args:
             udl: UDL representation
-            
+
         Returns:
             SHA-256 hash of UDL content
         """
         content = udl.source_text + str(udl.file_path)
-        return hashlib.sha256(content.encode('utf-8')).hexdigest()
+        return hashlib.sha256(content.encode("utf-8")).hexdigest()
 
     def clear_caches(self) -> None:
         """Clear all caches used by this pipeline."""
@@ -479,13 +481,13 @@ class RatingPipeline:
         """Get cache statistics."""
         if not self.enable_caching:
             return {"caching_enabled": False}
-        
+
         stats = {"caching_enabled": True}
-        
+
         if self.udl_cache:
             stats["udl_cache"] = self.udl_cache.get_stats()
-        
+
         if self.metric_cache:
             stats["metric_cache"] = self.metric_cache.get_stats()
-        
+
         return stats

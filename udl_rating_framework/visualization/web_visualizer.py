@@ -18,32 +18,32 @@ from ..core.representation import UDLRepresentation
 class WebVisualizer:
     """
     Creates interactive web-based visualizations for UDL analysis.
-    
+
     Generates HTML pages with embedded D3.js visualizations for:
     - Interactive grammar graphs
     - Real-time metric computation
     - CTM processing animations
     - Grammar dependency flows
     """
-    
+
     def __init__(self, output_dir: str = "visualizations"):
         """
         Initialize web visualizer.
-        
+
         Args:
             output_dir: Directory to save HTML visualizations
         """
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True)
-        
+
         # Copy static assets (D3.js, CSS, etc.)
         self._setup_static_assets()
-    
+
     def _setup_static_assets(self):
         """Set up static assets for web visualizations."""
         static_dir = self.output_dir / "static"
         static_dir.mkdir(exist_ok=True)
-        
+
         # Create CSS file for styling
         css_content = """
         body {
@@ -162,20 +162,20 @@ class WebVisualizer:
             transition: width 0.3s ease;
         }
         """
-        
+
         with open(static_dir / "style.css", "w") as f:
             f.write(css_content)
-    
-    def create_interactive_grammar_graph(self, 
-                                       udl: UDLRepresentation,
-                                       save_path: Optional[str] = None) -> str:
+
+    def create_interactive_grammar_graph(
+        self, udl: UDLRepresentation, save_path: Optional[str] = None
+    ) -> str:
         """
         Create interactive 3D grammar graph visualization.
-        
+
         Args:
             udl: UDL representation with grammar graph
             save_path: Optional path to save HTML file
-            
+
         Returns:
             Path to generated HTML file
         """
@@ -183,51 +183,55 @@ class WebVisualizer:
             save_path = self.output_dir / "grammar_graph.html"
         else:
             save_path = Path(save_path)
-        
+
         # Extract graph data
         graph = udl.get_grammar_graph()
-        
+
         # Convert NetworkX graph to D3.js format
         nodes = []
         links = []
-        
+
         # Create nodes
         for node_id, node_data in graph.nodes(data=True):
-            nodes.append({
-                "id": str(node_id),
-                "label": str(node_id),
-                "type": node_data.get("type", "unknown"),
-                "size": len(str(node_id)) * 2 + 10,
-                "color": self._get_node_color(node_data.get("type", "unknown"))
-            })
-        
+            nodes.append(
+                {
+                    "id": str(node_id),
+                    "label": str(node_id),
+                    "type": node_data.get("type", "unknown"),
+                    "size": len(str(node_id)) * 2 + 10,
+                    "color": self._get_node_color(node_data.get("type", "unknown")),
+                }
+            )
+
         # Create links
         for source, target, edge_data in graph.edges(data=True):
-            links.append({
-                "source": str(source),
-                "target": str(target),
-                "weight": edge_data.get("weight", 1),
-                "type": edge_data.get("type", "production")
-            })
-        
+            links.append(
+                {
+                    "source": str(source),
+                    "target": str(target),
+                    "weight": edge_data.get("weight", 1),
+                    "type": edge_data.get("type", "production"),
+                }
+            )
+
         # Generate HTML with embedded D3.js visualization
         html_content = self._generate_grammar_graph_html(nodes, links)
-        
+
         with open(save_path, "w") as f:
             f.write(html_content)
-        
+
         return str(save_path)
-    
-    def create_ctm_animation(self, 
-                           tracking_data: TrackingData,
-                           save_path: Optional[str] = None) -> str:
+
+    def create_ctm_animation(
+        self, tracking_data: TrackingData, save_path: Optional[str] = None
+    ) -> str:
         """
         Create animated visualization of CTM processing over time.
-        
+
         Args:
             tracking_data: TrackingData with recorded activations and synchronization
             save_path: Optional path to save HTML file
-            
+
         Returns:
             Path to generated HTML file
         """
@@ -235,28 +239,28 @@ class WebVisualizer:
             save_path = self.output_dir / "ctm_animation.html"
         else:
             save_path = Path(save_path)
-        
+
         # Prepare animation data
         animation_data = self._prepare_ctm_animation_data(tracking_data)
-        
+
         # Generate HTML with animation
         html_content = self._generate_ctm_animation_html(animation_data)
-        
+
         with open(save_path, "w") as f:
             f.write(html_content)
-        
+
         return str(save_path)
-    
-    def create_real_time_metrics_dashboard(self, 
-                                         metric_history: Dict[str, List[float]],
-                                         save_path: Optional[str] = None) -> str:
+
+    def create_real_time_metrics_dashboard(
+        self, metric_history: Dict[str, List[float]], save_path: Optional[str] = None
+    ) -> str:
         """
         Create real-time metrics computation visualization.
-        
+
         Args:
             metric_history: Dictionary mapping metric names to value histories
             save_path: Optional path to save HTML file
-            
+
         Returns:
             Path to generated HTML file
         """
@@ -264,25 +268,25 @@ class WebVisualizer:
             save_path = self.output_dir / "metrics_dashboard.html"
         else:
             save_path = Path(save_path)
-        
+
         # Generate HTML with real-time dashboard
         html_content = self._generate_metrics_dashboard_html(metric_history)
-        
+
         with open(save_path, "w") as f:
             f.write(html_content)
-        
+
         return str(save_path)
-    
-    def create_dependency_flow_diagram(self, 
-                                     udl: UDLRepresentation,
-                                     save_path: Optional[str] = None) -> str:
+
+    def create_dependency_flow_diagram(
+        self, udl: UDLRepresentation, save_path: Optional[str] = None
+    ) -> str:
         """
         Create grammar dependency flow diagram.
-        
+
         Args:
             udl: UDL representation with grammar dependencies
             save_path: Optional path to save HTML file
-            
+
         Returns:
             Path to generated HTML file
         """
@@ -290,18 +294,18 @@ class WebVisualizer:
             save_path = self.output_dir / "dependency_flow.html"
         else:
             save_path = Path(save_path)
-        
+
         # Extract dependency information
         dependencies = self._extract_dependencies(udl)
-        
+
         # Generate HTML with flow diagram
         html_content = self._generate_dependency_flow_html(dependencies)
-        
+
         with open(save_path, "w") as f:
             f.write(html_content)
-        
+
         return str(save_path)
-    
+
     def _get_node_color(self, node_type: str) -> str:
         """Get color for node based on type."""
         color_map = {
@@ -309,41 +313,49 @@ class WebVisualizer:
             "non_terminal": "#2196f3",
             "rule": "#ff9800",
             "constraint": "#f44336",
-            "unknown": "#9e9e9e"
+            "unknown": "#9e9e9e",
         }
         return color_map.get(node_type, "#9e9e9e")
-    
-    def _prepare_ctm_animation_data(self, tracking_data: TrackingData) -> Dict[str, Any]:
+
+    def _prepare_ctm_animation_data(
+        self, tracking_data: TrackingData
+    ) -> Dict[str, Any]:
         """Prepare data for CTM animation."""
         return {
             "iterations": tracking_data.iterations,
             "n_neurons": tracking_data.n_neurons,
             "activations": tracking_data.post_activations.tolist(),
             "synchronization": tracking_data.synch_out.tolist(),
-            "attention_weights": tracking_data.attention_weights.tolist() if tracking_data.attention_weights is not None else None
+            "attention_weights": tracking_data.attention_weights.tolist()
+            if tracking_data.attention_weights is not None
+            else None,
         }
-    
+
     def _extract_dependencies(self, udl: UDLRepresentation) -> Dict[str, Any]:
         """Extract dependency information from UDL."""
         graph = udl.get_grammar_graph()
-        
+
         # Compute strongly connected components
         sccs = list(nx.strongly_connected_components(graph))
-        
+
         # Compute topological ordering (if DAG)
         try:
             topo_order = list(nx.topological_sort(graph))
         except (nx.NetworkXError, nx.NetworkXUnfeasible):
             # Graph has cycles, use node list instead
             topo_order = list(graph.nodes())
-        
+
         return {
-            "nodes": [{"id": str(node), "group": i} for i, scc in enumerate(sccs) for node in scc],
+            "nodes": [
+                {"id": str(node), "group": i}
+                for i, scc in enumerate(sccs)
+                for node in scc
+            ],
             "links": [{"source": str(u), "target": str(v)} for u, v in graph.edges()],
             "sccs": [list(map(str, scc)) for scc in sccs],
-            "topo_order": list(map(str, topo_order))
+            "topo_order": list(map(str, topo_order)),
         }
-    
+
     def _generate_grammar_graph_html(self, nodes: List[Dict], links: List[Dict]) -> str:
         """Generate HTML for interactive grammar graph."""
         return f"""
@@ -551,7 +563,7 @@ class WebVisualizer:
 </body>
 </html>
         """
-    
+
     def _generate_ctm_animation_html(self, animation_data: Dict[str, Any]) -> str:
         """Generate HTML for CTM processing animation."""
         return f"""
@@ -766,8 +778,10 @@ class WebVisualizer:
 </body>
 </html>
         """
-    
-    def _generate_metrics_dashboard_html(self, metric_history: Dict[str, List[float]]) -> str:
+
+    def _generate_metrics_dashboard_html(
+        self, metric_history: Dict[str, List[float]]
+    ) -> str:
         """Generate HTML for real-time metrics dashboard."""
         return f"""
 <!DOCTYPE html>
@@ -1007,7 +1021,7 @@ class WebVisualizer:
 </body>
 </html>
         """
-    
+
     def _generate_metric_displays(self, metric_history: Dict[str, List[float]]) -> str:
         """Generate HTML for metric display widgets."""
         displays = []
@@ -1020,7 +1034,7 @@ class WebVisualizer:
             </div>
             """)
         return "".join(displays)
-    
+
     def _generate_dependency_flow_html(self, dependencies: Dict[str, Any]) -> str:
         """Generate HTML for dependency flow diagram."""
         return f"""
@@ -1332,21 +1346,23 @@ class WebVisualizer:
 </body>
 </html>
         """
-    
-    def create_comprehensive_dashboard(self, 
-                                     udl: UDLRepresentation,
-                                     tracking_data: Optional[TrackingData] = None,
-                                     metric_history: Optional[Dict[str, List[float]]] = None,
-                                     save_path: Optional[str] = None) -> str:
+
+    def create_comprehensive_dashboard(
+        self,
+        udl: UDLRepresentation,
+        tracking_data: Optional[TrackingData] = None,
+        metric_history: Optional[Dict[str, List[float]]] = None,
+        save_path: Optional[str] = None,
+    ) -> str:
         """
         Create comprehensive dashboard with all visualizations.
-        
+
         Args:
             udl: UDL representation
             tracking_data: Optional CTM tracking data
             metric_history: Optional metric computation history
             save_path: Optional path to save HTML file
-            
+
         Returns:
             Path to generated HTML file
         """
@@ -1354,33 +1370,37 @@ class WebVisualizer:
             save_path = self.output_dir / "comprehensive_dashboard.html"
         else:
             save_path = Path(save_path)
-        
+
         # Create individual visualizations
         grammar_graph_path = self.create_interactive_grammar_graph(udl)
         dependency_flow_path = self.create_dependency_flow_diagram(udl)
-        
+
         paths = {
             "grammar_graph": grammar_graph_path,
-            "dependency_flow": dependency_flow_path
+            "dependency_flow": dependency_flow_path,
         }
-        
+
         if tracking_data:
             ctm_animation_path = self.create_ctm_animation(tracking_data)
             paths["ctm_animation"] = ctm_animation_path
-        
+
         if metric_history:
-            metrics_dashboard_path = self.create_real_time_metrics_dashboard(metric_history)
+            metrics_dashboard_path = self.create_real_time_metrics_dashboard(
+                metric_history
+            )
             paths["metrics_dashboard"] = metrics_dashboard_path
-        
+
         # Generate comprehensive dashboard HTML
         html_content = self._generate_comprehensive_dashboard_html(paths)
-        
+
         with open(save_path, "w") as f:
             f.write(html_content)
-        
+
         return str(save_path)
-    
-    def _generate_comprehensive_dashboard_html(self, visualization_paths: Dict[str, str]) -> str:
+
+    def _generate_comprehensive_dashboard_html(
+        self, visualization_paths: Dict[str, str]
+    ) -> str:
         """Generate HTML for comprehensive dashboard."""
         return f"""
 <!DOCTYPE html>
@@ -1444,24 +1464,24 @@ class WebVisualizer:
             <ul>
                 <li><a href="#" onclick="showSection('grammar-graph')">Grammar Graph</a></li>
                 <li><a href="#" onclick="showSection('dependency-flow')">Dependency Flow</a></li>
-                {"<li><a href='#' onclick=\"showSection('ctm-animation')\">CTM Animation</a></li>" if 'ctm_animation' in visualization_paths else ""}
-                {"<li><a href='#' onclick=\"showSection('metrics-dashboard')\">Metrics Dashboard</a></li>" if 'metrics_dashboard' in visualization_paths else ""}
+                {"<li><a href='#' onclick=\"showSection('ctm-animation')\">CTM Animation</a></li>" if "ctm_animation" in visualization_paths else ""}
+                {"<li><a href='#' onclick=\"showSection('metrics-dashboard')\">Metrics Dashboard</a></li>" if "metrics_dashboard" in visualization_paths else ""}
             </ul>
         </nav>
         
         <div id="grammar-graph" class="dashboard-section active">
             <h2>Interactive Grammar Graph</h2>
-            <iframe src="{os.path.basename(visualization_paths['grammar_graph'])}" class="visualization-frame"></iframe>
+            <iframe src="{os.path.basename(visualization_paths["grammar_graph"])}" class="visualization-frame"></iframe>
         </div>
         
         <div id="dependency-flow" class="dashboard-section">
             <h2>Grammar Dependency Flow</h2>
-            <iframe src="{os.path.basename(visualization_paths['dependency_flow'])}" class="visualization-frame"></iframe>
+            <iframe src="{os.path.basename(visualization_paths["dependency_flow"])}" class="visualization-frame"></iframe>
         </div>
         
-        {"<div id='ctm-animation' class='dashboard-section'><h2>CTM Processing Animation</h2><iframe src='" + os.path.basename(visualization_paths['ctm_animation']) + "' class='visualization-frame'></iframe></div>" if 'ctm_animation' in visualization_paths else ""}
+        {"<div id='ctm-animation' class='dashboard-section'><h2>CTM Processing Animation</h2><iframe src='" + os.path.basename(visualization_paths["ctm_animation"]) + "' class='visualization-frame'></iframe></div>" if "ctm_animation" in visualization_paths else ""}
         
-        {"<div id='metrics-dashboard' class='dashboard-section'><h2>Real-time Metrics Dashboard</h2><iframe src='" + os.path.basename(visualization_paths['metrics_dashboard']) + "' class='visualization-frame'></iframe></div>" if 'metrics_dashboard' in visualization_paths else ""}
+        {"<div id='metrics-dashboard' class='dashboard-section'><h2>Real-time Metrics Dashboard</h2><iframe src='" + os.path.basename(visualization_paths["metrics_dashboard"]) + "' class='visualization-frame'></iframe></div>" if "metrics_dashboard" in visualization_paths else ""}
     </div>
 
     <script>

@@ -63,7 +63,7 @@ class MaintainabilityMetric(QualityMetric):
         safe_cm = max(0.01, comment_ratio)
 
         maintainability_raw = (
-            171 
+            171
             - 5.2 * math.log(safe_hv)
             - 0.23 * cyclomatic_complexity
             - 16.2 * math.log(safe_loc)
@@ -98,15 +98,19 @@ class MaintainabilityMetric(QualityMetric):
             if token.type == TokenType.OPERATOR:
                 operators.add(token.text)
                 operator_count += 1
-            elif token.type in [TokenType.IDENTIFIER, TokenType.LITERAL, TokenType.KEYWORD]:
+            elif token.type in [
+                TokenType.IDENTIFIER,
+                TokenType.LITERAL,
+                TokenType.KEYWORD,
+            ]:
                 operands.add(token.text)
                 operand_count += 1
 
         # Halstead metrics
         n1 = len(operators)  # Distinct operators
-        n2 = len(operands)   # Distinct operands
+        n2 = len(operands)  # Distinct operands
         N1 = operator_count  # Total operators
-        N2 = operand_count   # Total operands
+        N2 = operand_count  # Total operands
 
         n = n1 + n2  # Total distinct tokens
         N = N1 + N2  # Total tokens
@@ -138,17 +142,19 @@ class MaintainabilityMetric(QualityMetric):
         complexity = 1  # Base complexity
 
         # Count decision points in tokens
-        decision_operators = ['|', '?', '*', '+', '/', '&', '~', '!']
+        decision_operators = ["|", "?", "*", "+", "/", "&", "~", "!"]
         for token in tokens:
             if token.type == TokenType.OPERATOR and token.text in decision_operators:
                 complexity += 1
 
         # Count alternative productions in rules
         for rule in rules:
-            if hasattr(rule, 'rhs'):
+            if hasattr(rule, "rhs"):
                 # Count alternatives (assuming | separates alternatives)
-                rhs_text = ' '.join(rule.rhs) if isinstance(rule.rhs, list) else str(rule.rhs)
-                alternatives = rhs_text.count('|')
+                rhs_text = (
+                    " ".join(rule.rhs) if isinstance(rule.rhs, list) else str(rule.rhs)
+                )
+                alternatives = rhs_text.count("|")
                 complexity += alternatives
 
         # Count nesting levels (increases complexity)
@@ -169,9 +175,9 @@ class MaintainabilityMetric(QualityMetric):
         """
         max_depth = 0
         current_depth = 0
-        
-        open_brackets = {'(', '[', '{', '<'}
-        close_brackets = {')', ']', '}', '>'}
+
+        open_brackets = {"(", "[", "{", "<"}
+        close_brackets = {")", "]", "}", ">"}
 
         for token in tokens:
             if token.text in open_brackets:
@@ -196,7 +202,12 @@ class MaintainabilityMetric(QualityMetric):
 
         for token in tokens:
             # Skip whitespace, comments, and newlines
-            if token.type not in [TokenType.WHITESPACE, TokenType.COMMENT, TokenType.NEWLINE, TokenType.EOF]:
+            if token.type not in [
+                TokenType.WHITESPACE,
+                TokenType.COMMENT,
+                TokenType.NEWLINE,
+                TokenType.EOF,
+            ]:
                 lines_with_code.add(token.line)
 
         return len(lines_with_code)
@@ -239,11 +250,11 @@ class MaintainabilityMetric(QualityMetric):
         rules = udl.get_grammar_rules()
 
         return {
-            'halstead_volume': self._compute_halstead_volume(tokens),
-            'cyclomatic_complexity': self._compute_cyclomatic_complexity(tokens, rules),
-            'lines_of_code': float(self._compute_lines_of_code(tokens)),
-            'comment_ratio': self._compute_comment_ratio(tokens),
-            'maintainability_index': self.compute(udl)
+            "halstead_volume": self._compute_halstead_volume(tokens),
+            "cyclomatic_complexity": self._compute_cyclomatic_complexity(tokens, rules),
+            "lines_of_code": float(self._compute_lines_of_code(tokens)),
+            "comment_ratio": self._compute_comment_ratio(tokens),
+            "maintainability_index": self.compute(udl),
         }
 
     def _compute_halstead_metrics(self, tokens: List[Token]) -> Dict[str, float]:
@@ -262,40 +273,44 @@ class MaintainabilityMetric(QualityMetric):
         for token in tokens:
             if token.type == TokenType.OPERATOR:
                 operators[token.text] = operators.get(token.text, 0) + 1
-            elif token.type in [TokenType.IDENTIFIER, TokenType.LITERAL, TokenType.KEYWORD]:
+            elif token.type in [
+                TokenType.IDENTIFIER,
+                TokenType.LITERAL,
+                TokenType.KEYWORD,
+            ]:
                 operands[token.text] = operands.get(token.text, 0) + 1
 
         n1 = len(operators)  # Distinct operators
-        n2 = len(operands)   # Distinct operands
+        n2 = len(operands)  # Distinct operands
         N1 = sum(operators.values())  # Total operators
-        N2 = sum(operands.values())   # Total operands
+        N2 = sum(operands.values())  # Total operands
 
         n = n1 + n2  # Vocabulary
         N = N1 + N2  # Length
 
         if n <= 0:
             return {
-                'vocabulary': 0,
-                'length': 0,
-                'volume': 0,
-                'difficulty': 0,
-                'effort': 0
+                "vocabulary": 0,
+                "length": 0,
+                "volume": 0,
+                "difficulty": 0,
+                "effort": 0,
             }
 
         volume = N * math.log2(n)
-        
+
         # Difficulty: D = (n1/2) * (N2/n2)
         difficulty = (n1 / 2) * (N2 / n2) if n2 > 0 else 0
-        
+
         # Effort: E = D * V
         effort = difficulty * volume
 
         return {
-            'vocabulary': n,
-            'length': N,
-            'volume': volume,
-            'difficulty': difficulty,
-            'effort': effort
+            "vocabulary": n,
+            "length": N,
+            "volume": volume,
+            "difficulty": difficulty,
+            "effort": effort,
         }
 
     def get_formula(self) -> str:

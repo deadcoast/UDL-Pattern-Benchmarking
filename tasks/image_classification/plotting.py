@@ -292,9 +292,9 @@ def plot_neural_dynamics(
     mid_colours=None,
     use_most_active_neurons=False,
 ):
-    assert (
-        N_to_plot % N_per_row == 0
-    ), f"For nice visualisation, N_to_plot={N_to_plot} must be a multiple of N_per_row={N_per_row}"
+    assert N_to_plot % N_per_row == 0, (
+        f"For nice visualisation, N_to_plot={N_to_plot} must be a multiple of N_per_row={N_per_row}"
+    )
     assert post_activations_history.shape[-1] >= N_to_plot
     figscale = 2
     aspect_ratio = 3
@@ -343,7 +343,6 @@ def plot_neural_dynamics(
     ) as pbar_inner:
         pbar_inner.set_description("Plotting neural dynamics")
         for ndx in range(N_to_plot):
-
             ax_s = axes_synch[f"{ndx}"]
             ax_m = axes_mid[f"{ndx}"]
 

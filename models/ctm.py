@@ -574,9 +574,9 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
             )
 
         elif self.neuron_select_type == "random-pairing":
-            assert (
-                n_synch > n_random_pairing_self
-            ), f"Need at least {n_random_pairing_self} pairs for {self.neuron_select_type}"
+            assert n_synch > n_random_pairing_self, (
+                f"Need at least {n_random_pairing_self} pairs for {self.neuron_select_type}"
+            )
             neuron_indices_left = torch.from_numpy(
                 np.random.choice(np.arange(d_model), size=n_synch)
             )
@@ -618,22 +618,22 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
         Specifically when selecting neurons for sychronisation using 'first-last' or 'random',
         one needs the right number of neurons
         """
-        assert (
-            self.neuron_select_type in VALID_NEURON_SELECT_TYPES
-        ), f"Invalid neuron selection type: {self.neuron_select_type}"
+        assert self.neuron_select_type in VALID_NEURON_SELECT_TYPES, (
+            f"Invalid neuron selection type: {self.neuron_select_type}"
+        )
 
-        assert self.backbone_type in VALID_BACKBONE_TYPES + [
-            "none"
-        ], f"Invalid backbone_type: {self.backbone_type}"
+        assert self.backbone_type in VALID_BACKBONE_TYPES + ["none"], (
+            f"Invalid backbone_type: {self.backbone_type}"
+        )
 
         assert self.positional_embedding_type in VALID_POSITIONAL_EMBEDDING_TYPES + [
             "none"
         ], f"Invalid positional_embedding_type: {self.positional_embedding_type}"
 
         if self.neuron_select_type == "first-last":
-            assert self.d_model >= (
-                self.n_synch_out + self.n_synch_action
-            ), "d_model must be >= n_synch_out + n_synch_action for neuron subsets"
+            assert self.d_model >= (self.n_synch_out + self.n_synch_action), (
+                "d_model must be >= n_synch_out + n_synch_action for neuron subsets"
+            )
 
         if self.backbone_type == "none" and self.positional_embedding_type != "none":
             raise AssertionError(
@@ -690,9 +690,10 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
             self.decay_params_action, 0, 15
         )  # Fix from github user: kuviki
         self.decay_params_out.data = torch.clamp(self.decay_params_out, 0, 15)
-        r_action, r_out = torch.exp(-self.decay_params_action).unsqueeze(0).repeat(
-            B, 1
-        ), torch.exp(-self.decay_params_out).unsqueeze(0).repeat(B, 1)
+        r_action, r_out = (
+            torch.exp(-self.decay_params_action).unsqueeze(0).repeat(B, 1),
+            torch.exp(-self.decay_params_out).unsqueeze(0).repeat(B, 1),
+        )
 
         _, decay_alpha_out, decay_beta_out = self.compute_synchronisation(
             activated_state, None, None, r_out, synch_type="out"
@@ -701,7 +702,6 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
 
         # --- Recurrent Loop  ---
         for stepi in range(self.iterations):
-
             # --- Calculate Synchronisation for Input Data Interaction ---
             synchronisation_action, decay_alpha_action, decay_beta_action = (
                 self.compute_synchronisation(

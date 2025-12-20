@@ -150,9 +150,7 @@ class LSTMBaseline(nn.Module):
 
         # --- Tracking Initialization ---
         activations_tracking = []
-        attention_tracking = (
-            []
-        )  # Note: reshaping this correctly requires knowing num_heads
+        attention_tracking = []  # Note: reshaping this correctly requires knowing num_heads
         embedding_tracking = []
 
         thought_steps = ThoughtSteps(
@@ -192,7 +190,6 @@ class LSTMBaseline(nn.Module):
 
         # --- Recurrent Loop (T=iterations steps) ---
         for stepi in range(thought_steps.total_iterations):
-
             is_digit_step, is_question_step, is_answer_step = (
                 thought_steps.determine_step_type(stepi)
             )

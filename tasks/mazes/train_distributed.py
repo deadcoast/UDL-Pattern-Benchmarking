@@ -377,7 +377,6 @@ def is_main_process(rank):
 
 
 if __name__ == "__main__":
-
     args = parse_args()
 
     rank, world_size, local_rank = setup_ddp()
@@ -741,12 +740,10 @@ if __name__ == "__main__":
     iterator = iter(trainloader)
 
     for bi in range(start_iter, args.training_iterations):
-
         # --- Evaluation and Plotting (Rank 0 + Aggregation) ---
         if bi % args.track_every == 0 and (bi != 0 or args.reload_model_only):
             model.eval()
             with torch.inference_mode():
-
                 # --- Distributed Evaluation ---
                 if is_main_process(rank):
                     iters.append(bi)  # Track iterations on rank 0

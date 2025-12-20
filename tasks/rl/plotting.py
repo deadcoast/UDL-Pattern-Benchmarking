@@ -20,7 +20,6 @@ def make_rl_gif(
     inputs,
     filename,
 ):
-
     n_steps = len(pre_activations)
     pre_activations = pre_activations[:, 0, :]
     post_activations = post_activations[:, 0, :]

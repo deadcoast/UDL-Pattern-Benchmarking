@@ -98,7 +98,6 @@ class LSTMBaseline(nn.Module):
 
         # --- Recurrent Loop ---
         for stepi in range(self.iterations):
-
             lstm_input = features.reshape(x.size(0), -1)
             hidden_state, cell_state = self.lstm_cell(
                 lstm_input.squeeze(1), (hidden_state, cell_state)

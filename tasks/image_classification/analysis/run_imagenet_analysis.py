@@ -129,7 +129,6 @@ def parse_args():
 
 # --- Main Execution Block ---
 if __name__ == "__main__":
-
     # --- Setup ---
     args = parse_args()
     if args.device[0] != -1 and torch.cuda.is_available():
@@ -147,7 +146,7 @@ if __name__ == "__main__":
 
     # Handle legacy arguments from checkpoint if necessary
     if not hasattr(model_args, "backbone_type") and hasattr(model_args, "resnet_type"):
-        model_args.backbone_type = f'{model_args.resnet_type}-{getattr(model_args, "resnet_feature_scales", [4])[-1]}'
+        model_args.backbone_type = f"{model_args.resnet_type}-{getattr(model_args, 'resnet_feature_scales', [4])[-1]}"
     if not hasattr(model_args, "neuron_select_type"):
         model_args.neuron_select_type = "first-last"
 
@@ -263,7 +262,6 @@ if __name__ == "__main__":
     model.iterations = args.inference_iterations
 
     if "plots" in args.actions:
-
         with torch.inference_mode():  # Disable gradient calculations
             with tqdm(
                 total=len(loader),
@@ -301,7 +299,6 @@ if __name__ == "__main__":
                     if (
                         (bi % args.plot_every == 0) or bi == len(loader) - 1
                     ) and bi != 0:  #
-
                         concatenated_certainties = np.concatenate(
                             tracked_certainties, axis=0
                         )
@@ -451,7 +448,7 @@ if __name__ == "__main__":
                             )
                             plt.close(fig)
                             print(
-                                f"k={topk}. Accuracy most certain at last internal tick={100*np.array(accs_certain)[-1]:0.4f}"
+                                f"k={topk}. Accuracy most certain at last internal tick={100 * np.array(accs_certain)[-1]:0.4f}"
                             )  # Using certainty based approach
 
                         indices_over_80 = []
@@ -524,16 +521,12 @@ if __name__ == "__main__":
                                                         concatenated_targets[index]
                                                     ] = classes_80[
                                                         concatenated_targets[index]
-                                                    ] + [
-                                                        stepi
-                                                    ]
+                                                    ] + [stepi]
                                                     corrects_80[
                                                         concatenated_targets[index]
                                                     ] = corrects_80[
                                                         concatenated_targets[index]
-                                                    ] + [
-                                                        is_correct_here[index]
-                                                    ]
+                                                    ] + [is_correct_here[index]]
 
                                     pbarinner.update(1)
                             fig = plt.figure(figsize=(6.5 * figscale, 4 * figscale))
@@ -776,7 +769,6 @@ if __name__ == "__main__":
 
             # --- Loop Through Each Step ---
             for step_i in range(n_steps):
-
                 # --- Prepare Image for Display ---
                 # Denormalize the input tensor for visualization
                 data_img_tensor = inputs[
@@ -810,9 +802,7 @@ if __name__ == "__main__":
                     size=(img_h, img_w),
                     mode=interp_mode,
                     # align_corners=False
-                ).squeeze(
-                    0
-                )  # Remove batch dim -> (Heads, H, W)
+                ).squeeze(0)  # Remove batch dim -> (Heads, H, W)
 
                 # Normalize each head's map to [0, 1]
                 # Deal with mean
@@ -1169,9 +1159,7 @@ if __name__ == "__main__":
                 image_numpy = np.frombuffer(canvas.buffer_rgba(), dtype="uint8")
                 image_numpy = image_numpy.reshape(
                     *reversed(canvas.get_width_height()), 4
-                )[
-                    :, :, :3
-                ]  # Get RGB
+                )[:, :, :3]  # Get RGB
 
                 frames.append(image_numpy)  # Add to list for GIF
 
@@ -1191,7 +1179,6 @@ if __name__ == "__main__":
                 preset="veryslow",
             )
     if "demo" in args.actions:
-
         # --- Select Data Indices ---
         if not args.data_indices:  # If list is empty
             n_samples = len(validation_dataset)
@@ -1206,7 +1193,6 @@ if __name__ == "__main__":
             print(f"Using specified indices: {data_indices}")
 
         for di in data_indices:
-
             index_output_dir = os.path.join(args.output_dir, str(di))
             os.makedirs(index_output_dir, exist_ok=True)
 
@@ -1249,7 +1235,6 @@ if __name__ == "__main__":
 
             # --- Loop Through Each Step ---
             for step_i in range(n_steps):
-
                 # Store step color
                 current_colour = list(cmap_steps(step_linspace[step_i]))
                 route_colours_step.append(current_colour)
@@ -1286,9 +1271,7 @@ if __name__ == "__main__":
                     .float(),  # Add batch dim, ensure float
                     size=(img_h, img_w),
                     mode=interp_mode,
-                ).squeeze(
-                    0
-                )  # Remove batch dim -> (Heads, H, W)
+                ).squeeze(0)  # Remove batch dim -> (Heads, H, W)
 
                 attn_mean = attention_interp_bilinear.mean(0)
                 attn_mean_min = attn_mean.min()
@@ -1584,9 +1567,7 @@ if __name__ == "__main__":
                 image_numpy = np.frombuffer(canvas.buffer_rgba(), dtype="uint8")
                 image_numpy = image_numpy.reshape(
                     *reversed(canvas.get_width_height()), 4
-                )[
-                    :, :, :3
-                ]  # Get RGB
+                )[:, :, :3]  # Get RGB
 
                 frames.append(image_numpy)  # Add to list for GIF
 

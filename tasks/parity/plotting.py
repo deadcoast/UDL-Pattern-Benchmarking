@@ -38,7 +38,6 @@ def make_parity_gif(
     inputs_to_model,
     filename,
 ):
-
     # Config
     batch_index = 0
     n_neurons_to_visualise = 16
@@ -341,7 +340,6 @@ def plot_attention_trajectory(
 
 
 def plot_input(input_images, save_dir, filename):
-
     plt.figure(figsize=(5, 5))
     plt.imshow(
         input_images[0],
@@ -637,9 +635,9 @@ def create_stacked_gif(save_path, y_shift=200):
     accuracy_frames = [Image.fromarray(frame) for frame in accuracy_reader]
     attention_frames = [Image.fromarray(frame) for frame in attention_reader]
 
-    assert len(accuracy_frames) == len(
-        attention_frames
-    ), "Mismatch in frame counts between accuracy and attention GIFs"
+    assert len(accuracy_frames) == len(attention_frames), (
+        "Mismatch in frame counts between accuracy and attention GIFs"
+    )
 
     stacked_frames = []
     for acc_frame, att_frame in zip(accuracy_frames, attention_frames):
@@ -931,14 +929,13 @@ def extract_run_name(folder, run_index=None):
 def plot_loss_individual_runs(
     training_data, evaluate_every, save_dir, scale=1.0, x_max=None
 ):
-
     grouped = defaultdict(list)
     label_map = {}
     iters_map = {}
     model_map = {}
 
     base_colors = sns.color_palette("hls", n_colors=3)
-    color_lookup = {f"Run {i+1}": base_colors[i] for i in range(3)}
+    color_lookup = {f"Run {i + 1}": base_colors[i] for i in range(3)}
 
     for i, (folder, data) in enumerate(training_data.items()):
         checkpoint = load_checkpoint(get_latest_checkpoint_file(folder), device="cpu")
@@ -991,14 +988,13 @@ def plot_loss_individual_runs(
 def plot_accuracy_individual_runs(
     training_data, evaluate_every, save_dir, scale=1.0, smooth=False, x_max=None
 ):
-
     grouped = defaultdict(list)
     label_map = {}
     iters_map = {}
     model_map = {}
 
     base_colors = sns.color_palette("hls", n_colors=3)
-    color_lookup = {f"Run {i+1}": base_colors[i] for i in range(3)}
+    color_lookup = {f"Run {i + 1}": base_colors[i] for i in range(3)}
 
     for i, (folder, data) in enumerate(training_data.items()):
         checkpoint = load_checkpoint(get_latest_checkpoint_file(folder), device="cpu")
@@ -1065,7 +1061,6 @@ def plot_training_curve_all_runs(
     x_max=None,
     plot_individual_runs=True,
 ):
-
     all_folders = [folder for folder in all_folders if "certain" not in folder]
 
     training_data = {}
@@ -1187,7 +1182,6 @@ def plot_lstm_last_and_certain_accuracy(
     step=1,
     x_max=None,
 ):
-
     tags = ["lstm_10", "lstm_10_certain", "lstm_25", "lstm_25_certain"]
     folders = [f for f in all_folders if any(tag in f.lower() for tag in tags)]
 
@@ -1205,9 +1199,9 @@ def plot_lstm_last_and_certain_accuracy(
         label = "Certain" if "certain" in f.lower() else "Final"
         training_data.setdefault((iters, label), []).append(acc)
 
-    assert training_data and all(
-        i == eval_intervals[0] for i in eval_intervals
-    ), "Missing or inconsistent eval intervals."
+    assert training_data and all(i == eval_intervals[0] for i in eval_intervals), (
+        "Missing or inconsistent eval intervals."
+    )
     evaluate_every = eval_intervals[0]
 
     keys = sorted(training_data.keys())

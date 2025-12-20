@@ -75,19 +75,21 @@ EXPECTED_STRUCTURE = {
 }
 
 
-def check_structure(expected: dict, base_path: Path, prefix: str = "") -> tuple[list, list]:
+def check_structure(
+    expected: dict, base_path: Path, prefix: str = ""
+) -> tuple[list, list]:
     """
     Check if expected structure exists.
-    
+
     Returns:
         Tuple of (missing items, extra items not in docs)
     """
     missing = []
-    
+
     for name, value in expected.items():
         path = base_path / name
         full_name = f"{prefix}/{name}" if prefix else name
-        
+
         if isinstance(value, dict):
             # It's a directory with contents
             if not path.exists():
@@ -101,25 +103,27 @@ def check_structure(expected: dict, base_path: Path, prefix: str = "") -> tuple[
         elif value is True:
             # It's a file or directory that should exist
             if not path.exists():
-                missing.append(f"{'Directory' if '.' not in name else 'File'}: {full_name}")
-    
+                missing.append(
+                    f"{'Directory' if '.' not in name else 'File'}: {full_name}"
+                )
+
     return missing, []
 
 
 def find_undocumented(base_path: Path, expected: dict, prefix: str = "") -> list:
     """Find files/directories that exist but aren't documented."""
     undocumented = []
-    
+
     if not base_path.exists():
         return undocumented
-    
+
     for item in base_path.iterdir():
         # Skip hidden files and __pycache__
-        if item.name.startswith('.') or item.name == '__pycache__':
+        if item.name.startswith(".") or item.name == "__pycache__":
             continue
-        
+
         full_name = f"{prefix}/{item.name}" if prefix else item.name
-        
+
         if item.name not in expected:
             # Not documented
             if item.is_dir():
@@ -130,7 +134,7 @@ def find_undocumented(base_path: Path, expected: dict, prefix: str = "") -> list
             # Recursively check subdirectories
             sub_undoc = find_undocumented(item, expected[item.name], full_name)
             undocumented.extend(sub_undoc)
-    
+
     return undocumented
 
 
@@ -140,28 +144,24 @@ def main():
     print("UDL Rating Framework - Structure Verification")
     print("=" * 60)
     print()
-    
+
     # Check for missing items
     missing, _ = check_structure(EXPECTED_STRUCTURE, project_root)
-    
+
     # Check for undocumented items in key directories
     undocumented = []
     for key in ["udl_rating_framework"]:
         if key in EXPECTED_STRUCTURE:
-            undoc = find_undocumented(
-                project_root / key, 
-                EXPECTED_STRUCTURE[key], 
-                key
-            )
+            undoc = find_undocumented(project_root / key, EXPECTED_STRUCTURE[key], key)
             undocumented.extend(undoc)
-    
+
     print("Missing (documented but not found):")
     if missing:
         for item in sorted(missing):
             print(f"  ✗ {item}")
     else:
         print("  None - all documented items exist!")
-    
+
     print()
     print("Undocumented (exists but not in README):")
     if undocumented:
@@ -169,19 +169,19 @@ def main():
             print(f"  ? {item}")
     else:
         print("  None - all items are documented!")
-    
+
     print()
     print("=" * 60)
     print("Summary")
     print("=" * 60)
     print(f"  Missing items: {len(missing)}")
     print(f"  Undocumented items: {len(undocumented)}")
-    
+
     if missing:
         print()
         print("Action needed: Update code or documentation to resolve missing items")
         return 1
-    
+
     return 0
 
 

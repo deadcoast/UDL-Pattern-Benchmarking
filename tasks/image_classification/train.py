@@ -416,7 +416,6 @@ def get_dataset(dataset, root):
 
 
 if __name__ == "__main__":
-
     # Hosuekeeping
     args = parse_args()
 
@@ -759,16 +758,11 @@ if __name__ == "__main__":
             if (bi % args.track_every == 0 or bi == args.warmup_steps) and (
                 bi != 0 or args.reload_model_only
             ):
-
                 iters.append(bi)
                 current_train_losses = []
                 current_test_losses = []
-                current_train_accuracies = (
-                    []
-                )  # Holds list of accuracies per tick for CTM/LSTM, single value for FF
-                current_test_accuracies = (
-                    []
-                )  # Holds list of accuracies per tick for CTM/LSTM, single value for FF
+                current_train_accuracies = []  # Holds list of accuracies per tick for CTM/LSTM, single value for FF
+                current_test_accuracies = []  # Holds list of accuracies per tick for CTM/LSTM, single value for FF
                 current_train_accuracies_most_certain = []  # Only for CTM/LSTM
                 current_test_accuracies_most_certain = []  # Only for CTM/LSTM
 
@@ -797,9 +791,7 @@ if __name__ == "__main__":
                         num_workers=num_workers_test,
                     )
                     all_targets_list = []
-                    all_predictions_list = (
-                        []
-                    )  # List to store raw predictions (B, C, T) or (B, C)
+                    all_predictions_list = []  # List to store raw predictions (B, C, T) or (B, C)
                     all_predictions_most_certain_list = []  # Only for CTM/LSTM
                     all_losses = []
 
@@ -879,7 +871,7 @@ if __name__ == "__main__":
                             ):
                                 break  # Check condition >= N-1
                             pbar_inner.set_description(
-                                f"Computing metrics for train (Batch {inferi+1})"
+                                f"Computing metrics for train (Batch {inferi + 1})"
                             )
                             pbar_inner.update(1)
 
@@ -1004,7 +996,7 @@ if __name__ == "__main__":
                             ):
                                 break
                             pbar_inner.set_description(
-                                f"Computing metrics for test (Batch {inferi+1})"
+                                f"Computing metrics for test (Batch {inferi + 1})"
                             )
                             pbar_inner.update(1)
 

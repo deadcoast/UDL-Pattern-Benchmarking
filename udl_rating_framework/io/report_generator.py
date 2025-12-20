@@ -334,7 +334,7 @@ class ReportGenerator:
 </head>
 <body>
     <div class="container">
-        {''.join(content_sections)}
+        {"".join(content_sections)}
     </div>
     <script>{javascript}</script>
 </body>
@@ -607,19 +607,19 @@ class ReportGenerator:
             <h2>Summary Statistics</h2>
             <div class="score-display">
                 <div class="score-item">
-                    <div class="score-value">{overall_stats.get('mean', 0.0):.3f}</div>
+                    <div class="score-value">{overall_stats.get("mean", 0.0):.3f}</div>
                     <div class="score-label">Average Quality</div>
                 </div>
                 <div class="score-item">
-                    <div class="score-value">{confidence_stats.get('mean', 0.0):.3f}</div>
+                    <div class="score-value">{confidence_stats.get("mean", 0.0):.3f}</div>
                     <div class="score-label">Average Confidence</div>
                 </div>
                 <div class="score-item">
-                    <div class="score-value">{error_stats.get('total_errors', 0)}</div>
+                    <div class="score-value">{error_stats.get("total_errors", 0)}</div>
                     <div class="score-label">Total Errors</div>
                 </div>
                 <div class="score-item">
-                    <div class="score-value">{error_stats.get('total_warnings', 0)}</div>
+                    <div class="score-value">{error_stats.get("total_warnings", 0)}</div>
                     <div class="score-label">Total Warnings</div>
                 </div>
             </div>
@@ -643,7 +643,7 @@ class ReportGenerator:
         <div class="report-section">
             <div class="report-header">
                 <h2>Report {index + 1}: {html.escape(file_name)}</h2>
-                <div class="timestamp">{report.timestamp.strftime('%Y-%m-%d %H:%M:%S')}</div>
+                <div class="timestamp">{report.timestamp.strftime("%Y-%m-%d %H:%M:%S")}</div>
             </div>
             
             <div class="score-display">
@@ -711,7 +711,7 @@ class ReportGenerator:
                 </tr>
             </thead>
             <tbody>
-                {''.join(rows)}
+                {"".join(rows)}
             </tbody>
         </table>
         """
@@ -734,10 +734,10 @@ class ReportGenerator:
                 <div class="trace-step-header">
                     Step {step.step_number}: {html.escape(step.operation)}
                 </div>
-                {f'<div class="trace-formula">{html.escape(step.formula)}</div>' if step.formula else ''}
+                {f'<div class="trace-formula">{html.escape(step.formula)}</div>' if step.formula else ""}
                 <div><strong>Inputs:</strong> {html.escape(inputs_str)}</div>
                 <div><strong>Output:</strong> {html.escape(str(step.output))}</div>
-                {f'<div><strong>Intermediate Values:</strong> {html.escape(intermediate_str)}</div>' if step.intermediate_values else ''}
+                {f"<div><strong>Intermediate Values:</strong> {html.escape(intermediate_str)}</div>" if step.intermediate_values else ""}
             </div>
             """
             )
@@ -746,7 +746,7 @@ class ReportGenerator:
         <button class="collapsible">Computation Trace ({len(report.computation_trace)} steps)</button>
         <div class="collapsible-content">
             <div class="computation-trace">
-                {''.join(trace_steps)}
+                {"".join(trace_steps)}
             </div>
         </div>
         """
@@ -761,7 +761,7 @@ class ReportGenerator:
                 f"""
             <div class="error-section">
                 <h4>Errors ({len(report.errors)})</h4>
-                <ul>{''.join(error_items)}</ul>
+                <ul>{"".join(error_items)}</ul>
             </div>
             """
             )
@@ -774,7 +774,7 @@ class ReportGenerator:
                 f"""
             <div class="warning-section">
                 <h4>Warnings ({len(report.warnings)})</h4>
-                <ul>{''.join(warning_items)}</ul>
+                <ul>{"".join(warning_items)}</ul>
             </div>
             """
             )

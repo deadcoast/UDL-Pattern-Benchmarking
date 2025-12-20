@@ -89,9 +89,9 @@ class TestStructuralCoherenceMetric:
         # Probabilities: p(1) = 2/4 = 0.5, p(2) = 2/4 = 0.5
         # Expected entropy: -0.5*log2(0.5) - 0.5*log2(0.5) = 1.0
         expected_entropy = 1.0
-        assert (
-            abs(entropy - expected_entropy) < 0.01
-        ), f"Expected entropy ~{expected_entropy}, got {entropy}"
+        assert abs(entropy - expected_entropy) < 0.01, (
+            f"Expected entropy ~{expected_entropy}, got {entropy}"
+        )
 
     def test_modularity_calculation(self):
         """Test modularity calculation."""
@@ -154,18 +154,18 @@ class TestStructuralCoherenceProperties:
             coherence_score = self.metric.compute(udl)
 
             # Verify the score is bounded in [0, 1]
-            assert (
-                0.0 <= coherence_score <= 1.0
-            ), f"Coherence score {coherence_score} not in [0, 1]"
+            assert 0.0 <= coherence_score <= 1.0, (
+                f"Coherence score {coherence_score} not in [0, 1]"
+            )
 
             # Manually verify the formula: 1 - H(G)/H_max
             graph = udl.get_grammar_graph()
 
             if graph.number_of_nodes() <= 1:
                 # For trivial graphs, coherence should be 1.0
-                assert (
-                    coherence_score == 1.0
-                ), "Trivial graph should have perfect coherence"
+                assert coherence_score == 1.0, (
+                    "Trivial graph should have perfect coherence"
+                )
             else:
                 # Compute entropy manually
                 entropy = self.metric.compute_shannon_entropy(graph)
@@ -173,9 +173,9 @@ class TestStructuralCoherenceProperties:
 
                 # Verify entropy is non-negative and bounded
                 assert entropy >= 0.0, f"Entropy {entropy} must be non-negative"
-                assert (
-                    entropy <= max_entropy + 1e-10
-                ), f"Entropy {entropy} exceeds maximum {max_entropy}"
+                assert entropy <= max_entropy + 1e-10, (
+                    f"Entropy {entropy} exceeds maximum {max_entropy}"
+                )
 
                 # Verify the formula: coherence = 1 - H(G)/H_max
                 if max_entropy > 0:
@@ -184,13 +184,13 @@ class TestStructuralCoherenceProperties:
                         0.0, min(1.0, expected_coherence)
                     )  # Clamp to [0,1]
 
-                    assert (
-                        abs(coherence_score - expected_coherence) < 1e-10
-                    ), f"Formula mismatch: got {coherence_score}, expected {expected_coherence}"
+                    assert abs(coherence_score - expected_coherence) < 1e-10, (
+                        f"Formula mismatch: got {coherence_score}, expected {expected_coherence}"
+                    )
                 else:
-                    assert (
-                        coherence_score == 1.0
-                    ), "Zero max entropy should give perfect coherence"
+                    assert coherence_score == 1.0, (
+                        "Zero max entropy should give perfect coherence"
+                    )
 
         except Exception as e:
             # Skip malformed UDLs that can't be parsed
@@ -205,7 +205,7 @@ class TestStructuralCoherenceProperties:
         # Create a simple linear graph: 1->2->3->...->n
         udl_rules = []
         for i in range(1, num_nodes):
-            udl_rules.append(f"N{i} ::= N{i+1}")
+            udl_rules.append(f"N{i} ::= N{i + 1}")
 
         udl_text = "\n".join(udl_rules)
         udl = UDLRepresentation(udl_text, "test.udl")
@@ -217,9 +217,9 @@ class TestStructuralCoherenceProperties:
         )
 
         # Verify entropy bounds
-        assert (
-            0.0 <= entropy <= max_entropy + 1e-10
-        ), f"Entropy {entropy} not in bounds [0, {max_entropy}]"
+        assert 0.0 <= entropy <= max_entropy + 1e-10, (
+            f"Entropy {entropy} not in bounds [0, {max_entropy}]"
+        )
 
         # Verify coherence computation
         coherence = self.metric.compute(udl)
@@ -241,9 +241,9 @@ class TestStructuralCoherenceProperties:
             scores = [self.metric.compute(udl) for _ in range(3)]
 
             # All scores should be identical
-            assert all(
-                abs(score - scores[0]) < 1e-15 for score in scores
-            ), f"Metric not deterministic: {scores}"
+            assert all(abs(score - scores[0]) < 1e-15 for score in scores), (
+                f"Metric not deterministic: {scores}"
+            )
 
         except Exception:
             # Skip malformed UDLs

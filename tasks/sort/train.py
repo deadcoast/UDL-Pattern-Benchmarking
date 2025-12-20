@@ -279,7 +279,6 @@ def parse_args():
 
 
 if __name__ == "__main__":
-
     # Hosuekeeping
     args = parse_args()
     # Change the following for sorting
@@ -417,9 +416,7 @@ if __name__ == "__main__":
     test_losses = []
     train_accuracies = []  # This will be per internal tick, not so simple
     test_accuracies = []
-    train_accuracies_full_list = (
-        []
-    )  # This will be selected according to what is returned by loss function
+    train_accuracies_full_list = []  # This will be selected according to what is returned by loss function
     test_accuracies_full_list = []
     iters = []
 
@@ -527,7 +524,6 @@ if __name__ == "__main__":
             if bi % args.track_every == 0:  # and bi != 0:
                 model.eval()
                 with torch.inference_mode():
-
                     inputs, targets = next(iter(testloader))
                     inputs = inputs.to(device)
                     targets = targets.to(device)
@@ -568,9 +564,7 @@ if __name__ == "__main__":
                             position=1,
                             dynamic_ncols=True,
                         ) as pbar_inner:
-
                             for inferi, (inputs, targets) in enumerate(loader):
-
                                 inputs = inputs.to(device)
                                 targets = targets.to(device)
                                 these_predictions, certainties, synchronisation = model(
@@ -649,7 +643,6 @@ if __name__ == "__main__":
                             dynamic_ncols=True,
                         ) as pbar_inner:
                             for inferi, (inputs, targets) in enumerate(loader):
-
                                 inputs = inputs.to(device)
                                 targets = targets.to(device)
                                 these_predictions, certainties, synchronisation = model(

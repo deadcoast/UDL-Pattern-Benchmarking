@@ -86,7 +86,6 @@ def make_qamnist_gif(
     umap_positions,
     umap_point_size_scaler=2.5,
 ):
-
     # Config
     batch_index = 0
     figscale = 0.28
@@ -247,7 +246,6 @@ def run_umap(model, model_args, device):
     sampled = 0
     with tqdm(total=point_counts, desc="Collecting UMAP data") as pbar:
         for inputs, z, question_readable, targets in testloader:
-
             inputs, targets = inputs.to(device), targets.to(device)
             z = torch.stack(z, 1).to(device)
             B = inputs.shape[0]
@@ -299,7 +297,6 @@ def run_umap(model, model_args, device):
 
 
 def run_model_and_make_gif(checkpoint_path, save_path, device):
-
     checkpoint = load_checkpoint(checkpoint_path, device)
     model_args = get_model_args_from_checkpoint(checkpoint)
     model = prepare_model(model_args, device)
@@ -351,7 +348,6 @@ def run_model_and_make_gif(checkpoint_path, save_path, device):
 
 
 if __name__ == "__main__":
-
     CHECKPOINT_PATH = "logs/qamnist/run1/ctm_10/checkpoint_300000.pt"
     SAVE_PATH = "tasks/qamnist/analysis/outputs/blog_gifs"
     os.makedirs(SAVE_PATH, exist_ok=True)

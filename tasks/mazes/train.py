@@ -344,7 +344,6 @@ def parse_args():
 
 
 if __name__ == "__main__":
-
     # Hosuekeeping
     args = parse_args()
 
@@ -793,7 +792,6 @@ if __name__ == "__main__":
             if bi % args.track_every == 0 and (bi != 0 or args.reload_model_only):
                 model.eval()  # Use eval mode for consistency during tracking
                 with torch.inference_mode():  # Use inference mode for tracking
-
                     # --- Quantitative Metrics ---
                     iters.append(bi)
                     # Re-initialize metric lists for this evaluation step
@@ -815,12 +813,8 @@ if __name__ == "__main__":
                         num_workers=num_workers_test,
                     )  # Use consistent num_workers
                     all_targets_list = []
-                    all_predictions_list = (
-                        []
-                    )  # Per step/tick predictions argmax (N, S, T) or (N, S)
-                    all_predictions_most_certain_list = (
-                        []
-                    )  # Predictions at chosen step/tick argmax (N, S)
+                    all_predictions_list = []  # Per step/tick predictions argmax (N, S, T) or (N, S)
+                    all_predictions_most_certain_list = []  # Predictions at chosen step/tick argmax (N, S)
                     all_losses = []
 
                     with tqdm(
@@ -920,7 +914,7 @@ if __name__ == "__main__":
                             ):
                                 break
                             pbar_inner.set_description(
-                                f"Computing metrics for train (Batch {inferi+1})"
+                                f"Computing metrics for train (Batch {inferi + 1})"
                             )
                             pbar_inner.update(1)
 
@@ -1067,7 +1061,7 @@ if __name__ == "__main__":
                             ):
                                 break
                             pbar_inner.set_description(
-                                f"Computing metrics for test (Batch {inferi+1})"
+                                f"Computing metrics for test (Batch {inferi + 1})"
                             )
                             pbar_inner.update(1)
 

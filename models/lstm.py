@@ -206,9 +206,9 @@ class LSTMBaseline(nn.Module):
     def verify_args(self):
         """Verify the validity of the input arguments."""
 
-        assert self.backbone_type in VALID_BACKBONE_TYPES + [
-            "none"
-        ], f"Invalid backbone_type: {self.backbone_type}"
+        assert self.backbone_type in VALID_BACKBONE_TYPES + ["none"], (
+            f"Invalid backbone_type: {self.backbone_type}"
+        )
 
         assert self.positional_embedding_type in VALID_POSITIONAL_EMBEDDING_TYPES + [
             "none"
@@ -249,7 +249,6 @@ class LSTMBaseline(nn.Module):
 
         # --- Recurrent Loop  ---
         for stepi in range(self.iterations):
-
             # --- Interact with Data via Attention ---
             q = self.q_proj(hn[-1].unsqueeze(1))
             attn_out, attn_weights = self.attention(

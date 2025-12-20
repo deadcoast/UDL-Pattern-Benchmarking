@@ -15,10 +15,10 @@ from .webgl_visualizer import WebGLVisualizer
 from .realtime_metrics import RealTimeMetricsVisualizer, MetricUpdate
 
 __all__ = [
-    'ActivationVisualizer', 
-    'SynchronizationVisualizer',
-    'WebVisualizer',
-    'WebGLVisualizer', 
-    'RealTimeMetricsVisualizer',
-    'MetricUpdate'
+    "ActivationVisualizer",
+    "SynchronizationVisualizer",
+    "WebVisualizer",
+    "WebGLVisualizer",
+    "RealTimeMetricsVisualizer",
+    "MetricUpdate",
 ]

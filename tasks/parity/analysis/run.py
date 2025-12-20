@@ -254,7 +254,6 @@ def build_model_from_checkpoint_path(checkpoint_path, model_type, device="cpu"):
 
 def analyze_trained_model(run_model_spefic_save_dir, args, device):
     with torch.no_grad():
-
         latest_checkpoint_path = get_latest_checkpoint_file(args.log_dir)
         model, model_args = build_model_from_checkpoint_path(
             latest_checkpoint_path, args.model_type, device=device
@@ -434,7 +433,6 @@ def get_accuracy_and_loss_from_checkpoint(checkpoint):
 
 
 if __name__ == "__main__":
-
     args = parse_args()
 
     device = f"cuda:{args.device[0]}" if args.device[0] != -1 else "cpu"
@@ -461,7 +459,6 @@ if __name__ == "__main__":
 
     progress_bar = tqdm(all_runs_log_dirs, desc="Analyzing Runs", dynamic_ncols=True)
     for folder in progress_bar:
-
         run, model_name = folder.strip("/").split("/")[-2:]
 
         run_model_spefic_save_dir = f"{save_dir}/{model_name}/{run}"

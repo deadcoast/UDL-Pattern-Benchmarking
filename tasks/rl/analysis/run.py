@@ -158,7 +158,6 @@ def plot(
     title="Episode Rewards",
     save_path="episode_rewards_avg.png",
 ):
-
     fig, ax = plt.subplots(figsize=(10 * scale, 5 * scale))
 
     iter_groups = defaultdict(list)
@@ -350,7 +349,6 @@ def create_episode_length_csv_and_activation_plots(save_dir, args):
             for iters in ITERS_TO_TEST:
                 episode_lengths = []
                 for run in RUNS_TO_TEST:
-
                     activation_plots_path = (
                         f"{save_dir}/{env_id}/arch_{arch}_iters_{iters}_run_{run}"
                     )

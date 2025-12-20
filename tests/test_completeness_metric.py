@@ -164,9 +164,9 @@ class TestCompletenessMetricProperties:
             )
 
             # Verify boundedness
-            assert (
-                0.0 <= computed_score <= 1.0
-            ), f"Completeness score {computed_score} not in [0,1] for {description}"
+            assert 0.0 <= computed_score <= 1.0, (
+                f"Completeness score {computed_score} not in [0,1] for {description}"
+            )
 
     @given(
         st.sets(
@@ -241,9 +241,9 @@ class TestCompletenessMetricProperties:
             )
 
             # Verify boundedness
-            assert (
-                0.0 <= computed_score <= 1.0
-            ), f"Score {computed_score} not bounded for constructs {construct_types}"
+            assert 0.0 <= computed_score <= 1.0, (
+                f"Score {computed_score} not bounded for constructs {construct_types}"
+            )
 
         except Exception as e:
             # If UDL creation fails, skip this test case
@@ -268,9 +268,9 @@ class TestCompletenessMetricUnits:
         score = metric.compute(udl)
 
         # For basic grammar, this should be complete (has production_rules, terminals, non_terminals)
-        assert (
-            score == 1.0
-        ), f"Complete basic grammar should have completeness 1.0, got {score}"
+        assert score == 1.0, (
+            f"Complete basic grammar should have completeness 1.0, got {score}"
+        )
 
     def test_partially_complete_udl(self):
         """Test on partially complete UDL."""
@@ -289,9 +289,9 @@ class TestCompletenessMetricUnits:
         # - non_terminals (expr)
         # So it should be complete for basic grammar
         expected_score = 1.0  # All basic grammar requirements satisfied
-        assert (
-            abs(score - expected_score) < 1e-6
-        ), f"Expected completeness {expected_score}, got {score}"
+        assert abs(score - expected_score) < 1e-6, (
+            f"Expected completeness {expected_score}, got {score}"
+        )
 
     def test_minimal_udl(self):
         """Test on minimal UDL."""
@@ -308,9 +308,9 @@ class TestCompletenessMetricUnits:
         # - non_terminals (start)
         # So it should be complete for basic grammar
         expected_score = 1.0
-        assert (
-            abs(score - expected_score) < 1e-6
-        ), f"Expected minimal completeness {expected_score}, got {score}"
+        assert abs(score - expected_score) < 1e-6, (
+            f"Expected minimal completeness {expected_score}, got {score}"
+        )
 
     def test_incomplete_programming_language(self):
         """Test on UDL that looks like programming language but is incomplete."""
@@ -365,9 +365,9 @@ class TestCompletenessMetricUnits:
         # This should be detected as expression language and have high completeness
         # Should have: production_rules, terminals, non_terminals, operators, precedence, associativity, expressions
         # That's most of the expression language requirements
-        assert (
-            score > 0.5
-        ), f"Expression language should have high completeness, got {score}"
+        assert score > 0.5, (
+            f"Expression language should have high completeness, got {score}"
+        )
 
     def test_programming_language_completeness(self):
         """Test completeness for programming language constructs."""
@@ -384,9 +384,9 @@ class TestCompletenessMetricUnits:
         score = metric.compute(udl)
 
         # Should be detected as programming language with reasonable completeness
-        assert (
-            score > 0.3
-        ), f"Programming language should have reasonable completeness, got {score}"
+        assert score > 0.3, (
+            f"Programming language should have reasonable completeness, got {score}"
+        )
 
     def test_construct_extraction_method(self):
         """Test the extract_defined_constructs method directly."""
@@ -471,9 +471,9 @@ class TestCompletenessMetricUnits:
         expected_formula = (
             r"Completeness(U) = \frac{|Defined\_Constructs|}{|Required\_Constructs|}"
         )
-        assert (
-            formula == expected_formula
-        ), f"Expected formula {expected_formula}, got {formula}"
+        assert formula == expected_formula, (
+            f"Expected formula {expected_formula}, got {formula}"
+        )
 
     def test_boundedness_verification(self):
         """Test that the metric satisfies boundedness property."""
@@ -490,14 +490,14 @@ class TestCompletenessMetricUnits:
             udl = UDLRepresentation(udl_text, "test.udl")
             score = metric.compute(udl)
 
-            assert (
-                0.0 <= score <= 1.0
-            ), f"Score {score} not in [0,1] for UDL: {repr(udl_text)}"
+            assert 0.0 <= score <= 1.0, (
+                f"Score {score} not in [0,1] for UDL: {repr(udl_text)}"
+            )
 
             # Also test the verification method
-            assert metric.verify_boundedness(
-                udl
-            ), f"Boundedness verification failed for UDL: {repr(udl_text)}"
+            assert metric.verify_boundedness(udl), (
+                f"Boundedness verification failed for UDL: {repr(udl_text)}"
+            )
 
     def test_determinism_verification(self):
         """Test that the metric satisfies determinism property."""

@@ -623,7 +623,6 @@ def initialise_dynamic_args(args):
 
 
 if __name__ == "__main__":
-
     args = initialize_args()
 
     set_seed(args.seed)
@@ -734,9 +733,10 @@ if __name__ == "__main__":
             )
             next_done = np.logical_or(terminations, truncations)
             rewards[step] = torch.tensor(reward).to(device).view(-1)
-            next_obs, next_done = torch.Tensor(next_obs).to(device), torch.Tensor(
-                next_done
-            ).to(device)
+            next_obs, next_done = (
+                torch.Tensor(next_obs).to(device),
+                torch.Tensor(next_done).to(device),
+            )
 
             if "final_info" in infos:
                 for info in infos["final_info"]:

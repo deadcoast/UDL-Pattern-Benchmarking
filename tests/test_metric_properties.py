@@ -170,6 +170,7 @@ class TestMetricBoundedness:
         MetricRegistry.clear()
         # Re-register default metrics for other tests
         from udl_rating_framework.core.metrics import _register_default_metrics
+
         _register_default_metrics()
 
     @given(udl_text_strategy())
@@ -230,6 +231,7 @@ class TestMetricDeterminism:
         MetricRegistry.clear()
         # Re-register default metrics for other tests
         from udl_rating_framework.core.metrics import _register_default_metrics
+
         _register_default_metrics()
 
     @given(udl_text_strategy())
@@ -301,6 +303,7 @@ class TestMetricRegistry:
         MetricRegistry.clear()
         # Re-register default metrics for other tests
         from udl_rating_framework.core.metrics import _register_default_metrics
+
         _register_default_metrics()
 
     def test_metric_registration(self):

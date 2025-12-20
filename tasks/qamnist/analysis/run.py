@@ -206,7 +206,6 @@ def contains_only_zero_zero_ops(q):
 
 
 def create_case_study_plots(model, model_args, save_dir):
-
     num_digits = 2
     num_operations = 4
     testloader = prepare_data_for_analysis(num_digits, num_operations, model_args)
@@ -292,7 +291,6 @@ def get_accuracy(testloader, model, device, args):
 
 
 if __name__ == "__main__":
-
     args = parse_args()
 
     device = f"cuda:{args.device[0]}" if args.device[0] != -1 else "cpu"

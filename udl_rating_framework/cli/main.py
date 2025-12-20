@@ -24,26 +24,26 @@ from udl_rating_framework.cli.config import load_config, validate_config
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
 
 @click.group()
-@click.option('--config', '-c', 
-              type=click.Path(exists=True, path_type=Path),
-              help='Configuration file path (YAML format)')
-@click.option('--verbose', '-v', is_flag=True, 
-              help='Enable verbose logging')
-@click.option('--quiet', '-q', is_flag=True,
-              help='Suppress all output except errors')
+@click.option(
+    "--config",
+    "-c",
+    type=click.Path(exists=True, path_type=Path),
+    help="Configuration file path (YAML format)",
+)
+@click.option("--verbose", "-v", is_flag=True, help="Enable verbose logging")
+@click.option("--quiet", "-q", is_flag=True, help="Suppress all output except errors")
 @click.pass_context
 def cli(ctx: click.Context, config: Optional[Path], verbose: bool, quiet: bool):
     """
-    UDL Rating Framework - A mathematically-grounded system for evaluating 
+    UDL Rating Framework - A mathematically-grounded system for evaluating
     User Defined Languages built on Continuous Thought Machine architecture.
-    
+
     This tool provides commands for:
     - Rating UDL files and directories
     - Training CTM models
@@ -58,18 +58,18 @@ def cli(ctx: click.Context, config: Optional[Path], verbose: bool, quiet: bool):
         logging.getLogger().setLevel(logging.DEBUG)
     else:
         logging.getLogger().setLevel(logging.INFO)
-    
+
     # Load configuration
     ctx.ensure_object(dict)
     if config:
         try:
-            ctx.obj['config'] = load_config(config)
+            ctx.obj["config"] = load_config(config)
             logger.info(f"Loaded configuration from {config}")
         except Exception as e:
             logger.error(f"Failed to load configuration: {e}")
             sys.exit(1)
     else:
-        ctx.obj['config'] = {}
+        ctx.obj["config"] = {}
 
 
 # Add commands
@@ -92,9 +92,10 @@ def main():
         logger.error(f"Unexpected error: {e}")
         if logger.getEffectiveLevel() <= logging.DEBUG:
             import traceback
+
             traceback.print_exc()
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

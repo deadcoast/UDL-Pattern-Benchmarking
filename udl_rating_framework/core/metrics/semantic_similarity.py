@@ -41,10 +41,10 @@ class SemanticSimilarityMetric(QualityMetric):
         self.use_pretrained = use_pretrained
         self.vectorizer = TfidfVectorizer(
             max_features=1000,
-            stop_words='english',
+            stop_words="english",
             ngram_range=(1, 2),
             min_df=1,
-            max_df=0.95
+            max_df=0.95,
         )
 
     def compute(self, udl: UDLRepresentation) -> float:
@@ -107,7 +107,8 @@ class SemanticSimilarityMetric(QualityMetric):
 
         # Extract meaningful identifiers
         identifiers = [
-            token.text for token in tokens
+            token.text
+            for token in tokens
             if token.type == TokenType.IDENTIFIER and len(token.text) > 1
         ]
         constructs.extend(identifiers)
@@ -118,7 +119,7 @@ class SemanticSimilarityMetric(QualityMetric):
 
         # Extract comments (often contain semantic information)
         comments = [
-            token.text.strip('#').strip('//').strip('/*').strip('*/')
+            token.text.strip("#").strip("//").strip("/*").strip("*/")
             for token in tokens
             if token.type == TokenType.COMMENT and len(token.text.strip()) > 3
         ]
@@ -128,17 +129,16 @@ class SemanticSimilarityMetric(QualityMetric):
         literals = [
             token.text.strip('"').strip("'")
             for token in tokens
-            if token.type == TokenType.LITERAL 
+            if token.type == TokenType.LITERAL
             and len(token.text) > 3
             and not token.text.isdigit()
         ]
         constructs.extend(literals)
 
         # Remove duplicates and filter out very short constructs
-        unique_constructs = list(set(
-            construct for construct in constructs
-            if len(construct.strip()) > 1
-        ))
+        unique_constructs = list(
+            set(construct for construct in constructs if len(construct.strip()) > 1)
+        )
 
         return unique_constructs
 
@@ -188,7 +188,9 @@ class SemanticSimilarityMetric(QualityMetric):
         except Exception:
             return None
 
-    def _generate_pretrained_embeddings(self, constructs: List[str]) -> Optional[np.ndarray]:
+    def _generate_pretrained_embeddings(
+        self, constructs: List[str]
+    ) -> Optional[np.ndarray]:
         """
         Generate embeddings using pre-trained models (placeholder for future implementation).
 
@@ -214,9 +216,9 @@ class SemanticSimilarityMetric(QualityMetric):
             Character-based embedding matrix
         """
         # Create character frequency vectors
-        all_chars = set(''.join(constructs))
+        all_chars = set("".join(constructs))
         char_to_idx = {char: idx for idx, char in enumerate(sorted(all_chars))}
-        
+
         embeddings = []
         for construct in constructs:
             embedding = np.zeros(len(char_to_idx))
@@ -227,7 +229,7 @@ class SemanticSimilarityMetric(QualityMetric):
             if np.sum(embedding) > 0:
                 embedding = embedding / np.sum(embedding)
             embeddings.append(embedding)
-        
+
         return np.array(embeddings)
 
     def _split_identifier(self, identifier: str) -> str:
@@ -241,19 +243,21 @@ class SemanticSimilarityMetric(QualityMetric):
             Space-separated words
         """
         import re
-        
+
         # Split camelCase
-        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1 \2', identifier)
-        s2 = re.sub('([a-z0-9])([A-Z])', r'\1 \2', s1)
-        
+        s1 = re.sub("(.)([A-Z][a-z]+)", r"\1 \2", identifier)
+        s2 = re.sub("([a-z0-9])([A-Z])", r"\1 \2", s1)
+
         # Split snake_case and other separators
-        s3 = re.sub('[_-]', ' ', s2)
-        
+        s3 = re.sub("[_-]", " ", s2)
+
         return s3.lower()
 
     def get_formula(self) -> str:
         """Return LaTeX formula for this metric."""
-        return r"SemanticSimilarity(U) = \frac{1}{|C|^2} \sum_{i,j} \text{sim}(c_i, c_j)"
+        return (
+            r"SemanticSimilarity(U) = \frac{1}{|C|^2} \sum_{i,j} \text{sim}(c_i, c_j)"
+        )
 
     def get_properties(self) -> Dict[str, bool]:
         """

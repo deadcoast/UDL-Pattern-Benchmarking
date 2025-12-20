@@ -16,9 +16,9 @@ from .improvement_advisor import ImprovementAdvisor
 from .bi_exporter import BusinessIntelligenceExporter
 
 __all__ = [
-    'TimeSeriesAnalyzer',
-    'PortfolioAnalyzer', 
-    'TrendPredictor',
-    'ImprovementAdvisor',
-    'BusinessIntelligenceExporter'
+    "TimeSeriesAnalyzer",
+    "PortfolioAnalyzer",
+    "TrendPredictor",
+    "ImprovementAdvisor",
+    "BusinessIntelligenceExporter",
 ]

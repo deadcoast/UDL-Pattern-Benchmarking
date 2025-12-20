@@ -7,7 +7,12 @@ Measures compatibility and portability across different grammar formats and lang
 import re
 from typing import Dict, List, Set, Any, Tuple, Optional
 from udl_rating_framework.core.metrics.base import QualityMetric
-from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType, GrammarFormat
+from udl_rating_framework.core.representation import (
+    UDLRepresentation,
+    Token,
+    TokenType,
+    GrammarFormat,
+)
 
 
 class CrossLanguageCompatibilityMetric(QualityMetric):
@@ -35,44 +40,52 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
     def __init__(self):
         """Initialize cross-language compatibility metric."""
         self.weights = {
-            'portability': 0.3,
-            'standards': 0.25,
-            'universality': 0.25,
-            'interoperability': 0.2
+            "portability": 0.3,
+            "standards": 0.25,
+            "universality": 0.25,
+            "interoperability": 0.2,
         }
 
         # Define universal constructs that work across formats
         self.universal_constructs = {
-            'production_rules',
-            'terminals',
-            'non_terminals',
-            'alternation',
-            'concatenation',
-            'grouping',
-            'optional',
-            'repetition'
+            "production_rules",
+            "terminals",
+            "non_terminals",
+            "alternation",
+            "concatenation",
+            "grouping",
+            "optional",
+            "repetition",
         }
 
         # Define format-specific features
         self.format_specific_features = {
             GrammarFormat.ANTLR: {
-                'lexer_rules', 'parser_rules', 'actions', 'predicates',
-                'channels', 'modes', 'fragments', 'imports'
+                "lexer_rules",
+                "parser_rules",
+                "actions",
+                "predicates",
+                "channels",
+                "modes",
+                "fragments",
+                "imports",
             },
             GrammarFormat.PEG: {
-                'ordered_choice', 'not_predicate', 'and_predicate',
-                'cut_operator', 'packrat_parsing'
+                "ordered_choice",
+                "not_predicate",
+                "and_predicate",
+                "cut_operator",
+                "packrat_parsing",
             },
             GrammarFormat.YACC_BISON: {
-                'precedence_declarations', 'associativity', 'semantic_actions',
-                'error_recovery', 'shift_reduce'
+                "precedence_declarations",
+                "associativity",
+                "semantic_actions",
+                "error_recovery",
+                "shift_reduce",
             },
-            GrammarFormat.EBNF: {
-                'iso_syntax', 'repetition_syntax', 'exception_syntax'
-            },
-            GrammarFormat.ABNF: {
-                'rfc_syntax', 'prose_values', 'numeric_values'
-            }
+            GrammarFormat.EBNF: {"iso_syntax", "repetition_syntax", "exception_syntax"},
+            GrammarFormat.ABNF: {"rfc_syntax", "prose_values", "numeric_values"},
         }
 
     def compute(self, udl: UDLRepresentation) -> float:
@@ -93,10 +106,10 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
 
         # Weighted combination
         compatibility_score = (
-            self.weights['portability'] * portability_score +
-            self.weights['standards'] * standards_score +
-            self.weights['universality'] * universality_score +
-            self.weights['interoperability'] * interoperability_score
+            self.weights["portability"] * portability_score
+            + self.weights["standards"] * standards_score
+            + self.weights["universality"] * universality_score
+            + self.weights["interoperability"] * interoperability_score
         )
 
         return max(0.0, min(1.0, compatibility_score))
@@ -124,7 +137,9 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
 
         if current_format in self.format_specific_features:
             format_specific_features = self.format_specific_features[current_format]
-            format_specific_count = len(used_constructs.intersection(format_specific_features))
+            format_specific_count = len(
+                used_constructs.intersection(format_specific_features)
+            )
 
         total_constructs = len(used_constructs)
         if total_constructs == 0:
@@ -181,11 +196,11 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
 
         # Check for universal patterns
         universal_patterns = {
-            'basic_production': self._has_basic_productions(rules),
-            'standard_operators': self._uses_standard_operators(tokens),
-            'common_naming': self._uses_common_naming(tokens),
-            'standard_literals': self._uses_standard_literals(tokens),
-            'conventional_structure': self._has_conventional_structure(rules)
+            "basic_production": self._has_basic_productions(rules),
+            "standard_operators": self._uses_standard_operators(tokens),
+            "common_naming": self._uses_common_naming(tokens),
+            "standard_literals": self._uses_standard_literals(tokens),
+            "conventional_structure": self._has_conventional_structure(rules),
         }
 
         # Score based on presence of universal patterns
@@ -208,18 +223,18 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
 
         # Check compatibility with common parser generators
         tool_compatibility = {
-            'yacc_bison': self._compatible_with_yacc_bison(tokens),
-            'antlr': self._compatible_with_antlr(tokens),
-            'peg_parsers': self._compatible_with_peg_parsers(tokens),
-            'generic_parsers': self._compatible_with_generic_parsers(tokens)
+            "yacc_bison": self._compatible_with_yacc_bison(tokens),
+            "antlr": self._compatible_with_antlr(tokens),
+            "peg_parsers": self._compatible_with_peg_parsers(tokens),
+            "generic_parsers": self._compatible_with_generic_parsers(tokens),
         }
 
         # Weight by tool popularity/importance
         weights = {
-            'yacc_bison': 0.3,
-            'antlr': 0.3,
-            'peg_parsers': 0.2,
-            'generic_parsers': 0.2
+            "yacc_bison": 0.3,
+            "antlr": 0.3,
+            "peg_parsers": 0.2,
+            "generic_parsers": 0.2,
         }
 
         interoperability_score = sum(
@@ -244,39 +259,43 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
 
         # Basic constructs
         if rules:
-            constructs.add('production_rules')
+            constructs.add("production_rules")
 
         # Analyze tokens for specific constructs
         for token in tokens:
             if token.type == TokenType.OPERATOR:
-                if token.text == '|':
-                    constructs.add('alternation')
-                elif token.text in ['*', '+']:
-                    constructs.add('repetition')
-                elif token.text == '?':
-                    constructs.add('optional')
-                elif token.text in ['(', ')']:
-                    constructs.add('grouping')
-                elif token.text == '<-':
-                    constructs.add('ordered_choice')
-                elif token.text in ['&', '~']:
-                    constructs.add('predicates')
+                if token.text == "|":
+                    constructs.add("alternation")
+                elif token.text in ["*", "+"]:
+                    constructs.add("repetition")
+                elif token.text == "?":
+                    constructs.add("optional")
+                elif token.text in ["(", ")"]:
+                    constructs.add("grouping")
+                elif token.text == "<-":
+                    constructs.add("ordered_choice")
+                elif token.text in ["&", "~"]:
+                    constructs.add("predicates")
 
             elif token.type == TokenType.LITERAL:
-                constructs.add('terminals')
+                constructs.add("terminals")
 
             elif token.type == TokenType.IDENTIFIER:
-                constructs.add('non_terminals')
+                constructs.add("non_terminals")
 
         return constructs
 
     def _check_iso_ebnf_compliance(self, tokens: List[Token]) -> float:
         """Check compliance with ISO/IEC 14977 EBNF standard."""
         compliance_checks = {
-            'uses_assignment': any(token.text == '=' for token in tokens if token.type == TokenType.OPERATOR),
-            'uses_terminator': any(token.text in [';', '.'] for token in tokens),
-            'proper_grouping': self._has_proper_ebnf_grouping(tokens),
-            'standard_repetition': self._has_standard_ebnf_repetition(tokens)
+            "uses_assignment": any(
+                token.text == "="
+                for token in tokens
+                if token.type == TokenType.OPERATOR
+            ),
+            "uses_terminator": any(token.text in [";", "."] for token in tokens),
+            "proper_grouping": self._has_proper_ebnf_grouping(tokens),
+            "standard_repetition": self._has_standard_ebnf_repetition(tokens),
         }
 
         return sum(compliance_checks.values()) / len(compliance_checks)
@@ -284,10 +303,14 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
     def _check_rfc_abnf_compliance(self, tokens: List[Token]) -> float:
         """Check compliance with RFC 5234 ABNF standard."""
         compliance_checks = {
-            'uses_assignment': any(token.text == '=' for token in tokens if token.type == TokenType.OPERATOR),
-            'case_insensitive': self._has_case_insensitive_literals(tokens),
-            'numeric_values': self._has_numeric_value_notation(tokens),
-            'proper_concatenation': self._has_proper_abnf_concatenation(tokens)
+            "uses_assignment": any(
+                token.text == "="
+                for token in tokens
+                if token.type == TokenType.OPERATOR
+            ),
+            "case_insensitive": self._has_case_insensitive_literals(tokens),
+            "numeric_values": self._has_numeric_value_notation(tokens),
+            "proper_concatenation": self._has_proper_abnf_concatenation(tokens),
         }
 
         return sum(compliance_checks.values()) / len(compliance_checks)
@@ -295,9 +318,17 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
     def _check_bnf_compliance(self, tokens: List[Token]) -> float:
         """Check compliance with basic BNF conventions."""
         compliance_checks = {
-            'uses_assignment': any(token.text == '::=' for token in tokens if token.type == TokenType.OPERATOR),
-            'angle_brackets': self._has_angle_bracket_nonterminals(tokens),
-            'alternation': any(token.text == '|' for token in tokens if token.type == TokenType.OPERATOR)
+            "uses_assignment": any(
+                token.text == "::="
+                for token in tokens
+                if token.type == TokenType.OPERATOR
+            ),
+            "angle_brackets": self._has_angle_bracket_nonterminals(tokens),
+            "alternation": any(
+                token.text == "|"
+                for token in tokens
+                if token.type == TokenType.OPERATOR
+            ),
         }
 
         return sum(compliance_checks.values()) / len(compliance_checks)
@@ -305,9 +336,9 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
     def _check_antlr_conventions(self, tokens: List[Token]) -> float:
         """Check adherence to ANTLR conventions."""
         compliance_checks = {
-            'grammar_declaration': self._has_grammar_declaration(tokens),
-            'rule_naming': self._has_proper_antlr_naming(tokens),
-            'lexer_parser_separation': self._has_lexer_parser_separation(tokens)
+            "grammar_declaration": self._has_grammar_declaration(tokens),
+            "rule_naming": self._has_proper_antlr_naming(tokens),
+            "lexer_parser_separation": self._has_lexer_parser_separation(tokens),
         }
 
         return sum(compliance_checks.values()) / len(compliance_checks)
@@ -315,9 +346,21 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
     def _check_peg_conventions(self, tokens: List[Token]) -> float:
         """Check adherence to PEG conventions."""
         compliance_checks = {
-            'ordered_choice': any(token.text == '/' for token in tokens if token.type == TokenType.OPERATOR),
-            'peg_assignment': any(token.text == '<-' for token in tokens if token.type == TokenType.OPERATOR),
-            'predicates': any(token.text in ['&', '~'] for token in tokens if token.type == TokenType.OPERATOR)
+            "ordered_choice": any(
+                token.text == "/"
+                for token in tokens
+                if token.type == TokenType.OPERATOR
+            ),
+            "peg_assignment": any(
+                token.text == "<-"
+                for token in tokens
+                if token.type == TokenType.OPERATOR
+            ),
+            "predicates": any(
+                token.text in ["&", "~"]
+                for token in tokens
+                if token.type == TokenType.OPERATOR
+            ),
         }
 
         return sum(compliance_checks.values()) / len(compliance_checks)
@@ -325,9 +368,9 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
     def _check_generic_standards(self, tokens: List[Token]) -> float:
         """Check adherence to generic grammar standards."""
         compliance_checks = {
-            'has_productions': self._has_production_rules(tokens),
-            'consistent_operators': self._has_consistent_operators(tokens),
-            'proper_literals': self._has_proper_string_literals(tokens)
+            "has_productions": self._has_production_rules(tokens),
+            "consistent_operators": self._has_consistent_operators(tokens),
+            "proper_literals": self._has_proper_string_literals(tokens),
         }
 
         return sum(compliance_checks.values()) / len(compliance_checks)
@@ -339,18 +382,20 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
 
     def _uses_standard_operators(self, tokens: List[Token]) -> bool:
         """Check if UDL uses standard operators."""
-        standard_ops = {'|', '*', '+', '?', '(', ')', '::=', ':', '='}
+        standard_ops = {"|", "*", "+", "?", "(", ")", "::=", ":", "="}
         used_ops = {token.text for token in tokens if token.type == TokenType.OPERATOR}
         return len(used_ops.intersection(standard_ops)) > 0
 
     def _uses_common_naming(self, tokens: List[Token]) -> bool:
         """Check if UDL uses common naming conventions."""
-        identifiers = [token.text for token in tokens if token.type == TokenType.IDENTIFIER]
+        identifiers = [
+            token.text for token in tokens if token.type == TokenType.IDENTIFIER
+        ]
         if not identifiers:
             return True
 
         # Check for common patterns
-        common_patterns = ['expr', 'stmt', 'decl', 'term', 'factor', 'id', 'num']
+        common_patterns = ["expr", "stmt", "decl", "term", "factor", "id", "num"]
         return any(
             any(pattern in ident.lower() for pattern in common_patterns)
             for ident in identifiers
@@ -364,8 +409,8 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
 
         # Check for standard quote styles
         return any(
-            (literal.startswith('"') and literal.endswith('"')) or
-            (literal.startswith("'") and literal.endswith("'"))
+            (literal.startswith('"') and literal.endswith('"'))
+            or (literal.startswith("'") and literal.endswith("'"))
             for literal in literals
         )
 
@@ -375,19 +420,19 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
             return False
 
         # Look for hierarchical structure (common in well-structured grammars)
-        rule_names = [rule.lhs.lower() for rule in rules if hasattr(rule, 'lhs')]
-        
+        rule_names = [rule.lhs.lower() for rule in rules if hasattr(rule, "lhs")]
+
         # Common hierarchical patterns
-        hierarchy_indicators = ['program', 'statement', 'expression', 'term', 'factor']
+        hierarchy_indicators = ["program", "statement", "expression", "term", "factor"]
         return any(indicator in rule_names for indicator in hierarchy_indicators)
 
     def _compatible_with_yacc_bison(self, tokens: List[Token]) -> bool:
         """Check compatibility with Yacc/Bison."""
         # Look for Yacc-compatible constructs
         yacc_compatible = True
-        
+
         # Check for incompatible PEG constructs
-        peg_constructs = ['<-', '&', '~', '/']
+        peg_constructs = ["<-", "&", "~", "/"]
         for token in tokens:
             if token.type == TokenType.OPERATOR and token.text in peg_constructs:
                 yacc_compatible = False
@@ -409,32 +454,35 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
     def _compatible_with_generic_parsers(self, tokens: List[Token]) -> bool:
         """Check compatibility with generic parsers."""
         # Generic parsers usually handle basic BNF/EBNF
-        basic_constructs = {'|', '*', '+', '?', '(', ')', '::=', '='}
+        basic_constructs = {"|", "*", "+", "?", "(", ")", "::=", "="}
         used_ops = {token.text for token in tokens if token.type == TokenType.OPERATOR}
-        
+
         # If only basic constructs are used, it's compatible
         return used_ops.issubset(basic_constructs) or len(used_ops) == 0
 
     # Additional helper methods for specific compliance checks
     def _has_proper_ebnf_grouping(self, tokens: List[Token]) -> bool:
         """Check for proper EBNF grouping syntax."""
-        return any(token.text in ['(', ')', '[', ']', '{', '}'] for token in tokens)
+        return any(token.text in ["(", ")", "[", "]", "{", "}"] for token in tokens)
 
     def _has_standard_ebnf_repetition(self, tokens: List[Token]) -> bool:
         """Check for standard EBNF repetition syntax."""
-        return any(token.text in ['{', '}'] for token in tokens)
+        return any(token.text in ["{", "}"] for token in tokens)
 
     def _has_case_insensitive_literals(self, tokens: List[Token]) -> bool:
         """Check for case-insensitive literal notation."""
         # ABNF uses %i for case-insensitive
-        return any('%i' in token.text for token in tokens if token.type == TokenType.LITERAL)
+        return any(
+            "%i" in token.text for token in tokens if token.type == TokenType.LITERAL
+        )
 
     def _has_numeric_value_notation(self, tokens: List[Token]) -> bool:
         """Check for ABNF numeric value notation."""
         # ABNF uses %d for decimal, %x for hex
         return any(
-            token.text.startswith('%d') or token.text.startswith('%x')
-            for token in tokens if token.type == TokenType.LITERAL
+            token.text.startswith("%d") or token.text.startswith("%x")
+            for token in tokens
+            if token.type == TokenType.LITERAL
         )
 
     def _has_proper_abnf_concatenation(self, tokens: List[Token]) -> bool:
@@ -444,40 +492,51 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
 
     def _has_angle_bracket_nonterminals(self, tokens: List[Token]) -> bool:
         """Check for angle bracket notation for non-terminals."""
-        return any('<' in token.text and '>' in token.text for token in tokens)
+        return any("<" in token.text and ">" in token.text for token in tokens)
 
     def _has_grammar_declaration(self, tokens: List[Token]) -> bool:
         """Check for ANTLR grammar declaration."""
-        return any('grammar' in token.text.lower() for token in tokens)
+        return any("grammar" in token.text.lower() for token in tokens)
 
     def _has_proper_antlr_naming(self, tokens: List[Token]) -> bool:
         """Check for proper ANTLR naming conventions."""
         # ANTLR: parser rules lowercase, lexer rules uppercase
-        identifiers = [token.text for token in tokens if token.type == TokenType.IDENTIFIER]
+        identifiers = [
+            token.text for token in tokens if token.type == TokenType.IDENTIFIER
+        ]
         return len(identifiers) > 0  # Simplified check
 
     def _has_lexer_parser_separation(self, tokens: List[Token]) -> bool:
         """Check for lexer/parser rule separation."""
-        return any(token.text in ['lexer', 'parser'] for token in tokens)
+        return any(token.text in ["lexer", "parser"] for token in tokens)
 
     def _has_production_rules(self, tokens: List[Token]) -> bool:
         """Check for production rule indicators."""
-        production_ops = ['::=', ':', '->', '=', '<-']
-        return any(token.text in production_ops for token in tokens if token.type == TokenType.OPERATOR)
+        production_ops = ["::=", ":", "->", "=", "<-"]
+        return any(
+            token.text in production_ops
+            for token in tokens
+            if token.type == TokenType.OPERATOR
+        )
 
     def _has_consistent_operators(self, tokens: List[Token]) -> bool:
         """Check for consistent operator usage."""
-        assignment_ops = [token.text for token in tokens 
-                         if token.type == TokenType.OPERATOR and token.text in ['::=', ':', '->', '=', '<-']]
-        
+        assignment_ops = [
+            token.text
+            for token in tokens
+            if token.type == TokenType.OPERATOR
+            and token.text in ["::=", ":", "->", "=", "<-"]
+        ]
+
         if not assignment_ops:
             return True
-        
+
         # Check if mostly using one type of assignment operator
         from collections import Counter
+
         op_counts = Counter(assignment_ops)
         most_common_count = op_counts.most_common(1)[0][1]
-        
+
         return most_common_count / len(assignment_ops) >= 0.8
 
     def _has_proper_string_literals(self, tokens: List[Token]) -> bool:
@@ -485,13 +544,16 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
         literals = [token.text for token in tokens if token.type == TokenType.LITERAL]
         if not literals:
             return True
-        
+
         properly_quoted = sum(
-            1 for literal in literals
-            if ((literal.startswith('"') and literal.endswith('"')) or
-                (literal.startswith("'") and literal.endswith("'")))
+            1
+            for literal in literals
+            if (
+                (literal.startswith('"') and literal.endswith('"'))
+                or (literal.startswith("'") and literal.endswith("'"))
+            )
         )
-        
+
         return properly_quoted / len(literals) >= 0.8
 
     def get_formula(self) -> str:

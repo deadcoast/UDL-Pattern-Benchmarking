@@ -28,10 +28,10 @@ from udl_rating_framework.validation.link_validator import LinkValidator
 def compile_link_validation_findings(reporter: AuditReporter) -> int:
     """Compile findings from link validation (Phase 2)."""
     print("Scanning for link validation findings...")
-    
+
     validator = LinkValidator(project_root)
     report = validator.find_broken_links()
-    
+
     count = 0
     for result in report.broken_link_details:
         reporter.add_finding(
@@ -46,7 +46,7 @@ def compile_link_validation_findings(reporter: AuditReporter) -> int:
             status=ResolutionStatus.OPEN,
         )
         count += 1
-    
+
     print(f"  Found {count} broken links")
     return count
 
@@ -54,14 +54,14 @@ def compile_link_validation_findings(reporter: AuditReporter) -> int:
 def compile_structure_validation_findings(reporter: AuditReporter) -> int:
     """Compile findings from structure validation (Phase 6)."""
     print("Compiling structure validation findings...")
-    
+
     count = 0
-    
+
     # Based on STRUCTURE_VALIDATION_REPORT.md findings
     # 11 modules without direct test coverage
     untested_modules = [
         "cli_commands_compare",
-        "cli_commands_evaluate", 
+        "cli_commands_evaluate",
         "cli_commands_rate",
         "cli_commands_train",
         "cli_config",
@@ -72,7 +72,7 @@ def compile_structure_validation_findings(reporter: AuditReporter) -> int:
         "core_memory_mapping",
         "core_streaming",
     ]
-    
+
     for module in untested_modules:
         reporter.add_finding(
             category=FindingCategory.TEST,
@@ -84,7 +84,7 @@ def compile_structure_validation_findings(reporter: AuditReporter) -> int:
             resolution_notes="May be tested indirectly through integration tests",
         )
         count += 1
-    
+
     print(f"  Found {count} structure findings (all resolved/informational)")
     return count
 
@@ -92,12 +92,12 @@ def compile_structure_validation_findings(reporter: AuditReporter) -> int:
 def compile_api_validation_findings(reporter: AuditReporter) -> int:
     """Compile findings from API validation (Phase 3)."""
     print("Compiling API validation findings...")
-    
+
     count = 0
-    
+
     # Based on API_VALIDATION_REPORT.md - all major issues resolved
     # Remaining: 1 undocumented class, ~20 undocumented functions (mostly __init__)
-    
+
     reporter.add_finding(
         category=FindingCategory.API,
         severity=Severity.MINOR,
@@ -108,7 +108,7 @@ def compile_api_validation_findings(reporter: AuditReporter) -> int:
         status=ResolutionStatus.OPEN,
     )
     count += 1
-    
+
     # Note: __init__ methods and internal callbacks are typically not documented
     # Adding as INFO level
     undocumented_functions = [
@@ -116,20 +116,22 @@ def compile_api_validation_findings(reporter: AuditReporter) -> int:
         ("trend_predictor.py:453", "coef_ property"),
         ("performance_benchmarks.py:24", "memory_profile decorator"),
     ]
-    
+
     for location, name in undocumented_functions:
         file_path, line = location.split(":")
         reporter.add_finding(
             category=FindingCategory.DOCSTRING,
             severity=Severity.INFO,
-            file_path=f"udl_rating_framework/analytics/{file_path}" if "trend" in file_path else f"udl_rating_framework/benchmarks/{file_path}",
+            file_path=f"udl_rating_framework/analytics/{file_path}"
+            if "trend" in file_path
+            else f"udl_rating_framework/benchmarks/{file_path}",
             line_number=int(line),
             description=f"Function lacks docstring: {name}",
             requirement_ref="8.4",
             status=ResolutionStatus.OPEN,
         )
         count += 1
-    
+
     print(f"  Found {count} API documentation findings")
     return count
 
@@ -137,16 +139,25 @@ def compile_api_validation_findings(reporter: AuditReporter) -> int:
 def compile_test_failures(reporter: AuditReporter) -> int:
     """Compile findings from test failures."""
     print("Compiling test failure findings...")
-    
+
     count = 0
-    
+
     # Known failing tests from test run
     failing_tests = [
-        ("tests/test_api_integration.py", "API integration tests failing - FastAPI test client issues"),
-        ("tests/test_deployment.py", "Deployment tests failing - FastAPI endpoint issues"),
-        ("tests/test_link_validation_properties.py", "Link validation tests - some project links broken"),
+        (
+            "tests/test_api_integration.py",
+            "API integration tests failing - FastAPI test client issues",
+        ),
+        (
+            "tests/test_deployment.py",
+            "Deployment tests failing - FastAPI endpoint issues",
+        ),
+        (
+            "tests/test_link_validation_properties.py",
+            "Link validation tests - some project links broken",
+        ),
     ]
-    
+
     for test_file, description in failing_tests:
         reporter.add_finding(
             category=FindingCategory.TEST,
@@ -157,7 +168,7 @@ def compile_test_failures(reporter: AuditReporter) -> int:
             status=ResolutionStatus.OPEN,
         )
         count += 1
-    
+
     print(f"  Found {count} test failure findings")
     return count
 
@@ -165,14 +176,14 @@ def compile_test_failures(reporter: AuditReporter) -> int:
 def compile_deployment_findings(reporter: AuditReporter) -> int:
     """Compile findings from deployment validation (Phase 11)."""
     print("Compiling deployment validation findings...")
-    
+
     count = 0
-    
+
     # Based on completed tasks 18.1-18.5
     # Docker and Kubernetes validation passed
     # API endpoint documentation validated
     # Environment variable documentation validated
-    
+
     # No open findings - all resolved
     print(f"  Found {count} deployment findings (all resolved)")
     return count
@@ -181,9 +192,9 @@ def compile_deployment_findings(reporter: AuditReporter) -> int:
 def compile_formula_validation_findings(reporter: AuditReporter) -> int:
     """Compile findings from mathematical formula validation (Phase 4)."""
     print("Compiling formula validation findings...")
-    
+
     count = 0
-    
+
     # Based on formula_inventory.md - all formulas aligned
     # No open findings
     print(f"  Found {count} formula findings (all aligned)")
@@ -193,9 +204,9 @@ def compile_formula_validation_findings(reporter: AuditReporter) -> int:
 def compile_example_validation_findings(reporter: AuditReporter) -> int:
     """Compile findings from example validation (Phase 5)."""
     print("Compiling example validation findings...")
-    
+
     count = 0
-    
+
     # Based on completed tasks 8, 9, 10
     # UDL examples, notebooks, and scripts validated
     # No open findings
@@ -206,9 +217,9 @@ def compile_example_validation_findings(reporter: AuditReporter) -> int:
 def compile_config_validation_findings(reporter: AuditReporter) -> int:
     """Compile findings from configuration validation (Phase 7)."""
     print("Compiling configuration validation findings...")
-    
+
     count = 0
-    
+
     # Based on completed tasks 13, 14
     # Dependencies, entry points, and config consistency validated
     # No open findings
@@ -219,9 +230,9 @@ def compile_config_validation_findings(reporter: AuditReporter) -> int:
 def compile_docstring_validation_findings(reporter: AuditReporter) -> int:
     """Compile findings from docstring validation (Phase 8)."""
     print("Compiling docstring validation findings...")
-    
+
     count = 0
-    
+
     # Based on completed task 15
     # Docstrings validated
     # No major open findings
@@ -247,10 +258,10 @@ def main():
     print("Documentation Audit - Compiling All Findings")
     print("=" * 60)
     print()
-    
+
     reporter = AuditReporter()
     reporter.report.project_version = "1.0.0"
-    
+
     # Compile findings from all phases
     total = 0
     total += compile_link_validation_findings(reporter)
@@ -262,17 +273,18 @@ def main():
     total += compile_example_validation_findings(reporter)
     total += compile_config_validation_findings(reporter)
     total += compile_docstring_validation_findings(reporter)
-    
+
     # Set files scanned count
-    reporter.report.total_files_scanned = len(list(project_root.glob("**/*.py"))) + \
-                                          len(list(project_root.glob("**/*.md")))
-    
+    reporter.report.total_files_scanned = len(list(project_root.glob("**/*.py"))) + len(
+        list(project_root.glob("**/*.md"))
+    )
+
     # Add coverage metrics
     add_coverage_metrics(reporter)
-    
+
     # Generate recommendations
     reporter.generate_recommendations()
-    
+
     print()
     print("=" * 60)
     print("Summary")
@@ -283,20 +295,20 @@ def main():
     print(f"  Minor: {reporter.report.summary.get('minor', 0)}")
     print(f"  Info: {reporter.report.summary.get('info', 0)}")
     print()
-    
+
     # Save reports
     output_dir = project_root / "docs"
-    
+
     # Save markdown report
     md_path = output_dir / "AUDIT_REPORT.md"
     reporter.save_report(md_path, format="markdown")
     print(f"Markdown report saved to: {md_path}")
-    
+
     # Save JSON report
     json_path = output_dir / "audit_report.json"
     reporter.save_report(json_path, format="json")
     print(f"JSON report saved to: {json_path}")
-    
+
     return reporter
 
 

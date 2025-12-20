@@ -48,7 +48,6 @@ def make_rl_gif(
     umap_positions,
     umap_point_scaler=1.0,
 ):
-
     batch_index = 0
     figscale = 0.32
     n_steps = action_probs.shape[0]
@@ -146,7 +145,6 @@ def make_rl_gif(
 
 
 def run_umap(agent, model_args):
-
     all_post_activations = []
     point_counts = 150
 
@@ -232,7 +230,6 @@ def run_umap(agent, model_args):
 
 
 def run_model_and_make_gif(checkpoint_path, save_path, env_id, device):
-
     # Load the model
     _, _, _, _, _, model_args = get_training_data_from_checkpoint_path(
         checkpoint_path, device
@@ -259,7 +256,6 @@ def run_model_and_make_gif(checkpoint_path, save_path, env_id, device):
 
 
 if __name__ == "__main__":
-
     env_id = "MiniGrid-FourRooms-v0"
 
     CHECKPOINT_PATH = f"logs/rl/{env_id}/run1/ctm_2/checkpoint.pt"

@@ -99,7 +99,6 @@ class ContinuousThoughtMachineSORT(ContinuousThoughtMachine):
 
         # --- Recurrent Loop  ---
         for stepi in range(self.iterations):
-
             pre_synapse_input = torch.concatenate((x, activated_state), dim=-1)
 
             # --- Apply Synapses ---

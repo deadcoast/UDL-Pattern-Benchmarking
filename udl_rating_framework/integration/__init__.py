@@ -15,9 +15,9 @@ from .batch_processor import BatchProcessor
 from .ide_plugin import IDEPluginManager
 
 __all__ = [
-    'GitHookManager',
-    'CICDIntegration', 
-    'UDLLanguageServer',
-    'BatchProcessor',
-    'IDEPluginManager'
+    "GitHookManager",
+    "CICDIntegration",
+    "UDLLanguageServer",
+    "BatchProcessor",
+    "IDEPluginManager",
 ]

@@ -285,7 +285,6 @@ def parse_args():
 
 
 if __name__ == "__main__":
-
     # Hosuekeeping
     args = parse_args()
 
@@ -379,9 +378,7 @@ if __name__ == "__main__":
     test_losses = []
     train_accuracies = []  # This will be per internal tick, not so simple
     test_accuracies = []
-    train_accuracies_most_certain = (
-        []
-    )  # This will be selected according to what is returned by loss function
+    train_accuracies_most_certain = []  # This will be selected according to what is returned by loss function
     test_accuracies_most_certain = []
     iters = []
     scaler = torch.amp.GradScaler(
@@ -490,7 +487,6 @@ if __name__ == "__main__":
             if bi % args.track_every == 0:
                 model.eval()
                 with torch.inference_mode():
-
                     inputs, z, question_readable, targets = next(iter(testloader))
                     inputs = inputs.to(device)
                     targets = targets.to(device)
@@ -578,14 +574,12 @@ if __name__ == "__main__":
                             position=1,
                             dynamic_ncols=True,
                         ) as pbar_inner:
-
                             for inferi, (
                                 inputs,
                                 z,
                                 question_readable,
                                 targets,
                             ) in enumerate(loader):
-
                                 inputs = inputs.to(device)
                                 targets = targets.to(device)
                                 z = torch.stack(z, 1).to(device)
@@ -681,7 +675,6 @@ if __name__ == "__main__":
                                 question_readable,
                                 targets,
                             ) in enumerate(loader):
-
                                 inputs = inputs.to(device)
                                 targets = targets.to(device)
                                 z = torch.stack(z, 1).to(device)

@@ -57,17 +57,17 @@ class QAMNISTDataset(Dataset):
     def _calculate_num_images_range(self):
         min_val = self.num_images - self.num_images_delta
         max_val = self.num_images + self.num_images_delta
-        assert (
-            min_val >= 1
-        ), f"Minimum number of images must be at least 1, got {min_val}"
+        assert min_val >= 1, (
+            f"Minimum number of images must be at least 1, got {min_val}"
+        )
         return [min_val, max_val]
 
     def _calculate_num_operations_range(self):
         min_val = self.num_operations - self.num_operations_delta
         max_val = self.num_operations + self.num_operations_delta
-        assert (
-            min_val >= 1
-        ), f"Minimum number of operations must be at least 1, got {min_val}"
+        assert min_val >= 1, (
+            f"Minimum number of operations must be at least 1, got {min_val}"
+        )
         return [min_val, max_val]
 
     def set_num_digits(self, num_digits):
@@ -217,7 +217,6 @@ class MazeImageFolder(ImageFolder):
         with tqdm(
             total=self.__len__(), initial=0, leave=True, position=0, dynamic_ncols=True
         ) as pbar:
-
             for index in range(self.__len__()):
                 pbar.set_description("Loading mazes")
                 path, target = self.samples[index]

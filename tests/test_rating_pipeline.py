@@ -38,6 +38,7 @@ class TestRatingPipeline:
         MetricRegistry.clear()
         # Re-register default metrics for other tests
         from udl_rating_framework.core.metrics import _register_default_metrics
+
         _register_default_metrics()
 
     def create_test_udl(self, content: str = None) -> UDLRepresentation:
@@ -184,6 +185,7 @@ class TestIndependentMetricComputation:
         MetricRegistry.clear()
         # Re-register default metrics for other tests
         from udl_rating_framework.core.metrics import _register_default_metrics
+
         _register_default_metrics()
 
     def create_test_udl_from_content(self, content: str) -> UDLRepresentation:
@@ -259,9 +261,9 @@ class TestIndependentMetricComputation:
             combined_value = combined_report.metric_scores.get(metric_name, 0.0)
 
             # Allow small numerical differences due to floating point precision
-            assert (
-                abs(individual_value - combined_value) < 1e-10
-            ), f"Metric {metric_name} differs: individual={individual_value}, combined={combined_value}"
+            assert abs(individual_value - combined_value) < 1e-10, (
+                f"Metric {metric_name} differs: individual={individual_value}, combined={combined_value}"
+            )
 
         # Verify no side effects: compute metrics in different orders
         for i in range(min(3, len(working_metrics))):  # Test up to 3 permutations
@@ -275,9 +277,9 @@ class TestIndependentMetricComputation:
                 original_value = combined_report.metric_scores.get(metric_name, 0.0)
                 rotated_value = rotated_report.metric_scores.get(metric_name, 0.0)
 
-                assert (
-                    abs(original_value - rotated_value) < 1e-10
-                ), f"Metric {metric_name} order-dependent: original={original_value}, rotated={rotated_value}"
+                assert abs(original_value - rotated_value) < 1e-10, (
+                    f"Metric {metric_name} order-dependent: original={original_value}, rotated={rotated_value}"
+                )
 
     @given(
         st.text(
@@ -321,16 +323,16 @@ class TestIndependentMetricComputation:
                 # Metric should produce a valid result or fail gracefully
                 if metric_name in report.metric_scores:
                     value = report.metric_scores[metric_name]
-                    assert (
-                        0.0 <= value <= 1.0
-                    ), f"Metric {metric_name} out of bounds: {value}"
+                    assert 0.0 <= value <= 1.0, (
+                        f"Metric {metric_name} out of bounds: {value}"
+                    )
                     results[metric_name] = value
 
             except Exception as e:
                 # Metrics should fail gracefully, not crash the system
-                assert isinstance(
-                    e, (ValueError, TypeError, AttributeError)
-                ), f"Metric {metric_name} failed with unexpected error: {type(e).__name__}"
+                assert isinstance(e, (ValueError, TypeError, AttributeError)), (
+                    f"Metric {metric_name} failed with unexpected error: {type(e).__name__}"
+                )
 
         # If multiple metrics succeeded, verify they don't interfere
         if len(results) >= 2:
@@ -346,9 +348,9 @@ class TestIndependentMetricComputation:
                         combined_value = combined_report.metric_scores[metric_name]
 
                         # Values should be close (allowing for numerical precision)
-                        assert (
-                            abs(individual_value - combined_value) < 1e-6
-                        ), f"Metric {metric_name} interference detected"
+                        assert abs(individual_value - combined_value) < 1e-6, (
+                            f"Metric {metric_name} interference detected"
+                        )
 
             except Exception:
                 # Combined computation may fail, but individual metrics should still work
@@ -381,13 +383,12 @@ class TestIndependentMetricComputation:
                 metric_name in report1_first.metric_scores
                 and metric_name in report1_second.metric_scores
             ):
-
                 value_first = report1_first.metric_scores[metric_name]
                 value_second = report1_second.metric_scores[metric_name]
 
-                assert (
-                    abs(value_first - value_second) < 1e-10
-                ), f"Metric {metric_name} state not isolated: {value_first} != {value_second}"
+                assert abs(value_first - value_second) < 1e-10, (
+                    f"Metric {metric_name} state not isolated: {value_first} != {value_second}"
+                )
 
 
 class TestResultAggregation:
@@ -418,6 +419,7 @@ class TestResultAggregation:
         MetricRegistry.clear()
         # Re-register default metrics for other tests
         from udl_rating_framework.core.metrics import _register_default_metrics
+
         _register_default_metrics()
 
     def create_test_udl_from_content(self, content: str) -> UDLRepresentation:
@@ -484,22 +486,22 @@ class TestResultAggregation:
         reports = pipeline.compute_batch_ratings(udls)
 
         # Verify all UDLs are represented in the results
-        assert len(reports) == len(
-            udls
-        ), f"Expected {len(udls)} reports, got {len(reports)}"
+        assert len(reports) == len(udls), (
+            f"Expected {len(udls)} reports, got {len(reports)}"
+        )
 
         # Verify each UDL file is represented
         report_files = [report.udl_file for report in reports]
         for expected_file in expected_files:
-            assert (
-                expected_file in report_files
-            ), f"UDL file {expected_file} missing from results"
+            assert expected_file in report_files, (
+                f"UDL file {expected_file} missing from results"
+            )
 
         # Verify each report has the expected structure
         for i, report in enumerate(reports):
-            assert isinstance(
-                report, QualityReport
-            ), f"Report {i} is not a QualityReport instance"
+            assert isinstance(report, QualityReport), (
+                f"Report {i} is not a QualityReport instance"
+            )
 
             assert hasattr(report, "overall_score"), f"Report {i} missing overall_score"
 
@@ -510,9 +512,9 @@ class TestResultAggregation:
             assert hasattr(report, "udl_file"), f"Report {i} missing udl_file"
 
             # Verify the file path matches
-            assert (
-                report.udl_file == expected_files[i]
-            ), f"Report {i} file path mismatch: expected {expected_files[i]}, got {report.udl_file}"
+            assert report.udl_file == expected_files[i], (
+                f"Report {i} file path mismatch: expected {expected_files[i]}, got {report.udl_file}"
+            )
 
     @given(
         st.lists(
@@ -569,9 +571,9 @@ class TestResultAggregation:
         reports = pipeline.compute_batch_ratings(udls)
 
         # Verify we get a report for each UDL (success or failure)
-        assert len(reports) == len(
-            udls
-        ), f"Expected {len(udls)} reports, got {len(reports)}"
+        assert len(reports) == len(udls), (
+            f"Expected {len(udls)} reports, got {len(reports)}"
+        )
 
         # Verify each report is valid (even error reports)
         successful_reports = 0
@@ -630,9 +632,9 @@ class TestResultAggregation:
 
         for i, (individual, batch) in enumerate(zip(individual_reports, batch_reports)):
             # File paths should match
-            assert (
-                individual.udl_file == batch.udl_file
-            ), f"File path mismatch for UDL {i}"
+            assert individual.udl_file == batch.udl_file, (
+                f"File path mismatch for UDL {i}"
+            )
 
             # Metric scores should be identical
             for metric_name in ["consistency", "completeness"]:
@@ -640,18 +642,17 @@ class TestResultAggregation:
                     metric_name in individual.metric_scores
                     and metric_name in batch.metric_scores
                 ):
-
                     individual_score = individual.metric_scores[metric_name]
                     batch_score = batch.metric_scores[metric_name]
 
-                    assert (
-                        abs(individual_score - batch_score) < 1e-10
-                    ), f"Metric {metric_name} differs for UDL {i}: individual={individual_score}, batch={batch_score}"
+                    assert abs(individual_score - batch_score) < 1e-10, (
+                        f"Metric {metric_name} differs for UDL {i}: individual={individual_score}, batch={batch_score}"
+                    )
 
             # Overall scores should be identical
-            assert (
-                abs(individual.overall_score - batch.overall_score) < 1e-10
-            ), f"Overall score differs for UDL {i}: individual={individual.overall_score}, batch={batch.overall_score}"
+            assert abs(individual.overall_score - batch.overall_score) < 1e-10, (
+                f"Overall score differs for UDL {i}: individual={individual.overall_score}, batch={batch.overall_score}"
+            )
 
     def test_empty_input_aggregation(self):
         """
@@ -693,6 +694,7 @@ class TestRatingPipelineUnits:
         MetricRegistry.clear()
         # Re-register default metrics for other tests
         from udl_rating_framework.core.metrics import _register_default_metrics
+
         _register_default_metrics()
 
     def create_sample_udl(self) -> UDLRepresentation:
@@ -935,9 +937,9 @@ class TestRatingPipelineUnits:
                 )
 
                 # Allow small numerical differences
-                assert (
-                    abs(report.overall_score - expected_score) < 1e-6
-                ), f"Aggregation incorrect: expected {expected_score}, got {report.overall_score}"
+                assert abs(report.overall_score - expected_score) < 1e-6, (
+                    f"Aggregation incorrect: expected {expected_score}, got {report.overall_score}"
+                )
 
     def test_pipeline_validation_functionality(self):
         """

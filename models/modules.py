@@ -509,7 +509,9 @@ class PretrainedResNetWrapper(nn.Module):
             else (
                 512
                 if "50" in self.resnet_type
-                else 1024 if "101" in self.resnet_type else 2048
+                else 1024
+                if "101" in self.resnet_type
+                else 2048
             )
         )  # Approx for layer3/4 output channel numbers
         # Infer H, W assuming output is flattened C * H * W

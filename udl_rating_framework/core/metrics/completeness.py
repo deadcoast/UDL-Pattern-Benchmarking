@@ -14,7 +14,7 @@ class Construct:
 
     def __init__(self, name: str, construct_type: str, metadata: Dict[str, Any] = None):
         """Initialize a language construct.
-        
+
         Args:
             name: The name of the construct.
             construct_type: The type of construct (e.g., 'production_rule', 'terminal').

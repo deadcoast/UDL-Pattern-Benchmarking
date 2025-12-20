@@ -490,7 +490,6 @@ def resnet152(
 
 
 def prepare_resnet_backbone(backbone_type):
-
     resnet_family = resnet18  # Default
     if "34" in backbone_type:
         resnet_family = resnet34

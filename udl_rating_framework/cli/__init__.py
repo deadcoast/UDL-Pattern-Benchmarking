@@ -10,4 +10,4 @@ This module provides CLI commands for:
 
 from .main import main, cli
 
-__all__ = ['main', 'cli']
+__all__ = ["main", "cli"]

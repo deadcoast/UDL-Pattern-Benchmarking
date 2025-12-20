@@ -164,9 +164,9 @@ class TestFileDiscoveryProperties:
             # Verify no extra files were discovered (only supported extensions)
             supported_extensions = discovery.get_supported_extensions()
             for discovered_file in discovered_files:
-                assert (
-                    discovered_file.suffix in supported_extensions
-                ), f"Discovered file with unsupported extension: {discovered_file}"
+                assert discovered_file.suffix in supported_extensions, (
+                    f"Discovered file with unsupported extension: {discovered_file}"
+                )
 
             # Verify result metadata is reasonable
             assert result.total_files_examined >= len(discovered_files)
@@ -227,9 +227,9 @@ class TestFileDiscoveryProperties:
                 )
 
                 # Should have logged errors for unreadable files
-                assert (
-                    len(result.errors) > 0
-                ), "No errors were logged for unreadable files"
+                assert len(result.errors) > 0, (
+                    "No errors were logged for unreadable files"
+                )
 
                 # Should have examined more files than discovered (due to unreadable ones)
                 assert result.total_files_examined >= len(result.discovered_files)
@@ -277,8 +277,18 @@ class TestFileDiscoveryUnit:
 
                 # Track UDL files (including new formats)
                 if file_path.suffix in {
-                    ".udl", ".dsl", ".grammar", ".ebnf", ".txt",
-                    ".g4", ".peg", ".y", ".yacc", ".bnf", ".abnf", ".rr"
+                    ".udl",
+                    ".dsl",
+                    ".grammar",
+                    ".ebnf",
+                    ".txt",
+                    ".g4",
+                    ".peg",
+                    ".y",
+                    ".yacc",
+                    ".bnf",
+                    ".abnf",
+                    ".rr",
                 }:
                     expected_udl_files.append(file_path)
 
@@ -463,7 +473,7 @@ class TestFileDiscoveryUnit:
                 ("yacc_grammar.y", "%% expr : term '+' factor ;"),
                 ("bison_grammar.yacc", "%% stmt : expr ';' ;"),
                 ("bnf_grammar.bnf", "expr ::= term '+' factor"),
-                ("abnf_grammar.abnf", "expr = term \"+\" factor"),
+                ("abnf_grammar.abnf", 'expr = term "+" factor'),
                 ("extended_bnf.xbnf", "expr ::= term { '+' term }"),
                 ("wirth_notation.wsn", "expr = term { '+' term }."),
                 ("railroad_diagram.rr", "expr: term followed by '+' and factor"),
@@ -484,10 +494,20 @@ class TestFileDiscoveryUnit:
             assert len(result.errors) == 0
 
             # Verify all expected extensions are supported
-            expected_extensions = {".g4", ".peg", ".y", ".yacc", ".bnf", ".abnf", 
-                                 ".xbnf", ".wsn", ".rr", ".railroad"}
+            expected_extensions = {
+                ".g4",
+                ".peg",
+                ".y",
+                ".yacc",
+                ".bnf",
+                ".abnf",
+                ".xbnf",
+                ".wsn",
+                ".rr",
+                ".railroad",
+            }
             supported_extensions = discovery.get_supported_extensions()
-            
+
             for ext in expected_extensions:
                 assert ext in supported_extensions, f"Extension {ext} not supported"
 
