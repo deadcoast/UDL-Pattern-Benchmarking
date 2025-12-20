@@ -4,9 +4,10 @@ Completeness Metric implementation.
 Measures coverage of language constructs using set-theoretic formulations.
 """
 
-from typing import Set, Dict, Any, List
+from typing import Any, Dict, List, Set
+
 from udl_rating_framework.core.metrics.base import QualityMetric
-from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType
+from udl_rating_framework.core.representation import Token, TokenType, UDLRepresentation
 
 
 class Construct:
@@ -14,7 +15,7 @@ class Construct:
 
     def __init__(self, name: str, construct_type: str, metadata: Dict[str, Any] = None):
         """Initialize a language construct.
-        
+
         Args:
             name: The name of the construct.
             construct_type: The type of construct (e.g., 'production_rule', 'terminal').
@@ -124,7 +125,8 @@ class CompletenessMetric(QualityMetric):
         defined_construct_types = {
             construct.construct_type for construct in defined_constructs
         }
-        coverage_count = len(defined_construct_types.intersection(required_constructs))
+        coverage_count = len(
+            defined_construct_types.intersection(required_constructs))
 
         # Formula: |Defined_Constructs| / |Required_Constructs|
         completeness_score = coverage_count / len(required_constructs)
@@ -209,7 +211,8 @@ class CompletenessMetric(QualityMetric):
         rules = udl.get_grammar_rules()
 
         # Count different types of constructs
-        has_operators = any(token.type == TokenType.OPERATOR for token in tokens)
+        has_operators = any(
+            token.type == TokenType.OPERATOR for token in tokens)
         has_keywords = any(token.type == TokenType.KEYWORD for token in tokens)
         has_complex_rules = len(rules) > 5
         has_precedence_patterns = self._has_precedence_patterns(rules)
@@ -227,7 +230,8 @@ class CompletenessMetric(QualityMetric):
             "const",
         }
         has_prog_keywords = any(
-            any(keyword in token.text.lower() for keyword in programming_keywords)
+            any(keyword in token.text.lower()
+                for keyword in programming_keywords)
             for token in tokens
             if token.type == TokenType.LITERAL
         )

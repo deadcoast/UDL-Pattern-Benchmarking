@@ -4,14 +4,15 @@ Expressiveness Metric implementation.
 Measures language power using formal language theory and Chomsky hierarchy classification.
 """
 
-import zlib
 import re
-from typing import Dict, Any, List, Set, Tuple
+import zlib
+from typing import Any, Dict, List, Set, Tuple
+
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import (
-    UDLRepresentation,
     GrammarRule,
     TokenType,
+    UDLRepresentation,
 )
 
 
@@ -20,7 +21,7 @@ class Grammar:
 
     def __init__(self, rules: List[GrammarRule]):
         """Initialize a grammar from a list of production rules.
-        
+
         Args:
             rules: List of GrammarRule objects defining the grammar.
         """
