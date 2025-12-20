@@ -452,8 +452,10 @@ class TestPropertyBasedExampleExecution:
         
         For any valid variable name, assignment should execute.
         """
+        import keyword
         assume(not var_name.startswith('_'))
-        assume(var_name not in ('if', 'for', 'while', 'def', 'class', 'import', 'from'))
+        assume(not keyword.iskeyword(var_name))
+        assume(var_name not in ('True', 'False', 'None'))  # Also exclude soft keywords
         
         code = f"{var_name} = 42\nprint({var_name})"
         success, error = execute_code_safely(code)

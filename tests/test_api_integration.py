@@ -25,21 +25,35 @@ deployment_api_path = Path(__file__).parent.parent / "deployment" / "api"
 main_module_path = deployment_api_path / "main.py"
 
 # Load the deployment API main module directly to avoid conflict with root main.py
-try:
+def load_deployment_module():
+    """Load the deployment API module fresh."""
     spec = importlib.util.spec_from_file_location("deployment_api_main", main_module_path)
     deployment_main = importlib.util.module_from_spec(spec)
     sys.modules["deployment_api_main"] = deployment_main
     spec.loader.exec_module(deployment_main)
-    app = deployment_main.app
-    limiter = deployment_main.limiter
     # Make the module available for patching
     sys.modules["main"] = deployment_main
+    return deployment_main
+
+try:
+    deployment_main = load_deployment_module()
+    app = deployment_main.app
+    limiter = deployment_main.limiter
 except Exception as e:
     # Create a mock app for testing if the real app can't be imported
     from fastapi import FastAPI
     app = FastAPI()
     limiter = None
+    deployment_main = None
     print(f"Warning: Could not import deployment API: {e}")
+
+
+@pytest.fixture(autouse=True)
+def ensure_module_loaded():
+    """Ensure the deployment module is properly loaded for patching."""
+    if deployment_main is not None:
+        sys.modules["main"] = deployment_main
+    yield
 
 
 @pytest.fixture(autouse=True)
