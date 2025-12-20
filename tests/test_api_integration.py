@@ -18,19 +18,28 @@ import pytest
 import requests
 from fastapi.testclient import TestClient
 
-# Import the FastAPI app
+# Import the FastAPI app from deployment/api
 import sys
-deployment_api_path = str(Path(__file__).parent.parent / "deployment" / "api")
-if deployment_api_path not in sys.path:
-    sys.path.insert(0, deployment_api_path)
+import importlib.util
+deployment_api_path = Path(__file__).parent.parent / "deployment" / "api"
+main_module_path = deployment_api_path / "main.py"
 
+# Load the deployment API main module directly to avoid conflict with root main.py
 try:
-    from main import app, limiter
-except ImportError:
+    spec = importlib.util.spec_from_file_location("deployment_api_main", main_module_path)
+    deployment_main = importlib.util.module_from_spec(spec)
+    sys.modules["deployment_api_main"] = deployment_main
+    spec.loader.exec_module(deployment_main)
+    app = deployment_main.app
+    limiter = deployment_main.limiter
+    # Make the module available for patching
+    sys.modules["main"] = deployment_main
+except Exception as e:
     # Create a mock app for testing if the real app can't be imported
     from fastapi import FastAPI
     app = FastAPI()
     limiter = None
+    print(f"Warning: Could not import deployment API: {e}")
 
 
 @pytest.fixture(autouse=True)
