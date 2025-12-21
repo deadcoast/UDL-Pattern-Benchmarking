@@ -8,20 +8,19 @@ execute without errors.
 **Validates: Requirements 5.3**
 """
 
-import os
-import sys
-import pytest
-from pathlib import Path
-from typing import List, Tuple, Dict, Any
 import json
+import sys
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
+
+import nbformat
+import pytest
+from nbclient import NotebookClient
+from nbclient.exceptions import CellExecutionError
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
-
-import nbformat
-from nbclient import NotebookClient
-from nbclient.exceptions import CellExecutionError
 
 
 def get_all_notebooks() -> List[Path]:
@@ -254,7 +253,7 @@ class TestNotebookInventory:
         udl_notebooks = get_udl_notebooks()
         ctm_notebooks = get_ctm_notebooks()
 
-        print(f"\nNotebook Inventory:")
+        print("\nNotebook Inventory:")
         print(f"  Total notebooks: {len(all_notebooks)}")
         print(f"  UDL notebooks: {len(udl_notebooks)}")
         print(f"  CTM notebooks: {len(ctm_notebooks)}")

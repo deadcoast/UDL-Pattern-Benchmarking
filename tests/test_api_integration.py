@@ -5,17 +5,12 @@ This module provides comprehensive integration tests for the FastAPI
 endpoints, including authentication, error handling, and end-to-end functionality.
 """
 
-import asyncio
-import json
 import os
 import tempfile
-import time
 from pathlib import Path
-from typing import Dict, List
 from unittest.mock import Mock, patch
 
 import pytest
-import requests
 from fastapi.testclient import TestClient
 
 # Import the FastAPI app from deployment/api

@@ -367,7 +367,9 @@ class TestRealProjectValidation:
 
         validator = LinkValidator(project_root)
         links = validator.extract_links_from_file(readme)
-        file_links = [l for l in links if l.link_type == LinkType.FILE_REFERENCE]
+        file_links = [
+            link for link in links if link.link_type == LinkType.FILE_REFERENCE
+        ]
 
         for link in file_links:
             result = validator.validate_file_link(link)
@@ -398,7 +400,9 @@ Some content here.
 
             validator = LinkValidator(Path(tmpdir))
             links = validator.extract_links_from_file(source)
-            anchor_links = [l for l in links if l.link_type == LinkType.ANCHOR_LINK]
+            anchor_links = [
+                link for link in links if link.link_type == LinkType.ANCHOR_LINK
+            ]
 
             assert len(anchor_links) == 1
             result = validator.validate_anchor_link(anchor_links[0])
@@ -415,7 +419,9 @@ Some content here.
 
             validator = LinkValidator(Path(tmpdir))
             links = validator.extract_links_from_file(source)
-            anchor_links = [l for l in links if l.link_type == LinkType.ANCHOR_LINK]
+            anchor_links = [
+                link for link in links if link.link_type == LinkType.ANCHOR_LINK
+            ]
 
             assert len(anchor_links) == 1
             result = validator.validate_anchor_link(anchor_links[0])
@@ -497,7 +503,9 @@ Some content here.
 
             validator = LinkValidator(Path(tmpdir))
             links = validator.extract_links_from_file(source)
-            anchor_links = [l for l in links if l.link_type == LinkType.ANCHOR_LINK]
+            anchor_links = [
+                link for link in links if link.link_type == LinkType.ANCHOR_LINK
+            ]
 
             if anchor_links:  # Only if the empty anchor was extracted
                 result = validator.validate_anchor_link(anchor_links[0])
@@ -543,7 +551,9 @@ class TestPropertyBasedAnchorValidation:
             source.write_text(f"# {heading_text}\n\n[Link](#{anchor})\n")
 
             links = validator.extract_links_from_file(source)
-            anchor_links = [l for l in links if l.link_type == LinkType.ANCHOR_LINK]
+            anchor_links = [
+                link for link in links if link.link_type == LinkType.ANCHOR_LINK
+            ]
 
             if anchor_links:
                 result = validator.validate_anchor_link(anchor_links[0])
@@ -593,7 +603,9 @@ class TestPropertyBasedAnchorValidation:
             source.write_text("\n".join(content_lines))
 
             links = validator.extract_links_from_file(source)
-            anchor_links = [l for l in links if l.link_type == LinkType.ANCHOR_LINK]
+            anchor_links = [
+                link for link in links if link.link_type == LinkType.ANCHOR_LINK
+            ]
 
             for link in anchor_links:
                 result = validator.validate_anchor_link(link)
@@ -635,7 +647,9 @@ class TestRealProjectAnchorValidation:
 
         validator = LinkValidator(project_root)
         links = validator.extract_links_from_file(readme)
-        anchor_links = [l for l in links if l.link_type == LinkType.ANCHOR_LINK]
+        anchor_links = [
+            link for link in links if link.link_type == LinkType.ANCHOR_LINK
+        ]
 
         for link in anchor_links:
             result = validator.validate_anchor_link(link)
