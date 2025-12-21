@@ -5,22 +5,22 @@ Provides command-line interface for rating UDL files, training models,
 comparing UDLs, and evaluating model performance.
 """
 
-import click
+import json
 import logging
 import sys
-import yaml
 from pathlib import Path
-from typing import Dict, List, Optional, Any
-import json
+from typing import Any, Dict, List, Optional
 
-from udl_rating_framework.cli.commands.rate import rate_command
-from udl_rating_framework.cli.commands.train import train_command
+import click
+import yaml
+
+from udl_rating_framework.cli.commands.analytics import analytics
 from udl_rating_framework.cli.commands.compare import compare_command
 from udl_rating_framework.cli.commands.evaluate import evaluate_command
 from udl_rating_framework.cli.commands.integration import integration
-from udl_rating_framework.cli.commands.analytics import analytics
+from udl_rating_framework.cli.commands.rate import rate_command
+from udl_rating_framework.cli.commands.train import train_command
 from udl_rating_framework.cli.config import load_config, validate_config
-
 
 # Configure logging
 logging.basicConfig(

@@ -4,11 +4,12 @@ Evolution Tracking Metric implementation.
 Measures evolution and versioning characteristics of UDL definitions.
 """
 
-import hashlib
 import difflib
-from typing import Dict, List, Set, Any, Tuple, Optional
+import hashlib
+from typing import Any, Dict, List, Optional, Set, Tuple
+
 from udl_rating_framework.core.metrics.base import QualityMetric
-from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType
+from udl_rating_framework.core.representation import Token, TokenType, UDLRepresentation
 
 
 class EvolutionTrackingMetric(QualityMetric):
@@ -283,7 +284,8 @@ class EvolutionTrackingMetric(QualityMetric):
         # Compare with previous versions
         compatibility_scores = []
 
-        for version_id, prev_udl in self.version_history[-3:]:  # Last 3 versions
+        # Last 3 versions
+        for version_id, prev_udl in self.version_history[-3:]:
             compatibility = self._assess_version_compatibility(prev_udl, udl)
             compatibility_scores.append(compatibility)
 
@@ -309,9 +311,11 @@ class EvolutionTrackingMetric(QualityMetric):
         # Analyze changes from previous versions
         impact_scores = []
 
-        for version_id, prev_udl in self.version_history[-3:]:  # Last 3 versions
+        # Last 3 versions
+        for version_id, prev_udl in self.version_history[-3:]:
             impact = self._compute_version_change_impact(prev_udl, udl)
-            impact_scores.append(1.0 - impact)  # Invert: lower impact = higher score
+            # Invert: lower impact = higher score
+            impact_scores.append(1.0 - impact)
 
         return sum(impact_scores) / len(impact_scores) if impact_scores else 1.0
 
@@ -322,7 +326,8 @@ class EvolutionTrackingMetric(QualityMetric):
             return False
 
         # Look for modular patterns (separate concerns)
-        rule_names = [rule.lhs.lower() for rule in rules if hasattr(rule, "lhs")]
+        rule_names = [rule.lhs.lower()
+                      for rule in rules if hasattr(rule, "lhs")]
 
         # Check for different modules/categories
         categories = set()
@@ -342,7 +347,8 @@ class EvolutionTrackingMetric(QualityMetric):
             return False
 
         # Look for separation patterns
-        rule_names = [rule.lhs.lower() for rule in rules if hasattr(rule, "lhs")]
+        rule_names = [rule.lhs.lower()
+                      for rule in rules if hasattr(rule, "lhs")]
 
         # Check for lexical vs syntactic separation
         lexical_rules = sum(
@@ -399,7 +405,8 @@ class EvolutionTrackingMetric(QualityMetric):
 
             deps = set()
             rhs_text = (
-                " ".join(rule.rhs) if isinstance(rule.rhs, list) else str(rule.rhs)
+                " ".join(rule.rhs) if isinstance(
+                    rule.rhs, list) else str(rule.rhs)
             )
 
             for name in rule_names:
@@ -424,7 +431,8 @@ class EvolutionTrackingMetric(QualityMetric):
         if not rules:
             return False
 
-        rule_names = [rule.lhs.lower() for rule in rules if hasattr(rule, "lhs")]
+        rule_names = [rule.lhs.lower()
+                      for rule in rules if hasattr(rule, "lhs")]
 
         # Look for fundamental constructs that form a stable core
         core_constructs = [
@@ -448,9 +456,11 @@ class EvolutionTrackingMetric(QualityMetric):
             return False
 
         # Look for patterns that suggest extension points
-        rule_names = [rule.lhs.lower() for rule in rules if hasattr(rule, "lhs")]
+        rule_names = [rule.lhs.lower()
+                      for rule in rules if hasattr(rule, "lhs")]
 
-        extension_indicators = ["extension", "plugin", "custom", "user", "additional"]
+        extension_indicators = ["extension",
+                                "plugin", "custom", "user", "additional"]
         return any(
             indicator in name
             for name in rule_names
@@ -463,7 +473,8 @@ class EvolutionTrackingMetric(QualityMetric):
             return False
 
         # Look for plugin-like patterns
-        rule_names = [rule.lhs.lower() for rule in rules if hasattr(rule, "lhs")]
+        rule_names = [rule.lhs.lower()
+                      for rule in rules if hasattr(rule, "lhs")]
 
         plugin_indicators = ["plugin", "module", "component", "handler"]
         return any(
@@ -476,7 +487,8 @@ class EvolutionTrackingMetric(QualityMetric):
             return False
 
         # Look for hierarchical naming patterns
-        rule_names = [rule.lhs.lower() for rule in rules if hasattr(rule, "lhs")]
+        rule_names = [rule.lhs.lower()
+                      for rule in rules if hasattr(rule, "lhs")]
 
         # Check for hierarchy indicators
         hierarchy_levels = set()
@@ -503,7 +515,8 @@ class EvolutionTrackingMetric(QualityMetric):
         if not rules:
             return False
 
-        rule_names = [rule.lhs.lower() for rule in rules if hasattr(rule, "lhs")]
+        rule_names = [rule.lhs.lower()
+                      for rule in rules if hasattr(rule, "lhs")]
 
         abstract_indicators = ["abstract", "base", "generic", "template"]
         return any(
@@ -562,7 +575,8 @@ class EvolutionTrackingMetric(QualityMetric):
     def _supports_graceful_degradation(self, rules: List) -> bool:
         """Check for graceful degradation support."""
         # Look for fallback patterns
-        rule_names = [rule.lhs.lower() for rule in rules if hasattr(rule, "lhs")]
+        rule_names = [rule.lhs.lower()
+                      for rule in rules if hasattr(rule, "lhs")]
         fallback_indicators = ["fallback", "default", "alternative"]
         return any(
             indicator in name
@@ -627,16 +641,20 @@ class EvolutionTrackingMetric(QualityMetric):
         self, udl1: UDLRepresentation, udl2: UDLRepresentation
     ) -> Set[str]:
         """Find constructs added in udl2."""
-        rules1 = {rule.lhs for rule in udl1.get_grammar_rules() if hasattr(rule, "lhs")}
-        rules2 = {rule.lhs for rule in udl2.get_grammar_rules() if hasattr(rule, "lhs")}
+        rules1 = {rule.lhs for rule in udl1.get_grammar_rules()
+                  if hasattr(rule, "lhs")}
+        rules2 = {rule.lhs for rule in udl2.get_grammar_rules()
+                  if hasattr(rule, "lhs")}
         return rules2 - rules1
 
     def _find_removed_constructs(
         self, udl1: UDLRepresentation, udl2: UDLRepresentation
     ) -> Set[str]:
         """Find constructs removed in udl2."""
-        rules1 = {rule.lhs for rule in udl1.get_grammar_rules() if hasattr(rule, "lhs")}
-        rules2 = {rule.lhs for rule in udl2.get_grammar_rules() if hasattr(rule, "lhs")}
+        rules1 = {rule.lhs for rule in udl1.get_grammar_rules()
+                  if hasattr(rule, "lhs")}
+        rules2 = {rule.lhs for rule in udl2.get_grammar_rules()
+                  if hasattr(rule, "lhs")}
         return rules1 - rules2
 
     def _find_modified_rules(
@@ -687,7 +705,8 @@ class EvolutionTrackingMetric(QualityMetric):
         modified = self._find_modified_rules(udl1, udl2)
 
         total_changes = len(added) + len(removed) + len(modified)
-        total_rules = max(len(udl1.get_grammar_rules()), len(udl2.get_grammar_rules()))
+        total_rules = max(len(udl1.get_grammar_rules()),
+                          len(udl2.get_grammar_rules()))
 
         if total_rules == 0:
             return 0.0

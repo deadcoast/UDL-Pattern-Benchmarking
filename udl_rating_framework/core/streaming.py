@@ -6,26 +6,25 @@ UDL files that cannot fit in memory, with chunking, overlap handling,
 and incremental result aggregation.
 """
 
+import hashlib
+import json
 import logging
-import time
 import mmap
 import os
-from typing import Dict, List, Any, Optional, Iterator, Callable, Union, Tuple
-from pathlib import Path
-from dataclasses import dataclass, field
 import tempfile
-import json
-import hashlib
-from collections import deque
 import threading
-from queue import Queue, Empty
-
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.pipeline import RatingPipeline, QualityReport
-from udl_rating_framework.core.caching import get_udl_cache
+import time
+from collections import deque
+from dataclasses import dataclass, field
+from pathlib import Path
+from queue import Empty, Queue
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Union
 
 # Import metrics to ensure they are registered in the MetricRegistry
 import udl_rating_framework.core.metrics  # noqa: F401
+from udl_rating_framework.core.caching import get_udl_cache
+from udl_rating_framework.core.pipeline import QualityReport, RatingPipeline
+from udl_rating_framework.core.representation import UDLRepresentation
 
 logger = logging.getLogger(__name__)
 
@@ -157,7 +156,8 @@ class MemoryMappedFileReader:
 
             last_line_end = chunk.rfind(line_ending_bytes)
             if last_line_end != -1:
-                adjusted_start = search_start + last_line_end + len(line_ending_bytes)
+                adjusted_start = search_start + \
+                    last_line_end + len(line_ending_bytes)
 
         # Adjust end to end of line
         end = min(start + size, self.file_size)
@@ -223,7 +223,8 @@ class StreamingChunker:
                 )
 
                 # Read chunk content
-                chunk_data = reader.read_chunk(chunk_start, chunk_end - chunk_start)
+                chunk_data = reader.read_chunk(
+                    chunk_start, chunk_end - chunk_start)
                 chunk_content = chunk_data.decode(
                     self.config.encoding, errors="replace"
                 )
@@ -234,7 +235,8 @@ class StreamingChunker:
 
                 if chunk_start > 0 and self.config.overlap_size > 0:
                     # Read overlap before
-                    overlap_start = max(0, chunk_start - self.config.overlap_size)
+                    overlap_start = max(
+                        0, chunk_start - self.config.overlap_size)
                     overlap_data = reader.read_chunk(
                         overlap_start, chunk_start - overlap_start
                     )
@@ -245,7 +247,8 @@ class StreamingChunker:
                 if chunk_end < file_size and self.config.overlap_size > 0:
                     # Read overlap after
                     overlap_data = reader.read_chunk(
-                        chunk_end, min(self.config.overlap_size, file_size - chunk_end)
+                        chunk_end, min(self.config.overlap_size,
+                                       file_size - chunk_end)
                     )
                     overlap_after = overlap_data.decode(
                         self.config.encoding, errors="replace"
@@ -298,7 +301,8 @@ class StreamingChunker:
 
         while current_offset < len(content):
             # Calculate chunk end
-            chunk_end = min(current_offset + self.config.chunk_size, len(content))
+            chunk_end = min(current_offset +
+                            self.config.chunk_size, len(content))
 
             # Adjust to line boundaries
             if chunk_end < len(content):
@@ -315,11 +319,13 @@ class StreamingChunker:
             overlap_after = ""
 
             if current_offset > 0 and self.config.overlap_size > 0:
-                overlap_start = max(0, current_offset - self.config.overlap_size)
+                overlap_start = max(0, current_offset -
+                                    self.config.overlap_size)
                 overlap_before = content[overlap_start:current_offset]
 
             if chunk_end < len(content) and self.config.overlap_size > 0:
-                overlap_end = min(len(content), chunk_end + self.config.overlap_size)
+                overlap_end = min(len(content), chunk_end +
+                                  self.config.overlap_size)
                 overlap_after = content[chunk_end:overlap_end]
 
             # Create chunk
@@ -473,7 +479,8 @@ class StreamingProcessor:
         Yields:
             StreamingResult objects
         """
-        logger.info(f"Starting streaming processing of content ({len(content)} chars)")
+        logger.info(
+            f"Starting streaming processing of content ({len(content)} chars)")
 
         start_time = time.time()
         self.processed_chunks = 0
@@ -611,7 +618,8 @@ class StreamingProcessor:
 
         final_metric_scores = {}
         for metric_name, scores_weights in all_metric_scores.items():
-            weighted_sum = sum(score * weight for score, weight in scores_weights)
+            weighted_sum = sum(score * weight for score,
+                               weight in scores_weights)
             total_metric_weight = sum(weight for _, weight in scores_weights)
             final_metric_scores[metric_name] = (
                 weighted_sum / total_metric_weight if total_metric_weight > 0 else 0.0
@@ -634,8 +642,9 @@ class StreamingProcessor:
 
     def get_memory_usage(self) -> Dict[str, int]:
         """Get current memory usage statistics."""
-        import psutil
         import os
+
+        import psutil
 
         process = psutil.Process(os.getpid())
         memory_info = process.memory_info()

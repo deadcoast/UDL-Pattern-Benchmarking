@@ -10,12 +10,12 @@ and generates fix suggestions.
 **Validates: Requirements 10.1, 10.2, 10.3, 10.4, 10.5**
 """
 
+import json
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import List, Dict, Any, Optional
-import json
+from typing import Any, Dict, List, Optional
 
 
 class Severity(Enum):
@@ -115,7 +115,8 @@ class Finding:
             category=FindingCategory(data["category"]),
             severity=Severity(data["severity"]),
             source_location=SourceLocation(
-                file_path=data["source_file"], line_number=data.get("source_line")
+                file_path=data["source_file"], line_number=data.get(
+                    "source_line")
             ),
             description=data["description"],
             expected=data.get("expected"),
@@ -356,7 +357,8 @@ class AuditReporter:
         )
 
         # Generate suggestion
-        finding.suggestion = self.suggestion_generator.generate_suggestion(finding)
+        finding.suggestion = self.suggestion_generator.generate_suggestion(
+            finding)
 
         self.report.add_finding(finding)
         return finding
@@ -521,7 +523,8 @@ class AuditReporter:
                     )
 
                     if finding.requirement_ref:
-                        lines.append(f"- **Requirement:** {finding.requirement_ref}")
+                        lines.append(
+                            f"- **Requirement:** {finding.requirement_ref}")
 
                     if finding.expected:
                         lines.append(f"- **Expected:** {finding.expected}")

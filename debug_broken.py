@@ -3,13 +3,13 @@
 Debug script to check broken grammar example.
 """
 
-import sys
 import os
+import sys
+
+from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+from udl_rating_framework.core.representation import UDLRepresentation
 
 sys.path.insert(0, os.path.abspath("."))
-
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 
 
 def debug_broken_grammar():
@@ -92,7 +92,8 @@ Program ::= Statement* EOF  # EOF not defined anywhere
         num_cycles = len(cycles)
         num_rules = len(rules)
 
-        manual_score = 1.0 - (num_contradictions + num_cycles) / (num_rules + 1)
+        manual_score = 1.0 - (num_contradictions +
+                              num_cycles) / (num_rules + 1)
         print(
             f"✓ Manual calculation: 1 - ({num_contradictions} + {num_cycles}) / ({num_rules} + 1) = {manual_score:.6f}"
         )

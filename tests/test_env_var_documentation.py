@@ -15,14 +15,16 @@ from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
 import pytest
-from hypothesis import given, settings, strategies as st
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 
 class EnvVarExtractor(ast.NodeVisitor):
     """AST visitor to extract environment variable reads from Python code."""
 
     def __init__(self):
-        self.env_vars: List[Tuple[str, int, str]] = []  # (var_name, line_no, file_path)
+        # (var_name, line_no, file_path)
+        self.env_vars: List[Tuple[str, int, str]] = []
         self.current_file = ""
 
     def visit_Call(self, node: ast.Call):
@@ -55,7 +57,8 @@ class EnvVarExtractor(ast.NodeVisitor):
             and node.value.attr == "environ"
             and isinstance(node.slice, ast.Constant)
         ):
-            self.env_vars.append((node.slice.value, node.lineno, self.current_file))
+            self.env_vars.append(
+                (node.slice.value, node.lineno, self.current_file))
 
         self.generic_visit(node)
 
@@ -181,7 +184,8 @@ def get_deployment_env_vars(project_root: Path) -> Dict[str, List[Tuple[int, str
 
     # Filter to deployment-relevant variables
     # Exclude DDP/distributed training vars as they're PyTorch-specific
-    ddp_vars = {"RANK", "WORLD_SIZE", "MASTER_ADDR", "MASTER_PORT", "LOCAL_RANK"}
+    ddp_vars = {"RANK", "WORLD_SIZE",
+                "MASTER_ADDR", "MASTER_PORT", "LOCAL_RANK"}
 
     deployment_vars = {}
     for var_name, locations in all_vars.items():
@@ -308,7 +312,8 @@ var4 = os.environ.get('TEST_VAR_4', 'default')
 
 @given(
     st.sampled_from(
-        list(get_deployment_env_vars(get_project_root()).keys()) or ["PLACEHOLDER"]
+        list(get_deployment_env_vars(
+            get_project_root()).keys()) or ["PLACEHOLDER"]
     )
 )
 @settings(max_examples=50)

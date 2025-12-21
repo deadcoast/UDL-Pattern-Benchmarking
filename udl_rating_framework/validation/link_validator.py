@@ -9,10 +9,10 @@ Supports markdown link syntax: [text](path/to/file)
 """
 
 import re
-from pathlib import Path
 from dataclasses import dataclass, field
-from typing import List, Optional, Tuple
 from enum import Enum
+from pathlib import Path
+from typing import List, Optional, Tuple
 
 
 class LinkType(Enum):
@@ -515,5 +515,6 @@ if __name__ == "__main__":
         for result in all_results:
             if not result.is_valid:
                 print(f"  {result.link.source_file}:{result.link.source_line}")
-                print(f"    [{result.link.link_text}]({result.link.link_target})")
+                print(
+                    f"    [{result.link.link_text}]({result.link.link_target})")
                 print(f"    Error: {result.message}")

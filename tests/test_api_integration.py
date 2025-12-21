@@ -6,8 +6,12 @@ endpoints, including authentication, error handling, and end-to-end functionalit
 """
 
 import asyncio
+import importlib.util
 import json
 import os
+
+# Import the FastAPI app from deployment/api
+import sys
 import tempfile
 import time
 from pathlib import Path
@@ -17,10 +21,6 @@ from unittest.mock import Mock, patch
 import pytest
 import requests
 from fastapi.testclient import TestClient
-
-# Import the FastAPI app from deployment/api
-import sys
-import importlib.util
 
 deployment_api_path = Path(__file__).parent.parent / "deployment" / "api"
 main_module_path = deployment_api_path / "main.py"
@@ -89,7 +89,8 @@ class TestAPIAuthentication:
         # Request without token should fail
         response = self.client.post(
             "/rate",
-            json={"content": "grammar Test { rule = 'hello' }", "filename": "test.udl"},
+            json={"content": "grammar Test { rule = 'hello' }",
+                  "filename": "test.udl"},
         )
         assert response.status_code == 401
         assert "Authentication token required" in response.json()["detail"]
@@ -100,7 +101,8 @@ class TestAPIAuthentication:
         headers = {"Authorization": "Bearer invalid-token"}
         response = self.client.post(
             "/rate",
-            json={"content": "grammar Test { rule = 'hello' }", "filename": "test.udl"},
+            json={"content": "grammar Test { rule = 'hello' }",
+                  "filename": "test.udl"},
             headers=headers,
         )
         assert response.status_code == 401
@@ -122,7 +124,8 @@ class TestAPIAuthentication:
         headers = {"Authorization": "Bearer test-secret-token"}
         response = self.client.post(
             "/rate",
-            json={"content": "grammar Test { rule = 'hello' }", "filename": "test.udl"},
+            json={"content": "grammar Test { rule = 'hello' }",
+                  "filename": "test.udl"},
             headers=headers,
         )
         assert response.status_code == 200
@@ -214,7 +217,8 @@ class TestEndpointValidation:
         assert response.status_code == 200  # Empty batch is allowed
 
         # Too many UDLs
-        udls = [{"content": f"grammar Test{i} {{ rule = 'test' }}"} for i in range(15)]
+        udls = [{"content": f"grammar Test{i} {{ rule = 'test' }}"}
+                for i in range(15)]
         response = self.client.post("/rate/batch", json={"udls": udls})
         assert response.status_code == 400
         assert "Batch size limited" in response.json()["detail"]
@@ -239,7 +243,8 @@ class TestErrorHandling:
         """Test behavior when rating pipeline is not initialized."""
         response = self.client.post(
             "/rate",
-            json={"content": "grammar Test { rule = 'hello' }", "filename": "test.udl"},
+            json={"content": "grammar Test { rule = 'hello' }",
+                  "filename": "test.udl"},
         )
         # The API catches the 503 error and returns 500
         assert response.status_code == 500
@@ -253,7 +258,8 @@ class TestErrorHandling:
     def test_pipeline_processing_error(self):
         """Test handling of processing errors."""
         with patch("main.rating_pipeline") as mock_pipeline:
-            mock_pipeline.process_udl.side_effect = Exception("Processing failed")
+            mock_pipeline.process_udl.side_effect = Exception(
+                "Processing failed")
 
             response = self.client.post(
                 "/rate",

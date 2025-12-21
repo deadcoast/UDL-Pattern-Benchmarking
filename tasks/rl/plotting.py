@@ -1,12 +1,12 @@
-import matplotlib.pyplot as plt
+import imageio
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
 
 mpl.use("Agg")
-import seaborn as sns
-import numpy as np
 
 sns.set_style("darkgrid")
-import imageio
 
 
 def make_rl_gif(
@@ -185,7 +185,8 @@ def make_rl_gif(
             ax_pre = ax.twinx()
 
             pre_min, pre_max = np.min(pre_activation), np.max(pre_activation)
-            post_min, post_max = np.min(post_activation), np.max(post_activation)
+            post_min, post_max = np.min(
+                post_activation), np.max(post_activation)
 
             ax_pre.plot(
                 np.arange(n_steps),
@@ -241,7 +242,8 @@ def make_rl_gif(
         if stepi == 1:
             fig_gif.savefig(filename.split(".gif")[0] + "_frame1.png", dpi=100)
         if stepi == n_steps - 1:
-            fig_gif.savefig(filename.split(".gif")[0] + "_frame-1.png", dpi=100)
+            fig_gif.savefig(filename.split(".gif")[
+                            0] + "_frame-1.png", dpi=100)
 
         # Convert to frame
         canvas = fig_gif.canvas

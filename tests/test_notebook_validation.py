@@ -8,20 +8,20 @@ execute without errors.
 **Validates: Requirements 5.3**
 """
 
+import json
 import os
 import sys
-import pytest
 from pathlib import Path
-from typing import List, Tuple, Dict, Any
-import json
+from typing import Any, Dict, List, Tuple
+
+import nbformat
+import pytest
+from nbclient import NotebookClient
+from nbclient.exceptions import CellExecutionError
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
-
-import nbformat
-from nbclient import NotebookClient
-from nbclient.exceptions import CellExecutionError
 
 
 def get_all_notebooks() -> List[Path]:
@@ -129,7 +129,8 @@ def execute_notebook(notebook_path: Path, timeout: int = 300) -> Dict[str, Any]:
         with open(notebook_path, "r", encoding="utf-8") as f:
             nb = nbformat.read(f, as_version=4)
 
-        code_cells = [i for i, cell in enumerate(nb.cells) if cell.cell_type == "code"]
+        code_cells = [i for i, cell in enumerate(
+            nb.cells) if cell.cell_type == "code"]
         result["total_cells"] = len(code_cells)
 
         # Create client with timeout
@@ -213,7 +214,8 @@ class TestUDLNotebookExecution:
 
     def test_udl_notebooks_exist(self, udl_notebooks):
         """UDL notebooks should exist in examples/notebooks/."""
-        assert len(udl_notebooks) > 0, "No UDL notebooks found in examples/notebooks/"
+        assert len(
+            udl_notebooks) > 0, "No UDL notebooks found in examples/notebooks/"
 
     @pytest.mark.parametrize(
         "notebook_name",
@@ -261,7 +263,8 @@ class TestNotebookInventory:
 
         for nb in all_notebooks:
             cell_count = count_code_cells(nb)
-            print(f"    - {nb.relative_to(PROJECT_ROOT)}: {cell_count} code cells")
+            print(
+                f"    - {nb.relative_to(PROJECT_ROOT)}: {cell_count} code cells")
 
         assert len(all_notebooks) > 0, "No notebooks found"
 

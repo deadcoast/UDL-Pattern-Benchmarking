@@ -7,7 +7,8 @@ and configure automated UDL quality checking in your CI/CD pipelines.
 """
 
 from pathlib import Path
-from udl_rating_framework.integration.cicd import CICDIntegration, CICDConfig
+
+from udl_rating_framework.integration.cicd import CICDConfig, CICDIntegration
 
 
 def main():
@@ -66,7 +67,8 @@ def main():
 
     # Jenkins Pipeline
     print("\n2. Jenkins Pipeline:")
-    jenkins_pipeline = integration.generate_jenkins_pipeline("UDL Quality Check")
+    jenkins_pipeline = integration.generate_jenkins_pipeline(
+        "UDL Quality Check")
     print("Generated Jenkins pipeline with:")
     print("- Parallel quality checking")
     print("- Baseline comparison for feature branches")

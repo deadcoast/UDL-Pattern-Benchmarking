@@ -8,14 +8,15 @@ Tests that for any requirement reference in a test file (e.g., "Validates: Requi
 the referenced requirement must exist in the requirements document.
 """
 
-import pytest
 import ast
 import re
-from pathlib import Path
-from hypothesis import given, strategies as st, settings, assume
-from typing import List, Set, Tuple, Optional
 from dataclasses import dataclass
+from pathlib import Path
+from typing import List, Optional, Set, Tuple
 
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
 
 # Valid requirement numbers from both specs
 VALID_DOC_VALIDATION_REQUIREMENTS = {
@@ -238,7 +239,8 @@ def extract_all_requirement_refs(file_path: Path) -> List[RequirementReference]:
         line_number = 0
 
         if isinstance(
-            node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)
+            node, (ast.FunctionDef, ast.AsyncFunctionDef,
+                   ast.ClassDef, ast.Module)
         ):
             docstring = ast.get_docstring(node)
             line_number = getattr(node, "lineno", 0)
@@ -251,9 +253,11 @@ def extract_all_requirement_refs(file_path: Path) -> List[RequirementReference]:
                         file_path=str(file_path),
                         line_number=line_number,
                         requirement_id=req_id,
-                        context=docstring[:100] + "..."
-                        if len(docstring) > 100
-                        else docstring,
+                        context=(
+                            docstring[:100] + "..."
+                            if len(docstring) > 100
+                            else docstring
+                        ),
                     )
                 )
 
@@ -285,7 +289,8 @@ class TestRequirementReferenceFormat:
             )
 
     @given(
-        st.integers(min_value=1, max_value=20), st.integers(min_value=1, max_value=10)
+        st.integers(min_value=1, max_value=20), st.integers(
+            min_value=1, max_value=10)
     )
     @settings(max_examples=100)
     def test_generated_valid_formats(self, major: int, minor: int):
@@ -471,7 +476,8 @@ class TestPropertyBasedRequirementValidation:
     """
 
     @given(
-        st.lists(st.sampled_from(list(ALL_VALID_REQUIREMENTS)), min_size=1, max_size=5)
+        st.lists(st.sampled_from(list(ALL_VALID_REQUIREMENTS)),
+                 min_size=1, max_size=5)
     )
     @settings(max_examples=100)
     def test_valid_refs_always_validate(self, refs: List[str]):
@@ -485,7 +491,8 @@ class TestPropertyBasedRequirementValidation:
             assert validate_requirement_format(ref), (
                 f"Valid ref {ref} should have valid format"
             )
-            assert validate_requirement_exists(ref), f"Valid ref {ref} should exist"
+            assert validate_requirement_exists(
+                ref), f"Valid ref {ref} should exist"
 
     @given(st.text(alphabet="0123456789.", min_size=1, max_size=10))
     @settings(max_examples=100)

@@ -13,15 +13,15 @@ Usage:
 """
 
 import argparse
-import sys
-import subprocess
 import json
 import re
+import subprocess
+import sys
 import tempfile
-from pathlib import Path
-from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
@@ -303,18 +303,22 @@ class ExampleRunner:
                         path=path,
                         example_type=ExampleType.PYTHON_SCRIPT,
                         success=False,
-                        error_message=result.stderr[:500]
-                        if result.stderr
-                        else "Non-zero exit code",
+                        error_message=(
+                            result.stderr[:500]
+                            if result.stderr
+                            else "Non-zero exit code"
+                        ),
                     )
 
                 return ExampleResult(
                     path=path,
                     example_type=ExampleType.PYTHON_SCRIPT,
                     success=True,
-                    output=result.stdout[:200]
-                    if result.stdout
-                    else "Completed successfully",
+                    output=(
+                        result.stdout[:200]
+                        if result.stdout
+                        else "Completed successfully"
+                    ),
                 )
             else:
                 # Just validate syntax

@@ -3,29 +3,30 @@ PPO implementation based on CleanRL's PPO implementation.
 https://github.com/vwxyzjn/cleanrl/blob/master/cleanrl/ppo_atari_lstm.py
 """
 
+import argparse
+import multiprocessing
 import os
 import time
-import multiprocessing
+
 import gymnasium as gym
+import minigrid
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from gymnasium.wrappers import NormalizeReward
+from minigrid.wrappers import ImgObsWrapper
 from torch.distributions.categorical import Categorical
 from torch.utils.tensorboard import SummaryWriter
-from gymnasium.wrappers import NormalizeReward
-import minigrid
-from minigrid.wrappers import ImgObsWrapper
-import argparse
 from tqdm import tqdm
 
 from models.ctm_rl import ContinuousThoughtMachineRL
 from models.lstm_rl import LSTMBaseline
-from utils.housekeeping import set_seed
-from tasks.rl.envs import MaskVelocityWrapper
-from tasks.rl.utils import combine_tracking_data
-from tasks.rl.plotting import make_rl_gif
 from tasks.image_classification.plotting import plot_neural_dynamics
+from tasks.rl.envs import MaskVelocityWrapper
+from tasks.rl.plotting import make_rl_gif
+from tasks.rl.utils import combine_tracking_data
+from utils.housekeeping import set_seed
 
 
 def parse_args():
@@ -82,7 +83,8 @@ def parse_args():
         default=2,
         help="Hidden dimensions for deep NLMs.",
     )
-    parser.add_argument("--dropout", type=float, default=0.0, help="Dropout rate.")
+    parser.add_argument("--dropout", type=float,
+                        default=0.0, help="Dropout rate.")
     parser.add_argument(
         "--do_normalisation",
         action=argparse.BooleanOptionalAction,
@@ -189,7 +191,8 @@ def parse_args():
     parser.add_argument(
         "--target_kl", type=float, default=None, help="Target KL divergence threshold."
     )
-    parser.add_argument("--lr", type=float, default=5e-4, help="Learning rate.")
+    parser.add_argument("--lr", type=float, default=5e-4,
+                        help="Learning rate.")
     parser.add_argument(
         "--num_validation_envs",
         type=int,
@@ -242,7 +245,8 @@ def make_env_classic_control(
         if mask_velocity:
             env = MaskVelocityWrapper(env)
         env = NormalizeReward(env, gamma=0.99, epsilon=1e-8)
-        env = gym.wrappers.TimeLimit(env, max_episode_steps=max_environment_steps)
+        env = gym.wrappers.TimeLimit(
+            env, max_episode_steps=max_environment_steps)
         env = gym.wrappers.RecordEpisodeStatistics(env)
         return env
 
@@ -251,10 +255,12 @@ def make_env_classic_control(
 
 def make_env_minigrid(env_id, max_environment_steps):
     def thunk():
-        env = gym.make(env_id, max_steps=max_environment_steps, render_mode="rgb_array")
+        env = gym.make(env_id, max_steps=max_environment_steps,
+                       render_mode="rgb_array")
         env = ImgObsWrapper(env)
         env = NormalizeReward(env, gamma=0.99, epsilon=1e-8)
-        env = gym.wrappers.TimeLimit(env, max_episode_steps=max_environment_steps)
+        env = gym.wrappers.TimeLimit(
+            env, max_episode_steps=max_environment_steps)
         env = gym.wrappers.RecordEpisodeStatistics(env)
         return env
 
@@ -337,7 +343,8 @@ class Agent(nn.Module):
             self.recurrent_model.start_trace.unsqueeze(0), num_envs, 0
         )
         initial_activated_state_trace = torch.repeat_interleave(
-            self.recurrent_model.start_activated_trace.unsqueeze(0), num_envs, 0
+            self.recurrent_model.start_activated_trace.unsqueeze(
+                0), num_envs, 0
         )
         return initial_state_trace, initial_activated_state_trace
 
@@ -359,10 +366,12 @@ class Agent(nn.Module):
             raise ValueError("Model type not supported.")
 
     def _get_lstm_hidden_states(self, lstm_state, done, num_envs):
-        initial_hidden_state, initial_cell_state = self.get_initial_lstm_state(num_envs)
+        initial_hidden_state, initial_cell_state = self.get_initial_lstm_state(
+            num_envs)
         # Assuming continious hidden states
         masked_previous_hidden_state = (1.0 - done).view(-1, 1) * lstm_state[0]
-        masked_previous_cell_state_state = (1.0 - done).view(-1, 1) * lstm_state[1]
+        masked_previous_cell_state_state = (
+            1.0 - done).view(-1, 1) * lstm_state[1]
         masked_initial_hidden_state = done.view(-1, 1) * initial_hidden_state
         masked_initial_cell_state = done.view(-1, 1) * initial_cell_state
         return (masked_previous_hidden_state + masked_initial_hidden_state), (
@@ -374,11 +383,13 @@ class Agent(nn.Module):
             num_envs
         )
         if self.continious_state_trace:
-            masked_previous_state_trace = (1.0 - done).view(-1, 1, 1) * ctm_state[0]
+            masked_previous_state_trace = (
+                1.0 - done).view(-1, 1, 1) * ctm_state[0]
             masked_previous_activated_state_trace = (1.0 - done).view(
                 -1, 1, 1
             ) * ctm_state[1]
-            masked_initial_state_trace = done.view(-1, 1, 1) * initial_state_trace
+            masked_initial_state_trace = done.view(-1,
+                                                   1, 1) * initial_state_trace
             masked_initial_activated_state_trace = (
                 done.view(-1, 1, 1) * initial_activated_state_trace
             )
@@ -480,7 +491,8 @@ def save_model(
 
 
 def load_model(agent, optimizer, checkpoint_path, device):
-    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    checkpoint = torch.load(
+        checkpoint_path, map_location=device, weights_only=False)
     agent.load_state_dict(checkpoint["model_state_dict"])
 
     if optimizer is not None and "optimizer_state_dict" in checkpoint:
@@ -518,9 +530,11 @@ def plot_activations(agent, device, args):
                     render_mode="rgb_array",
                 )()
             elif "MiniGrid" in args.env_id:
-                eval_env = make_env_minigrid(args.env_id, args.max_environment_steps)()
+                eval_env = make_env_minigrid(
+                    args.env_id, args.max_environment_steps)()
             else:
-                raise NotImplementedError(f"Environment {args.env_id} not supported.")
+                raise NotImplementedError(
+                    f"Environment {args.env_id} not supported.")
 
             eval_next_obs, _ = eval_env.reset()
             episode_reward = 0
@@ -577,7 +591,8 @@ def plot_activations(agent, device, args):
 
             eval_env.close()
 
-            combined_tracking_data = combine_tracking_data(tracking_data_by_world_step)
+            combined_tracking_data = combine_tracking_data(
+                tracking_data_by_world_step)
 
             n_to_plot = (
                 80
@@ -711,7 +726,8 @@ if __name__ == "__main__":
         initial_state = (next_state[0].clone(), next_state[1].clone())
 
         if args.anneal_lr:
-            frac = 1.0 - (training_iteration - 1.0) / args.num_training_iterations
+            frac = 1.0 - (training_iteration - 1.0) / \
+                args.num_training_iterations
             lrnow = frac * args.lr
             optimizer.param_groups[0]["lr"] = lrnow
 
@@ -759,8 +775,10 @@ if __name__ == "__main__":
                             info[0]["episode"]["l"],
                             global_step,
                         )
-                        episode_rewards_tracking.append(info[0]["episode"]["r"])
-                        episode_lengths_tracking.append(info[0]["episode"]["l"])
+                        episode_rewards_tracking.append(
+                            info[0]["episode"]["r"])
+                        episode_lengths_tracking.append(
+                            info[0]["episode"]["l"])
                         global_steps_tracking.append(global_step)
 
             elif "episode" in infos:
@@ -788,8 +806,10 @@ if __name__ == "__main__":
                                 episode_lengths[env_idx],
                                 global_step,
                             )
-                            episode_rewards_tracking.append(episode_rewards[env_idx])
-                            episode_lengths_tracking.append(episode_lengths[env_idx])
+                            episode_rewards_tracking.append(
+                                episode_rewards[env_idx])
+                            episode_lengths_tracking.append(
+                                episode_lengths[env_idx])
                             global_steps_tracking.append(global_step)
 
         with torch.no_grad():
@@ -832,7 +852,8 @@ if __name__ == "__main__":
         assert args.num_envs % args.num_minibatches == 0
         envsperbatch = args.num_envs // args.num_minibatches
         envinds = np.arange(args.num_envs)
-        flatinds = np.arange(args.batch_size).reshape(args.num_steps, args.num_envs)
+        flatinds = np.arange(args.batch_size).reshape(
+            args.num_steps, args.num_envs)
         clipfracs = []
         for epoch in range(args.update_epochs):
             for start in range(0, args.num_envs, envsperbatch):
@@ -896,7 +917,8 @@ if __name__ == "__main__":
                     v_loss_max = torch.max(v_loss_unclipped, v_loss_clipped)
                     v_loss = 0.5 * v_loss_max.mean()
                 else:
-                    v_loss = 0.5 * ((newvalue - b_returns[mb_inds]) ** 2).mean()
+                    v_loss = 0.5 * \
+                        ((newvalue - b_returns[mb_inds]) ** 2).mean()
 
                 entropy_loss = entropy.mean()
                 loss = pg_loss - args.ent_coef * entropy_loss + v_loss * args.vf_coef
@@ -912,11 +934,13 @@ if __name__ == "__main__":
                     else:
                         param_norm = param.grad.data.norm(2).item()
                         total_norm += param_norm**2
-                        writer.add_scalar(f"grad_norms/{name}", param_norm, global_step)
+                        writer.add_scalar(
+                            f"grad_norms/{name}", param_norm, global_step)
                 total_norm = total_norm**0.5
                 writer.add_scalar("grad_norms/total", total_norm, global_step)
 
-                nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
+                nn.utils.clip_grad_norm_(
+                    agent.parameters(), args.max_grad_norm)
                 optimizer.step()
 
             if args.target_kl is not None and approx_kl > args.target_kl:
@@ -944,18 +968,23 @@ if __name__ == "__main__":
 
         y_pred, y_true = b_values.cpu().numpy(), b_returns.cpu().numpy()
         var_y = np.var(y_true)
-        explained_var = np.nan if var_y == 0 else 1 - np.var(y_true - y_pred) / var_y
+        explained_var = np.nan if var_y == 0 else 1 - \
+            np.var(y_true - y_pred) / var_y
 
-        writer.add_scalar("charts/lr", optimizer.param_groups[0]["lr"], global_step)
+        writer.add_scalar(
+            "charts/lr", optimizer.param_groups[0]["lr"], global_step)
         writer.add_scalar("losses/value_loss", v_loss.item(), global_step)
         writer.add_scalar("losses/policy_loss", pg_loss.item(), global_step)
         writer.add_scalar("losses/entropy", entropy_loss.item(), global_step)
-        writer.add_scalar("losses/old_approx_kl", old_approx_kl.item(), global_step)
+        writer.add_scalar("losses/old_approx_kl",
+                          old_approx_kl.item(), global_step)
         writer.add_scalar("losses/approx_kl", approx_kl.item(), global_step)
         writer.add_scalar("losses/clipfrac", np.mean(clipfracs), global_step)
-        writer.add_scalar("losses/explained_variance", explained_var, global_step)
+        writer.add_scalar("losses/explained_variance",
+                          explained_var, global_step)
         writer.add_scalar(
-            "charts/SPS", int(global_step / (time.time() - start_time)), global_step
+            "charts/SPS", int(global_step / (time.time() -
+                              start_time)), global_step
         )
 
     envs.close()

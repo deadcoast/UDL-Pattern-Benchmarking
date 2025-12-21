@@ -95,7 +95,8 @@ def check_structure(
             if not path.exists():
                 missing.append(f"Directory: {full_name}")
             elif not path.is_dir():
-                missing.append(f"Expected directory but found file: {full_name}")
+                missing.append(
+                    f"Expected directory but found file: {full_name}")
             else:
                 # Recursively check contents
                 sub_missing, _ = check_structure(value, path, full_name)
@@ -152,7 +153,8 @@ def main():
     undocumented = []
     for key in ["udl_rating_framework"]:
         if key in EXPECTED_STRUCTURE:
-            undoc = find_undocumented(project_root / key, EXPECTED_STRUCTURE[key], key)
+            undoc = find_undocumented(
+                project_root / key, EXPECTED_STRUCTURE[key], key)
             undocumented.extend(undoc)
 
     print("Missing (documented but not found):")

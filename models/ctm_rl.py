@@ -1,11 +1,13 @@
+import math
+
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
-import math
-from models.ctm import ContinuousThoughtMachine
-from models.modules import MiniGridBackbone, ClassicControlBackbone, SynapseUNET
-from models.utils import compute_decay
+
 from models.constants import VALID_NEURON_SELECT_TYPES
+from models.ctm import ContinuousThoughtMachine
+from models.modules import ClassicControlBackbone, MiniGridBackbone, SynapseUNET
+from models.utils import compute_decay
 
 
 class ContinuousThoughtMachineRL(ContinuousThoughtMachine):
@@ -66,13 +68,17 @@ class ContinuousThoughtMachineRL(ContinuousThoughtMachine):
         self.register_buffer(
             "diagonal_mask_out",
             torch.triu(
-                torch.ones(self.n_synch_out, self.n_synch_out, dtype=torch.bool)
+                torch.ones(self.n_synch_out,
+                           self.n_synch_out, dtype=torch.bool)
             ),
         )
 
-        self.attention = None  # Should already be None because super(... heads=0... )
-        self.q_proj = None  # Should already be None because super(... heads=0... )
-        self.kv_proj = None  # Should already be None because super(... heads=0... )
+        # Should already be None because super(... heads=0... )
+        self.attention = None
+        # Should already be None because super(... heads=0... )
+        self.q_proj = None
+        # Should already be None because super(... heads=0... )
+        self.kv_proj = None
         self.output_projector = None
 
     # --- Core CTM Methods ---
@@ -85,13 +91,14 @@ class ContinuousThoughtMachineRL(ContinuousThoughtMachine):
         # For RL tasks we track a sliding window of activations from which we compute synchronisation
         S = activated_state_trace.permute(0, 2, 1)
         diagonal_mask = self.diagonal_mask_out.to(S.device)
-        decay = compute_decay(S.size(1), self.decay_params_out, clamp_lims=(0, 4))
+        decay = compute_decay(
+            S.size(1), self.decay_params_out, clamp_lims=(0, 4))
         synchronisation = (
             (
                 decay.unsqueeze(0)
                 * (
-                    S[:, :, -self.n_synch_out :].unsqueeze(-1)
-                    * S[:, :, -self.n_synch_out :].unsqueeze(-2)
+                    S[:, :, -self.n_synch_out:].unsqueeze(-1)
+                    * S[:, :, -self.n_synch_out:].unsqueeze(-2)
                 )[:, :, diagonal_mask]
             ).sum(1)
         ) / torch.sqrt(
@@ -204,7 +211,8 @@ class ContinuousThoughtMachineRL(ContinuousThoughtMachine):
         # --- Recurrent Loop  ---
         for stepi in range(self.iterations):
             pre_synapse_input = torch.concatenate(
-                (features.reshape(x.size(0), -1), activated_state_trace[:, :, -1]), -1
+                (features.reshape(x.size(0), -1),
+                 activated_state_trace[:, :, -1]), -1
             )
 
             # --- Apply Synapses ---
@@ -216,7 +224,8 @@ class ContinuousThoughtMachineRL(ContinuousThoughtMachine):
             # --- Apply NLMs ---
             activated_state = self.trace_processor(state_trace)
             activated_state_trace = torch.concatenate(
-                (activated_state_trace[:, :, 1:], activated_state.unsqueeze(-1)), -1
+                (activated_state_trace[:, :, 1:],
+                 activated_state.unsqueeze(-1)), -1
             )
 
             # --- Tracking ---
@@ -224,7 +233,8 @@ class ContinuousThoughtMachineRL(ContinuousThoughtMachine):
                 pre_activations_tracking.append(
                     state_trace[:, :, -1].detach().cpu().numpy()
                 )
-                post_activations_tracking.append(activated_state.detach().cpu().numpy())
+                post_activations_tracking.append(
+                    activated_state.detach().cpu().numpy())
 
         hidden_states = (
             state_trace,
@@ -232,7 +242,8 @@ class ContinuousThoughtMachineRL(ContinuousThoughtMachine):
         )
 
         # --- Calculate Output Synchronisation ---
-        synchronisation_out = self.compute_synchronisation(activated_state_trace)
+        synchronisation_out = self.compute_synchronisation(
+            activated_state_trace)
 
         # --- Return Values ---
         if track:

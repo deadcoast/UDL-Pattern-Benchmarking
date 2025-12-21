@@ -5,43 +5,44 @@ Tests hyperparameter optimization, ensemble methods, transfer learning,
 active learning, and uncertainty quantification.
 """
 
+import os
+import tempfile
+from pathlib import Path
+from unittest.mock import MagicMock, Mock, patch
+
+import numpy as np
 import pytest
 import torch
 import torch.nn as nn
-import numpy as np
 from torch.utils.data import DataLoader, TensorDataset
-from unittest.mock import Mock, patch, MagicMock
-import tempfile
-import os
-from pathlib import Path
 
-from udl_rating_framework.training.hyperparameter_optimization import (
-    CTMHyperparameterOptimizer,
-    CTMHyperparameterSpace,
-    create_ctm_param_space,
-)
-from udl_rating_framework.training.ensemble_methods import (
-    EnsemblePredictor,
-    EnsembleMember,
-    CTMEnsembleTrainer,
-)
+from udl_rating_framework.core.aggregation import MetricAggregator
+from udl_rating_framework.core.metrics.base import QualityMetric
+from udl_rating_framework.core.representation import Token, TokenType, UDLRepresentation
+from udl_rating_framework.models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
 from udl_rating_framework.training.active_learning import (
     ActiveLearningConfig,
     CTMUncertaintySampling,
     DiversitySampling,
     HybridSampling,
 )
+from udl_rating_framework.training.ensemble_methods import (
+    CTMEnsembleTrainer,
+    EnsembleMember,
+    EnsemblePredictor,
+)
+from udl_rating_framework.training.hyperparameter_optimization import (
+    CTMHyperparameterOptimizer,
+    CTMHyperparameterSpace,
+    create_ctm_param_space,
+)
 from udl_rating_framework.training.uncertainty_quantification import (
-    SynchronizationUncertainty,
-    UncertaintyEstimate,
     CalibrationAnalyzer,
+    SynchronizationUncertainty,
     UncertaintyAwarePredictor,
+    UncertaintyEstimate,
     bootstrap_confidence_intervals,
 )
-from udl_rating_framework.models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
-from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType
-from udl_rating_framework.core.metrics.base import QualityMetric
-from udl_rating_framework.core.aggregation import MetricAggregator
 
 
 class MockMetric(QualityMetric):
@@ -195,7 +196,8 @@ class TestEnsembleMethods:
 
     def test_ensemble_member_creation(self, mock_model):
         """Test ensemble member creation."""
-        member = EnsembleMember(model=mock_model, weight=0.8, model_id="test_member")
+        member = EnsembleMember(
+            model=mock_model, weight=0.8, model_id="test_member")
 
         assert member.model == mock_model
         assert member.weight == 0.8
@@ -212,7 +214,8 @@ class TestEnsembleMethods:
         synch_out = torch.rand(batch_size, 32)
         tracking_data = None
 
-        mock_model.return_value = (predictions, certainties, synch_out, tracking_data)
+        mock_model.return_value = (
+            predictions, certainties, synch_out, tracking_data)
         member = EnsembleMember(model=mock_model)
 
         pred_result, cert_result = member.predict(token_ids)
@@ -323,7 +326,8 @@ class TestActiveLearning:
         mock_dataset = Mock()
         mock_dataset.__len__ = Mock(return_value=100)
         mock_dataset.__getitem__ = Mock(
-            return_value=(torch.randint(0, 1000, (128,)), MockUDLRepresentation())
+            return_value=(torch.randint(0, 1000, (128,)),
+                          MockUDLRepresentation())
         )
 
         # Mock model predictions with varying uncertainty
@@ -375,7 +379,8 @@ class TestActiveLearning:
         mock_dataset = Mock()
         mock_dataset.__len__ = Mock(return_value=100)
         mock_dataset.__getitem__ = Mock(
-            return_value=(torch.randint(0, 1000, (128,)), MockUDLRepresentation())
+            return_value=(torch.randint(0, 1000, (128,)),
+                          MockUDLRepresentation())
         )
 
         # Mock model predictions

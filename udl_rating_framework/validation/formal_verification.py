@@ -5,11 +5,12 @@ This module provides formal verification capabilities to ensure that all quality
 satisfy their mathematical properties as specified in the design document.
 """
 
-import numpy as np
 import logging
-from typing import List, Dict, Any, Tuple, Optional, Callable
-from dataclasses import dataclass
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+import numpy as np
 
 from ..core.metrics.base import QualityMetric
 from ..core.representation import UDLRepresentation
@@ -326,7 +327,8 @@ class FormalVerifier:
                 )
                 results.append(
                     PropertyVerificationResult(
-                        property_name=test.__class__.__name__.replace("Test", ""),
+                        property_name=test.__class__.__name__.replace(
+                            "Test", ""),
                         metric_name=metric_name,
                         passed=False,
                         test_cases=len(test_cases),
@@ -352,7 +354,8 @@ class FormalVerifier:
                             f"✗ {metric_name}: Custom {result.property_name} property failed"
                         )
                 except Exception as e:
-                    self.logger.error(f"Error in custom test for {metric_name}: {e}")
+                    self.logger.error(
+                        f"Error in custom test for {metric_name}: {e}")
 
         return results
 
@@ -437,11 +440,13 @@ class FormalVerifier:
 
                 if not result.passed and result.failures:
                     lines.append(f"  - Failures: {len(result.failures)}")
-                    for failure in result.failures[:3]:  # Show first 3 failures
+                    # Show first 3 failures
+                    for failure in result.failures[:3]:
                         if "violation" in failure:
                             lines.append(f"    - {failure['violation']}")
                     if len(result.failures) > 3:
-                        lines.append(f"    - ... and {len(result.failures) - 3} more")
+                        lines.append(
+                            f"    - ... and {len(result.failures) - 3} more")
 
                 if result.error_message:
                     lines.append(f"  - Error: {result.error_message}")

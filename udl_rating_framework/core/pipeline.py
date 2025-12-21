@@ -4,18 +4,18 @@ Rating computation pipeline.
 Orchestrates metric computation, aggregation, and report generation.
 """
 
-import logging
 import hashlib
-from datetime import datetime
-from typing import Dict, List, Optional, Any, Tuple
+import logging
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.base import QualityMetric, MetricRegistry
 from udl_rating_framework.core.aggregation import MetricAggregator
+from udl_rating_framework.core.caching import get_metric_cache, get_udl_cache
 from udl_rating_framework.core.confidence import ConfidenceCalculator
-from udl_rating_framework.core.caching import get_udl_cache, get_metric_cache
+from udl_rating_framework.core.metrics.base import MetricRegistry, QualityMetric
+from udl_rating_framework.core.representation import UDLRepresentation
 
 logger = logging.getLogger(__name__)
 
@@ -246,7 +246,8 @@ class RatingPipeline:
                                 "metric_values": metric_values,
                             },
                             output=overall_score,
-                            intermediate_values={"overall_score": overall_score},
+                            intermediate_values={
+                                "overall_score": overall_score},
                         )
                         report.computation_trace.append(step)
                         step_counter += 1
@@ -350,7 +351,8 @@ class RatingPipeline:
         reports = []
         for i, udl in enumerate(udls):
             try:
-                logger.debug(f"Processing UDL {i + 1}/{len(udls)}: {udl.file_path}")
+                logger.debug(
+                    f"Processing UDL {i + 1}/{len(udls)}: {udl.file_path}")
                 report = self.compute_rating(udl)
                 reports.append(report)
             except Exception as e:
@@ -371,7 +373,8 @@ class RatingPipeline:
                 )
                 reports.append(error_report)
 
-        logger.info(f"Batch processing completed. {len(reports)} reports generated.")
+        logger.info(
+            f"Batch processing completed. {len(reports)} reports generated.")
         return reports
 
     def get_available_metrics(self) -> Dict[str, str]:
@@ -429,7 +432,8 @@ class RatingPipeline:
             # Test confidence computation
             try:
                 test_probs = [0.5, 0.3, 0.2]
-                confidence = self.confidence_calculator.compute_confidence(test_probs)
+                confidence = self.confidence_calculator.compute_confidence(
+                    test_probs)
                 results["confidence_works"] = True
                 results["confidence_bounded"] = bool(0.0 <= confidence <= 1.0)
             except Exception:

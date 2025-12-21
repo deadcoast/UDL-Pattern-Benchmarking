@@ -6,17 +6,18 @@ Tests for the Audit Reporter module.
 **Validates: Requirements 10.1, 10.2, 10.3, 10.4**
 """
 
-from hypothesis import given, strategies as st, settings
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from udl_rating_framework.validation.audit_reporter import (
-    AuditReporter,
     AuditReport,
+    AuditReporter,
     Finding,
     FindingCategory,
-    Severity,
-    ResolutionStatus,
-    SourceLocation,
     FixSuggestionGenerator,
+    ResolutionStatus,
+    Severity,
+    SourceLocation,
 )
 
 
@@ -34,9 +35,12 @@ class TestFindingCompleteness:
     @given(
         category=st.sampled_from(list(FindingCategory)),
         severity=st.sampled_from(list(Severity)),
-        file_path=st.text(min_size=1, max_size=100).filter(lambda x: x.strip()),
-        line_number=st.one_of(st.none(), st.integers(min_value=1, max_value=10000)),
-        description=st.text(min_size=1, max_size=500).filter(lambda x: x.strip()),
+        file_path=st.text(min_size=1, max_size=100).filter(
+            lambda x: x.strip()),
+        line_number=st.one_of(st.none(), st.integers(
+            min_value=1, max_value=10000)),
+        description=st.text(min_size=1, max_size=500).filter(
+            lambda x: x.strip()),
     )
     @settings(max_examples=100)
     def test_finding_has_required_fields(
@@ -106,7 +110,8 @@ class TestFindingCompleteness:
             id="TEST-0001",
             category=FindingCategory.LINK,
             severity=Severity.MAJOR,
-            source_location=SourceLocation(file_path="test.md", line_number=42),
+            source_location=SourceLocation(
+                file_path="test.md", line_number=42),
             description="Test finding",
             expected="expected_value",
             actual="actual_value",
@@ -180,7 +185,8 @@ class TestFixSuggestionGeneration:
             id="LINK-0001",
             category=FindingCategory.LINK,
             severity=Severity.MAJOR,
-            source_location=SourceLocation(file_path="README.md", line_number=10),
+            source_location=SourceLocation(
+                file_path="README.md", line_number=10),
             description="Broken file link to docs/missing.md",
             expected="docs/missing.md",
         )
@@ -203,7 +209,8 @@ class TestFixSuggestionGeneration:
             id="API-0001",
             category=FindingCategory.API,
             severity=Severity.MINOR,
-            source_location=SourceLocation(file_path="module.py", line_number=50),
+            source_location=SourceLocation(
+                file_path="module.py", line_number=50),
             description="Missing docstring for function calculate",
         )
 
@@ -227,7 +234,8 @@ class TestFixSuggestionGeneration:
             id="API-0002",
             category=FindingCategory.API,
             severity=Severity.MAJOR,
-            source_location=SourceLocation(file_path="module.py", line_number=100),
+            source_location=SourceLocation(
+                file_path="module.py", line_number=100),
             description="Signature mismatch for function process",
             expected="process(data: str) -> int",
             actual="process(data: str, flag: bool) -> int",
@@ -241,7 +249,8 @@ class TestFixSuggestionGeneration:
     @given(
         category=st.sampled_from(list(FindingCategory)),
         severity=st.sampled_from(list(Severity)),
-        description=st.text(min_size=10, max_size=200).filter(lambda x: x.strip()),
+        description=st.text(min_size=10, max_size=200).filter(
+            lambda x: x.strip()),
     )
     @settings(max_examples=100)
     def test_suggestion_is_non_empty_string(self, category, severity, description):

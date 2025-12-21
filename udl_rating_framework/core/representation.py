@@ -5,10 +5,11 @@ Provides formal representation of UDL structure for mathematical analysis.
 """
 
 import re
-import networkx as nx
-from typing import List, Dict, Set, Any, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any, Dict, List, Optional, Set, Tuple
+
+import networkx as nx
 
 
 class TokenType(Enum):
@@ -48,7 +49,8 @@ class Constraint:
     def __post_init__(self):
         # Convert dict to tuple of tuples for hashability
         if isinstance(self.metadata, dict):
-            object.__setattr__(self, "metadata", tuple(sorted(self.metadata.items())))
+            object.__setattr__(self, "metadata", tuple(
+                sorted(self.metadata.items())))
 
     def get_metadata_dict(self) -> Dict[str, Any]:
         """Convert metadata back to dict for easier access."""
@@ -131,7 +133,8 @@ class UDLTokenizer:
         # Identifiers and keywords
         (r"[a-zA-Z_][a-zA-Z0-9_]*", TokenType.IDENTIFIER),  # Standard identifiers
         (r"[0-9]+", TokenType.LITERAL),  # Numbers
-        (r"\$[0-9]+", TokenType.IDENTIFIER),  # Yacc/Bison positional parameters
+        # Yacc/Bison positional parameters
+        (r"\$[0-9]+", TokenType.IDENTIFIER),
         # Catch-all for other operators
         (r"[^\s\w]", TokenType.OPERATOR),
     ]
@@ -628,7 +631,8 @@ class UDLRepresentation:
                     lhs=lhs,
                     rhs=rhs,
                     constraints=[],
-                    metadata={"operator": operator, "format": self.format.value},
+                    metadata={"operator": operator,
+                              "format": self.format.value},
                 )
                 rules.append(rule)
             else:
@@ -694,13 +698,16 @@ class UDLRepresentation:
 
         for token in self._tokens:
             if token.type == TokenType.IDENTIFIER:
-                semantic_map[token] = {"type": "symbol", "category": "non_terminal"}
+                semantic_map[token] = {
+                    "type": "symbol", "category": "non_terminal"}
             elif token.type == TokenType.LITERAL:
                 semantic_map[token] = {"type": "terminal", "value": token.text}
             elif token.type == TokenType.OPERATOR:
-                semantic_map[token] = {"type": "operator", "function": token.text}
+                semantic_map[token] = {
+                    "type": "operator", "function": token.text}
             elif token.type == TokenType.KEYWORD:
-                semantic_map[token] = {"type": "keyword", "meaning": token.text}
+                semantic_map[token] = {
+                    "type": "keyword", "meaning": token.text}
 
         return semantic_map
 
@@ -713,7 +720,8 @@ class UDLRepresentation:
             if token.type == TokenType.COMMENT:
                 # Simple constraint extraction from comments
                 if "constraint:" in token.text.lower():
-                    constraint_text = token.text.split("constraint:", 1)[1].strip()
+                    constraint_text = token.text.split(
+                        "constraint:", 1)[1].strip()
                     constraint = Constraint(
                         type="comment_constraint",
                         condition=constraint_text,

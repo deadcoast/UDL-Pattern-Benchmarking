@@ -8,7 +8,8 @@ with parallel processing, caching, and progress tracking.
 
 import time
 from pathlib import Path
-from udl_rating_framework.integration.batch_processor import BatchProcessor, BatchConfig
+
+from udl_rating_framework.integration.batch_processor import BatchConfig, BatchProcessor
 
 
 def create_sample_udl_files(output_dir: Path, count: int = 10):
@@ -105,7 +106,8 @@ def main():
     print(f"  Failed files: {result.failed_files}")
     print(f"  Processing time: {result.processing_time:.2f}s")
     print(f"  Average quality: {result.average_quality:.3f}")
-    print(f"  Processing rate: {result.summary_stats['processing_rate']:.1f} files/sec")
+    print(
+        f"  Processing rate: {result.summary_stats['processing_rate']:.1f} files/sec")
     print(f"  Success rate: {result.summary_stats['success_rate']:.1%}")
 
     # Quality distribution
@@ -120,7 +122,8 @@ def main():
     print(f"\nSample File Results:")
     for i, (file_path, file_result) in enumerate(list(result.file_results.items())[:5]):
         if "error" in file_result:
-            print(f"  ❌ {Path(file_path).name}: Error - {file_result['error']}")
+            print(
+                f"  ❌ {Path(file_path).name}: Error - {file_result['error']}")
         else:
             score = file_result["overall_score"]
             confidence = file_result["confidence"]
@@ -184,7 +187,8 @@ def main():
         result2 = processor.process_directory(sample_dir, patterns=["*.udl"])
         cached_time = time.time() - start_time
 
-        speedup = processing_time / cached_time if cached_time > 0 else float("inf")
+        speedup = processing_time / \
+            cached_time if cached_time > 0 else float("inf")
         print(f"  Original time: {processing_time:.2f}s")
         print(f"  Cached time: {cached_time:.2f}s")
         print(f"  Speedup: {speedup:.1f}x")

@@ -8,13 +8,14 @@ through the rating system without errors.
 **Validates: Requirements 5.1**
 """
 
-import pytest
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.pipeline import RatingPipeline
+import pytest
+
 from udl_rating_framework.core.metrics.base import MetricRegistry
+from udl_rating_framework.core.pipeline import RatingPipeline
+from udl_rating_framework.core.representation import UDLRepresentation
 
 
 class TestUDLExampleProcessing:
@@ -49,7 +50,8 @@ class TestUDLExampleProcessing:
         if not examples_dir.exists():
             return []
 
-        extensions = ["*.udl", "*.g4", "*.peg", "*.y", "*.ebnf", "*.abnf", "*.rr"]
+        extensions = ["*.udl", "*.g4", "*.peg",
+                      "*.y", "*.ebnf", "*.abnf", "*.rr"]
         files = []
         for ext in extensions:
             files.extend(examples_dir.glob(ext))
@@ -283,7 +285,8 @@ class TestUDLExampleProcessing:
 
                 # Check for errors in report
                 if report.errors:
-                    failures.append({"file": file_path.name, "errors": report.errors})
+                    failures.append(
+                        {"file": file_path.name, "errors": report.errors})
                 else:
                     successes.append(
                         {"file": file_path.name, "score": report.overall_score}
@@ -395,7 +398,8 @@ class TestUDLProcessingReport:
 
         This test documents the processing status of all UDL files.
         """
-        examples_dir = Path(__file__).parent.parent / "examples" / "udl_examples"
+        examples_dir = Path(__file__).parent.parent / \
+            "examples" / "udl_examples"
 
         if not examples_dir.exists():
             pytest.skip("Examples directory not found")
@@ -408,7 +412,8 @@ class TestUDLProcessingReport:
         ]
 
         # Get all grammar files
-        extensions = ["*.udl", "*.g4", "*.peg", "*.y", "*.ebnf", "*.abnf", "*.rr"]
+        extensions = ["*.udl", "*.g4", "*.peg",
+                      "*.y", "*.ebnf", "*.abnf", "*.rr"]
         all_files = []
         for ext in extensions:
             all_files.extend(examples_dir.glob(ext))

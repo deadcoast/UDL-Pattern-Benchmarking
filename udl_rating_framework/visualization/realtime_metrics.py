@@ -6,11 +6,12 @@ and interactive dashboards for monitoring UDL analysis progress.
 """
 
 import json
-import time
 import threading
-from typing import Dict, List, Optional, Any, Callable
+import time
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from dataclasses import dataclass, asdict
+from typing import Any, Callable, Dict, List, Optional
+
 import numpy as np
 
 
@@ -98,7 +99,8 @@ class RealTimeMetricsVisualizer:
             )
 
             # Update performance metrics
-            self.performance_metrics["computation_time"].append(computation["duration"])
+            self.performance_metrics["computation_time"].append(
+                computation["duration"])
 
     def create_realtime_dashboard(
         self, save_path: Optional[str] = None, websocket_port: int = 8765
@@ -233,7 +235,8 @@ class RealTimeMetricsVisualizer:
 
     def _prepare_comparison_data(self, metric_names: List[str]) -> Dict[str, Any]:
         """Prepare data for metric comparison."""
-        comparison_data = {"metrics": metric_names, "data": {}, "statistics": {}}
+        comparison_data = {"metrics": metric_names,
+                           "data": {}, "statistics": {}}
 
         for metric_name in metric_names:
             if metric_name in self.metric_history:

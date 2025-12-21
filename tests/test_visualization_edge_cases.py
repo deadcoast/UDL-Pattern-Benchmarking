@@ -5,25 +5,26 @@ Tests visualization robustness with empty/null data, corrupted data,
 memory limits, browser compatibility, and export functionality.
 """
 
-import pytest
-import numpy as np
-import tempfile
-import shutil
-import os
 import json
+import os
+import shutil
+import tempfile
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import MagicMock, Mock, patch
 
-from udl_rating_framework.visualization import (
-    WebVisualizer,
-    WebGLVisualizer,
-    RealTimeMetricsVisualizer,
-    ActivationVisualizer,
-    SynchronizationVisualizer,
-    MetricUpdate,
-)
+import numpy as np
+import pytest
+
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.models.ctm_adapter import TrackingData
+from udl_rating_framework.visualization import (
+    ActivationVisualizer,
+    MetricUpdate,
+    RealTimeMetricsVisualizer,
+    SynchronizationVisualizer,
+    WebGLVisualizer,
+    WebVisualizer,
+)
 
 
 @pytest.fixture
@@ -70,7 +71,8 @@ def empty_tracking_data():
 def corrupted_tracking_data():
     """Create corrupted tracking data with mismatched dimensions."""
     return TrackingData(
-        pre_activations=np.random.randn(5, 1, 8),  # 5 iterations, 1 batch, 8 neurons
+        # 5 iterations, 1 batch, 8 neurons
+        pre_activations=np.random.randn(5, 1, 8),
         post_activations=np.random.randn(3, 2, 6),  # Mismatched dimensions
         synch_out=np.random.randn(4, 1, 4),  # Different iteration count
         synch_action=np.random.randn(5, 1, 2),
@@ -535,8 +537,9 @@ class TestVisualizationMemoryLimits:
         """Test that memory is properly cleaned up after visualization."""
         try:
             import gc
-            import psutil
             import os
+
+            import psutil
 
             process = psutil.Process(os.getpid())
             initial_memory = process.memory_info().rss

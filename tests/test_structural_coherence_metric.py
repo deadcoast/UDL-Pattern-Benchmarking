@@ -4,10 +4,13 @@ Tests for Structural Coherence Metric.
 Tests both unit functionality and property-based correctness.
 """
 
-import pytest
 import math
+
 import networkx as nx
-from hypothesis import given, strategies as st, assume, settings
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
+
 from udl_rating_framework.core.metrics.structural_coherence import (
     StructuralCoherenceMetric,
 )
@@ -213,7 +216,8 @@ class TestStructuralCoherenceProperties:
         graph = udl.get_grammar_graph()
         entropy = self.metric.compute_shannon_entropy(graph)
         max_entropy = (
-            math.log2(graph.number_of_nodes()) if graph.number_of_nodes() > 1 else 0.0
+            math.log2(graph.number_of_nodes()
+                      ) if graph.number_of_nodes() > 1 else 0.0
         )
 
         # Verify entropy bounds
@@ -232,7 +236,8 @@ class TestStructuralCoherenceProperties:
         Test that the metric is deterministic - same input produces same output.
         """
         # Create a simple UDL from the rule parts
-        udl_text = "\n".join([f"S{i} ::= {part}" for i, part in enumerate(rule_parts)])
+        udl_text = "\n".join(
+            [f"S{i} ::= {part}" for i, part in enumerate(rule_parts)])
 
         try:
             udl = UDLRepresentation(udl_text, "test.udl")

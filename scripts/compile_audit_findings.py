@@ -12,17 +12,17 @@ a comprehensive audit report.
 import sys
 from pathlib import Path
 
-# Add project root to path
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
-
 from udl_rating_framework.validation.audit_reporter import (
     AuditReporter,
     FindingCategory,
-    Severity,
     ResolutionStatus,
+    Severity,
 )
 from udl_rating_framework.validation.link_validator import LinkValidator
+
+# Add project root to path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
 
 
 def compile_link_validation_findings(reporter: AuditReporter) -> int:
@@ -122,9 +122,11 @@ def compile_api_validation_findings(reporter: AuditReporter) -> int:
         reporter.add_finding(
             category=FindingCategory.DOCSTRING,
             severity=Severity.INFO,
-            file_path=f"udl_rating_framework/analytics/{file_path}"
-            if "trend" in file_path
-            else f"udl_rating_framework/benchmarks/{file_path}",
+            file_path=(
+                f"udl_rating_framework/analytics/{file_path}"
+                if "trend" in file_path
+                else f"udl_rating_framework/benchmarks/{file_path}"
+            ),
             line_number=int(line),
             description=f"Function lacks docstring: {name}",
             requirement_ref="8.4",

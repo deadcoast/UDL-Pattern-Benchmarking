@@ -9,10 +9,10 @@ Provides comprehensive visualization tools including:
 """
 
 from .activation_visualizer import ActivationVisualizer
+from .realtime_metrics import MetricUpdate, RealTimeMetricsVisualizer
 from .synchronization_visualizer import SynchronizationVisualizer
 from .web_visualizer import WebVisualizer
 from .webgl_visualizer import WebGLVisualizer
-from .realtime_metrics import RealTimeMetricsVisualizer, MetricUpdate
 
 __all__ = [
     "ActivationVisualizer",

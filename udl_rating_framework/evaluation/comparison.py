@@ -6,12 +6,13 @@ effect size computation, and ranking with confidence intervals.
 """
 
 import logging
-from typing import Dict, List, Tuple, Optional, Any
+import warnings
 from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
 from scipy import stats
-from scipy.stats import ttest_ind, wilcoxon, mannwhitneyu
-import warnings
+from scipy.stats import mannwhitneyu, ttest_ind, wilcoxon
 
 from udl_rating_framework.core.pipeline import QualityReport
 
@@ -125,7 +126,8 @@ class ComparisonEngine:
         rankings = self._compute_rankings_with_confidence(reports)
 
         # Compute summary statistics
-        summary_stats = self._compute_summary_statistics(reports, pairwise_results)
+        summary_stats = self._compute_summary_statistics(
+            reports, pairwise_results)
 
         return ComparisonSummary(
             pairwise_results=pairwise_results,
@@ -172,11 +174,13 @@ class ComparisonEngine:
                 )
 
                 # Compute effect size (Cohen's d)
-                cohens_d = self._compute_cohens_d(score1, score2, report1, report2)
+                cohens_d = self._compute_cohens_d(
+                    score1, score2, report1, report2)
 
                 # Determine significance and effect size interpretation
                 is_significant = min(ttest_p, wilcoxon_p or 1.0) < self.alpha
-                effect_interpretation = self._interpret_effect_size(abs(cohens_d))
+                effect_interpretation = self._interpret_effect_size(
+                    abs(cohens_d))
 
                 result = ComparisonResult(
                     udl1_name=report1.udl_file,
@@ -423,8 +427,10 @@ class ComparisonEngine:
                 udl_name=report.udl_file,
                 score=float(scores[i]),
                 rank=int(base_ranks[i]),
-                confidence_interval=(float(score_cis[i][0]), float(score_cis[i][1])),
-                rank_confidence_interval=(int(rank_cis[i][0]), int(rank_cis[i][1])),
+                confidence_interval=(
+                    float(score_cis[i][0]), float(score_cis[i][1])),
+                rank_confidence_interval=(
+                    int(rank_cis[i][0]), int(rank_cis[i][1])),
             )
             results.append(result)
 
@@ -458,9 +464,9 @@ class ComparisonEngine:
             "mean_absolute_difference": float(
                 np.mean([abs(r.difference) for r in pairwise_results])
             ),
-            "max_absolute_difference": float(
-                np.max([abs(r.difference) for r in pairwise_results])
-            )
-            if pairwise_results
-            else 0.0,
+            "max_absolute_difference": (
+                float(np.max([abs(r.difference) for r in pairwise_results]))
+                if pairwise_results
+                else 0.0
+            ),
         }

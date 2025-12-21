@@ -1,15 +1,22 @@
-import torch
-import os
 import math
+import os
+import re
+
 import imageio
-import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib as mpl
-from tqdm import tqdm
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+import torch
 import umap
 from scipy.special import softmax
-import seaborn as sns
-import re
+from tqdm import tqdm
+
+from models.utils import get_model_args_from_checkpoint, load_checkpoint
+from tasks.image_classification.plotting import save_frames_to_mp4
+from tasks.parity.utils import reshape_attention_weights
+from tasks.qamnist.analysis.run import prepare_data_for_analysis
+from tasks.qamnist.utils import prepare_model
 
 sns.set_style("darkgrid")
 mpl.use("Agg")
@@ -24,11 +31,6 @@ mpl.rcParams.update(
     """,
     }
 )
-from tasks.qamnist.utils import prepare_model
-from models.utils import load_checkpoint, get_model_args_from_checkpoint
-from tasks.qamnist.analysis.run import prepare_data_for_analysis
-from tasks.parity.utils import reshape_attention_weights
-from tasks.image_classification.plotting import save_frames_to_mp4
 
 
 def compose_modular_expressions(input_string):
@@ -68,8 +70,8 @@ def compose_modular_expressions(input_string):
     if first_paren != -1 and last_paren != -1 and first_paren < last_paren:
         final_composed = (
             final_composed[:first_paren]
-            + final_composed[first_paren + 1 : last_paren]
-            + final_composed[last_paren + 1 :]
+            + final_composed[first_paren + 1: last_paren]
+            + final_composed[last_paren + 1:]
         )
 
     return final_composed
@@ -94,11 +96,13 @@ def make_qamnist_gif(
     heatmap_cmap = sns.color_palette("viridis", as_cmap=True)
     frames = []
 
-    these_inputs = inputs_to_model[:, batch_index, :, :, :]  # Shape: (T, C, H, W)
+    # Shape: (T, C, H, W)
+    these_inputs = inputs_to_model[:, batch_index, :, :, :]
     these_input_gates = input_gates[:, batch_index, :, :]  # Shape: (T, H, W)
     these_predictions = predictions[batch_index, :, :]  # Shape: (C, T)
     this_target = targets[batch_index]  # Shape: (C)
-    these_post_activations = post_activations[:, batch_index, :]  # Shape: (T, H)
+    # Shape: (T, H)
+    these_post_activations = post_activations[:, batch_index, :]
 
     probs_min, probs_max = 0, 1
 
@@ -182,7 +186,8 @@ def make_qamnist_gif(
             this_input_gate = these_input_gates[stepi]
         except (IndexError, TypeError):
             this_input_gate = np.zeros_like(these_input_gates[0])
-        gate_min, gate_max = np.nanmin(this_input_gate), np.nanmax(this_input_gate)
+        gate_min, gate_max = np.nanmin(
+            this_input_gate), np.nanmax(this_input_gate)
         if not np.isclose(gate_min, gate_max):
             normalized_gate = (this_input_gate - gate_min) / (
                 gate_max - gate_min + 1e-8
@@ -239,7 +244,8 @@ def run_umap(model, model_args, device):
     num_digits = 4
     num_operations = 3
     model_args.batch_size_test = 1
-    testloader = prepare_data_for_analysis(num_digits, num_operations, model_args)
+    testloader = prepare_data_for_analysis(
+        num_digits, num_operations, model_args)
 
     point_counts = 150
     all_post_activations = []
@@ -329,7 +335,7 @@ def run_model_and_make_gif(checkpoint_path, save_path, device):
     embedding_input[:T_embed] = reshaped
 
     embedding_tensor = torch.from_numpy(embedding_input).to(gif_inputs.device)
-    gif_inputs[digits_input.size(0) : digits_input.size(0) + T_embed] = (
+    gif_inputs[digits_input.size(0): digits_input.size(0) + T_embed] = (
         embedding_tensor[:T_embed]
     )
 

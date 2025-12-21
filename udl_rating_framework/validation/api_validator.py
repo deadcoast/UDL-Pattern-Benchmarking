@@ -6,13 +6,13 @@ Extracts public APIs, compares signatures, and identifies discrepancies.
 """
 
 import ast
-import inspect
 import importlib
+import inspect
 import pkgutil
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
-import re
 
 
 @dataclass
@@ -42,7 +42,8 @@ class APIDiscrepancy:
     """Represents a discrepancy between documented and actual API."""
 
     element_name: str
-    discrepancy_type: str  # 'missing_in_code', 'missing_in_docs', 'signature_mismatch', 'undocumented'
+    # 'missing_in_code', 'missing_in_docs', 'signature_mismatch', 'undocumented'
+    discrepancy_type: str
     documented_value: Optional[str] = None
     actual_value: Optional[str] = None
     severity: str = "major"  # 'critical', 'major', 'minor'
@@ -185,7 +186,8 @@ class APIExtractor:
             sig = "()"
 
         element = APIElement(
-            name=method.__name__ if hasattr(method, "__name__") else str(method),
+            name=method.__name__ if hasattr(
+                method, "__name__") else str(method),
             module=module_name,
             element_type="method",
             signature=sig,
@@ -390,20 +392,24 @@ class APIValidator:
             lines.append(f"\n## {module}\n")
 
             # Separate classes and functions
-            classes = [a for a in by_module[module] if a.element_type == "class"]
-            functions = [a for a in by_module[module] if a.element_type == "function"]
+            classes = [a for a in by_module[module]
+                       if a.element_type == "class"]
+            functions = [a for a in by_module[module]
+                         if a.element_type == "function"]
 
             if classes:
                 lines.append("\n### Classes\n")
                 for cls in classes:
                     has_doc = "✓" if cls.docstring else "✗"
-                    lines.append(f"- `{cls.name}{cls.signature}` [{has_doc}]\n")
+                    lines.append(
+                        f"- `{cls.name}{cls.signature}` [{has_doc}]\n")
 
             if functions:
                 lines.append("\n### Functions\n")
                 for func in functions:
                     has_doc = "✓" if func.docstring else "✗"
-                    lines.append(f"- `{func.name}{func.signature}` [{has_doc}]\n")
+                    lines.append(
+                        f"- `{func.name}{func.signature}` [{has_doc}]\n")
 
         return "".join(lines)
 
@@ -429,7 +435,8 @@ def main():
 
     # Generate inventory
     inventory = validator.generate_api_inventory()
-    print("\n" + inventory[:2000] + "..." if len(inventory) > 2000 else inventory)
+    print("\n" + inventory[:2000] +
+          "..." if len(inventory) > 2000 else inventory)
 
 
 if __name__ == "__main__":

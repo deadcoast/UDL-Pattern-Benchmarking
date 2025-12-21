@@ -11,34 +11,36 @@ Tests various failure scenarios to ensure the system handles errors gracefully:
 Requirements: 2.3, 9.5
 """
 
-import pytest
-import tempfile
-import os
-import time
-import threading
-import socket
-from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
-from concurrent.futures import TimeoutError
 import multiprocessing as mp
-from typing import List, Dict, Any, Optional
+import os
+import socket
+import tempfile
+import threading
+import time
+from concurrent.futures import TimeoutError
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+from unittest.mock import MagicMock, Mock, patch
+
+import pytest
+
+from udl_rating_framework.core.caching import LRUCache, get_metric_cache, get_udl_cache
+from udl_rating_framework.core.multiprocessing import (
+    BatchProcessingStats,
+    ParallelProcessor,
+    ProcessingResult,
+)
+from udl_rating_framework.core.pipeline import QualityReport, RatingPipeline
 
 # Import framework components
 from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.pipeline import RatingPipeline, QualityReport
-from udl_rating_framework.core.multiprocessing import (
-    ParallelProcessor,
-    ProcessingResult,
-    BatchProcessingStats,
-)
 from udl_rating_framework.io.file_discovery import FileDiscovery, FileDiscoveryError
-from udl_rating_framework.core.caching import LRUCache, get_udl_cache, get_metric_cache
 
 
 def _check_distributed_available():
     """Check if distributed computing is available."""
     try:
-        from udl_rating_framework.core.distributed import RAY_AVAILABLE, DASK_AVAILABLE
+        from udl_rating_framework.core.distributed import DASK_AVAILABLE, RAY_AVAILABLE
 
         return RAY_AVAILABLE or DASK_AVAILABLE
     except ImportError:
@@ -55,8 +57,8 @@ class TestNetworkFailures:
     def test_distributed_network_connection_failure(self):
         """Test handling of network connection failures in distributed processing."""
         from udl_rating_framework.core.distributed import (
-            DistributedProcessor,
             DistributedConfig,
+            DistributedProcessor,
         )
 
         config = DistributedConfig(
@@ -76,9 +78,9 @@ class TestNetworkFailures:
     def test_distributed_worker_network_timeout(self):
         """Test timeout handling when workers become unreachable."""
         from udl_rating_framework.core.distributed import (
-            DistributedProcessor,
-            DistributedConfig,
             RAY_AVAILABLE,
+            DistributedConfig,
+            DistributedProcessor,
         )
 
         if not RAY_AVAILABLE:
@@ -160,7 +162,8 @@ class TestNetworkFailures:
                 )
             except ConnectionError as e:
                 results.append(
-                    ProcessingResult(success=False, error=str(e), processing_time=0.0)
+                    ProcessingResult(success=False, error=str(
+                        e), processing_time=0.0)
                 )
 
         # Should handle partial failures gracefully
@@ -237,7 +240,8 @@ class TestDiskIOErrors:
 
             # Should handle corrupted files gracefully
             # Either errors are reported or file is skipped
-            assert hasattr(result, "errors") or hasattr(result, "discovered_files")
+            assert hasattr(result, "errors") or hasattr(
+                result, "discovered_files")
 
     def test_file_disappears_during_processing(self):
         """Test handling when files are deleted during processing."""
@@ -255,7 +259,8 @@ class TestDiskIOErrors:
             test_file.unlink()
 
             # Try to read the files - should handle missing file gracefully
-            file_contents, errors = discovery.discover_and_read_files_parallel(temp_dir)
+            file_contents, errors = discovery.discover_and_read_files_parallel(
+                temp_dir)
 
             # Should handle file deletion gracefully
             # Either no files found or error reported
@@ -293,7 +298,8 @@ class TestMemoryAllocationFailures:
     def test_large_file_memory_handling(self):
         """Test handling of large files that might cause memory issues."""
         # Create a moderately large UDL text
-        large_udl_text = "\n".join([f"rule R{i} ::= 'test{i}'" for i in range(1000)])
+        large_udl_text = "\n".join(
+            [f"rule R{i} ::= 'test{i}'" for i in range(1000)])
 
         # Should handle large files without crashing
         try:
@@ -306,7 +312,8 @@ class TestMemoryAllocationFailures:
     def test_metric_computation_memory_limit(self):
         """Test handling of memory limits during metric computation."""
         # Create a UDL that might cause memory issues
-        large_udl_text = "\n".join([f"rule R{i} ::= 'test{i}'" for i in range(1000)])
+        large_udl_text = "\n".join(
+            [f"rule R{i} ::= 'test{i}'" for i in range(1000)])
 
         # Mock memory error during metric computation
         def mock_compute_with_memory_error(self, udl):
@@ -426,7 +433,8 @@ class TestDatabaseConnectionFailures:
         # Should have handled the error gracefully
         assert len(errors_handled) == 5
         assert sum(1 for status, _ in errors_handled if status == "error") == 1
-        assert sum(1 for status, _ in errors_handled if status == "success") == 4
+        assert sum(1 for status, _ in errors_handled if status ==
+                   "success") == 4
 
     def test_connection_retry_logic(self):
         """Test connection retry logic pattern."""
@@ -491,8 +499,8 @@ class TestTimeoutHandling:
     def test_distributed_task_timeout_config(self):
         """Test distributed task timeout configuration."""
         from udl_rating_framework.core.distributed import (
-            DistributedProcessor,
             DistributedConfig,
+            DistributedProcessor,
         )
 
         config = DistributedConfig(timeout_seconds=1.0)
@@ -556,7 +564,8 @@ class TestFaultToleranceIntegration:
 
         for i in range(10):
             try:
-                failure_type = random.choice(["memory", "io", "network", "success"])
+                failure_type = random.choice(
+                    ["memory", "io", "network", "success"])
 
                 if failure_type == "memory":
                     raise MemoryError("Simulated memory failure")
@@ -597,7 +606,8 @@ class TestFaultToleranceIntegration:
                 )
             except RuntimeError as e:
                 results.append(
-                    ProcessingResult(success=False, error=str(e), processing_time=0.0)
+                    ProcessingResult(success=False, error=str(
+                        e), processing_time=0.0)
                 )
 
         # Should handle partial failures gracefully

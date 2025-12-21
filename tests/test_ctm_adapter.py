@@ -4,19 +4,20 @@ Tests for CTM adapter module.
 Tests the UDL rating CTM model and its components.
 """
 
+import numpy as np
 import pytest
 import torch
-import numpy as np
-from hypothesis import given, strategies as st, settings
+from hypothesis import given, settings
+from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays
 
+from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.models.ctm_adapter import (
+    TrackingData,
     UDLRatingCTM,
     UDLTokenVocabulary,
     create_udl_rating_model,
-    TrackingData,
 )
-from udl_rating_framework.core.representation import UDLRepresentation
 
 
 class TestUDLTokenVocabulary:
@@ -100,7 +101,8 @@ class TestUDLRatingCTM:
 
         assert token_ids.shape == (10,)
         assert token_ids[0] == vocab.token_to_index("<BOS>")
-        assert token_ids[-1] == vocab.token_to_index("<PAD>")  # Should be padded
+        # Should be padded
+        assert token_ids[-1] == vocab.token_to_index("<PAD>")
 
 
 class TestCTMAdapterProperties:
@@ -126,7 +128,8 @@ class TestCTMAdapterProperties:
         """
         # Ensure d_input is divisible by heads for multi-head attention
         d_input = heads * 8  # Use multiple of 8 for reasonable embedding size
-        model = UDLRatingCTM(vocab_size=vocab_size, d_input=d_input, heads=heads)
+        model = UDLRatingCTM(vocab_size=vocab_size,
+                             d_input=d_input, heads=heads)
 
         # Generate random tokens
         token_ids = torch.randint(0, vocab_size, (batch_size, seq_len))
@@ -145,7 +148,8 @@ class TestCTMAdapterProperties:
         batch_size=st.integers(min_value=1, max_value=4),
         seq_len=st.integers(min_value=1, max_value=20),
     )
-    @settings(max_examples=20, deadline=60000)  # Increased deadline for CTM processing
+    # Increased deadline for CTM processing
+    @settings(max_examples=20, deadline=60000)
     def test_property_synchronization_extraction(
         self, vocab_size, iterations, batch_size, seq_len
     ):
@@ -216,14 +220,17 @@ class TestCTMAdapterProperties:
         assert tracking_data is not None
 
         # Check pre-activations: a_i(t) for all neurons i and iterations t
-        assert tracking_data.pre_activations.shape[0] == iterations  # All iterations
-        assert tracking_data.pre_activations.shape[1] == batch_size  # All batch samples
+        # All iterations
+        assert tracking_data.pre_activations.shape[0] == iterations
+        # All batch samples
+        assert tracking_data.pre_activations.shape[1] == batch_size
         assert (
             tracking_data.pre_activations.shape[2] == tracking_data.n_neurons
         )  # All neurons
 
         # Check post-activations: a_i(t) for all neurons i and iterations t
-        assert tracking_data.post_activations.shape[0] == iterations  # All iterations
+        # All iterations
+        assert tracking_data.post_activations.shape[0] == iterations
         assert (
             tracking_data.post_activations.shape[1] == batch_size
         )  # All batch samples
@@ -362,7 +369,13 @@ class TestCTMAdapterProperties:
 
         if len(actual_shape) == 5:
             # If we have 5 dimensions, squeeze the extra dimension (likely the query dimension)
-            assert actual_shape == (iterations, batch_size, heads, 1, seq_len), (
+            assert actual_shape == (
+                iterations,
+                batch_size,
+                heads,
+                1,
+                seq_len,
+            ), (
                 f"Unexpected attention shape: {actual_shape}, expected: ({iterations}, {batch_size}, {heads}, 1, {seq_len})"
             )
             # Reshape for normalization check
@@ -370,7 +383,12 @@ class TestCTMAdapterProperties:
                 3
             )  # Remove the extra dimension
         else:
-            assert actual_shape == (iterations, batch_size, heads, seq_len), (
+            assert actual_shape == (
+                iterations,
+                batch_size,
+                heads,
+                seq_len,
+            ), (
                 f"Unexpected attention shape: {actual_shape}, expected: ({iterations}, {batch_size}, {heads}, {seq_len})"
             )
             attention_weights_reshaped = tracking_data.attention_weights
@@ -471,8 +489,10 @@ class TestCTMAdapterUnitTests:
             token_ids = torch.randint(0, vocab_size, (1, seq_len))
             ratings, _, _, _ = model(token_ids)
 
-            assert torch.all(ratings >= 0.0), f"Found rating < 0: {ratings.min()}"
-            assert torch.all(ratings <= 1.0), f"Found rating > 1: {ratings.max()}"
+            assert torch.all(
+                ratings >= 0.0), f"Found rating < 0: {ratings.min()}"
+            assert torch.all(
+                ratings <= 1.0), f"Found rating > 1: {ratings.max()}"
 
     def test_with_various_sequence_lengths(self):
         """Test with various sequence lengths."""
@@ -535,8 +555,8 @@ class TestCTMAdapterUnitTests:
 
     def test_data_export_to_numpy_hdf5(self):
         """Test data export to NumPy/HDF5."""
-        import tempfile
         import os
+        import tempfile
 
         vocab_size = 20
         batch_size = 1
@@ -602,11 +622,12 @@ class TestCTMAdapterUnitTests:
 
     def test_visualization_generation(self):
         """Test visualization generation."""
+        import matplotlib.pyplot as plt
+
         from udl_rating_framework.visualization import (
             ActivationVisualizer,
             SynchronizationVisualizer,
         )
-        import matplotlib.pyplot as plt
 
         vocab_size = 15
         batch_size = 1
@@ -641,7 +662,8 @@ class TestCTMAdapterUnitTests:
         plt.close(fig2)
 
         # Test distribution plot
-        fig3 = activation_viz.plot_activation_distribution(tracking_data, "post")
+        fig3 = activation_viz.plot_activation_distribution(
+            tracking_data, "post")
         assert isinstance(fig3, plt.Figure)
         plt.close(fig3)
 
@@ -702,7 +724,8 @@ class TestCTMAdapterUnitTests:
             type_stats = stats[activation_type]
 
             # Check required statistics
-            required_keys = ["mean", "std", "min", "max", "variance", "mean_abs"]
+            required_keys = ["mean", "std", "min",
+                             "max", "variance", "mean_abs"]
             for key in required_keys:
                 assert key in type_stats
                 assert isinstance(type_stats[key], float)
@@ -749,7 +772,8 @@ class TestCTMAdapterUnitTests:
             assert metric_name in evolution_metrics
             assert isinstance(evolution_metrics[metric_name], float)
             assert np.isfinite(evolution_metrics[metric_name])
-            assert evolution_metrics[metric_name] >= 0  # All should be non-negative
+            # All should be non-negative
+            assert evolution_metrics[metric_name] >= 0
 
 
 def test_create_udl_rating_model():

@@ -7,11 +7,11 @@ Provides real-time UDL quality feedback in IDEs and editors that support LSP.
 import asyncio
 import json
 import logging
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Union
-from dataclasses import dataclass
 import threading
 import time
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 from udl_rating_framework.core.pipeline import RatingPipeline
 from udl_rating_framework.core.representation import UDLRepresentation
@@ -418,7 +418,7 @@ class UDLLanguageServer:
             new_lines[0] = start_line_text + new_lines[0]
             new_lines[-1] = new_lines[-1] + end_line_text
 
-            lines[start_line : end_line + 1] = new_lines
+            lines[start_line: end_line + 1] = new_lines
 
         document.text = "\n".join(lines)
 

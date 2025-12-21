@@ -4,20 +4,21 @@ CTM Model Adapter for UDL Rating.
 Adapts the Continuous Thought Machine architecture for UDL quality prediction.
 """
 
+import os
+import sys
+from dataclasses import dataclass
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
+
+import h5py
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
-from typing import Tuple, List, Dict, Any, Optional, NamedTuple
-import sys
-import os
-import h5py
-from dataclasses import dataclass
+from ctm import ContinuousThoughtMachine
+
+from ..core.representation import Token, TokenType, UDLRepresentation
 
 # Add the models directory to the path to import CTM
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "models"))
-
-from ctm import ContinuousThoughtMachine
-from ..core.representation import UDLRepresentation, Token, TokenType
 
 
 @dataclass
@@ -112,10 +113,12 @@ class TrackingData:
             # Compute spectral properties (eigenvalues of covariance matrix)
             # Flatten to [time*batch, neurons] for covariance computation
             flat_activations = activations.reshape(-1, activations.shape[-1])
-            if flat_activations.shape[0] > 1:  # Need at least 2 samples for covariance
+            # Need at least 2 samples for covariance
+            if flat_activations.shape[0] > 1:
                 cov_matrix = np.cov(flat_activations.T)
                 eigenvals = np.linalg.eigvals(cov_matrix)
-                stats[name]["spectral_radius"] = float(np.max(np.real(eigenvals)))
+                stats[name]["spectral_radius"] = float(
+                    np.max(np.real(eigenvals)))
                 stats[name]["spectral_norm"] = float(np.linalg.norm(eigenvals))
 
         return stats
@@ -134,8 +137,10 @@ class TrackingData:
             ("action", self.synch_action),
         ]:
             # Temporal stability: variance across time
-            temporal_variance = np.var(synch_data, axis=0)  # [batch, synch_dim]
-            metrics[f"{name}_temporal_stability"] = float(np.mean(temporal_variance))
+            temporal_variance = np.var(
+                synch_data, axis=0)  # [batch, synch_dim]
+            metrics[f"{name}_temporal_stability"] = float(
+                np.mean(temporal_variance))
 
             # Convergence rate: difference between final and initial states
             if self.iterations > 1:
@@ -155,8 +160,10 @@ class TrackingData:
                 change_rates = np.linalg.norm(
                     differences, axis=-1
                 )  # [iterations-1, batch]
-                metrics[f"{name}_mean_change_rate"] = float(np.mean(change_rates))
-                metrics[f"{name}_final_change_rate"] = float(np.mean(change_rates[-1]))
+                metrics[f"{name}_mean_change_rate"] = float(
+                    np.mean(change_rates))
+                metrics[f"{name}_final_change_rate"] = float(
+                    np.mean(change_rates[-1]))
 
         return metrics
 
@@ -361,7 +368,8 @@ class UDLRatingCTM(nn.Module):
 
         # Initialize CTM state
         state_trace = self.ctm.start_trace.unsqueeze(0).expand(B, -1, -1)
-        activated_state = self.ctm.start_activated_state.unsqueeze(0).expand(B, -1)
+        activated_state = self.ctm.start_activated_state.unsqueeze(
+            0).expand(B, -1)
 
         # Prepare storage for outputs
         predictions = torch.empty(
@@ -380,7 +388,8 @@ class UDLRatingCTM(nn.Module):
         self.ctm.decay_params_action.data = torch.clamp(
             self.ctm.decay_params_action, 0, 15
         )
-        self.ctm.decay_params_out.data = torch.clamp(self.ctm.decay_params_out, 0, 15)
+        self.ctm.decay_params_out.data = torch.clamp(
+            self.ctm.decay_params_out, 0, 15)
         r_action = torch.exp(-self.ctm.decay_params_action).unsqueeze(0).repeat(B, 1)
         r_out = torch.exp(-self.ctm.decay_params_out).unsqueeze(0).repeat(B, 1)
 
@@ -418,7 +427,8 @@ class UDLRatingCTM(nn.Module):
                 q, kv, kv, average_attn_weights=False, need_weights=True
             )
             attn_out = attn_out.squeeze(1)
-            pre_synapse_input = torch.concatenate((attn_out, activated_state), dim=-1)
+            pre_synapse_input = torch.concatenate(
+                (attn_out, activated_state), dim=-1)
 
             # Apply synapses
             state = self.ctm.synapses(pre_synapse_input)
@@ -452,9 +462,11 @@ class UDLRatingCTM(nn.Module):
                 pre_activations_tracking.append(
                     state_trace[:, :, -1].detach().cpu().numpy()
                 )
-                post_activations_tracking.append(activated_state.detach().cpu().numpy())
+                post_activations_tracking.append(
+                    activated_state.detach().cpu().numpy())
                 attention_tracking.append(attn_weights.detach().cpu().numpy())
-                synch_out_tracking.append(synchronisation_out.detach().cpu().numpy())
+                synch_out_tracking.append(
+                    synchronisation_out.detach().cpu().numpy())
                 synch_action_tracking.append(
                     synchronisation_action.detach().cpu().numpy()
                 )

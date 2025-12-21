@@ -6,17 +6,18 @@ across multiple projects, identifying patterns, best practices, and areas
 for improvement at the portfolio level.
 """
 
+import warnings
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Set, Tuple
+
 import numpy as np
 import pandas as pd
-from datetime import datetime
-from typing import Dict, List, Tuple, Optional, Any, Set
-from dataclasses import dataclass
 from scipy import stats
-from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
+from scipy.cluster.hierarchy import dendrogram, fcluster, linkage
 from sklearn.cluster import KMeans
-import warnings
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 from udl_rating_framework.core.pipeline import QualityReport
 
@@ -107,7 +108,8 @@ class PortfolioAnalyzer:
             PortfolioComparison with comprehensive analysis results
         """
         # Group reports by project
-        project_reports = self._group_reports_by_project(reports, project_mapping)
+        project_reports = self._group_reports_by_project(
+            reports, project_mapping)
 
         # Filter projects with sufficient data
         filtered_projects = {
@@ -124,7 +126,8 @@ class PortfolioAnalyzer:
         # Generate project profiles
         project_profiles = {}
         for project, project_reports_list in filtered_projects.items():
-            profile = self._create_project_profile(project, project_reports_list)
+            profile = self._create_project_profile(
+                project, project_reports_list)
             project_profiles[project] = profile
 
         # Generate rankings
@@ -188,7 +191,8 @@ class PortfolioAnalyzer:
                         metric_values = [
                             p.metric_averages.get(metric, 0) for p in profiles.values()
                         ]
-                        industry_standards[metric] = np.percentile(metric_values, 75)
+                        industry_standards[metric] = np.percentile(
+                            metric_values, 75)
         else:
             industry_standards = industry_benchmarks.copy()
 
@@ -211,7 +215,8 @@ class PortfolioAnalyzer:
 
             # Consistency gap
             gaps["consistency_score"] = (
-                industry_standards["consistency_score"] - profile.consistency_score
+                industry_standards["consistency_score"] -
+                profile.consistency_score
             )
 
             # Metric-specific gaps
@@ -561,7 +566,8 @@ class PortfolioAnalyzer:
         ]:
             if np.std(values) > 0:
                 z_scores = np.abs(stats.zscore(values))
-                outlier_indices = np.where(z_scores > 2.5)[0]  # 2.5 sigma threshold
+                outlier_indices = np.where(z_scores > 2.5)[
+                    0]  # 2.5 sigma threshold
                 for idx in outlier_indices:
                     outliers.add(projects[idx])
 
@@ -649,7 +655,8 @@ class PortfolioAnalyzer:
             # Cluster-based recommendations
             for cluster_name, cluster_projects in clusters.items():
                 if project in cluster_projects and len(cluster_projects) > 1:
-                    other_projects = [p for p in cluster_projects if p != project]
+                    other_projects = [
+                        p for p in cluster_projects if p != project]
                     project_recommendations.append(
                         f"Similar to projects: {', '.join(other_projects)} - consider collaboration and knowledge sharing"
                     )
@@ -757,7 +764,8 @@ class PortfolioAnalyzer:
 
         for metric, ranking in portfolio_comparison.rankings.items():
             if not metric.startswith("metric_"):
-                report_lines.extend([f"### {metric.replace('_', ' ').title()}", ""])
+                report_lines.extend(
+                    [f"### {metric.replace('_', ' ').title()}", ""])
                 for i, project in enumerate(ranking, 1):
                     report_lines.append(f"{i}. {project}")
                 report_lines.append("")
@@ -766,7 +774,8 @@ class PortfolioAnalyzer:
         report_lines.extend(["## Project Clusters", ""])
 
         for cluster_name, cluster_projects in portfolio_comparison.clusters.items():
-            report_lines.extend([f"### {cluster_name.replace('_', ' ').title()}", ""])
+            report_lines.extend(
+                [f"### {cluster_name.replace('_', ' ').title()}", ""])
             for project in cluster_projects:
                 profile = profiles[project]
                 report_lines.append(
@@ -803,7 +812,8 @@ class PortfolioAnalyzer:
 
                 for metric, gap in gaps.items():
                     if gap > 0.01:  # Only show significant gaps
-                        report_lines.append(f"  - {metric}: {gap:.3f} below standard")
+                        report_lines.append(
+                            f"  - {metric}: {gap:.3f} below standard")
 
                 report_lines.append("")
 

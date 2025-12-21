@@ -12,10 +12,10 @@ This module provides:
 from .comparison import (
     ComparisonEngine,
     ComparisonResult,
-    RankingResult,
     ComparisonSummary,
+    RankingResult,
 )
-from .evaluation_suite import EvaluationSuite, EvaluationResult
+from .evaluation_suite import EvaluationResult, EvaluationSuite
 
 __all__ = [
     "ComparisonEngine",

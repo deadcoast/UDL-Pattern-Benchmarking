@@ -6,8 +6,8 @@ for validating metric implementations.
 """
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Any
 from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 
 @dataclass
@@ -77,7 +77,8 @@ class DatasetBenchmark:
         # Placeholder implementation
         metric_scores = {"consistency": 0.85, "completeness": 0.90}
         baseline_scores = {"consistency": 0.80, "completeness": 0.85}
-        improvement = {k: metric_scores[k] - baseline_scores[k] for k in metric_scores}
+        improvement = {k: metric_scores[k] -
+                       baseline_scores[k] for k in metric_scores}
 
         return BenchmarkResult(
             dataset_name=dataset_name,

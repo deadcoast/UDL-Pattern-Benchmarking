@@ -17,7 +17,7 @@ import os
 import re
 import sys
 from pathlib import Path
-from typing import Set, Dict, List, Tuple
+from typing import Dict, List, Set, Tuple
 
 # Standard library modules (Python 3.10+)
 STDLIB_MODULES = {
@@ -599,7 +599,8 @@ def main():
         print("   These are optional (imported with try/except):")
         for dep in sorted(optional_missing):
             pkg_name = normalize_import_to_package(dep)
-            print(f"   - {dep} (consider adding to [project.optional-dependencies])")
+            print(
+                f"   - {dep} (consider adding to [project.optional-dependencies])")
 
     if test_missing:
         print(f"\n🧪 TEST DEPENDENCIES ({len(test_missing)}):")

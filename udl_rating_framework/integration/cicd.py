@@ -5,13 +5,14 @@ Provides integration with popular CI/CD systems including GitHub Actions,
 Jenkins, GitLab CI, and others for automated UDL quality checking.
 """
 
-import os
 import json
-import yaml
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Union
 import logging
-from dataclasses import dataclass, asdict
+import os
+from dataclasses import asdict, dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
+
+import yaml
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +78,8 @@ class CICDIntegration:
                             "uses": "actions/setup-python@v4",
                             "with": {"python-version": "3.10"},
                         },
-                        {"name": "Install dependencies", "run": "pip install -e ."},
+                        {"name": "Install dependencies",
+                            "run": "pip install -e ."},
                         {
                             "name": "Run UDL quality check",
                             "run": f"udl-rating rate . --threshold {self.config.min_quality_threshold} --format {self.config.report_format} --output udl-quality-report.{self.config.report_format}",
@@ -314,9 +316,11 @@ pipeline {{
                 ],
                 "artifacts": {
                     "reports": {
-                        "junit": "udl-quality-report.xml"
-                        if self.config.report_format == "xml"
-                        else None
+                        "junit": (
+                            "udl-quality-report.xml"
+                            if self.config.report_format == "xml"
+                            else None
+                        )
                     },
                     "paths": [f"udl-quality-report.{self.config.report_format}"],
                     "expire_in": f"{self.config.artifact_retention_days} days",
@@ -529,7 +533,8 @@ def main():
 
     if args.action == "generate":
         platforms = args.platform or ["github"]
-        created_files = integration.create_workflow_files(args.output_dir, platforms)
+        created_files = integration.create_workflow_files(
+            args.output_dir, platforms)
 
         print("Created CI/CD workflow files:")
         for platform, file_path in created_files.items():

@@ -8,28 +8,30 @@ match the actual implementations in the code.
 **Validates: Requirements 4.1, 8.5**
 """
 
-import pytest
 import math
 import zlib
-from hypothesis import given, strategies as st, settings, assume
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 import networkx as nx
 import numpy as np
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
 
-from udl_rating_framework.core.representation import (
-    UDLRepresentation,
-    GrammarRule,
-    Token,
-    TokenType,
-)
-from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+from udl_rating_framework.core.aggregation import MetricAggregator
+from udl_rating_framework.core.confidence import ConfidenceCalculator
 from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 from udl_rating_framework.core.metrics.expressiveness import ExpressivenessMetric
 from udl_rating_framework.core.metrics.structural_coherence import (
     StructuralCoherenceMetric,
 )
-from udl_rating_framework.core.aggregation import MetricAggregator
-from udl_rating_framework.core.confidence import ConfidenceCalculator
+from udl_rating_framework.core.representation import (
+    GrammarRule,
+    Token,
+    TokenType,
+    UDLRepresentation,
+)
 
 
 # Strategies for generating test data
@@ -82,7 +84,8 @@ def weight_strategy(draw):
 def probability_distribution_strategy(draw, n_classes=5):
     """Generate valid probability distributions."""
     # Generate n random positive values
-    values = [draw(st.floats(min_value=0.001, max_value=1.0)) for _ in range(n_classes)]
+    values = [draw(st.floats(min_value=0.001, max_value=1.0))
+              for _ in range(n_classes)]
     total = sum(values)
     # Normalize to sum to 1.0
     return [v / total for v in values]
@@ -209,7 +212,8 @@ class TestCompletenessFormulaValidation:
             expected_value = 1.0 if not defined_constructs else 0.0
         else:
             # Compute intersection
-            defined_construct_types = {c.construct_type for c in defined_constructs}
+            defined_construct_types = {
+                c.construct_type for c in defined_constructs}
             intersection_count = len(
                 defined_construct_types.intersection(required_constructs)
             )

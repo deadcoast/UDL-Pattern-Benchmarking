@@ -2,45 +2,43 @@ import argparse
 import os
 import random
 import time
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+import torch
+import torch.distributed as dist
+import torch.nn as nn
+import torchvision
+from torch.nn.parallel import DistributedDataParallel as DDP
+from torch.utils.data.distributed import DistributedSampler
+from tqdm.auto import tqdm
+
+from models.ctm import ContinuousThoughtMachine
+from models.ff import FFBaseline
+from models.lstm import LSTMBaseline
+from tasks.image_classification.plotting import (
+    make_classification_gif,
+    plot_neural_dynamics,
+)
+from tasks.image_classification.train import get_dataset  # Use shared get_dataset
+from utils.housekeeping import set_seed, zip_python_code
+from utils.losses import image_classification_loss  # For CTM, LSTM
+from utils.samplers import FastRandomDistributedSampler
+from utils.schedulers import WarmupCosineAnnealingLR, WarmupMultiStepLR, warmup
 
 sns.set_style("darkgrid")
-import torch
 
 if torch.cuda.is_available():
     # For faster
     torch.set_float32_matmul_precision("high")
-import torch.nn as nn
-import torch.distributed as dist
-from torch.nn.parallel import DistributedDataParallel as DDP
-from torch.utils.data.distributed import DistributedSampler
-from utils.samplers import FastRandomDistributedSampler
-from tqdm.auto import tqdm
-
-from tasks.image_classification.train import get_dataset  # Use shared get_dataset
 
 # Model Imports
-from models.ctm import ContinuousThoughtMachine
-from models.lstm import LSTMBaseline
-from models.ff import FFBaseline
 
 # Plotting/Utils Imports
-from tasks.image_classification.plotting import (
-    plot_neural_dynamics,
-    make_classification_gif,
-)
-from utils.housekeeping import set_seed, zip_python_code
-from utils.losses import image_classification_loss  # For CTM, LSTM
-from utils.schedulers import WarmupCosineAnnealingLR, WarmupMultiStepLR, warmup
-
-import torchvision
 
 torchvision.disable_beta_transforms_warning()
-
-import warnings
 
 warnings.filterwarnings(
     "ignore", message="using precomputed metric; inverse_transform will be unavailable"
@@ -56,19 +54,22 @@ warnings.filterwarnings(
     "ignore",
     "Corrupt EXIF data",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 warnings.filterwarnings(
     "ignore",
     "UserWarning: Metadata Warning",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 warnings.filterwarnings(
     "ignore",
     "UserWarning: Truncated File Read",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 
 
@@ -89,7 +90,8 @@ def parse_args():
     parser.add_argument(
         "--d_model", type=int, default=512, help="Dimension of the model."
     )
-    parser.add_argument("--dropout", type=float, default=0.0, help="Dropout rate.")
+    parser.add_argument("--dropout", type=float,
+                        default=0.0, help="Dropout rate.")
     parser.add_argument(
         "--backbone_type",
         type=str,
@@ -388,13 +390,13 @@ def is_main_process(rank):
 
 # --- End DDP Setup ---
 
-
 if __name__ == "__main__":
     args = parse_args()
 
     rank, world_size, local_rank = setup_ddp()
 
-    set_seed(args.seed + rank, False)  # Add rank for different seeds per process
+    # Add rank for different seeds per process
+    set_seed(args.seed + rank, False)
 
     # Rank 0 handles directory creation and initial logging
     if is_main_process(rank):
@@ -522,7 +524,8 @@ if __name__ == "__main__":
 
     # Wrap model with DDP
     if device.type == "cuda" and world_size > 1:
-        model = DDP(model_base, device_ids=[local_rank], output_device=local_rank)
+        model = DDP(model_base, device_ids=[
+                    local_rank], output_device=local_rank)
     elif device.type == "cpu" and world_size > 1:
         model = DDP(model_base)  # No device_ids for CPU
     else:  # Single process run
@@ -531,7 +534,8 @@ if __name__ == "__main__":
     if is_main_process(rank):
         # Access underlying model for param count
         param_count = (
-            sum(p.numel() for p in model.module.parameters() if p.requires_grad)
+            sum(p.numel()
+                for p in model.module.parameters() if p.requires_grad)
             if world_size > 1
             else sum(p.numel() for p in model.parameters() if p.requires_grad)
         )
@@ -636,7 +640,8 @@ if __name__ == "__main__":
 
             # Handle potential 'module.' prefix in saved state_dict
             state_dict = checkpoint["model_state_dict"]
-            has_module_prefix = all(k.startswith("module.") for k in state_dict)
+            has_module_prefix = all(k.startswith("module.")
+                                    for k in state_dict)
             is_wrapped = isinstance(model, DDP)
 
             if has_module_prefix and not is_wrapped:
@@ -700,7 +705,8 @@ if __name__ == "__main__":
                             "test_accuracies_standard"
                         ]
                 elif is_main_process(rank) and args.ignore_metrics_when_reloading:
-                    print(f"Rank {rank}: Ignoring metrics history upon reload.")
+                    print(
+                        f"Rank {rank}: Ignoring metrics history upon reload.")
 
             else:
                 print(f"Rank {rank}: Only reloading model weights!")
@@ -724,7 +730,8 @@ if __name__ == "__main__":
             del checkpoint
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
-            print(f"Rank {rank}: Reload finished, starting from iteration {start_iter}")
+            print(
+                f"Rank {rank}: Reload finished, starting from iteration {start_iter}")
         else:
             print(
                 f"Rank {rank}: Checkpoint not found at {chkpt_path}, starting from scratch."
@@ -875,7 +882,8 @@ if __name__ == "__main__":
                 total_train_correct_certain = torch.tensor(
                     0.0, device=device
                 )  # CTM/LSTM
-                total_train_correct_standard = torch.tensor(0.0, device=device)  # FF
+                total_train_correct_standard = torch.tensor(
+                    0.0, device=device)  # FF
                 total_train_samples = torch.tensor(0.0, device=device)
 
                 # Use a sampler for evaluation to ensure non-overlapping data if needed
@@ -912,20 +920,24 @@ if __name__ == "__main__":
                                 predictions, certainties, targets, use_most_certain=True
                             )
                             preds_eval = predictions.argmax(1)[
-                                torch.arange(predictions.size(0), device=device),
+                                torch.arange(predictions.size(0),
+                                             device=device),
                                 where_most_certain,
                             ]
-                            total_train_correct_certain += (preds_eval == targets).sum()
+                            total_train_correct_certain += (
+                                preds_eval == targets).sum()
                         elif args.model == "lstm":
                             predictions, certainties, _ = model(inputs)
                             loss_eval, where_most_certain = image_classification_loss(
                                 predictions, certainties, targets, use_most_certain=True
                             )
                             preds_eval = predictions.argmax(1)[
-                                torch.arange(predictions.size(0), device=device),
+                                torch.arange(predictions.size(0),
+                                             device=device),
                                 where_most_certain,
                             ]
-                            total_train_correct_certain += (preds_eval == targets).sum()
+                            total_train_correct_certain += (
+                                preds_eval == targets).sum()
                         elif args.model == "ff":
                             predictions = model(inputs)
                             loss_eval = nn.CrossEntropyLoss()(predictions, targets)
@@ -947,8 +959,10 @@ if __name__ == "__main__":
                 # Aggregate Train Metrics
                 if world_size > 1:
                     dist.all_reduce(total_train_loss, op=dist.ReduceOp.SUM)
-                    dist.all_reduce(total_train_correct_certain, op=dist.ReduceOp.SUM)
-                    dist.all_reduce(total_train_correct_standard, op=dist.ReduceOp.SUM)
+                    dist.all_reduce(total_train_correct_certain,
+                                    op=dist.ReduceOp.SUM)
+                    dist.all_reduce(total_train_correct_standard,
+                                    op=dist.ReduceOp.SUM)
                     dist.all_reduce(total_train_samples, op=dist.ReduceOp.SUM)
 
                 # Calculate final Train metrics on Rank 0
@@ -962,21 +976,25 @@ if __name__ == "__main__":
                             total_train_correct_certain.item()
                             / total_train_samples.item()
                         )
-                        train_accuracies_most_certain.append(avg_train_acc_certain)
+                        train_accuracies_most_certain.append(
+                            avg_train_acc_certain)
                     elif args.model == "ff":
                         avg_train_acc_standard = (
                             total_train_correct_standard.item()
                             / total_train_samples.item()
                         )
-                        train_accuracies_standard.append(avg_train_acc_standard)
-                    print(f"Iter {bi} Train Metrics (Agg): Loss={avg_train_loss:.4f}")
+                        train_accuracies_standard.append(
+                            avg_train_acc_standard)
+                    print(
+                        f"Iter {bi} Train Metrics (Agg): Loss={avg_train_loss:.4f}")
 
                 # TEST METRICS
                 total_test_loss = torch.tensor(0.0, device=device)
                 total_test_correct_certain = torch.tensor(
                     0.0, device=device
                 )  # CTM/LSTM
-                total_test_correct_standard = torch.tensor(0.0, device=device)  # FF
+                total_test_correct_standard = torch.tensor(
+                    0.0, device=device)  # FF
                 total_test_samples = torch.tensor(0.0, device=device)
 
                 pbar_inner_desc = (
@@ -1003,25 +1021,30 @@ if __name__ == "__main__":
                                 predictions, certainties, targets, use_most_certain=True
                             )
                             preds_eval = predictions.argmax(1)[
-                                torch.arange(predictions.size(0), device=device),
+                                torch.arange(predictions.size(0),
+                                             device=device),
                                 where_most_certain,
                             ]
-                            total_test_correct_certain += (preds_eval == targets).sum()
+                            total_test_correct_certain += (
+                                preds_eval == targets).sum()
                         elif args.model == "lstm":
                             predictions, certainties, _ = model(inputs)
                             loss_eval, where_most_certain = image_classification_loss(
                                 predictions, certainties, targets, use_most_certain=True
                             )
                             preds_eval = predictions.argmax(1)[
-                                torch.arange(predictions.size(0), device=device),
+                                torch.arange(predictions.size(0),
+                                             device=device),
                                 where_most_certain,
                             ]
-                            total_test_correct_certain += (preds_eval == targets).sum()
+                            total_test_correct_certain += (
+                                preds_eval == targets).sum()
                         elif args.model == "ff":
                             predictions = model(inputs)
                             loss_eval = nn.CrossEntropyLoss()(predictions, targets)
                             preds_eval = predictions.argmax(1)
-                            total_test_correct_standard += (preds_eval == targets).sum()
+                            total_test_correct_standard += (
+                                preds_eval == targets).sum()
 
                         total_test_loss += loss_eval * inputs.size(0)
                         total_test_samples += inputs.size(0)
@@ -1036,8 +1059,10 @@ if __name__ == "__main__":
                 # Aggregate Test Metrics
                 if world_size > 1:
                     dist.all_reduce(total_test_loss, op=dist.ReduceOp.SUM)
-                    dist.all_reduce(total_test_correct_certain, op=dist.ReduceOp.SUM)
-                    dist.all_reduce(total_test_correct_standard, op=dist.ReduceOp.SUM)
+                    dist.all_reduce(total_test_correct_certain,
+                                    op=dist.ReduceOp.SUM)
+                    dist.all_reduce(total_test_correct_standard,
+                                    op=dist.ReduceOp.SUM)
                     dist.all_reduce(total_test_samples, op=dist.ReduceOp.SUM)
 
                 # Calculate and Plot final Test metrics on Rank 0
@@ -1051,7 +1076,8 @@ if __name__ == "__main__":
                             total_test_correct_certain.item()
                             / total_test_samples.item()
                         )
-                        test_accuracies_most_certain.append(avg_test_acc_certain)
+                        test_accuracies_most_certain.append(
+                            avg_test_acc_certain)
                         acc_label = f"Most certain ({avg_test_acc_certain:.3f})"
                         acc_val = avg_test_acc_certain
                     elif args.model == "ff":
@@ -1210,20 +1236,23 @@ if __name__ == "__main__":
                             att_shape[1],
                         )
 
-                        pbar.set_description("Tracking (Rank 0): Dynamics Plot")
+                        pbar.set_description(
+                            "Tracking (Rank 0): Dynamics Plot")
                         plot_neural_dynamics(
                             post_activations_viz, 100, args.log_dir, axis_snap=True
                         )
 
                         # Plot specific indices from test_data directly
-                        pbar.set_description("Tracking (Rank 0): GIF Generation")
+                        pbar.set_description(
+                            "Tracking (Rank 0): GIF Generation")
                         for plot_idx in args.plot_indices:
                             try:
                                 if plot_idx < len(test_data):
                                     inputs_plot, target_plot = test_data.__getitem__(
                                         plot_idx
                                     )
-                                    inputs_plot = inputs_plot.unsqueeze(0).to(device)
+                                    inputs_plot = inputs_plot.unsqueeze(
+                                        0).to(device)
 
                                     (
                                         preds_plot,
@@ -1243,7 +1272,8 @@ if __name__ == "__main__":
 
                                     img_gif = np.moveaxis(
                                         np.clip(
-                                            inputs_plot[0].detach().cpu().numpy()
+                                            inputs_plot[0].detach(
+                                            ).cpu().numpy()
                                             * np.array(dataset_std).reshape(
                                                 len(dataset_std), 1, 1
                                             )

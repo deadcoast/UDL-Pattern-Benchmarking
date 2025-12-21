@@ -1,63 +1,61 @@
 import argparse
 import os
 import random
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-
-sns.set_style("darkgrid")
 import torch
-
-if torch.cuda.is_available():
-    # For faster
-    torch.set_float32_matmul_precision("high")
+import torchvision
+from autoclip.torch import QuantileClip
 from tqdm.auto import tqdm
 
 from data.custom_datasets import SortDataset
 from models.ctm_sort import ContinuousThoughtMachineSORT
 from tasks.image_classification.plotting import (
-    plot_neural_dynamics,
     make_classification_gif,
+    plot_neural_dynamics,
 )
+from tasks.sort.utils import compute_ctc_accuracy, decode_predictions
 from utils.housekeeping import set_seed, zip_python_code
 from utils.losses import sort_loss
-from tasks.sort.utils import compute_ctc_accuracy, decode_predictions
 from utils.schedulers import WarmupCosineAnnealingLR, WarmupMultiStepLR, warmup
 
-import torchvision
+sns.set_style("darkgrid")
+
+if torch.cuda.is_available():
+    # For faster
+    torch.set_float32_matmul_precision("high")
 
 torchvision.disable_beta_transforms_warning()
-
-from autoclip.torch import QuantileClip
-
-import warnings
 
 warnings.filterwarnings(
     "ignore", message="using precomputed metric; inverse_transform will be unavailable"
 )
 
-
 warnings.filterwarnings(
     "ignore",
     "Corrupt EXIF data",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 
 warnings.filterwarnings(
     "ignore",
     "UserWarning: Metadata Warning",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
-
 
 warnings.filterwarnings(
     "ignore",
     "UserWarning: Truncated File Read",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 
 
@@ -126,7 +124,8 @@ def parse_args():
         default=4,
         help="Hidden dimensions of the memory if using deep memory.",
     )
-    parser.add_argument("--dropout", type=float, default=0.0, help="Dropout rate.")
+    parser.add_argument("--dropout", type=float,
+                        default=0.0, help="Dropout rate.")
     parser.add_argument(
         "--dropout_nlm",
         type=float,
@@ -230,7 +229,8 @@ def parse_args():
     parser.add_argument(
         "--log_dir", type=str, default="logs/scratch", help="Directory for logging."
     )
-    parser.add_argument("--N_to_sort", type=int, default=30, help="N numbers to sort.")
+    parser.add_argument("--N_to_sort", type=int,
+                        default=30, help="N numbers to sort.")
     parser.add_argument(
         "--save_every",
         type=int,
@@ -411,12 +411,14 @@ if __name__ == "__main__":
 
     # Metrics tracking (I like custom)
     # Using batched estimates
-    start_iter = 0  # For reloading, keep track of this (pretty tqdm stuff needs it)
+    # For reloading, keep track of this (pretty tqdm stuff needs it)
+    start_iter = 0
     train_losses = []
     test_losses = []
     train_accuracies = []  # This will be per internal tick, not so simple
     test_accuracies = []
-    train_accuracies_full_list = []  # This will be selected according to what is returned by loss function
+    # This will be selected according to what is returned by loss function
+    train_accuracies_full_list = []
     test_accuracies_full_list = []
     iters = []
 
@@ -541,7 +543,7 @@ if __name__ == "__main__":
 
                     imgi = 0
 
-                    ##################################### TRAIN METRICS
+                    # TRAIN METRICS
                     all_predictions = []
                     all_targets = []
                     all_losses = []
@@ -574,7 +576,8 @@ if __name__ == "__main__":
                                 loss = sort_loss(these_predictions, targets)
                                 all_losses.append(loss.item())
 
-                                all_targets.append(targets.detach().cpu().numpy())
+                                all_targets.append(
+                                    targets.detach().cpu().numpy())
 
                                 decoded = [
                                     d[: targets.shape[1]]
@@ -589,7 +592,8 @@ if __name__ == "__main__":
                                                 (
                                                     d,
                                                     torch.zeros(
-                                                        targets.shape[1] - len(d),
+                                                        targets.shape[1] -
+                                                        len(d),
                                                         device=targets.device,
                                                     )
                                                     + targets.shape[1],
@@ -603,7 +607,8 @@ if __name__ == "__main__":
                                     0,
                                 )
 
-                                all_predictions.append(decoded.detach().cpu().numpy())
+                                all_predictions.append(
+                                    decoded.detach().cpu().numpy())
 
                                 if (
                                     args.n_test_batches != -1
@@ -619,13 +624,14 @@ if __name__ == "__main__":
                         all_predictions = np.concatenate(all_predictions)
                         all_targets = np.concatenate(all_targets)
 
-                        train_accuracies.append((all_predictions == all_targets).mean())
+                        train_accuracies.append(
+                            (all_predictions == all_targets).mean())
                         train_accuracies_full_list.append(
                             (all_predictions == all_targets).all(-1).mean()
                         )
                         train_losses.append(np.mean(all_losses))
 
-                        ##################################### TEST METRICS
+                        # TEST METRICS
                         all_predictions = []
                         all_targets = []
                         all_losses = []
@@ -652,7 +658,8 @@ if __name__ == "__main__":
                                 loss = sort_loss(these_predictions, targets)
                                 all_losses.append(loss.item())
 
-                                all_targets.append(targets.detach().cpu().numpy())
+                                all_targets.append(
+                                    targets.detach().cpu().numpy())
 
                                 decoded = [
                                     d[: targets.shape[1]]
@@ -667,7 +674,8 @@ if __name__ == "__main__":
                                                 (
                                                     d,
                                                     torch.zeros(
-                                                        targets.shape[1] - len(d),
+                                                        targets.shape[1] -
+                                                        len(d),
                                                         device=targets.device,
                                                     )
                                                     + targets.shape[1],
@@ -681,7 +689,8 @@ if __name__ == "__main__":
                                     0,
                                 )
 
-                                all_predictions.append(decoded.detach().cpu().numpy())
+                                all_predictions.append(
+                                    decoded.detach().cpu().numpy())
 
                                 if (
                                     args.n_test_batches != -1
@@ -697,7 +706,8 @@ if __name__ == "__main__":
                         all_predictions = np.concatenate(all_predictions)
                         all_targets = np.concatenate(all_targets)
 
-                        test_accuracies.append((all_predictions == all_targets).mean())
+                        test_accuracies.append(
+                            (all_predictions == all_targets).mean())
                         test_accuracies_full_list.append(
                             (all_predictions == all_targets).all(-1).mean()
                         )
@@ -742,7 +752,8 @@ if __name__ == "__main__":
                         axacc_test.set_xlim([0, args.training_iterations])
 
                         figacc.tight_layout()
-                        figacc.savefig(f"{args.log_dir}/accuracies.png", dpi=150)
+                        figacc.savefig(
+                            f"{args.log_dir}/accuracies.png", dpi=150)
                         plt.close(figacc)
 
                         figloss = plt.figure(figsize=(10, 5))
