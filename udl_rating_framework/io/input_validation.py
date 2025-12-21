@@ -7,13 +7,12 @@ This module provides functionality for:
 - Grammar specification validation
 """
 
-import re
 import logging
-from pathlib import Path
-from typing import List, Optional, Tuple, Set
+import re
 from dataclasses import dataclass
 from enum import Enum
-
+from pathlib import Path
+from typing import List, Optional, Set, Tuple
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -150,7 +149,8 @@ class InputValidator:
 
         # Perform validation
         format_type = self._detect_format(content, file_path)
-        content_errors, content_warnings = self._validate_content(content, format_type)
+        content_errors, content_warnings = self._validate_content(
+            content, format_type)
         detected_constructs = self._detect_constructs(content)
 
         errors.extend(content_errors)
@@ -196,7 +196,8 @@ class InputValidator:
         format_type = format_hint or self._detect_format(content)
 
         # Validate content structure
-        content_errors, content_warnings = self._validate_content(content, format_type)
+        content_errors, content_warnings = self._validate_content(
+            content, format_type)
         detected_constructs = self._detect_constructs(content)
 
         errors.extend(content_errors)
@@ -244,7 +245,8 @@ class InputValidator:
                         return content
                 except UnicodeDecodeError:
                     continue
-            raise ValidationError("Cannot decode file with any supported encoding")
+            raise ValidationError(
+                "Cannot decode file with any supported encoding")
         except Exception as e:
             raise ValidationError(f"Error reading file: {e}")
 
@@ -334,11 +336,13 @@ class InputValidator:
         # Check for extremely long lines
         for i, line in enumerate(lines, 1):
             if len(line) > 1000:
-                warnings.append(f"Line {i} is very long ({len(line)} characters)")
+                warnings.append(
+                    f"Line {i} is very long ({len(line)} characters)")
 
         # Format-specific validation
         if format_type in [UDLFormat.EBNF, UDLFormat.BNF]:
-            self._validate_grammar_syntax(content, format_type, errors, warnings)
+            self._validate_grammar_syntax(
+                content, format_type, errors, warnings)
         elif format_type == UDLFormat.GRAMMAR:
             self._validate_grammar_declaration(content, errors, warnings)
 
@@ -383,10 +387,12 @@ class InputValidator:
                 rhs = parts[1].strip()
 
                 if not lhs:
-                    errors.append(f"Line {i}: Empty left-hand side in production rule")
+                    errors.append(
+                        f"Line {i}: Empty left-hand side in production rule")
 
                 if not rhs:
-                    errors.append(f"Line {i}: Empty right-hand side in production rule")
+                    errors.append(
+                        f"Line {i}: Empty right-hand side in production rule")
 
                 # Check for balanced brackets in EBNF
                 if format_type == UDLFormat.EBNF:

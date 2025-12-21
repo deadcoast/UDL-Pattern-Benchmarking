@@ -5,11 +5,12 @@ This module provides intelligent recommendations for improving UDL quality
 based on analysis of quality metrics, patterns, and best practices.
 """
 
-import numpy as np
-from datetime import datetime
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass
 from collections import defaultdict
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Any, Dict, List, Optional
+
+import numpy as np
 
 from udl_rating_framework.core.pipeline import QualityReport
 
@@ -102,7 +103,8 @@ class ImprovementAdvisor:
         timeline = self._estimate_timeline(suggestions)
 
         # Define success metrics
-        success_metrics = self._define_success_metrics(latest_report, suggestions)
+        success_metrics = self._define_success_metrics(
+            latest_report, suggestions)
 
         return ImprovementPlan(
             udl_file=udl_file,
@@ -153,7 +155,8 @@ class ImprovementAdvisor:
             if not project_reports_list:
                 continue
 
-            latest_report = max(project_reports_list, key=lambda r: r.timestamp)
+            latest_report = max(project_reports_list,
+                                key=lambda r: r.timestamp)
 
             # Identify low-performing metrics
             for metric, score in latest_report.metric_scores.items():
@@ -233,7 +236,8 @@ class ImprovementAdvisor:
 
         # Analyze trends if we have historical data
         if len(historical_reports) > 1:
-            sorted_reports = sorted(historical_reports, key=lambda r: r.timestamp)
+            sorted_reports = sorted(
+                historical_reports, key=lambda r: r.timestamp)
 
             for metric in analysis["current_scores"]:
                 values = []
@@ -250,7 +254,8 @@ class ImprovementAdvisor:
 
                 if len(valid_values) > 1:
                     # Simple trend analysis
-                    trend = (valid_values[-1] - valid_values[0]) / len(valid_values)
+                    trend = (valid_values[-1] -
+                             valid_values[0]) / len(valid_values)
                     analysis["trends"][metric] = trend
 
                     # Volatility (coefficient of variation)
@@ -274,14 +279,17 @@ class ImprovementAdvisor:
         suggestions = []
 
         # Consistency improvements
-        consistency_score = analysis["current_scores"].get("ConsistencyMetric", 0.0)
+        consistency_score = analysis["current_scores"].get(
+            "ConsistencyMetric", 0.0)
         if consistency_score < 0.7:
             suggestions.extend(
-                self._generate_consistency_suggestions(consistency_score, latest_report)
+                self._generate_consistency_suggestions(
+                    consistency_score, latest_report)
             )
 
         # Completeness improvements
-        completeness_score = analysis["current_scores"].get("CompletenessMetric", 0.0)
+        completeness_score = analysis["current_scores"].get(
+            "CompletenessMetric", 0.0)
         if completeness_score < 0.7:
             suggestions.extend(
                 self._generate_completeness_suggestions(
@@ -306,7 +314,8 @@ class ImprovementAdvisor:
         )
         if structure_score < 0.7:
             suggestions.extend(
-                self._generate_structure_suggestions(structure_score, latest_report)
+                self._generate_structure_suggestions(
+                    structure_score, latest_report)
             )
 
         # Error-based suggestions
@@ -318,7 +327,8 @@ class ImprovementAdvisor:
         # Warning-based suggestions
         if latest_report.warnings:
             suggestions.extend(
-                self._generate_warning_based_suggestions(latest_report.warnings)
+                self._generate_warning_based_suggestions(
+                    latest_report.warnings)
             )
 
         # Trend-based suggestions
@@ -693,13 +703,15 @@ class ImprovementAdvisor:
 
         for suggestion in suggestions:
             # Base score from priority level
-            priority_weight = {"high": 3, "medium": 2, "low": 1}[suggestion.priority]
+            priority_weight = {"high": 3, "medium": 2,
+                               "low": 1}[suggestion.priority]
 
             # Impact weight
             impact_weight = suggestion.expected_impact * 10
 
             # Effort weight (inverse - lower effort is better)
-            effort_weight = {"low": 3, "medium": 2, "high": 1}[suggestion.effort_level]
+            effort_weight = {"low": 3, "medium": 2,
+                             "high": 1}[suggestion.effort_level]
 
             # Combined score
             score = priority_weight * 0.4 + impact_weight * 0.4 + effort_weight * 0.2
@@ -829,7 +841,8 @@ class ImprovementAdvisor:
         ]
 
         # Summary
-        total_impact = sum(s.expected_impact for s in improvement_plan.suggestions)
+        total_impact = sum(
+            s.expected_impact for s in improvement_plan.suggestions)
         high_priority = len(
             [s for s in improvement_plan.suggestions if s.priority == "high"]
         )

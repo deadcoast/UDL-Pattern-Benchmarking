@@ -5,21 +5,22 @@ Tests cache corruption detection, recovery, eviction policies, concurrent access
 persistence, invalidation, and performance under various conditions.
 """
 
-import pytest
+import concurrent.futures
 import tempfile
 import time
-import concurrent.futures
-from pathlib import Path
 from datetime import datetime, timedelta
+from pathlib import Path
 from unittest.mock import Mock
+
+import pytest
 
 from udl_rating_framework.core.caching import (
     LRUCache,
-    UDLRepresentationCache,
     MetricCache,
-    get_udl_cache,
-    get_metric_cache,
+    UDLRepresentationCache,
     clear_all_caches,
+    get_metric_cache,
+    get_udl_cache,
 )
 from udl_rating_framework.core.representation import UDLRepresentation
 
@@ -223,14 +224,16 @@ class TestUDLRepresentationCache:
         content = "grammar TestGrammar { rule: 'test'; }"
 
         # Cache UDL with content
-        cache.put_udl("virtual_file.udl", mock_udl_representation, content=content)
+        cache.put_udl("virtual_file.udl",
+                      mock_udl_representation, content=content)
 
         # NOTE: There's a bug in the current implementation where _is_entry_valid
         # doesn't handle content-based cache keys properly. For now, we'll test
         # the cache storage and key generation directly.
 
         # Test cache key generation
-        cache_key = cache._get_cache_key(Path("virtual_file.udl"), content=content)
+        cache_key = cache._get_cache_key(
+            Path("virtual_file.udl"), content=content)
         assert cache_key.startswith("content:")
 
         # Test that the entry was stored
@@ -269,7 +272,8 @@ class TestUDLRepresentationCache:
     def test_cache_ttl_expiration(self, temp_udl_file, mock_udl_representation):
         """Test cache TTL expiration."""
         # Create cache with very short TTL (in seconds for testing)
-        cache = UDLRepresentationCache(max_size=10, ttl_hours=0.001)  # ~3.6 seconds
+        cache = UDLRepresentationCache(
+            max_size=10, ttl_hours=0.001)  # ~3.6 seconds
 
         # Cache UDL
         cache.put_udl(temp_udl_file, mock_udl_representation)
@@ -496,8 +500,10 @@ class TestMetricCache:
             try:
                 for i in range(num_operations):
                     udl_hash = f"hash_{worker_id}_{i}"
-                    metric_name = f"metric_{i % 5}"  # Cycle through 5 metric names
-                    metric_value = (worker_id * 100 + i) / 1000.0  # Unique value
+                    # Cycle through 5 metric names
+                    metric_name = f"metric_{i % 5}"
+                    metric_value = (worker_id * 100 + i) / \
+                        1000.0  # Unique value
 
                     # Cache metric
                     cache.put_metric(udl_hash, metric_name, metric_value)
@@ -607,7 +613,8 @@ class TestCacheIntegration:
                     assert cached_entry.data is mock_udls[i]
 
             # Modify one file
-            udl_files[2].write_text("grammar Test2Modified { rule: 'modified'; }")
+            udl_files[2].write_text(
+                "grammar Test2Modified { rule: 'modified'; }")
 
             # Test that we can detect file modification through mtime
             original_mtime = udl_files[2].stat().st_mtime
@@ -699,7 +706,8 @@ class TestCacheIntegration:
                     if i % 5 == 0:
                         for j in range(max(0, i - 5), i):
                             old_key = f"worker{worker_id}_key{j}"
-                            cache.get(old_key)  # May or may not exist due to evictions
+                            # May or may not exist due to evictions
+                            cache.get(old_key)
 
                 results[worker_id] = "success"
             except Exception as e:
@@ -707,7 +715,8 @@ class TestCacheIntegration:
 
         # Run workers concurrently
         with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-            futures = [executor.submit(worker_with_evictions, i) for i in range(3)]
+            futures = [executor.submit(worker_with_evictions, i)
+                       for i in range(3)]
             concurrent.futures.wait(futures)
 
         # Check results

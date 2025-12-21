@@ -5,17 +5,17 @@ This module tests the deployment-related functionality including
 the FastAPI application and client libraries.
 """
 
+import importlib.util
 import os
+
+# Import the FastAPI app from deployment/api
+import sys
 import tempfile
 from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
 from fastapi.testclient import TestClient
-
-# Import the FastAPI app from deployment/api
-import sys
-import importlib.util
 
 deployment_api_path = Path(__file__).parent.parent / "deployment" / "api"
 main_module_path = deployment_api_path / "main.py"
@@ -256,7 +256,8 @@ class TestFastAPIDeployment:
     def test_batch_rating_size_limit(self):
         """Test batch rating size limit."""
         # Create request with too many UDLs
-        udls = [{"content": f"grammar Test{i} {{ rule = 'test' }}"} for i in range(15)]
+        udls = [{"content": f"grammar Test{i} {{ rule = 'test' }}"}
+                for i in range(15)]
         request_data = {"udls": udls, "parallel": True}
 
         response = self.client.post("/rate/batch", json=request_data)
@@ -308,7 +309,8 @@ class TestPythonClient:
     def test_client_initialization(self):
         """Test client initialization."""
         # Import the client
-        sys.path.append(str(Path(__file__).parent.parent / "deployment" / "client"))
+        sys.path.append(
+            str(Path(__file__).parent.parent / "deployment" / "client"))
         from python_client import UDLRatingClient
 
         client = UDLRatingClient(
@@ -322,7 +324,8 @@ class TestPythonClient:
 
     def test_client_no_token(self):
         """Test client without authentication token."""
-        sys.path.append(str(Path(__file__).parent.parent / "deployment" / "client"))
+        sys.path.append(
+            str(Path(__file__).parent.parent / "deployment" / "client"))
         from python_client import UDLRatingClient
 
         client = UDLRatingClient(base_url="http://localhost:8000")
@@ -335,7 +338,8 @@ class TestDockerConfiguration:
     def test_dockerfile_exists(self):
         """Test that Dockerfile exists and has required stages."""
         dockerfile_path = (
-            Path(__file__).parent.parent / "deployment" / "docker" / "Dockerfile"
+            Path(__file__).parent.parent /
+            "deployment" / "docker" / "Dockerfile"
         )
         assert dockerfile_path.exists()
 
@@ -384,7 +388,8 @@ class TestKubernetesManifests:
 
         for filename in required_files:
             file_path = k8s_dir / filename
-            assert file_path.exists(), f"Missing Kubernetes manifest: {filename}"
+            assert file_path.exists(
+            ), f"Missing Kubernetes manifest: {filename}"
 
     def test_deployment_manifest_structure(self):
         """Test deployment manifest has required structure."""
@@ -428,7 +433,8 @@ class TestDeploymentScripts:
     def test_build_script_content(self):
         """Test build script has required content."""
         build_script = (
-            Path(__file__).parent.parent / "deployment" / "scripts" / "build.sh"
+            Path(__file__).parent.parent /
+            "deployment" / "scripts" / "build.sh"
         )
         content = build_script.read_text()
 

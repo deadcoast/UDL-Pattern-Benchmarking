@@ -10,11 +10,12 @@ the referenced requirement must exist in the requirements document.
 
 import ast
 import re
-from pathlib import Path
-from hypothesis import given, strategies as st, settings
-from typing import List
 from dataclasses import dataclass
+from pathlib import Path
+from typing import List
 
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 # Valid requirement numbers from both specs
 VALID_DOC_VALIDATION_REQUIREMENTS = {
@@ -237,7 +238,8 @@ def extract_all_requirement_refs(file_path: Path) -> List[RequirementReference]:
         line_number = 0
 
         if isinstance(
-            node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)
+            node, (ast.FunctionDef, ast.AsyncFunctionDef,
+                   ast.ClassDef, ast.Module)
         ):
             docstring = ast.get_docstring(node)
             line_number = getattr(node, "lineno", 0)
@@ -286,7 +288,8 @@ class TestRequirementReferenceFormat:
             )
 
     @given(
-        st.integers(min_value=1, max_value=20), st.integers(min_value=1, max_value=10)
+        st.integers(min_value=1, max_value=20), st.integers(
+            min_value=1, max_value=10)
     )
     @settings(max_examples=100)
     def test_generated_valid_formats(self, major: int, minor: int):
@@ -472,7 +475,8 @@ class TestPropertyBasedRequirementValidation:
     """
 
     @given(
-        st.lists(st.sampled_from(list(ALL_VALID_REQUIREMENTS)), min_size=1, max_size=5)
+        st.lists(st.sampled_from(list(ALL_VALID_REQUIREMENTS)),
+                 min_size=1, max_size=5)
     )
     @settings(max_examples=100)
     def test_valid_refs_always_validate(self, refs: List[str]):
@@ -486,7 +490,8 @@ class TestPropertyBasedRequirementValidation:
             assert validate_requirement_format(ref), (
                 f"Valid ref {ref} should have valid format"
             )
-            assert validate_requirement_exists(ref), f"Valid ref {ref} should exist"
+            assert validate_requirement_exists(
+                ref), f"Valid ref {ref} should exist"
 
     @given(st.text(alphabet="0123456789.", min_size=1, max_size=10))
     @settings(max_examples=100)

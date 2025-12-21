@@ -236,8 +236,9 @@ def test_basic_functionality():
 
     # Test ConfidenceCalculator
     try:
-        from udl_rating_framework.core.confidence import ConfidenceCalculator
         import numpy as np
+
+        from udl_rating_framework.core.confidence import ConfidenceCalculator
 
         calculator = ConfidenceCalculator()
         assert calculator is not None

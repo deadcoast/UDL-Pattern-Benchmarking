@@ -6,24 +6,26 @@ to test complex data structures, mathematical computations with edge values,
 invariants across different code paths, and state machine properties.
 """
 
-import pytest
-import numpy as np
-import tempfile
 import os
-from hypothesis import given, strategies as st, settings
-from hypothesis.extra.numpy import arrays
-from hypothesis.stateful import RuleBasedStateMachine, rule, initialize, invariant
+import tempfile
 
-from udl_rating_framework.core.representation import UDLRepresentation
+import numpy as np
+import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
+from hypothesis.extra.numpy import arrays
+from hypothesis.stateful import RuleBasedStateMachine, initialize, invariant, rule
+
 from udl_rating_framework.core.aggregation import MetricAggregator
 from udl_rating_framework.core.confidence import ConfidenceCalculator
-from udl_rating_framework.core.pipeline import RatingPipeline, QualityReport
-from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 from udl_rating_framework.core.metrics.expressiveness import ExpressivenessMetric
 from udl_rating_framework.core.metrics.structural_coherence import (
     StructuralCoherenceMetric,
 )
+from udl_rating_framework.core.pipeline import QualityReport, RatingPipeline
+from udl_rating_framework.core.representation import UDLRepresentation
 
 
 # Custom strategies for complex data structures
@@ -45,7 +47,8 @@ def probability_distribution_strategy(draw, min_size=2, max_size=10):
 @st.composite
 def metric_weights_strategy(draw, min_metrics=2, max_metrics=6):
     """Generate valid metric weight dictionaries."""
-    num_metrics = draw(st.integers(min_value=min_metrics, max_value=max_metrics))
+    num_metrics = draw(st.integers(
+        min_value=min_metrics, max_value=max_metrics))
     metric_names = [f"metric_{i}" for i in range(num_metrics)]
 
     # Generate positive weights
@@ -73,11 +76,13 @@ def udl_content_strategy(draw):
 
     for i in range(num_rules):
         lhs = draw(
-            st.text(alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ", min_size=1, max_size=5)
+            st.text(alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                    min_size=1, max_size=5)
         )
         rhs_parts = draw(
             st.lists(
-                st.text(alphabet="abcdefghijklmnopqrstuvwxyz", min_size=1, max_size=8),
+                st.text(alphabet="abcdefghijklmnopqrstuvwxyz",
+                        min_size=1, max_size=8),
                 min_size=1,
                 max_size=4,
             )
@@ -128,14 +133,16 @@ class TestMathematicalComputationsEdgeCases:
         aggregator = MetricAggregator(weights)
 
         # Generate metric values
-        metric_values = {name: np.random.uniform(0, 1) for name in weights.keys()}
+        metric_values = {name: np.random.uniform(
+            0, 1) for name in weights.keys()}
 
         # Test basic aggregation
         result = aggregator.aggregate(metric_values)
         assert 0.0 <= result <= 1.0, f"Aggregated result {result} not in [0,1]"
 
         # Test linearity: scaling all metrics should scale result
-        scaled_values = {name: value * 0.5 for name, value in metric_values.items()}
+        scaled_values = {name: value * 0.5 for name,
+                         value in metric_values.items()}
         scaled_result = aggregator.aggregate(scaled_values)
         expected_scaled = result * 0.5
 
@@ -157,7 +164,8 @@ class TestMathematicalComputationsEdgeCases:
                 )
 
     @given(
-        st.lists(st.floats(min_value=0.0, max_value=1.0), min_size=2, max_size=10),
+        st.lists(st.floats(min_value=0.0, max_value=1.0),
+                 min_size=2, max_size=10),
         st.floats(min_value=-10.0, max_value=10.0),
     )
     @settings(max_examples=100, deadline=3000)
@@ -165,10 +173,12 @@ class TestMathematicalComputationsEdgeCases:
         """Test aggregation with extreme and noisy values."""
         # Create equal weights
         num_metrics = len(metric_values)
-        weights = {f"metric_{i}": 1.0 / num_metrics for i in range(num_metrics)}
+        weights = {f"metric_{i}": 1.0 /
+                   num_metrics for i in range(num_metrics)}
 
         aggregator = MetricAggregator(weights)
-        metric_dict = {f"metric_{i}": val for i, val in enumerate(metric_values)}
+        metric_dict = {f"metric_{i}": val for i,
+                       val in enumerate(metric_values)}
 
         result = aggregator.aggregate(metric_dict)
 
@@ -201,7 +211,8 @@ class TestComplexDataStructureInvariants:
             # Invariant 1: Token count should be consistent
             tokens1 = udl_repr.get_tokens()
             tokens2 = udl_repr.get_tokens()  # Call again
-            assert len(tokens1) == len(tokens2), "Token count should be deterministic"
+            assert len(tokens1) == len(
+                tokens2), "Token count should be deterministic"
 
             # Invariant 2: Grammar graph should be consistent
             graph1 = udl_repr.get_grammar_graph()
@@ -218,7 +229,8 @@ class TestComplexDataStructureInvariants:
             ast2 = udl_repr.to_ast()
             # AST should have same structure (we can't easily compare objects, but can check basic properties)
             if hasattr(ast1, "__dict__") and hasattr(ast2, "__dict__"):
-                assert type(ast1) is type(ast2), "AST types should be consistent"
+                assert type(ast1) is type(
+                    ast2), "AST types should be consistent"
 
             # Invariant 4: Representation should handle empty content gracefully
             if not udl_content.strip():
@@ -259,7 +271,8 @@ class TestComplexDataStructureInvariants:
                 overall_score=sum(metrics.values()) / len(metrics),
                 confidence=0.8,
                 metric_scores=metrics,
-                metric_formulas={name: f"formula_{name}" for name in metrics.keys()},
+                metric_formulas={
+                    name: f"formula_{name}" for name in metrics.keys()},
                 computation_trace=[],
                 error_bounds={
                     name: (val * 0.9, val * 1.1) for name, val in metrics.items()
@@ -299,7 +312,8 @@ class TestStateMachineProperties:
     @given(
         st.lists(
             st.tuples(
-                st.text(alphabet="abcdefghijklmnopqrstuvwxyz", min_size=1, max_size=20),
+                st.text(alphabet="abcdefghijklmnopqrstuvwxyz",
+                        min_size=1, max_size=20),
                 st.floats(min_value=0.0, max_value=1.0),
             ),
             min_size=1,
@@ -349,7 +363,8 @@ class TestStateMachineProperties:
                     results2.append(None)
 
             # Results should be consistent
-            assert len(results1) == len(results2), "Result count should be consistent"
+            assert len(results1) == len(
+                results2), "Result count should be consistent"
 
             for i, (r1, r2) in enumerate(zip(results1, results2)):
                 if r1 is not None and r2 is not None:
@@ -520,7 +535,8 @@ class TestShrinkingAndMinimalExamples:
             )
 
         except Exception as e:
-            pytest.fail(f"Confidence calculation failed with valid probabilities: {e}")
+            pytest.fail(
+                f"Confidence calculation failed with valid probabilities: {e}")
 
 
 if __name__ == "__main__":

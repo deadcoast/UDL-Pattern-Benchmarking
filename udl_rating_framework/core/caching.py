@@ -7,11 +7,11 @@ to improve performance during batch processing and repeated evaluations.
 
 import hashlib
 import logging
-from pathlib import Path
-from typing import Dict, Any, Optional, Union
+import threading
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-import threading
+from pathlib import Path
+from typing import Any, Dict, Optional, Union
 
 from udl_rating_framework.core.representation import UDLRepresentation
 
@@ -137,7 +137,8 @@ class LRUCache:
             return
 
         # Find least recently used key
-        lru_key = min(self._access_order.keys(), key=lambda k: self._access_order[k])
+        lru_key = min(self._access_order.keys(),
+                      key=lambda k: self._access_order[k])
 
         # Remove from cache
         del self._cache[lru_key]
@@ -148,7 +149,8 @@ class LRUCache:
     def get_stats(self) -> Dict[str, Any]:
         """Get cache statistics."""
         with self._lock:
-            total_accesses = sum(entry.access_count for entry in self._cache.values())
+            total_accesses = sum(
+                entry.access_count for entry in self._cache.values())
 
             return {
                 "size": len(self._cache),
@@ -242,7 +244,8 @@ class UDLRepresentationCache:
             except OSError:
                 pass
 
-        self.cache.put(cache_key, udl, file_hash=file_hash, file_mtime=file_mtime)
+        self.cache.put(cache_key, udl, file_hash=file_hash,
+                       file_mtime=file_mtime)
         logger.debug(f"Cached UDL representation: {file_path}")
 
     def invalidate_file(self, file_path: Union[str, Path]) -> bool:
@@ -330,7 +333,8 @@ class UDLRepresentationCache:
             try:
                 current_mtime = file_path.stat().st_mtime
                 if current_mtime != cache_entry.file_mtime:
-                    logger.debug(f"File modified, cache invalid for: {file_path}")
+                    logger.debug(
+                        f"File modified, cache invalid for: {file_path}")
                     return False
             except OSError:
                 # If we can't check file stats, assume invalid

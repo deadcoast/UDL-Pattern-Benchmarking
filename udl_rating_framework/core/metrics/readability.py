@@ -6,8 +6,9 @@ Measures readability of UDL syntax using linguistic and structural analysis.
 
 import re
 from typing import Dict, List
+
 from udl_rating_framework.core.metrics.base import QualityMetric
-from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType
+from udl_rating_framework.core.representation import Token, TokenType, UDLRepresentation
 
 
 class ReadabilityMetric(QualityMetric):
@@ -270,7 +271,8 @@ class ReadabilityMetric(QualityMetric):
         if not tokens:
             return 0.0
 
-        operator_count = sum(1 for token in tokens if token.type == TokenType.OPERATOR)
+        operator_count = sum(
+            1 for token in tokens if token.type == TokenType.OPERATOR)
         total_meaningful = sum(
             1
             for token in tokens
@@ -334,7 +336,8 @@ class ReadabilityMetric(QualityMetric):
             return 1.0
 
         # Analyze identifier characteristics
-        avg_length = sum(len(ident) for ident in identifiers) / len(identifiers)
+        avg_length = sum(len(ident)
+                         for ident in identifiers) / len(identifiers)
 
         # Prefer moderate length identifiers (5-15 characters)
         optimal_length = 10
@@ -363,10 +366,12 @@ class ReadabilityMetric(QualityMetric):
 
         # Analyze naming patterns
         naming_patterns = self._analyze_naming_patterns(identifiers)
-        pattern_consistency = self._compute_pattern_consistency(naming_patterns)
+        pattern_consistency = self._compute_pattern_consistency(
+            naming_patterns)
 
         # Analyze operator usage consistency
-        operators = [token.text for token in tokens if token.type == TokenType.OPERATOR]
+        operators = [
+            token.text for token in tokens if token.type == TokenType.OPERATOR]
         operator_consistency = self._compute_operator_consistency(operators)
 
         # Combine consistency measures
@@ -448,7 +453,8 @@ class ReadabilityMetric(QualityMetric):
             return 1.0
 
         # Check for consistent use of assignment operators
-        assignment_ops = [op for op in operators if op in ["::=", ":=", "->", ":", "="]]
+        assignment_ops = [op for op in operators if op in [
+            "::=", ":=", "->", ":", "="]]
 
         if not assignment_ops:
             return 1.0

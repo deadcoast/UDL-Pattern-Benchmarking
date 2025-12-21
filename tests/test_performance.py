@@ -4,19 +4,20 @@ Performance tests for UDL Rating Framework.
 Tests performance characteristics and complexity bounds of core components.
 """
 
-import time
+import os
 import statistics
 import tempfile
-import os
+import time
 from pathlib import Path
 from typing import List
+
 import torch
 
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.base import MetricRegistry
-from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
-from udl_rating_framework.core.multiprocessing import ParallelProcessor
 from udl_rating_framework.benchmarks.performance_benchmarks import PerformanceBenchmark
+from udl_rating_framework.core.metrics.base import MetricRegistry
+from udl_rating_framework.core.multiprocessing import ParallelProcessor
+from udl_rating_framework.core.representation import UDLRepresentation
+from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
 
 
 class TestMetricComputationPerformance:
@@ -29,8 +30,8 @@ class TestMetricComputationPerformance:
     def setup_method(self):
         """Set up test fixtures."""
         # Ensure we have metrics registered for testing
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.expressiveness import (
             ExpressivenessMetric,
         )
@@ -120,8 +121,10 @@ class TestMetricComputationPerformance:
             # Log performance characteristics
             print(f"\n{metric_name} performance:")
             for i, (size, time_taken) in enumerate(zip(udl_sizes, times)):
-                throughput = 1.0 / time_taken if time_taken > 0 else float("inf")
-                print(f"  Size {size}: {time_taken:.4f}s ({throughput:.2f} ops/s)")
+                throughput = 1.0 / \
+                    time_taken if time_taken > 0 else float("inf")
+                print(
+                    f"  Size {size}: {time_taken:.4f}s ({throughput:.2f} ops/s)")
 
         # Verify reasonable performance (should complete within reasonable time)
         for metric_name, times in results.items():
@@ -189,7 +192,8 @@ class TestMetricComputationPerformance:
                 for i in range(1, len(udl_sizes)):
                     size_ratio = udl_sizes[i] / udl_sizes[i - 1]
                     time_ratio = (
-                        times[i] / times[i - 1] if times[i - 1] > 0 else float("inf")
+                        times[i] / times[i - 1] if times[i -
+                                                         1] > 0 else float("inf")
                     )
                     growth_ratios.append(time_ratio / size_ratio)
 
@@ -262,7 +266,8 @@ class TestCTMInferencePerformance:
             median_time = statistics.median(iteration_times)
             times.append(median_time)
 
-            throughput = seq_len / median_time if median_time > 0 else float("inf")
+            throughput = seq_len / \
+                median_time if median_time > 0 else float("inf")
             print(
                 f"Sequence length {seq_len}: {median_time:.4f}s ({throughput:.0f} tokens/s)"
             )
@@ -280,7 +285,8 @@ class TestCTMInferencePerformance:
             for i in range(1, len(sequence_lengths)):
                 size_ratio = sequence_lengths[i] / sequence_lengths[i - 1]
                 time_ratio = (
-                    times[i] / times[i - 1] if times[i - 1] > 0 else float("inf")
+                    times[i] / times[i - 1] if times[i -
+                                                     1] > 0 else float("inf")
                 )
                 growth_ratios.append(time_ratio / size_ratio)
 
@@ -342,7 +348,8 @@ class TestCTMInferencePerformance:
             time_per_sample = median_time / batch_size
             times_per_sample.append(time_per_sample)
 
-            throughput = batch_size / median_time if median_time > 0 else float("inf")
+            throughput = batch_size / \
+                median_time if median_time > 0 else float("inf")
             print(
                 f"Batch size {batch_size}: {median_time:.4f}s total, {time_per_sample:.4f}s per sample ({throughput:.1f} samples/s)"
             )
@@ -359,7 +366,8 @@ class TestCTMInferencePerformance:
                 f"Batch processing (size {batch_size}) is less efficient than individual: ratio {efficiency_ratio:.2f}"
             )
 
-            print(f"Batch size {batch_size} efficiency: {efficiency_ratio:.2f}x")
+            print(
+                f"Batch size {batch_size} efficiency: {efficiency_ratio:.2f}x")
 
 
 class TestBatchProcessingPerformance:
@@ -372,8 +380,8 @@ class TestBatchProcessingPerformance:
     def setup_method(self):
         """Set up test fixtures."""
         # Ensure we have metrics registered for testing
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 
         # Clear registry and register test metrics
         MetricRegistry.clear()
@@ -424,7 +432,8 @@ class TestBatchProcessingPerformance:
                 end_time = time.perf_counter()
 
                 total_time = end_time - start_time
-                throughput = file_count / total_time if total_time > 0 else float("inf")
+                throughput = file_count / \
+                    total_time if total_time > 0 else float("inf")
 
                 # Verify all files were processed
                 assert len(reports) == file_count
@@ -483,7 +492,8 @@ class TestBatchProcessingPerformance:
         for i, worker_count in enumerate(worker_counts[1:], 1):
             parallel_time = times[i]
             speedup = (
-                sequential_time / parallel_time if parallel_time > 0 else float("inf")
+                sequential_time /
+                parallel_time if parallel_time > 0 else float("inf")
             )
 
             # Parallel processing should provide some speedup or at least not be much slower
@@ -564,8 +574,8 @@ class TestPerformanceBenchmarkIntegration:
     def setup_method(self):
         """Set up test fixtures."""
         # Ensure we have metrics registered for testing
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 
         # Clear registry and register test metrics
         MetricRegistry.clear()

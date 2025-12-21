@@ -7,13 +7,14 @@ to various business intelligence and data visualization platforms.
 
 import json
 import xml.etree.ElementTree as ET
+from collections import defaultdict
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass, asdict
-from collections import defaultdict
-import pandas as pd
+from typing import Any, Dict, List, Optional
+
 import numpy as np
+import pandas as pd
 
 from udl_rating_framework.core.pipeline import QualityReport
 
@@ -98,7 +99,8 @@ class BusinessIntelligenceExporter:
 
         # Add forecasts if requested
         if config.include_forecasts:
-            dataset = self._add_forecast_data(dataset, reports, project_mapping)
+            dataset = self._add_forecast_data(
+                dataset, reports, project_mapping)
 
         # Create BI dataset
         bi_dataset = BIDataset(
@@ -138,8 +140,10 @@ class BusinessIntelligenceExporter:
 
         if dashboard_type == "executive":
             # Executive dashboard datasets
-            datasets["kpis"] = self._create_kpi_dataset(reports, project_mapping)
-            datasets["trends"] = self._create_trend_dataset(reports, project_mapping)
+            datasets["kpis"] = self._create_kpi_dataset(
+                reports, project_mapping)
+            datasets["trends"] = self._create_trend_dataset(
+                reports, project_mapping)
             datasets["portfolio_overview"] = self._create_portfolio_overview_dataset(
                 reports, project_mapping
             )
@@ -159,7 +163,8 @@ class BusinessIntelligenceExporter:
                 reports, project_mapping
             )
             datasets["improvement_tracking"] = (
-                self._create_improvement_tracking_dataset(reports, project_mapping)
+                self._create_improvement_tracking_dataset(
+                    reports, project_mapping)
             )
 
         else:  # analytical
@@ -352,7 +357,8 @@ class BusinessIntelligenceExporter:
         elif time_grouping == "weekly":
             detailed_df["week"] = detailed_df["timestamp"].dt.isocalendar().week
             detailed_df["year_week"] = (
-                detailed_df["year"].astype(str) + "_W" + detailed_df["week"].astype(str)
+                detailed_df["year"].astype(
+                    str) + "_W" + detailed_df["week"].astype(str)
             )
             group_cols.append("year_week")
         elif time_grouping == "monthly":
@@ -376,7 +382,8 @@ class BusinessIntelligenceExporter:
                 agg_dict[col] = ["mean", "std", "min", "max", "count"]
 
         # Perform aggregation
-        summary_df = detailed_df.groupby(group_cols).agg(agg_dict).reset_index()
+        summary_df = detailed_df.groupby(
+            group_cols).agg(agg_dict).reset_index()
 
         # Flatten column names
         summary_df.columns = [
@@ -411,7 +418,8 @@ class BusinessIntelligenceExporter:
                 continue
 
             # Sort by timestamp
-            project_reports = sorted(project_reports, key=lambda r: r.timestamp)
+            project_reports = sorted(
+                project_reports, key=lambda r: r.timestamp)
 
             # Calculate KPIs
             overall_scores = [r.overall_score for r in project_reports]
@@ -419,15 +427,18 @@ class BusinessIntelligenceExporter:
 
             # Trend calculation
             if len(overall_scores) > 1:
-                trend = (overall_scores[-1] - overall_scores[0]) / len(overall_scores)
+                trend = (overall_scores[-1] -
+                         overall_scores[0]) / len(overall_scores)
             else:
                 trend = 0.0
 
             # Risk assessment
             recent_scores = (
-                overall_scores[-5:] if len(overall_scores) >= 5 else overall_scores
+                overall_scores[-5:] if len(
+                    overall_scores) >= 5 else overall_scores
             )
-            volatility = np.std(recent_scores) if len(recent_scores) > 1 else 0.0
+            volatility = np.std(recent_scores) if len(
+                recent_scores) > 1 else 0.0
 
             risk_level = "Low"
             if np.mean(recent_scores) < 0.5 or volatility > 0.2:
@@ -503,8 +514,10 @@ class BusinessIntelligenceExporter:
 
         if "project" in dataset.columns:
             # Add simple forecast placeholders
-            dataset["forecast_7d"] = dataset.get("overall_score", 0.0)  # Placeholder
-            dataset["forecast_30d"] = dataset.get("overall_score", 0.0)  # Placeholder
+            dataset["forecast_7d"] = dataset.get(
+                "overall_score", 0.0)  # Placeholder
+            dataset["forecast_30d"] = dataset.get(
+                "overall_score", 0.0)  # Placeholder
             dataset["forecast_confidence"] = 0.7  # Placeholder
 
         return dataset
@@ -531,7 +544,8 @@ class BusinessIntelligenceExporter:
                 },
                 "unique_udl_files": len(set(r.udl_file for r in reports)),
                 "unique_projects": len(
-                    set(r.udl_file.split("/")[0] for r in reports if "/" in r.udl_file)
+                    set(r.udl_file.split("/")[0]
+                        for r in reports if "/" in r.udl_file)
                 ),
             },
             "schema_version": "1.0",
@@ -563,9 +577,11 @@ class BusinessIntelligenceExporter:
 
                 # Add metadata sheet
                 metadata_df = pd.DataFrame(
-                    [{"Key": k, "Value": str(v)} for k, v in dataset.metadata.items()]
+                    [{"Key": k, "Value": str(v)}
+                     for k, v in dataset.metadata.items()]
                 )
-                metadata_df.to_excel(writer, sheet_name="Metadata", index=False)
+                metadata_df.to_excel(
+                    writer, sheet_name="Metadata", index=False)
 
         elif config.format == "parquet":
             dataset.data.to_parquet(output_path, index=False)
@@ -591,7 +607,8 @@ class BusinessIntelligenceExporter:
         for _, row in dataset.data.iterrows():
             record_elem = ET.SubElement(data_elem, "record")
             for col, value in row.items():
-                col_elem = ET.SubElement(record_elem, str(col).replace(" ", "_"))
+                col_elem = ET.SubElement(
+                    record_elem, str(col).replace(" ", "_"))
                 col_elem.text = str(value) if pd.notna(value) else ""
 
         # Write to file
@@ -706,7 +723,8 @@ class BusinessIntelligenceExporter:
         project_reports = defaultdict(list)
         for report in reports:
             project = (
-                report.udl_file.split("/")[0] if "/" in report.udl_file else "default"
+                report.udl_file.split(
+                    "/")[0] if "/" in report.udl_file else "default"
             )
             project_reports[project].append(report)
 
@@ -762,7 +780,8 @@ class BusinessIntelligenceExporter:
             name="risk_assessment",
             description="Project Risk Assessment",
             data=df,
-            metadata={"assessment_criteria": "quality_score, volatility, error_rate"},
+            metadata={
+                "assessment_criteria": "quality_score, volatility, error_rate"},
             export_timestamp=datetime.now(),
         )
 

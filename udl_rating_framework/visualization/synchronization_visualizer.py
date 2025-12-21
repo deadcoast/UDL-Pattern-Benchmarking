@@ -4,9 +4,11 @@ Synchronization Evolution Visualization Utilities.
 Provides tools for visualizing synchronization matrix evolution over time.
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
 from typing import Dict, List, Optional, Tuple
+
+import matplotlib.pyplot as plt
+import numpy as np
+
 from ..models.ctm_adapter import TrackingData
 
 
@@ -80,7 +82,8 @@ class SynchronizationVisualizer:
 
         # Set ticks
         ax.set_xticks(
-            range(0, tracking_data.iterations, max(1, tracking_data.iterations // 10))
+            range(0, tracking_data.iterations, max(
+                1, tracking_data.iterations // 10))
         )
         synch_dim = synch_data.shape[1]
         ax.set_yticks(range(0, synch_dim, max(1, synch_dim // 10)))
@@ -175,9 +178,11 @@ class SynchronizationVisualizer:
             matplotlib Figure object
         """
         if synch_type == "out":
-            synch_data = tracking_data.synch_out  # [iterations, batch, synch_dim]
+            # [iterations, batch, synch_dim]
+            synch_data = tracking_data.synch_out
         elif synch_type == "action":
-            synch_data = tracking_data.synch_action  # [iterations, batch, synch_dim]
+            # [iterations, batch, synch_dim]
+            synch_data = tracking_data.synch_action
         else:
             raise ValueError("synch_type must be 'out' or 'action'")
 
@@ -191,11 +196,13 @@ class SynchronizationVisualizer:
             differences = np.diff(
                 synch_data, axis=0
             )  # [iterations-1, batch, synch_dim]
-            change_rates = np.linalg.norm(differences, axis=-1)  # [iterations-1, batch]
+            change_rates = np.linalg.norm(
+                differences, axis=-1)  # [iterations-1, batch]
             mean_change_rates = np.mean(change_rates, axis=1)  # [iterations-1]
             std_change_rates = np.std(change_rates, axis=1)  # [iterations-1]
 
-            ax1.plot(iterations[1:], mean_change_rates, "b-", linewidth=2, label="Mean")
+            ax1.plot(iterations[1:], mean_change_rates,
+                     "b-", linewidth=2, label="Mean")
             ax1.fill_between(
                 iterations[1:],
                 mean_change_rates - std_change_rates,
@@ -206,7 +213,8 @@ class SynchronizationVisualizer:
             )
             ax1.set_xlabel("Iteration")
             ax1.set_ylabel("Change Rate (L2 Norm)")
-            ax1.set_title(f"{synch_type.capitalize()} Synchronization Change Rate")
+            ax1.set_title(
+                f"{synch_type.capitalize()} Synchronization Change Rate")
             ax1.legend()
             ax1.grid(True, alpha=0.3)
 
@@ -215,7 +223,8 @@ class SynchronizationVisualizer:
         distances_to_final = []
         for t in range(tracking_data.iterations):
             current_state = synch_data[t]  # [batch, synch_dim]
-            distances = np.linalg.norm(current_state - final_state, axis=-1)  # [batch]
+            distances = np.linalg.norm(
+                current_state - final_state, axis=-1)  # [batch]
             distances_to_final.append(np.mean(distances))
 
         ax2.plot(iterations, distances_to_final, "r-", linewidth=2)
@@ -275,10 +284,12 @@ class SynchronizationVisualizer:
 
         # Set ticks
         ax.set_xticks(
-            range(0, tracking_data.iterations, max(1, tracking_data.iterations // 10))
+            range(0, tracking_data.iterations, max(
+                1, tracking_data.iterations // 10))
         )
         ax.set_yticks(
-            range(0, tracking_data.seq_len, max(1, tracking_data.seq_len // 10))
+            range(0, tracking_data.seq_len, max(
+                1, tracking_data.seq_len // 10))
         )
 
         plt.tight_layout()
@@ -310,7 +321,8 @@ class SynchronizationVisualizer:
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=self.figsize)
 
         # Plot distribution of attention sums
-        ax1.hist(attention_sums.flatten(), bins=50, alpha=0.7, edgecolor="black")
+        ax1.hist(attention_sums.flatten(), bins=50,
+                 alpha=0.7, edgecolor="black")
         ax1.axvline(
             x=1.0, color="red", linestyle="--", linewidth=2, label="Expected (1.0)"
         )
@@ -326,8 +338,10 @@ class SynchronizationVisualizer:
         max_deviations = np.max(deviations, axis=(1, 2))  # [iterations]
 
         iterations = range(tracking_data.iterations)
-        ax2.plot(iterations, mean_deviations, "b-", linewidth=2, label="Mean Deviation")
-        ax2.plot(iterations, max_deviations, "r-", linewidth=2, label="Max Deviation")
+        ax2.plot(iterations, mean_deviations, "b-",
+                 linewidth=2, label="Mean Deviation")
+        ax2.plot(iterations, max_deviations, "r-",
+                 linewidth=2, label="Max Deviation")
         ax2.set_xlabel("Iteration")
         ax2.set_ylabel("Deviation from 1.0")
         ax2.set_title("Attention Normalization Deviation Over Time")

@@ -5,15 +5,16 @@ Provides comprehensive benchmarking of metric computation, CTM inference,
 and batch processing performance.
 """
 
-import time
-import statistics
-import logging
-import psutil
 import gc
-from typing import Dict, List, Any, Optional
+import logging
+import statistics
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 import matplotlib.pyplot as plt
+import psutil
 import torch
 
 try:
@@ -36,10 +37,10 @@ except ImportError:
         return func
 
 
-from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.metrics.base import MetricRegistry
-from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
 from udl_rating_framework.core.multiprocessing import ParallelProcessor
+from udl_rating_framework.core.representation import UDLRepresentation
+from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
 
 logger = logging.getLogger(__name__)
 
@@ -207,7 +208,8 @@ class PerformanceBenchmark:
                             "udl_size": udl_size,
                             "iterations": iterations,
                             "std_time": (
-                                statistics.stdev(times) if len(times) > 1 else 0.0
+                                statistics.stdev(times) if len(
+                                    times) > 1 else 0.0
                             ),
                             "min_time": min(times),
                             "max_time": max(times),
@@ -273,7 +275,8 @@ class PerformanceBenchmark:
                     model.eval()
 
                     # Generate random input
-                    token_ids = torch.randint(0, vocab_size, (batch_size, seq_len))
+                    token_ids = torch.randint(
+                        0, vocab_size, (batch_size, seq_len))
 
                     # Warm up
                     with torch.no_grad():
@@ -304,7 +307,8 @@ class PerformanceBenchmark:
                     avg_time = statistics.mean(times)
                     avg_memory = statistics.mean(memory_usages)
                     throughput = (
-                        (batch_size * seq_len) / avg_time if avg_time > 0 else 0.0
+                        (batch_size * seq_len) /
+                        avg_time if avg_time > 0 else 0.0
                     )
 
                     result = BenchmarkResult(
@@ -321,7 +325,8 @@ class PerformanceBenchmark:
                             "iterations": iterations,
                             "tokens_per_second": throughput,
                             "std_time": (
-                                statistics.stdev(times) if len(times) > 1 else 0.0
+                                statistics.stdev(times) if len(
+                                    times) > 1 else 0.0
                             ),
                         },
                     )
@@ -430,7 +435,8 @@ class PerformanceBenchmark:
                             "iterations": iterations,
                             "files_per_second": throughput,
                             "std_time": (
-                                statistics.stdev(times) if len(times) > 1 else 0.0
+                                statistics.stdev(times) if len(
+                                    times) > 1 else 0.0
                             ),
                             "speedup": (
                                 throughput / (file_count / max(times))
@@ -506,7 +512,8 @@ class PerformanceBenchmark:
                 )
 
             except Exception as e:
-                logger.error(f"Error testing complexity for {metric_name}: {e}")
+                logger.error(
+                    f"Error testing complexity for {metric_name}: {e}")
                 results[f"metric_{metric_name}"] = False
 
         return results
@@ -564,7 +571,8 @@ class PerformanceBenchmark:
         ratios = []
         for i in range(1, len(sizes)):
             size_ratio = sizes[i] / sizes[i - 1]
-            time_ratio = times[i] / times[i - 1] if times[i - 1] > 0 else float("inf")
+            time_ratio = times[i] / times[i -
+                                          1] if times[i - 1] > 0 else float("inf")
             ratios.append(time_ratio / size_ratio)
 
         # Check if ratios are reasonable for expected complexity
@@ -744,7 +752,8 @@ def run_comprehensive_benchmarks(
 
     # Verify complexity bounds
     logger.info("Verifying complexity bounds...")
-    complexity_results = benchmark.verify_complexity_bounds(max_size=500, step_size=50)
+    complexity_results = benchmark.verify_complexity_bounds(
+        max_size=500, step_size=50)
 
     # Log summary
     logger.info("Benchmark Summary:")

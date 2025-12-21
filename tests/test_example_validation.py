@@ -6,18 +6,19 @@ by loading example UDLs with hand-calculated values and verifying
 the system produces identical results within numerical precision.
 """
 
-import pytest
 from pathlib import Path
 from typing import Dict
 
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+import pytest
+
+from udl_rating_framework.core.aggregation import MetricAggregator
 from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 from udl_rating_framework.core.metrics.expressiveness import ExpressivenessMetric
 from udl_rating_framework.core.metrics.structural_coherence import (
     StructuralCoherenceMetric,
 )
-from udl_rating_framework.core.aggregation import MetricAggregator
+from udl_rating_framework.core.representation import UDLRepresentation
 
 
 class TestExampleValidation:
@@ -327,7 +328,8 @@ class TestExampleValidation:
         # Get expected value
         expected_values = self.get_expected_values(example_file)
         if "structural_coherence" not in expected_values:
-            pytest.skip(f"No expected structural_coherence value for {example_file}")
+            pytest.skip(
+                f"No expected structural_coherence value for {example_file}")
 
         expected = expected_values["structural_coherence"]
 

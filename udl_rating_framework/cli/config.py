@@ -4,11 +4,12 @@ Configuration management for CLI.
 Handles loading and validation of YAML configuration files.
 """
 
-import yaml
 import logging
-from pathlib import Path
-from typing import Dict, Any
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Dict
+
+import yaml
 
 logger = logging.getLogger(__name__)
 
@@ -134,7 +135,8 @@ def validate_config(config_dict: Dict[str, Any]) -> None:
         ]
 
         if abs(sum(weights) - 1.0) > 1e-6:
-            raise ValueError(f"Metric weights must sum to 1.0, got {sum(weights)}")
+            raise ValueError(
+                f"Metric weights must sum to 1.0, got {sum(weights)}")
 
         if any(w < 0 for w in weights):
             raise ValueError("All metric weights must be non-negative")

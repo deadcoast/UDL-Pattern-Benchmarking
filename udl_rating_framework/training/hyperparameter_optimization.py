@@ -5,14 +5,15 @@ Provides automated hyperparameter tuning using various optimization strategies
 including grid search, random search, and Bayesian optimization.
 """
 
-import torch
-from torch.utils.data import DataLoader
-import numpy as np
-from typing import Dict, List, Any, Optional, Tuple
+import itertools
+import json
 import logging
 from dataclasses import dataclass, field
-import json
-import itertools
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+import torch
+from torch.utils.data import DataLoader
 
 try:
     import optuna
@@ -21,10 +22,10 @@ try:
 except ImportError:
     OPTUNA_AVAILABLE = False
 
-from .training_pipeline import TrainingPipeline
-from ..models.ctm_adapter import UDLRatingCTM, create_udl_rating_model
-from ..core.metrics.base import QualityMetric
 from ..core.aggregation import MetricAggregator
+from ..core.metrics.base import QualityMetric
+from ..models.ctm_adapter import UDLRatingCTM, create_udl_rating_model
+from .training_pipeline import TrainingPipeline
 
 logger = logging.getLogger(__name__)
 
@@ -73,12 +74,14 @@ class CTMHyperparameterSpace:
     )  # Usually False for CTM
 
     # Synapse and processing parameters
-    synapse_depth: Any = field(default_factory=lambda: [2, 3, 4, 5])  # U-Net depth
+    synapse_depth: Any = field(default_factory=lambda: [
+                               2, 3, 4, 5])  # U-Net depth
     heads: Any = field(default_factory=lambda: [4, 8, 16])  # Attention heads
 
     # Regularization
     dropout: Any = field(default_factory=lambda: (0.0, 0.3))
-    dropout_nlm: Any = field(default_factory=lambda: (0.0, 0.2))  # NLM-specific dropout
+    dropout_nlm: Any = field(default_factory=lambda: (
+        0.0, 0.2))  # NLM-specific dropout
 
     # Training parameters
     learning_rate: Any = field(default_factory=lambda: (1e-5, 1e-2))
@@ -175,7 +178,8 @@ class CTMHyperparameterOptimizer:
 
         self.optimization_history = []
 
-        logger.info(f"Initialized hyperparameter optimizer with device: {self.device}")
+        logger.info(
+            f"Initialized hyperparameter optimizer with device: {self.device}")
 
     def _create_model_and_pipeline(
         self, params: Dict[str, Any]
@@ -332,7 +336,8 @@ class CTMHyperparameterOptimizer:
                 if isinstance(value[0], int):
                     param_values.append(list(range(value[0], value[1] + 1)))
                 else:
-                    param_values.append(np.linspace(value[0], value[1], 5).tolist())
+                    param_values.append(np.linspace(
+                        value[0], value[1], 5).tolist())
             elif isinstance(value, list):
                 param_values.append(value)
             else:
@@ -346,7 +351,8 @@ class CTMHyperparameterOptimizer:
             np.random.shuffle(all_combinations)
             all_combinations = all_combinations[:max_trials]
 
-        logger.info(f"Evaluating {len(all_combinations)} parameter combinations")
+        logger.info(
+            f"Evaluating {len(all_combinations)} parameter combinations")
 
         best_score = -float("inf")
         best_params = None
@@ -414,7 +420,8 @@ class CTMHyperparameterOptimizer:
 
         start_time = time.time()
 
-        logger.info(f"Starting random search optimization with {num_trials} trials")
+        logger.info(
+            f"Starting random search optimization with {num_trials} trials")
 
         best_score = -float("inf")
         best_params = None
@@ -432,9 +439,11 @@ class CTMHyperparameterOptimizer:
                     # Continuous parameter - check if it's a valid range
                     if value[0] < value[1]:
                         if isinstance(value[0], int):
-                            params[name] = np.random.randint(value[0], value[1] + 1)
+                            params[name] = np.random.randint(
+                                value[0], value[1] + 1)
                         else:
-                            params[name] = np.random.uniform(value[0], value[1])
+                            params[name] = np.random.uniform(
+                                value[0], value[1])
                     else:
                         # If range is invalid (low >= high), use the first value
                         params[name] = value[0]
@@ -523,9 +532,11 @@ class CTMHyperparameterOptimizer:
                 ):
                     # Continuous parameter
                     if isinstance(value[0], int):
-                        params[name] = trial.suggest_int(name, value[0], value[1])
+                        params[name] = trial.suggest_int(
+                            name, value[0], value[1])
                     else:
-                        params[name] = trial.suggest_float(name, value[0], value[1])
+                        params[name] = trial.suggest_float(
+                            name, value[0], value[1])
                 elif isinstance(value, list):
                     params[name] = trial.suggest_categorical(name, value)
                 else:

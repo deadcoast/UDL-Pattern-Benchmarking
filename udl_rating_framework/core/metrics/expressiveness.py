@@ -4,13 +4,14 @@ Expressiveness Metric implementation.
 Measures language power using formal language theory and Chomsky hierarchy classification.
 """
 
-import zlib
 import re
+import zlib
 from typing import Dict, List
+
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import (
-    UDLRepresentation,
     GrammarRule,
+    UDLRepresentation,
 )
 
 

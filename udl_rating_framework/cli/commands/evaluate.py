@@ -4,20 +4,21 @@ Evaluate command for UDL Rating Framework CLI.
 Provides functionality to evaluate trained CTM models using comprehensive metrics.
 """
 
-import click
+import json
 import logging
+import sys
 from pathlib import Path
 from typing import Optional
-import json
-import sys
+
+import click
 import torch
 
-from udl_rating_framework.evaluation.evaluation_suite import EvaluationSuite
-from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
-from udl_rating_framework.core.metrics.base import MetricRegistry
 from udl_rating_framework.core.aggregation import MetricAggregator
+from udl_rating_framework.core.metrics.base import MetricRegistry
 from udl_rating_framework.core.representation import UDLRepresentation
+from udl_rating_framework.evaluation.evaluation_suite import EvaluationSuite
 from udl_rating_framework.io.file_discovery import FileDiscovery
+from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
 
 # Import metrics to trigger registration
 
@@ -112,7 +113,8 @@ def evaluate_command(
     try:
         # Validate parameters
         if k_folds < 5:
-            raise click.BadParameter(f"k_folds must be at least 5, got {k_folds}")
+            raise click.BadParameter(
+                f"k_folds must be at least 5, got {k_folds}")
 
         if bootstrap_samples < 1000:
             raise click.BadParameter(
@@ -129,9 +131,12 @@ def evaluate_command(
         if "evaluation" in config:
             eval_config = config["evaluation"]
             k_folds = eval_config.get("k_folds", k_folds)
-            bootstrap_samples = eval_config.get("bootstrap_samples", bootstrap_samples)
-            confidence_level = eval_config.get("confidence_level", confidence_level)
-            calibration_bins = eval_config.get("calibration_bins", calibration_bins)
+            bootstrap_samples = eval_config.get(
+                "bootstrap_samples", bootstrap_samples)
+            confidence_level = eval_config.get(
+                "confidence_level", confidence_level)
+            calibration_bins = eval_config.get(
+                "calibration_bins", calibration_bins)
 
         if "output" in config:
             output_config = config["output"]
@@ -210,7 +215,8 @@ def evaluate_command(
             logger.error("No test files could be parsed successfully")
             sys.exit(1)
 
-        logger.info(f"Successfully parsed {len(test_representations)} test files")
+        logger.info(
+            f"Successfully parsed {len(test_representations)} test files")
 
         # Set up ground truth metrics
         metric_registry = MetricRegistry()
@@ -261,7 +267,8 @@ def evaluate_command(
                 for udl_repr in udl_representations:
                     # Tokenize
                     tokens = udl_repr.get_tokens()
-                    token_ids = [vocab.get_token_id(token.text) for token in tokens]
+                    token_ids = [vocab.get_token_id(
+                        token.text) for token in tokens]
 
                     # Pad/truncate
                     if len(token_ids) > max_length:
@@ -413,7 +420,8 @@ def evaluate_command(
             f"Spearman correlation: {evaluation_result.spearman_correlation:.4f} "
             f"(95% CI: {evaluation_result.spearman_ci[0]:.4f}-{evaluation_result.spearman_ci[1]:.4f})"
         )
-        logger.info(f"Calibration error: {evaluation_result.calibration_error:.4f}")
+        logger.info(
+            f"Calibration error: {evaluation_result.calibration_error:.4f}")
         logger.info(
             f"Cross-validation score: {evaluation_result.mean_cv_score:.4f} ± {evaluation_result.std_cv_score:.4f}"
         )

@@ -7,27 +7,27 @@ strategy effectiveness after the metric registration fixes.
 Requirements: 8.6, 9.2, 10.7
 """
 
-import pytest
 import tempfile
 import time
 from pathlib import Path
 
+import pytest
+
 # Import metrics first to ensure registration
 import udl_rating_framework.core.metrics  # noqa: F401
-
-from udl_rating_framework.core.streaming import (
-    StreamingProcessor,
-    StreamingConfig,
-)
 from udl_rating_framework.core.incremental import (
-    IncrementalProcessor,
-    IncrementalCache,
     FileSnapshot,
+    IncrementalCache,
+    IncrementalProcessor,
 )
 from udl_rating_framework.core.performance import (
-    PerformanceOptimizer,
     PerformanceConfig,
+    PerformanceOptimizer,
     ProcessingStrategy,
+)
+from udl_rating_framework.core.streaming import (
+    StreamingConfig,
+    StreamingProcessor,
 )
 
 
@@ -77,7 +77,8 @@ def temp_udl_files(sample_udl_content):
         for i in range(5):
             file_path = temp_path / f"test_{i}.udl"
             content = (
-                sample_udl_content + f"\n# File {i}\nfile_rule_{i} ::= 'file_{i}'\n"
+                sample_udl_content +
+                f"\n# File {i}\nfile_rule_{i} ::= 'file_{i}'\n"
             )
             file_path.write_text(content)
             files.append(file_path)
@@ -140,7 +141,8 @@ class TestStreamingProcessorFixed:
             config = StreamingConfig(chunk_size=chunk_size)
             processor = StreamingProcessor(config)
 
-            results = list(processor.process_content_streaming(large_udl_content))
+            results = list(
+                processor.process_content_streaming(large_udl_content))
 
             assert len(results) > 0, f"No results for chunk_size={chunk_size}"
             # Larger chunks should produce fewer results
@@ -315,7 +317,8 @@ class TestPerformanceOptimizerFixed:
         strategy = optimizer._select_strategy(workload_info)
 
         # For small files, should select parallel or incremental
-        assert strategy in [ProcessingStrategy.PARALLEL, ProcessingStrategy.INCREMENTAL]
+        assert strategy in [ProcessingStrategy.PARALLEL,
+                            ProcessingStrategy.INCREMENTAL]
 
     def test_strategy_selection_streaming(self, large_temp_file):
         """Test strategy selection for streaming."""
@@ -340,7 +343,8 @@ class TestPerformanceOptimizerFixed:
         optimizer = PerformanceOptimizer(config)
 
         result = optimizer.process_files(
-            file_paths=temp_udl_files, metric_names=["consistency", "completeness"]
+            file_paths=temp_udl_files, metric_names=[
+                "consistency", "completeness"]
         )
 
         assert result.strategy_used == ProcessingStrategy.PARALLEL
@@ -354,7 +358,8 @@ class TestPerformanceOptimizerFixed:
         optimizer = PerformanceOptimizer(config)
 
         result = optimizer.process_files(
-            file_paths=temp_udl_files, metric_names=["consistency", "completeness"]
+            file_paths=temp_udl_files, metric_names=[
+                "consistency", "completeness"]
         )
 
         assert result.strategy_used == ProcessingStrategy.INCREMENTAL
@@ -367,7 +372,8 @@ class TestPerformanceOptimizerFixed:
         optimizer = PerformanceOptimizer(config)
 
         result = optimizer.process_files(
-            file_paths=[large_temp_file], metric_names=["consistency", "completeness"]
+            file_paths=[large_temp_file], metric_names=[
+                "consistency", "completeness"]
         )
 
         assert result.strategy_used == ProcessingStrategy.STREAMING
@@ -379,7 +385,8 @@ class TestPerformanceOptimizerFixed:
         optimizer = PerformanceOptimizer()
 
         # Process files to generate statistics
-        optimizer.process_files(file_paths=temp_udl_files, metric_names=["consistency"])
+        optimizer.process_files(file_paths=temp_udl_files,
+                                metric_names=["consistency"])
 
         stats = optimizer.get_performance_statistics()
 
@@ -419,7 +426,8 @@ class TestPerformanceOptimizationEffectiveness:
         seq_optimizer = PerformanceOptimizer(seq_config)
 
         seq_result = seq_optimizer.process_files(
-            file_paths=temp_udl_files, metric_names=["consistency", "completeness"]
+            file_paths=temp_udl_files, metric_names=[
+                "consistency", "completeness"]
         )
 
         # Parallel processing
@@ -427,7 +435,8 @@ class TestPerformanceOptimizationEffectiveness:
         par_optimizer = PerformanceOptimizer(par_config)
 
         par_result = par_optimizer.process_files(
-            file_paths=temp_udl_files, metric_names=["consistency", "completeness"]
+            file_paths=temp_udl_files, metric_names=[
+                "consistency", "completeness"]
         )
 
         # Both should complete successfully
@@ -486,7 +495,6 @@ pytestmark = [
     pytest.mark.filterwarnings("ignore:.*:DeprecationWarning"),
     pytest.mark.filterwarnings("ignore:.*:UserWarning"),
 ]
-
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])

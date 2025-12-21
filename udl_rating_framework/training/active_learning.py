@@ -5,18 +5,19 @@ Implements active learning strategies to improve training data selection
 and model performance with minimal labeling effort.
 """
 
-import torch
-from torch.utils.data import DataLoader, Dataset
-import numpy as np
-from typing import List, Dict, Any, Optional, Callable
 import logging
-from dataclasses import dataclass
-from abc import ABC, abstractmethod
 import random
-from sklearn.cluster import KMeans
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, Optional
 
-from ..models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
+import numpy as np
+import torch
+from sklearn.cluster import KMeans
+from torch.utils.data import DataLoader, Dataset
+
 from ..core.representation import UDLRepresentation
+from ..models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
 from .training_pipeline import TrainingPipeline, UDLDataset
 
 logger = logging.getLogger(__name__)
@@ -172,7 +173,8 @@ class CTMUncertaintySampling(QueryStrategy):
 
                 # Compute CTM-specific uncertainty
                 if self.method == "synchronization_entropy":
-                    uncertainty = self._compute_synchronization_uncertainty(synch_out)
+                    uncertainty = self._compute_synchronization_uncertainty(
+                        synch_out)
 
                 elif self.method == "neuron_diversity":
                     uncertainty = self._compute_neuron_diversity_uncertainty(
@@ -180,7 +182,8 @@ class CTMUncertaintySampling(QueryStrategy):
                     )
 
                 elif self.method == "temporal_instability":
-                    uncertainty = self._compute_temporal_uncertainty(tracking_data)
+                    uncertainty = self._compute_temporal_uncertainty(
+                        tracking_data)
 
                 else:
                     # Fallback to traditional entropy
@@ -220,7 +223,8 @@ class CTMUncertaintySampling(QueryStrategy):
         entropy = -torch.sum(synch_probs * torch.log(synch_probs + 1e-10))
 
         # Normalize by maximum possible entropy
-        max_entropy = torch.log(torch.tensor(len(synch_probs), dtype=torch.float32))
+        max_entropy = torch.log(torch.tensor(
+            len(synch_probs), dtype=torch.float32))
         normalized_entropy = entropy / max_entropy
 
         return normalized_entropy.item()
@@ -247,7 +251,8 @@ class CTMUncertaintySampling(QueryStrategy):
         ]  # [neurons] - final iteration, first batch
 
         # Compute activation entropy across neurons
-        activation_probs = torch.softmax(torch.tensor(final_activations), dim=0)
+        activation_probs = torch.softmax(
+            torch.tensor(final_activations), dim=0)
         neuron_entropy = -torch.sum(
             activation_probs * torch.log(activation_probs + 1e-10)
         )
@@ -347,7 +352,8 @@ class DiversitySampling(QueryStrategy):
             return random.sample(unlabeled_indices, n_samples)
 
         # Extract features for diversity computation
-        features = self._extract_features(model, unlabeled_pool, unlabeled_indices)
+        features = self._extract_features(
+            model, unlabeled_pool, unlabeled_indices)
 
         if self.method == "kmeans":
             return self._kmeans_sampling(features, unlabeled_indices, n_samples)
@@ -395,7 +401,8 @@ class DiversitySampling(QueryStrategy):
                 else:
                     # Fallback: use embedding of first token
                     embedded = model.embedding(token_ids)
-                    features.append(embedded.mean(dim=1).squeeze().cpu().numpy())
+                    features.append(embedded.mean(
+                        dim=1).squeeze().cpu().numpy())
 
         return np.array(features)
 
@@ -445,7 +452,8 @@ class DiversitySampling(QueryStrategy):
             distances = np.linalg.norm(cluster_features - center, axis=1)
             closest_indices = np.argsort(distances)[:n_cluster_samples]
 
-            selected_indices.extend([cluster_indices[i] for i in closest_indices])
+            selected_indices.extend([cluster_indices[i]
+                                    for i in closest_indices])
 
         logger.info(
             f"Selected {len(selected_indices)} samples using k-means diversity sampling"
@@ -493,12 +501,14 @@ class DiversitySampling(QueryStrategy):
             else:
                 # Select sample with maximum minimum distance to selected samples
                 selected_features = np.array(
-                    [features[unlabeled_indices.index(idx)] for idx in selected_indices]
+                    [features[unlabeled_indices.index(
+                        idx)] for idx in selected_indices]
                 )
 
                 min_distances = []
                 for feat in remaining_features:
-                    distances = np.linalg.norm(selected_features - feat, axis=1)
+                    distances = np.linalg.norm(
+                        selected_features - feat, axis=1)
                     min_distances.append(np.min(distances))
 
                 idx = np.argmax(min_distances)
@@ -539,8 +549,10 @@ class HybridSampling(QueryStrategy):
         self.uncertainty_weight = uncertainty_weight
         self.diversity_weight = diversity_weight
 
-        self.uncertainty_sampler = CTMUncertaintySampling(uncertainty_method, device)
-        self.diversity_sampler = DiversitySampling(diversity_method, device=device)
+        self.uncertainty_sampler = CTMUncertaintySampling(
+            uncertainty_method, device)
+        self.diversity_sampler = DiversitySampling(
+            diversity_method, device=device)
 
     def select_samples(
         self,
@@ -647,7 +659,8 @@ class ActiveLearner:
                 device,
             )
         else:
-            raise ValueError(f"Unknown query strategy: {config.query_strategy}")
+            raise ValueError(
+                f"Unknown query strategy: {config.query_strategy}")
 
         # Active learning state
         self.labeled_indices = []
@@ -656,7 +669,8 @@ class ActiveLearner:
         # Move model to device
         self.model.to(self.device)
 
-        logger.info(f"Initialized active learner with {config.query_strategy} strategy")
+        logger.info(
+            f"Initialized active learner with {config.query_strategy} strategy")
 
     def _get_ground_truth(self, udl_representation: UDLRepresentation) -> float:
         """
@@ -709,12 +723,15 @@ class ActiveLearner:
         Returns:
             Initial labeled indices
         """
-        n_samples = min(self.config.initial_pool_size, len(self.unlabeled_dataset))
-        initial_indices = random.sample(range(len(self.unlabeled_dataset)), n_samples)
+        n_samples = min(self.config.initial_pool_size,
+                        len(self.unlabeled_dataset))
+        initial_indices = random.sample(
+            range(len(self.unlabeled_dataset)), n_samples)
 
         self.labeled_indices = initial_indices
 
-        logger.info(f"Initialized labeled pool with {len(initial_indices)} samples")
+        logger.info(
+            f"Initialized labeled pool with {len(initial_indices)} samples")
         return initial_indices
 
     def active_learning_iteration(self) -> Dict[str, Any]:
@@ -741,14 +758,17 @@ class ActiveLearner:
 
         # Create training dataset
         train_dataset = self._create_training_dataset(self.labeled_indices)
-        train_dataloader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+        train_dataloader = DataLoader(
+            train_dataset, batch_size=16, shuffle=True)
 
         # Split for validation
-        val_size = int(len(self.labeled_indices) * self.config.validation_split)
+        val_size = int(len(self.labeled_indices) *
+                       self.config.validation_split)
         if val_size > 0:
             val_indices = random.sample(self.labeled_indices, val_size)
             val_dataset = self._create_training_dataset(val_indices)
-            val_dataloader = DataLoader(val_dataset, batch_size=16, shuffle=False)
+            val_dataloader = DataLoader(
+                val_dataset, batch_size=16, shuffle=False)
         else:
             val_dataloader = None
 
@@ -807,7 +827,8 @@ class ActiveLearner:
         # Run active learning iterations
         for iteration in range(self.config.max_iterations):
             if len(self.labeled_indices) >= len(self.unlabeled_dataset):
-                logger.info("All samples have been labeled. Stopping active learning.")
+                logger.info(
+                    "All samples have been labeled. Stopping active learning.")
                 break
 
             self.active_learning_iteration()
@@ -824,8 +845,10 @@ class ActiveLearner:
         Returns:
             Learning curve data
         """
-        pool_sizes = [result["labeled_pool_size"] for result in self.learning_history]
-        train_losses = [result["final_train_loss"] for result in self.learning_history]
+        pool_sizes = [result["labeled_pool_size"]
+                      for result in self.learning_history]
+        train_losses = [result["final_train_loss"]
+                        for result in self.learning_history]
         val_losses = [
             result["final_val_loss"]
             for result in self.learning_history
@@ -862,7 +885,8 @@ class ActiveLearner:
         Args:
             filepath: Path to state file
         """
-        state = torch.load(filepath, map_location=self.device, weights_only=False)
+        state = torch.load(
+            filepath, map_location=self.device, weights_only=False)
 
         self.labeled_indices = state["labeled_indices"]
         self.learning_history = state["learning_history"]
@@ -893,7 +917,8 @@ def create_active_learner(
     Returns:
         Active learner instance
     """
-    config = ActiveLearningConfig(query_strategy=query_strategy, **config_kwargs)
+    config = ActiveLearningConfig(
+        query_strategy=query_strategy, **config_kwargs)
 
     return ActiveLearner(
         model=model,

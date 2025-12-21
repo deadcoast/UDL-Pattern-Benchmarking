@@ -4,21 +4,22 @@ Training Pipeline for UDL Rating Framework.
 Trains CTM model to approximate mathematical metrics using ground truth computation.
 """
 
+import json
+import logging
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
-import numpy as np
-from typing import List, Dict, Any, Optional, Tuple
-import logging
-from pathlib import Path
-import json
 
-from ..models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
-from ..core.metrics.base import QualityMetric
 from ..core.aggregation import MetricAggregator
 from ..core.confidence import ConfidenceCalculator
+from ..core.metrics.base import QualityMetric
 from ..core.representation import UDLRepresentation
+from ..models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +71,8 @@ class UDLDataset(Dataset):
             indices = indices[: self.max_length]
         else:
             indices.extend(
-                [self.vocab.token_to_index("<PAD>")] * (self.max_length - len(indices))
+                [self.vocab.token_to_index("<PAD>")] *
+                (self.max_length - len(indices))
             )
 
         return torch.tensor(indices, dtype=torch.long)
@@ -122,7 +124,8 @@ class TrainingPipeline:
         """
         # Validate loss weights
         if abs(alpha + beta - 1.0) > 1e-6:
-            raise ValueError(f"Loss weights must sum to 1.0, got α={alpha}, β={beta}")
+            raise ValueError(
+                f"Loss weights must sum to 1.0, got α={alpha}, β={beta}")
         if alpha < 0 or beta < 0:
             raise ValueError("Loss weights must be non-negative")
 
@@ -233,7 +236,8 @@ class TrainingPipeline:
         # Compute prediction accuracy (binary: correct if within threshold)
         threshold = 0.1  # Consider prediction correct if within 0.1 of ground truth
         prediction_accuracy = (
-            torch.abs(predictions.squeeze() - ground_truth.squeeze()) < threshold
+            torch.abs(predictions.squeeze() -
+                      ground_truth.squeeze()) < threshold
         ).float()
 
         # Calibration loss: MSE between confidence and accuracy
@@ -496,7 +500,8 @@ class TrainingPipeline:
         logger.info(f"Saved checkpoint: {checkpoint_path}")
 
         # Also save training history as JSON
-        history_path = Path(checkpoint_dir) / f"training_history_epoch_{epoch}.json"
+        history_path = Path(checkpoint_dir) / \
+            f"training_history_epoch_{epoch}.json"
         with open(history_path, "w") as f:
             json.dump(self.training_history, f, indent=2)
 

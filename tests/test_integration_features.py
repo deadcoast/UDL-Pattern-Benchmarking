@@ -4,18 +4,19 @@ Tests for integration and workflow features.
 Tests Git hooks, CI/CD integration, LSP server, batch processing, and IDE plugins.
 """
 
-import pytest
-import tempfile
 import json
-import yaml
+import tempfile
 from pathlib import Path
 from unittest.mock import Mock, patch
 
+import pytest
+import yaml
+
+from udl_rating_framework.integration.batch_processor import BatchConfig, BatchProcessor
+from udl_rating_framework.integration.cicd import CICDConfig, CICDIntegration
 from udl_rating_framework.integration.git_hooks import GitHookManager
-from udl_rating_framework.integration.cicd import CICDIntegration, CICDConfig
-from udl_rating_framework.integration.lsp_server import UDLLanguageServer, LSPServer
-from udl_rating_framework.integration.batch_processor import BatchProcessor, BatchConfig
 from udl_rating_framework.integration.ide_plugin import IDEPluginManager
+from udl_rating_framework.integration.lsp_server import LSPServer, UDLLanguageServer
 
 
 class TestGitHooks:
@@ -193,7 +194,8 @@ class TestCICDIntegration:
         # Check job steps
         job = pipeline_data["jobs"][0]
         assert job["job"] == "UDLQualityCheck"
-        assert any("udl-rating rate" in step.get("script", "") for step in job["steps"])
+        assert any("udl-rating rate" in step.get("script", "")
+                   for step in job["steps"])
 
     def test_workflow_file_creation(self):
         """Test workflow file creation."""
@@ -405,7 +407,8 @@ class TestBatchProcessor:
             sample_dir.mkdir()
             for i in range(3):
                 file_path = sample_dir / f"test_{i}.udl"
-                file_path.write_text(f'grammar Test{i} {{ rule test = "value{i}" }}')
+                file_path.write_text(
+                    f'grammar Test{i} {{ rule test = "value{i}" }}')
 
             # Test file discovery
             config = BatchConfig(max_workers=1)
@@ -590,7 +593,8 @@ class TestIDEPluginManager:
             assert (plugin_dir / "ftdetect" / "udl.vim").exists()
 
             # Verify plugin content
-            plugin_content = (plugin_dir / "plugin" / "udl_rating.vim").read_text()
+            plugin_content = (plugin_dir / "plugin" /
+                              "udl_rating.vim").read_text()
             assert "UDLCheckQuality" in plugin_content
             assert "udl_rating#check_quality" in plugin_content
 
@@ -601,8 +605,9 @@ class TestIntegrationCLI:
     @patch("udl_rating_framework.cli.commands.integration.GitHookManager")
     def test_git_hooks_cli_integration(self, mock_manager_class):
         """Test Git hooks CLI integration."""
-        from udl_rating_framework.cli.commands.integration import install_git_hooks
         from click.testing import CliRunner
+
+        from udl_rating_framework.cli.commands.integration import install_git_hooks
 
         # Mock the manager
         mock_manager = Mock()
@@ -613,7 +618,8 @@ class TestIntegrationCLI:
 
         with tempfile.TemporaryDirectory() as temp_dir:
             result = runner.invoke(
-                install_git_hooks, ["--repo-path", temp_dir, "--threshold", "0.8"]
+                install_git_hooks, ["--repo-path",
+                                    temp_dir, "--threshold", "0.8"]
             )
 
             assert result.exit_code == 0
@@ -623,10 +629,11 @@ class TestIntegrationCLI:
     @patch("udl_rating_framework.cli.commands.integration.CICDIntegration")
     def test_cicd_cli_integration(self, mock_integration_class):
         """Test CI/CD CLI integration."""
+        from click.testing import CliRunner
+
         from udl_rating_framework.cli.commands.integration import (
             generate_cicd_workflows,
         )
-        from click.testing import CliRunner
 
         # Mock the integration
         mock_integration = Mock()
@@ -657,8 +664,9 @@ class TestIntegrationCLI:
     @patch("udl_rating_framework.cli.commands.integration.GitHookManager")
     def test_git_hooks_uninstall_cli(self, mock_manager_class):
         """Test Git hooks uninstall CLI command."""
-        from udl_rating_framework.cli.commands.integration import uninstall_git_hooks
         from click.testing import CliRunner
+
+        from udl_rating_framework.cli.commands.integration import uninstall_git_hooks
 
         # Mock the manager
         mock_manager = Mock()
@@ -668,7 +676,8 @@ class TestIntegrationCLI:
         runner = CliRunner()
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            result = runner.invoke(uninstall_git_hooks, ["--repo-path", temp_dir])
+            result = runner.invoke(uninstall_git_hooks, [
+                                   "--repo-path", temp_dir])
 
             assert result.exit_code == 0
             assert "✅ Git hooks uninstalled successfully" in result.output
@@ -677,8 +686,9 @@ class TestIntegrationCLI:
     @patch("udl_rating_framework.cli.commands.integration.GitHookManager")
     def test_git_hooks_check_staged_cli(self, mock_manager_class):
         """Test Git hooks check-staged CLI command."""
-        from udl_rating_framework.cli.commands.integration import check_staged_files
         from click.testing import CliRunner
+
+        from udl_rating_framework.cli.commands.integration import check_staged_files
 
         # Mock the manager
         mock_manager = Mock()
@@ -692,7 +702,8 @@ class TestIntegrationCLI:
 
         with tempfile.TemporaryDirectory() as temp_dir:
             result = runner.invoke(
-                check_staged_files, ["--repo-path", temp_dir, "--threshold", "0.7"]
+                check_staged_files, ["--repo-path",
+                                     temp_dir, "--threshold", "0.7"]
             )
 
             assert result.exit_code == 0
@@ -701,10 +712,11 @@ class TestIntegrationCLI:
     @patch("udl_rating_framework.cli.commands.integration.CICDIntegration")
     def test_cicd_validate_cli(self, mock_integration_class):
         """Test CI/CD validate CLI command."""
+        from click.testing import CliRunner
+
         from udl_rating_framework.cli.commands.integration import (
             validate_cicd_workflows,
         )
-        from click.testing import CliRunner
 
         # Mock the integration
         mock_integration = Mock()
@@ -728,10 +740,11 @@ class TestIntegrationCLI:
 
     def test_cicd_generate_multiple_platforms(self):
         """Test CI/CD workflow generation for multiple platforms."""
+        from click.testing import CliRunner
+
         from udl_rating_framework.cli.commands.integration import (
             generate_cicd_workflows,
         )
-        from click.testing import CliRunner
 
         runner = CliRunner()
 
@@ -755,7 +768,8 @@ class TestIntegrationCLI:
 
             # Check files were created
             github_workflow = (
-                Path(temp_dir) / ".github" / "workflows" / "udl-quality-check.yml"
+                Path(temp_dir) / ".github" /
+                "workflows" / "udl-quality-check.yml"
             )
             jenkinsfile = Path(temp_dir) / "Jenkinsfile"
 
@@ -773,7 +787,8 @@ class TestGitHooksEndToEnd:
             git_dir = repo_path / ".git"
             git_dir.mkdir()
 
-            manager = GitHookManager(repo_path=repo_path, min_quality_threshold=0.7)
+            manager = GitHookManager(
+                repo_path=repo_path, min_quality_threshold=0.7)
 
             # Install hooks
             success = manager.install_hooks()
@@ -810,7 +825,8 @@ class TestGitHooksEndToEnd:
             git_dir = repo_path / ".git"
             git_dir.mkdir()
 
-            manager = GitHookManager(repo_path=repo_path, min_quality_threshold=0.7)
+            manager = GitHookManager(
+                repo_path=repo_path, min_quality_threshold=0.7)
 
             # Install hooks
             success = manager.install_hooks()
@@ -841,7 +857,8 @@ class TestCICDEndToEnd:
             config = CICDConfig(min_quality_threshold=0.75, timeout_minutes=25)
             integration = CICDIntegration(config)
 
-            created_files = integration.create_workflow_files(output_dir, ["github"])
+            created_files = integration.create_workflow_files(
+                output_dir, ["github"])
 
             assert "github" in created_files
             workflow_file = created_files["github"]
@@ -863,7 +880,8 @@ class TestCICDEndToEnd:
             config = CICDConfig(min_quality_threshold=0.8, timeout_minutes=30)
             integration = CICDIntegration(config)
 
-            created_files = integration.create_workflow_files(output_dir, ["jenkins"])
+            created_files = integration.create_workflow_files(
+                output_dir, ["jenkins"])
 
             assert "jenkins" in created_files
             jenkinsfile = created_files["jenkins"]
@@ -883,7 +901,8 @@ class TestCICDEndToEnd:
             integration = CICDIntegration()
             platforms = ["github", "jenkins", "gitlab", "azure"]
 
-            created_files = integration.create_workflow_files(output_dir, platforms)
+            created_files = integration.create_workflow_files(
+                output_dir, platforms)
 
             assert len(created_files) == 4
             for platform in platforms:

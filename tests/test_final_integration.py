@@ -11,26 +11,27 @@ This module implements Task 23: Final integration and system testing
 Requirements: All
 """
 
-import pytest
-import tempfile
 import json
+import shutil
+import tempfile
 from pathlib import Path
 from typing import List
-import shutil
+
+import pytest
 from click.testing import CliRunner
 
 from udl_rating_framework.cli.main import cli
-from udl_rating_framework.core.representation import UDLRepresentation
+from udl_rating_framework.core.aggregation import MetricAggregator
+from udl_rating_framework.core.confidence import ConfidenceCalculator
 from udl_rating_framework.core.metrics.base import MetricRegistry
-from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 from udl_rating_framework.core.metrics.expressiveness import ExpressivenessMetric
 from udl_rating_framework.core.metrics.structural_coherence import (
     StructuralCoherenceMetric,
 )
-from udl_rating_framework.core.aggregation import MetricAggregator
-from udl_rating_framework.core.confidence import ConfidenceCalculator
 from udl_rating_framework.core.pipeline import RatingPipeline
+from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.io.file_discovery import FileDiscovery
 from udl_rating_framework.io.report_generator import ReportGenerator
 
@@ -52,7 +53,8 @@ class TestFinalIntegration:
         MetricRegistry.register("consistency", ConsistencyMetric)
         MetricRegistry.register("completeness", CompletenessMetric)
         MetricRegistry.register("expressiveness", ExpressivenessMetric)
-        MetricRegistry.register("structural_coherence", StructuralCoherenceMetric)
+        MetricRegistry.register("structural_coherence",
+                                StructuralCoherenceMetric)
 
         # Initialize core components
         self.metrics = {
@@ -294,7 +296,8 @@ class TestFinalIntegration:
             discovery_result = self.file_discovery.discover_files(temp_dir)
             discovered_files = discovery_result.discovered_files
             # Should discover readable files, skip unreadable ones
-            assert len(discovered_files) >= 3  # At least empty, invalid, large, special
+            # At least empty, invalid, large, special
+            assert len(discovered_files) >= 3
         except Exception as e:
             pytest.fail(f"File discovery failed on error scenarios: {e}")
 
@@ -521,12 +524,14 @@ class TestFinalIntegration:
                     )
 
             except Exception as e:
-                mathematical_errors.append(f"{udl_file.name}: UDL parsing failed: {e}")
+                mathematical_errors.append(
+                    f"{udl_file.name}: UDL parsing failed: {e}")
 
         # Report any mathematical errors
         if mathematical_errors:
             error_report = "\n".join(mathematical_errors)
-            pytest.fail(f"Mathematical correctness violations found:\n{error_report}")
+            pytest.fail(
+                f"Mathematical correctness violations found:\n{error_report}")
 
         print(
             f"✓ Mathematical correctness verified on {len(udl_files[:10])} UDL examples"
@@ -645,11 +650,14 @@ class TestFinalIntegration:
 
                 # Verify reasonable performance bounds
                 if size_name == "small" and processing_time > 10:
-                    pytest.fail(f"Small UDL took too long: {processing_time:.3f}s")
+                    pytest.fail(
+                        f"Small UDL took too long: {processing_time:.3f}s")
                 elif size_name == "medium" and processing_time > 30:
-                    pytest.fail(f"Medium UDL took too long: {processing_time:.3f}s")
+                    pytest.fail(
+                        f"Medium UDL took too long: {processing_time:.3f}s")
                 elif size_name == "large" and processing_time > 120:
-                    pytest.fail(f"Large UDL took too long: {processing_time:.3f}s")
+                    pytest.fail(
+                        f"Large UDL took too long: {processing_time:.3f}s")
 
             except Exception as e:
                 performance_results.append(

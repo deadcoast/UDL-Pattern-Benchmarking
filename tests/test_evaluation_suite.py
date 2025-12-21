@@ -9,15 +9,16 @@ This module tests:
 - Bootstrap confidence intervals
 """
 
-import pytest
 import numpy as np
-from hypothesis import given, strategies as st, settings
+import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 from scipy.stats import pearsonr, spearmanr
 from sklearn.linear_model import LinearRegression
 
 from udl_rating_framework.evaluation.evaluation_suite import (
-    EvaluationSuite,
     EvaluationResult,
+    EvaluationSuite,
 )
 
 
@@ -137,12 +138,14 @@ class TestEvaluationSuite:
         )
 
         # Verify ECE is computed and bounded
-        assert isinstance(ece, (int, float)), f"ECE should be numeric, got {type(ece)}"
+        assert isinstance(
+            ece, (int, float)), f"ECE should be numeric, got {type(ece)}"
         assert 0 <= ece <= 1, f"ECE should be in [0,1], got {ece}"
 
         # Test with perfectly calibrated data (confidence = accuracy)
         # Create data where confidence matches accuracy in each bin
-        perfect_confidences = y_true.astype(float)  # 0 or 1 confidence matching labels
+        # 0 or 1 confidence matching labels
+        perfect_confidences = y_true.astype(float)
         perfect_ece = self.suite.compute_calibration_error(
             y_true, y_pred, perfect_confidences, n_bins=n_bins
         )
@@ -187,7 +190,8 @@ class TestEvaluationSuite:
 
         # For normal errors, we expect higher p-values (though this is probabilistic)
         # We just verify the test runs and produces reasonable values
-        assert not np.isnan(shapiro_stat), "Shapiro statistic should not be NaN"
+        assert not np.isnan(
+            shapiro_stat), "Shapiro statistic should not be NaN"
         assert not np.isnan(p_value), "P-value should not be NaN"
 
     @given(
@@ -208,7 +212,8 @@ class TestEvaluationSuite:
         y_pred = y_true + noise_level * np.random.randn(n_samples)
 
         # Compute bootstrap confidence intervals
-        bootstrap_cis = self.suite.bootstrap_confidence_intervals(y_true, y_pred)
+        bootstrap_cis = self.suite.bootstrap_confidence_intervals(
+            y_true, y_pred)
 
         # Verify bootstrap samples ≥ 1000
         assert self.suite.bootstrap_samples >= 1000, (
@@ -268,12 +273,15 @@ class TestEvaluationSuiteIntegration:
         )
 
         # Verify results
-        assert len(cv_scores) == 5, f"Should have 5 CV scores, got {len(cv_scores)}"
+        assert len(
+            cv_scores) == 5, f"Should have 5 CV scores, got {len(cv_scores)}"
         assert all(isinstance(score, (int, float)) for score in cv_scores), (
             "All CV scores should be numeric"
         )
-        assert isinstance(mean_score, (int, float)), "Mean score should be numeric"
-        assert isinstance(std_score, (int, float)), "Std score should be numeric"
+        assert isinstance(mean_score, (int, float)
+                          ), "Mean score should be numeric"
+        assert isinstance(std_score, (int, float)
+                          ), "Std score should be numeric"
         assert std_score >= 0, "Standard deviation should be non-negative"
 
     def test_metric_computation(self):
@@ -291,9 +299,11 @@ class TestEvaluationSuiteIntegration:
         # Verify result structure
         assert isinstance(result, EvaluationResult)
         assert isinstance(result.pearson_correlation, (int, float))
-        assert isinstance(result.pearson_ci, tuple) and len(result.pearson_ci) == 2
+        assert isinstance(result.pearson_ci, tuple) and len(
+            result.pearson_ci) == 2
         assert isinstance(result.spearman_correlation, (int, float))
-        assert isinstance(result.spearman_ci, tuple) and len(result.spearman_ci) == 2
+        assert isinstance(result.spearman_ci, tuple) and len(
+            result.spearman_ci) == 2
         assert isinstance(result.calibration_error, (int, float))
         assert isinstance(result.shapiro_statistic, (int, float))
         assert isinstance(result.shapiro_p_value, (int, float))

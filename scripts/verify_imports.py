@@ -7,8 +7,8 @@ Validates: Requirements 6.5
 """
 
 import ast
-import sys
 import importlib
+import sys
 from pathlib import Path
 from typing import List, Tuple
 
@@ -41,7 +41,8 @@ def extract_imports(file_path: Path) -> List[Tuple[str, int, str]]:
                     for alias in node.names:
                         if alias.name != "*":
                             full_name = f"{node.module}.{alias.name}"
-                            imports.append((full_name, node.lineno, "from_attr"))
+                            imports.append(
+                                (full_name, node.lineno, "from_attr"))
     except (SyntaxError, UnicodeDecodeError) as e:
         print(f"Warning: Could not parse {file_path}: {e}")
 
@@ -288,7 +289,8 @@ def main():
             if module_name.startswith("udl_rating_framework"):
                 success, error = verify_import(module_name)
                 if not success:
-                    failed_imports.append((file_path, module_name, line_no, error))
+                    failed_imports.append(
+                        (file_path, module_name, line_no, error))
 
     print("=" * 60)
     print("Results")
@@ -301,7 +303,8 @@ def main():
     ]
 
     print(f"Total imports found: {len(all_imports)}")
-    print(f"Internal imports (udl_rating_framework.*): {len(internal_imports)}")
+    print(
+        f"Internal imports (udl_rating_framework.*): {len(internal_imports)}")
     print()
 
     if failed_imports:

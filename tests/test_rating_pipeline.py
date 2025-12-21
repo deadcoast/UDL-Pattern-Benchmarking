@@ -4,18 +4,20 @@ Tests for the rating computation pipeline.
 Tests both unit functionality and property-based correctness.
 """
 
-import pytest
-from hypothesis import given, strategies as st, assume
-import tempfile
 import os
+import tempfile
 
+import pytest
+from hypothesis import assume, given
+from hypothesis import strategies as st
+
+from udl_rating_framework.core.metrics.base import MetricRegistry
 from udl_rating_framework.core.pipeline import (
-    RatingPipeline,
-    QualityReport,
     ComputationStep,
+    QualityReport,
+    RatingPipeline,
 )
 from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.base import MetricRegistry
 
 
 class TestRatingPipeline:
@@ -24,8 +26,8 @@ class TestRatingPipeline:
     def setup_method(self):
         """Set up test fixtures."""
         # Ensure we have some metrics registered for testing
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 
         # Clear registry and register test metrics
         MetricRegistry.clear()
@@ -167,8 +169,8 @@ class TestIndependentMetricComputation:
     def setup_method(self):
         """Set up test fixtures."""
         # Ensure we have metrics registered for testing
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.expressiveness import (
             ExpressivenessMetric,
         )
@@ -257,7 +259,8 @@ class TestIndependentMetricComputation:
         # Verify that individual and combined results match
         for metric_name in working_metrics:
             individual_value = individual_results[metric_name]
-            combined_value = combined_report.metric_scores.get(metric_name, 0.0)
+            combined_value = combined_report.metric_scores.get(
+                metric_name, 0.0)
 
             # Allow small numerical differences due to floating point precision
             assert abs(individual_value - combined_value) < 1e-10, (
@@ -273,8 +276,10 @@ class TestIndependentMetricComputation:
 
             # Results should be identical regardless of computation order
             for metric_name in working_metrics:
-                original_value = combined_report.metric_scores.get(metric_name, 0.0)
-                rotated_value = rotated_report.metric_scores.get(metric_name, 0.0)
+                original_value = combined_report.metric_scores.get(
+                    metric_name, 0.0)
+                rotated_value = rotated_report.metric_scores.get(
+                    metric_name, 0.0)
 
                 assert abs(original_value - rotated_value) < 1e-10, (
                     f"Metric {metric_name} order-dependent: original={original_value}, rotated={rotated_value}"
@@ -283,7 +288,8 @@ class TestIndependentMetricComputation:
     @given(
         st.text(
             alphabet=st.characters(
-                whitelist_categories=("Lu", "Ll", "Nd", "Pc", "Pd", "Ps", "Pe", "Po")
+                whitelist_categories=(
+                    "Lu", "Ll", "Nd", "Pc", "Pd", "Ps", "Pe", "Po")
             ),
             min_size=10,
             max_size=200,
@@ -338,7 +344,8 @@ class TestIndependentMetricComputation:
             # Compute together and verify independence
             working_metrics = list(results.keys())
             try:
-                pipeline_combined = RatingPipeline(metric_names=working_metrics)
+                pipeline_combined = RatingPipeline(
+                    metric_names=working_metrics)
                 combined_report = pipeline_combined.compute_rating(udl)
 
                 for metric_name in working_metrics:
@@ -401,8 +408,8 @@ class TestResultAggregation:
     def setup_method(self):
         """Set up test fixtures."""
         # Ensure we have metrics registered for testing
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.expressiveness import (
             ExpressivenessMetric,
         )
@@ -502,11 +509,14 @@ class TestResultAggregation:
                 f"Report {i} is not a QualityReport instance"
             )
 
-            assert hasattr(report, "overall_score"), f"Report {i} missing overall_score"
+            assert hasattr(
+                report, "overall_score"), f"Report {i} missing overall_score"
 
-            assert hasattr(report, "confidence"), f"Report {i} missing confidence"
+            assert hasattr(
+                report, "confidence"), f"Report {i} missing confidence"
 
-            assert hasattr(report, "metric_scores"), f"Report {i} missing metric_scores"
+            assert hasattr(
+                report, "metric_scores"), f"Report {i} missing metric_scores"
 
             assert hasattr(report, "udl_file"), f"Report {i} missing udl_file"
 
@@ -680,8 +690,8 @@ class TestRatingPipelineUnits:
     def setup_method(self):
         """Set up test fixtures."""
         # Ensure we have metrics registered for testing
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 
         # Clear registry and register test metrics
         MetricRegistry.clear()
@@ -857,7 +867,8 @@ class TestRatingPipelineUnits:
         configurations = [
             {"metric_names": ["consistency"], "enable_tracing": True},
             {"metric_names": ["completeness"], "enable_tracing": False},
-            {"metric_names": ["consistency", "completeness"], "enable_tracing": True},
+            {"metric_names": ["consistency", "completeness"],
+                "enable_tracing": True},
         ]
 
         for config in configurations:
@@ -879,7 +890,8 @@ class TestRatingPipelineUnits:
             ]
 
             for field in required_fields:
-                assert hasattr(report, field), f"Report missing required field: {field}"
+                assert hasattr(
+                    report, field), f"Report missing required field: {field}"
 
             # Verify field types
             assert isinstance(report.overall_score, (int, float))
@@ -896,7 +908,8 @@ class TestRatingPipelineUnits:
             for metric_name in config["metric_names"]:
                 if metric_name in report.metric_scores:
                     assert metric_name in report.metric_formulas
-                    assert isinstance(report.metric_scores[metric_name], (int, float))
+                    assert isinstance(
+                        report.metric_scores[metric_name], (int, float))
                     assert isinstance(report.metric_formulas[metric_name], str)
 
             # Verify tracing behavior

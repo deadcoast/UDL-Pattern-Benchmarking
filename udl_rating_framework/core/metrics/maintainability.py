@@ -6,8 +6,9 @@ Measures maintainability of UDL using software engineering metrics adapted for g
 
 import math
 from typing import Dict, List
+
 from udl_rating_framework.core.metrics.base import QualityMetric
-from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType
+from udl_rating_framework.core.representation import Token, TokenType, UDLRepresentation
 
 
 class MaintainabilityMetric(QualityMetric):
@@ -51,7 +52,8 @@ class MaintainabilityMetric(QualityMetric):
 
         # Compute component metrics
         halstead_volume = self._compute_halstead_volume(tokens)
-        cyclomatic_complexity = self._compute_cyclomatic_complexity(tokens, rules)
+        cyclomatic_complexity = self._compute_cyclomatic_complexity(
+            tokens, rules)
         lines_of_code = self._compute_lines_of_code(tokens)
         comment_ratio = self._compute_comment_ratio(tokens)
 
@@ -152,7 +154,8 @@ class MaintainabilityMetric(QualityMetric):
             if hasattr(rule, "rhs"):
                 # Count alternatives (assuming | separates alternatives)
                 rhs_text = (
-                    " ".join(rule.rhs) if isinstance(rule.rhs, list) else str(rule.rhs)
+                    " ".join(rule.rhs) if isinstance(
+                        rule.rhs, list) else str(rule.rhs)
                 )
                 alternatives = rhs_text.count("|")
                 complexity += alternatives

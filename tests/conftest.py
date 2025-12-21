@@ -1,12 +1,15 @@
+from types import SimpleNamespace
+
 import pytest
 import torch
+
 from models.ctm import ContinuousThoughtMachine
 from models.ctm_qamnist import ContinuousThoughtMachineQAMNIST
-from utils.samplers import QAMNISTSampler
 from tasks.qamnist.utils import get_dataset
+from tasks.rl.train import Agent
 from tests.test_data import (
-    GOLDEN_TEST_EXPECTED_ACTION_LOGITS_RL,
     GOLDEN_TEST_EXPECTED_ACTION_LOG_PROB_RL,
+    GOLDEN_TEST_EXPECTED_ACTION_LOGITS_RL,
     GOLDEN_TEST_EXPECTED_ACTION_PROBS_RL,
     GOLDEN_TEST_EXPECTED_ACTION_RL,
     GOLDEN_TEST_EXPECTED_ACTIVATED_STATE_TRACE_RL,
@@ -21,11 +24,11 @@ from tests.test_data import (
     GOLDEN_TEST_EXPECTED_POST_ACTIVATIONS_TRACKING_PARITY,
     GOLDEN_TEST_EXPECTED_POST_ACTIVATIONS_TRACKING_QAMNIST,
     GOLDEN_TEST_EXPECTED_POST_ACTIVATIONS_TRACKING_RL,
-    GOLDEN_TEST_EXPECTED_PREDICTIONS_PARITY,
-    GOLDEN_TEST_EXPECTED_PREDICTIONS_QAMNIST,
     GOLDEN_TEST_EXPECTED_PRE_ACTIVATIONS_TRACKING_PARITY,
     GOLDEN_TEST_EXPECTED_PRE_ACTIVATIONS_TRACKING_QAMNIST,
     GOLDEN_TEST_EXPECTED_PRE_ACTIVATIONS_TRACKING_RL,
+    GOLDEN_TEST_EXPECTED_PREDICTIONS_PARITY,
+    GOLDEN_TEST_EXPECTED_PREDICTIONS_QAMNIST,
     GOLDEN_TEST_EXPECTED_STATE_TRACE_RL,
     GOLDEN_TEST_EXPECTED_SYNCH_ACTION_TRACKING_PARITY,
     GOLDEN_TEST_EXPECTED_SYNCH_ACTION_TRACKING_QAMNIST,
@@ -36,8 +39,7 @@ from tests.test_data import (
     GOLDEN_TEST_SYNCH_OUT_TRACKING_RL,
 )
 from utils.housekeeping import set_seed
-from tasks.rl.train import Agent
-from types import SimpleNamespace
+from utils.samplers import QAMNISTSampler
 
 # --- Housekeeping ---
 

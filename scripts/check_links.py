@@ -32,7 +32,8 @@ def _import_link_validator():
     module_path = (
         project_root / "udl_rating_framework" / "validation" / "link_validator.py"
     )
-    spec = importlib.util.spec_from_file_location("link_validator", module_path)
+    spec = importlib.util.spec_from_file_location(
+        "link_validator", module_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -147,7 +148,8 @@ class LinkChecker:
                     by_type[link_type_key]["broken"] += 1
 
                     try:
-                        rel_source = link.source_file.relative_to(self.project_root)
+                        rel_source = link.source_file.relative_to(
+                            self.project_root)
                     except ValueError:
                         rel_source = link.source_file
 
@@ -349,7 +351,8 @@ Examples:
     args = parser.parse_args()
 
     # Run link checker
-    checker = LinkChecker(project_root=Path(args.project_root), verbose=args.verbose)
+    checker = LinkChecker(project_root=Path(
+        args.project_root), verbose=args.verbose)
 
     if args.verbose:
         print("Starting link validation...")
