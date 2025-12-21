@@ -6,11 +6,12 @@ effect size computation, and ranking with confidence intervals.
 """
 
 import logging
-from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 from scipy import stats
-from scipy.stats import ttest_ind, mannwhitneyu
+from scipy.stats import mannwhitneyu, ttest_ind
 
 from udl_rating_framework.core.pipeline import QualityReport
 
@@ -124,7 +125,8 @@ class ComparisonEngine:
         rankings = self._compute_rankings_with_confidence(reports)
 
         # Compute summary statistics
-        summary_stats = self._compute_summary_statistics(reports, pairwise_results)
+        summary_stats = self._compute_summary_statistics(
+            reports, pairwise_results)
 
         return ComparisonSummary(
             pairwise_results=pairwise_results,
@@ -171,11 +173,13 @@ class ComparisonEngine:
                 )
 
                 # Compute effect size (Cohen's d)
-                cohens_d = self._compute_cohens_d(score1, score2, report1, report2)
+                cohens_d = self._compute_cohens_d(
+                    score1, score2, report1, report2)
 
                 # Determine significance and effect size interpretation
                 is_significant = min(ttest_p, wilcoxon_p or 1.0) < self.alpha
-                effect_interpretation = self._interpret_effect_size(abs(cohens_d))
+                effect_interpretation = self._interpret_effect_size(
+                    abs(cohens_d))
 
                 result = ComparisonResult(
                     udl1_name=report1.udl_file,
@@ -419,8 +423,10 @@ class ComparisonEngine:
                 udl_name=report.udl_file,
                 score=float(scores[i]),
                 rank=int(base_ranks[i]),
-                confidence_interval=(float(score_cis[i][0]), float(score_cis[i][1])),
-                rank_confidence_interval=(int(rank_cis[i][0]), int(rank_cis[i][1])),
+                confidence_interval=(
+                    float(score_cis[i][0]), float(score_cis[i][1])),
+                rank_confidence_interval=(
+                    int(rank_cis[i][0]), int(rank_cis[i][1])),
             )
             results.append(result)
 

@@ -216,8 +216,9 @@ class TestBasicFunctionality:
 
     def test_confidence_calculator_basic_computation(self):
         """Test basic confidence computation."""
-        from udl_rating_framework.core.confidence import ConfidenceCalculator
         import numpy as np
+
+        from udl_rating_framework.core.confidence import ConfidenceCalculator
 
         calculator = ConfidenceCalculator()
 

@@ -5,23 +5,24 @@ Tests the time series analysis, portfolio analysis, trend prediction,
 improvement advisory, and business intelligence export capabilities.
 """
 
-import pytest
-import numpy as np
-import pandas as pd
+import json
+import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
-import tempfile
-import json
 
-from udl_rating_framework.core.pipeline import QualityReport
+import numpy as np
+import pandas as pd
+import pytest
+
 from udl_rating_framework.analytics import (
-    TimeSeriesAnalyzer,
-    PortfolioAnalyzer,
-    TrendPredictor,
-    ImprovementAdvisor,
     BusinessIntelligenceExporter,
+    ImprovementAdvisor,
+    PortfolioAnalyzer,
+    TimeSeriesAnalyzer,
+    TrendPredictor,
 )
 from udl_rating_framework.analytics.bi_exporter import BIExportConfig
+from udl_rating_framework.core.pipeline import QualityReport
 
 
 @pytest.fixture
@@ -31,7 +32,8 @@ def sample_reports():
     base_time = datetime.now() - timedelta(days=30)
 
     # Create reports for multiple UDL files over time
-    udl_files = ["project1/grammar.udl", "project1/lexer.udl", "project2/parser.udl"]
+    udl_files = ["project1/grammar.udl",
+                 "project1/lexer.udl", "project2/parser.udl"]
 
     for i in range(30):
         for j, udl_file in enumerate(udl_files):
@@ -67,7 +69,8 @@ def sample_reports():
                 overall_score=overall_score,
                 confidence=confidence,
                 metric_scores=metric_scores,
-                metric_formulas={k: f"formula_{k}" for k in metric_scores.keys()},
+                metric_formulas={
+                    k: f"formula_{k}" for k in metric_scores.keys()},
                 computation_trace=[],
                 error_bounds={
                     k: (v - 0.05, v + 0.05) for k, v in metric_scores.items()
@@ -209,7 +212,8 @@ class TestPortfolioAnalyzer:
             "project2/parser.udl": "ProjectB",
         }
 
-        comparison = analyzer.analyze_portfolio(sample_reports, project_mapping)
+        comparison = analyzer.analyze_portfolio(
+            sample_reports, project_mapping)
 
         assert "ProjectA" in comparison.project_profiles
         assert "ProjectB" in comparison.project_profiles
@@ -243,7 +247,8 @@ class TestTrendPredictor:
         predictor = TrendPredictor(prediction_horizon=10)
 
         predictions = predictor.predict_quality_trends(
-            sample_reports, "project1/grammar.udl", ["overall_score", "confidence"]
+            sample_reports, "project1/grammar.udl", [
+                "overall_score", "confidence"]
         )
 
         assert len(predictions) == 2
@@ -254,7 +259,8 @@ class TestTrendPredictor:
             assert len(result.predictions) == 10  # prediction_horizon
             assert result.confidence_intervals is not None
             assert len(result.model_performance) > 0
-            assert result.model_type in ["linear", "polynomial", "random_forest"]
+            assert result.model_type in [
+                "linear", "polynomial", "random_forest"]
 
     def test_analyze_portfolio_trends(self, sample_reports):
         """Test portfolio trend analysis."""
@@ -328,7 +334,8 @@ class TestImprovementAdvisor:
             warnings=["Warning 1", "Warning 2", "Warning 3"],
         )
 
-        plan = advisor.generate_improvement_plan([low_quality_report], "test.udl")
+        plan = advisor.generate_improvement_plan(
+            [low_quality_report], "test.udl")
 
         assert plan.udl_file == "test.udl"
         assert plan.current_score == 0.4
@@ -357,7 +364,8 @@ class TestImprovementAdvisor:
         """Test portfolio improvement analysis."""
         advisor = ImprovementAdvisor()
 
-        recommendations = advisor.analyze_portfolio_improvements(sample_reports)
+        recommendations = advisor.analyze_portfolio_improvements(
+            sample_reports)
 
         assert isinstance(recommendations, dict)
         # Should have some recommendations for the portfolio
@@ -381,7 +389,8 @@ class TestImprovementAdvisor:
             warnings=[],
         )
 
-        plan = advisor.generate_improvement_plan([low_quality_report], "test.udl")
+        plan = advisor.generate_improvement_plan(
+            [low_quality_report], "test.udl")
         report = advisor.generate_improvement_report(plan)
 
         assert isinstance(report, str)
@@ -401,7 +410,8 @@ class TestBusinessIntelligenceExporter:
         with tempfile.TemporaryDirectory() as temp_dir:
             output_path = Path(temp_dir) / "test_export.csv"
 
-            dataset = exporter.export_quality_data(sample_reports, config, output_path)
+            dataset = exporter.export_quality_data(
+                sample_reports, config, output_path)
 
             assert dataset.name == "udl_quality_detailed"
             assert len(dataset.data) > 0
@@ -421,7 +431,8 @@ class TestBusinessIntelligenceExporter:
         with tempfile.TemporaryDirectory() as temp_dir:
             output_path = Path(temp_dir) / "test_export.json"
 
-            dataset = exporter.export_quality_data(sample_reports, config, output_path)
+            dataset = exporter.export_quality_data(
+                sample_reports, config, output_path)
 
             assert dataset.name == "udl_quality_summary"
             assert output_path.exists()
@@ -489,15 +500,20 @@ class TestBusinessIntelligenceExporter:
         exporter = BusinessIntelligenceExporter()
 
         # Test detailed level
-        config_detailed = BIExportConfig(format="csv", aggregation_level="detailed")
-        dataset_detailed = exporter.export_quality_data(sample_reports, config_detailed)
+        config_detailed = BIExportConfig(
+            format="csv", aggregation_level="detailed")
+        dataset_detailed = exporter.export_quality_data(
+            sample_reports, config_detailed)
 
         # Test summary level
-        config_summary = BIExportConfig(format="csv", aggregation_level="summary")
-        dataset_summary = exporter.export_quality_data(sample_reports, config_summary)
+        config_summary = BIExportConfig(
+            format="csv", aggregation_level="summary")
+        dataset_summary = exporter.export_quality_data(
+            sample_reports, config_summary)
 
         # Test executive level
-        config_executive = BIExportConfig(format="csv", aggregation_level="executive")
+        config_executive = BIExportConfig(
+            format="csv", aggregation_level="executive")
         dataset_executive = exporter.export_quality_data(
             sample_reports, config_executive
         )
@@ -530,7 +546,8 @@ class TestAnalyticsIntegration:
 
         # Improvement advisory
         advisor = ImprovementAdvisor()
-        plan = advisor.generate_improvement_plan(sample_reports, "project1/grammar.udl")
+        plan = advisor.generate_improvement_plan(
+            sample_reports, "project1/grammar.udl")
 
         # BI export
         exporter = BusinessIntelligenceExporter()

@@ -7,15 +7,15 @@ to improve performance on multi-core systems.
 
 import logging
 import multiprocessing as mp
-from concurrent.futures import ProcessPoolExecutor, as_completed
-from typing import List, Dict, Any, Callable, Optional, Tuple, Union
-from pathlib import Path
-import traceback
-from dataclasses import dataclass
 import time
+import traceback
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.pipeline import QualityReport, RatingPipeline
+from udl_rating_framework.core.representation import UDLRepresentation
 
 logger = logging.getLogger(__name__)
 
@@ -192,7 +192,8 @@ class ParallelProcessor:
         self.max_workers = max_workers or mp.cpu_count()
         self.chunk_size = chunk_size
 
-        logger.info(f"Initialized parallel processor with {self.max_workers} workers")
+        logger.info(
+            f"Initialized parallel processor with {self.max_workers} workers")
 
     def process_files_parallel(
         self,
@@ -271,7 +272,8 @@ class ParallelProcessor:
                         )
                         reports.append(error_report)
                         failed += 1
-                        logger.warning(f"Failed to process {file_path}: {result.error}")
+                        logger.warning(
+                            f"Failed to process {file_path}: {result.error}")
 
                     # Call progress callback if provided
                     if progress_callback:
@@ -401,7 +403,8 @@ class ParallelProcessor:
                         progress_callback(completed_tasks, total_tasks)
 
         total_time = time.time() - start_time
-        logger.info(f"Parallel metric computation completed in {total_time:.3f}s")
+        logger.info(
+            f"Parallel metric computation completed in {total_time:.3f}s")
 
         return results
 
@@ -531,7 +534,8 @@ def compute_metrics_for_udls_parallel(
         Dictionary mapping metric names to lists of (file_path, value_or_error) tuples
     """
     # Extract content from UDL representations
-    udl_contents = [(udl.file_path, udl.source_text) for udl in udl_representations]
+    udl_contents = [(udl.file_path, udl.source_text)
+                    for udl in udl_representations]
 
     # Create processor and compute metrics
     processor = ParallelProcessor(max_workers=max_workers)

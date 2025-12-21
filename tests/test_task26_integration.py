@@ -11,11 +11,12 @@ Tests end-to-end functionality for new grammar formats:
 
 import tempfile
 from pathlib import Path
-from udl_rating_framework.io.file_discovery import FileDiscovery
-from udl_rating_framework.core.representation import UDLRepresentation, GrammarFormat
-from udl_rating_framework.core.pipeline import RatingPipeline
-from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+
 from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+from udl_rating_framework.core.pipeline import RatingPipeline
+from udl_rating_framework.core.representation import GrammarFormat, UDLRepresentation
+from udl_rating_framework.io.file_discovery import FileDiscovery
 
 
 class TestTask26Integration:
@@ -56,7 +57,8 @@ class TestTask26Integration:
 
             # Verify all expected extensions are found
             discovered_extensions = {f.suffix for f in result.discovered_files}
-            expected_extensions = {Path(f).suffix for f in new_format_files.keys()}
+            expected_extensions = {
+                Path(f).suffix for f in new_format_files.keys()}
             assert discovered_extensions == expected_extensions
 
     def test_format_detection_accuracy(self):
@@ -97,7 +99,8 @@ class TestTask26Integration:
                 "grammar Test;\nexpr : term '+' factor ;\nterm : NUMBER ;",
                 ["expr", "term"],
             ),
-            ("test.peg", "Expr <- Term '+' Factor\nTerm <- NUMBER", ["Expr", "Term"]),
+            ("test.peg", "Expr <- Term '+' Factor\nTerm <- NUMBER",
+             ["Expr", "Term"]),
             (
                 "test.y",
                 "%% expr : term '+' factor ;\nterm : NUMBER ;",
@@ -108,8 +111,10 @@ class TestTask26Integration:
                 "expr ::= term '+' factor\nterm ::= NUMBER",
                 ["expr", "term"],
             ),
-            ("test.abnf", 'expr = term "+" factor\nterm = NUMBER', ["expr", "term"]),
-            ("test.rr", "expr: term plus factor\nterm: number", ["expr", "term"]),
+            ("test.abnf", 'expr = term "+" factor\nterm = NUMBER',
+             ["expr", "term"]),
+            ("test.rr", "expr: term plus factor\nterm: number",
+             ["expr", "term"]),
         ]
 
         for filename, content, expected_rules in test_cases:

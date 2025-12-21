@@ -6,20 +6,20 @@ of UDL files with parallel processing, progress tracking, and result aggregation
 """
 
 import json
-import time
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Callable, Iterator
-from dataclasses import dataclass, asdict
-from concurrent.futures import ProcessPoolExecutor, as_completed
-import multiprocessing as mp
 import logging
-from collections import defaultdict
-import tempfile
+import multiprocessing as mp
 import shutil
+import tempfile
+import time
+from collections import defaultdict
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from dataclasses import asdict, dataclass
+from pathlib import Path
+from typing import Any, Callable, Dict, Iterator, List, Optional
 
 from udl_rating_framework.core.pipeline import RatingPipeline
-from udl_rating_framework.io.file_discovery import FileDiscovery
 from udl_rating_framework.core.representation import UDLRepresentation
+from udl_rating_framework.io.file_discovery import FileDiscovery
 from udl_rating_framework.io.report_generator import ReportGenerator
 
 logger = logging.getLogger(__name__)
@@ -104,7 +104,8 @@ class BatchProcessor:
         # Setup caching
         if self.config.enable_caching:
             if self.config.cache_dir is None:
-                self.config.cache_dir = Path(tempfile.gettempdir()) / "udl_rating_cache"
+                self.config.cache_dir = Path(
+                    tempfile.gettempdir()) / "udl_rating_cache"
             self.config.cache_dir.mkdir(parents=True, exist_ok=True)
 
         # Processing state
@@ -209,7 +210,8 @@ class BatchProcessor:
         self.total_count = len(file_paths)
         self.processed_count = 0
 
-        logger.info(f"Starting streaming processing of {self.total_count} files")
+        logger.info(
+            f"Starting streaming processing of {self.total_count} files")
 
         with open(output_file, "w") as f:
             f.write("[\n")  # Start JSON array
@@ -217,8 +219,9 @@ class BatchProcessor:
 
             # Process in chunks to manage memory
             for i in range(0, len(file_paths), self.config.chunk_size):
-                chunk = file_paths[i : i + self.config.chunk_size]
-                chunk_tasks = [ProcessingTask(file_path=path) for path in chunk]
+                chunk = file_paths[i: i + self.config.chunk_size]
+                chunk_tasks = [ProcessingTask(file_path=path)
+                               for path in chunk]
 
                 # Process chunk
                 chunk_results = self._process_chunk(chunk_tasks)
@@ -240,7 +243,7 @@ class BatchProcessor:
             future_to_task = {}
 
             for i in range(0, len(tasks), self.config.chunk_size):
-                chunk = tasks[i : i + self.config.chunk_size]
+                chunk = tasks[i: i + self.config.chunk_size]
                 future = executor.submit(self._process_chunk_worker, chunk)
                 future_to_task[future] = chunk
 
@@ -275,7 +278,8 @@ class BatchProcessor:
 
         for task in tasks:
             result = self._process_single_task(task)
-            results.append({"file_path": str(task.file_path), "result": result})
+            results.append(
+                {"file_path": str(task.file_path), "result": result})
 
         return results
 
@@ -321,7 +325,8 @@ class BatchProcessor:
                 and task.retry_count < self.config.max_retries
             ):
                 task.retry_count += 1
-                logger.info(f"Retrying {task.file_path} (attempt {task.retry_count})")
+                logger.info(
+                    f"Retrying {task.file_path} (attempt {task.retry_count})")
                 return self._process_single_task(task)
 
             error_msg = str(e)
@@ -411,7 +416,8 @@ class BatchProcessor:
     def _update_progress(self) -> None:
         """Update progress and call callback if provided."""
         if self.config.progress_callback:
-            self.config.progress_callback(self.processed_count, self.total_count)
+            self.config.progress_callback(
+                self.processed_count, self.total_count)
 
         # Log progress periodically
         if self.processed_count % 100 == 0 or self.processed_count == self.total_count:
@@ -426,7 +432,8 @@ class BatchProcessor:
     def _create_batch_result(self, processing_time: float) -> BatchResult:
         """Create final batch result."""
         # Calculate statistics
-        successful_results = [r for r in self.results.values() if "error" not in r]
+        successful_results = [
+            r for r in self.results.values() if "error" not in r]
 
         if successful_results:
             scores = [r["overall_score"] for r in successful_results]
@@ -513,13 +520,15 @@ class BatchProcessor:
                 writer = csv.writer(f)
 
                 # Write header
-                writer.writerow(["file_path", "overall_score", "confidence", "status"])
+                writer.writerow(
+                    ["file_path", "overall_score", "confidence", "status"])
 
                 # Write results
                 for file_path, file_result in result.file_results.items():
                     if "error" in file_result:
                         writer.writerow(
-                            [file_path, "", "", f"Error: {file_result['error']}"]
+                            [file_path, "", "",
+                                f"Error: {file_result['error']}"]
                         )
                     else:
                         writer.writerow(
@@ -591,7 +600,8 @@ class BatchProcessor:
 
         total_successful = sum(result.quality_distribution.values())
         for level, count in result.quality_distribution.items():
-            percentage = (count / total_successful * 100) if total_successful > 0 else 0
+            percentage = (count / total_successful *
+                          100) if total_successful > 0 else 0
             html += f"<tr><td>{level.title()}</td><td>{count}</td><td>{percentage:.1f}%</td></tr>"
 
         html += """
@@ -634,7 +644,8 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="UDL Batch Processor")
-    parser.add_argument("input_path", type=Path, help="Input directory or file list")
+    parser.add_argument("input_path", type=Path,
+                        help="Input directory or file list")
     parser.add_argument(
         "--output", "-o", type=Path, required=True, help="Output file path"
     )
@@ -654,7 +665,8 @@ def main():
         "--timeout", type=float, default=30.0, help="Timeout per file in seconds"
     )
     parser.add_argument("--cache-dir", type=Path, help="Cache directory path")
-    parser.add_argument("--no-cache", action="store_true", help="Disable caching")
+    parser.add_argument("--no-cache", action="store_true",
+                        help="Disable caching")
     parser.add_argument(
         "--include-patterns",
         nargs="+",
@@ -684,7 +696,8 @@ def main():
 
     # Progress callback
     def progress_callback(processed: int, total: int):
-        print(f"Progress: {processed}/{total} ({processed / total * 100:.1f}%)")
+        print(
+            f"Progress: {processed}/{total} ({processed / total * 100:.1f}%)")
 
     config.progress_callback = progress_callback
 

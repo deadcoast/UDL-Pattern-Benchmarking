@@ -6,9 +6,11 @@ and CTM processing with enhanced interactivity.
 """
 
 import json
-import numpy as np
-from typing import Dict, List, Optional, Any
 from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import numpy as np
+
 from ..core.representation import UDLRepresentation
 from ..models.ctm_adapter import TrackingData
 
@@ -172,8 +174,10 @@ class WebGLVisualizer:
         # Process edges
         edges_3d = []
         for source, target, edge_data in graph.edges(data=True):
-            source_pos = next(n["position"] for n in nodes_3d if n["id"] == str(source))
-            target_pos = next(n["position"] for n in nodes_3d if n["id"] == str(target))
+            source_pos = next(n["position"]
+                              for n in nodes_3d if n["id"] == str(source))
+            target_pos = next(n["position"]
+                              for n in nodes_3d if n["id"] == str(target))
 
             edges_3d.append(
                 {
@@ -219,7 +223,8 @@ class WebGLVisualizer:
         return {
             "neurons": neurons_3d,
             "iterations": tracking_data.iterations,
-            "synchronization": tracking_data.synch_out[:, 0, :].tolist(),  # First batch
+            # First batch
+            "synchronization": tracking_data.synch_out[:, 0, :].tolist(),
         }
 
     def _get_node_color_rgb(self, node_type: str) -> List[float]:

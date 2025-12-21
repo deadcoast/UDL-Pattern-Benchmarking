@@ -35,8 +35,8 @@ from slowapi.util import get_remote_address
 try:
     from udl_rating_framework.core.pipeline import RatingPipeline
     from udl_rating_framework.core.representation import UDLRepresentation
-    from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
     from udl_rating_framework.io.file_discovery import FileDiscovery
+    from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
 
     FRAMEWORK_AVAILABLE = True
 except ImportError as e:
@@ -55,7 +55,8 @@ except ImportError as e:
             return SimpleNamespace(
                 overall_score=0.8,
                 confidence=0.9,
-                metric_scores={"ConsistencyMetric": 0.8, "CompletenessMetric": 0.9},
+                metric_scores={"ConsistencyMetric": 0.8,
+                               "CompletenessMetric": 0.9},
                 metric_formulas={
                     "ConsistencyMetric": "1 - (|Contradictions| + |Cycles|) / (|Rules| + 1)",
                     "CompletenessMetric": "|Defined| / |Required|",
@@ -116,11 +117,15 @@ class MetricScore(BaseModel):
 class UDLRatingResponse(BaseModel):
     """Response model for UDL rating."""
 
-    overall_score: float = Field(..., description="Overall quality score [0,1]")
+    overall_score: float = Field(...,
+                                 description="Overall quality score [0,1]")
     confidence: float = Field(..., description="Confidence in rating [0,1]")
-    metrics: List[MetricScore] = Field(..., description="Individual metric scores")
-    processing_time: float = Field(..., description="Processing time in seconds")
-    model_used: str = Field(..., description="Model type used (mathematical/ctm)")
+    metrics: List[MetricScore] = Field(...,
+                                       description="Individual metric scores")
+    processing_time: float = Field(...,
+                                   description="Processing time in seconds")
+    model_used: str = Field(...,
+                            description="Model type used (mathematical/ctm)")
     trace: Optional[List[Dict]] = Field(None, description="Computation trace")
 
 
@@ -136,7 +141,8 @@ class HealthResponse(BaseModel):
 class BatchRatingRequest(BaseModel):
     """Request model for batch UDL rating."""
 
-    udls: List[UDLRatingRequest] = Field(..., description="List of UDLs to rate")
+    udls: List[UDLRatingRequest] = Field(...,
+                                         description="List of UDLs to rate")
     parallel: bool = Field(True, description="Process in parallel")
 
 

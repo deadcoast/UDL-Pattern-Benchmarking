@@ -5,14 +5,15 @@ This module provides capabilities to analyze how UDL quality metrics
 change over time, identifying trends, patterns, and anomalies.
 """
 
+import warnings
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from datetime import datetime, timedelta
-from typing import Dict, List, Tuple, Optional
-from dataclasses import dataclass
 from scipy import stats
 from scipy.signal import find_peaks
-import warnings
 
 from udl_rating_framework.core.pipeline import QualityReport
 
@@ -105,7 +106,8 @@ class TimeSeriesAnalyzer:
         elif metric_name == "confidence":
             values = [r.confidence for r in file_reports]
         else:
-            values = [r.metric_scores.get(metric_name, np.nan) for r in file_reports]
+            values = [r.metric_scores.get(metric_name, np.nan)
+                      for r in file_reports]
 
         # Remove NaN values
         valid_indices = [i for i, v in enumerate(values) if not np.isnan(v)]
@@ -113,7 +115,8 @@ class TimeSeriesAnalyzer:
         values = [values[i] for i in valid_indices]
 
         if len(values) < self.min_observations:
-            raise ValueError("Insufficient valid data after removing NaN values")
+            raise ValueError(
+                "Insufficient valid data after removing NaN values")
 
         # Create pandas Series
         time_series = pd.Series(values, index=pd.DatetimeIndex(timestamps))
@@ -164,7 +167,8 @@ class TimeSeriesAnalyzer:
         results = {}
         for metric in metrics:
             try:
-                evolution = self.analyze_quality_evolution(reports, udl_file, metric)
+                evolution = self.analyze_quality_evolution(
+                    reports, udl_file, metric)
                 results[metric] = evolution
             except ValueError as e:
                 warnings.warn(f"Could not analyze metric {metric}: {e}")
@@ -176,7 +180,8 @@ class TimeSeriesAnalyzer:
         """Analyze trends in time series data."""
         # Convert timestamps to numeric for regression
         timestamps_numeric = np.array(
-            [(t - time_series.index[0]).total_seconds() for t in time_series.index]
+            [(t - time_series.index[0]).total_seconds()
+             for t in time_series.index]
         )
         values = time_series.values
 
@@ -226,7 +231,8 @@ class TimeSeriesAnalyzer:
                 try:
                     seasonal_autocorr = time_series.autocorr(lag=period)
                     if not np.isnan(seasonal_autocorr):
-                        max_strength = max(max_strength, abs(seasonal_autocorr))
+                        max_strength = max(
+                            max_strength, abs(seasonal_autocorr))
                 except Exception:
                     continue
 
@@ -245,12 +251,13 @@ class TimeSeriesAnalyzer:
 
         for i in range(window_size, len(values) - window_size):
             # Variance before and after point
-            var_before = np.var(values[i - window_size : i])
-            var_after = np.var(values[i : i + window_size])
+            var_before = np.var(values[i - window_size: i])
+            var_after = np.var(values[i: i + window_size])
 
             # F-test for variance change
             if var_before > 0 and var_after > 0:
-                f_stat = max(var_before, var_after) / min(var_before, var_after)
+                f_stat = max(var_before, var_after) / \
+                    min(var_before, var_after)
                 # Simple threshold (could be improved with proper statistical test)
                 if f_stat > 4.0:  # Significant variance change
                     change_points.append(time_series.index[i])
@@ -322,7 +329,8 @@ class TimeSeriesAnalyzer:
 
         # Convert to numeric timestamps
         timestamps_numeric = np.array(
-            [(t - time_series.index[0]).total_seconds() for t in time_series.index]
+            [(t - time_series.index[0]).total_seconds()
+             for t in time_series.index]
         )
         values = time_series.values
 
@@ -343,7 +351,8 @@ class TimeSeriesAnalyzer:
             last_timestamp + (i + 1) * time_delta for i in range(forecast_periods)
         ]
         future_timestamps_numeric = np.array(
-            [(t - time_series.index[0]).total_seconds() for t in future_timestamps]
+            [(t - time_series.index[0]).total_seconds()
+             for t in future_timestamps]
         )
 
         # Generate forecasts
@@ -352,7 +361,8 @@ class TimeSeriesAnalyzer:
         # Ensure forecasts are within valid range [0, 1]
         forecast_values = np.clip(forecast_values, 0.0, 1.0)
 
-        forecast = pd.Series(forecast_values, index=pd.DatetimeIndex(future_timestamps))
+        forecast = pd.Series(
+            forecast_values, index=pd.DatetimeIndex(future_timestamps))
 
         # Generate confidence intervals (simple approach using residual standard error)
         residuals = values - (slope * timestamps_numeric + intercept)
@@ -360,8 +370,10 @@ class TimeSeriesAnalyzer:
 
         # 95% confidence intervals
         margin_of_error = 1.96 * residual_std
-        lower_bound = pd.Series(forecast_values - margin_of_error, index=forecast.index)
-        upper_bound = pd.Series(forecast_values + margin_of_error, index=forecast.index)
+        lower_bound = pd.Series(
+            forecast_values - margin_of_error, index=forecast.index)
+        upper_bound = pd.Series(
+            forecast_values + margin_of_error, index=forecast.index)
 
         # Clip confidence intervals to valid range
         lower_bound = lower_bound.clip(0.0, 1.0)
@@ -402,7 +414,8 @@ class TimeSeriesAnalyzer:
                 f"Moderate volatility (σ: {trend_analysis.volatility:.3f})"
             )
         else:
-            summary_parts.append(f"Low volatility (σ: {trend_analysis.volatility:.3f})")
+            summary_parts.append(
+                f"Low volatility (σ: {trend_analysis.volatility:.3f})")
 
         # Seasonality
         if trend_analysis.seasonality_strength > 0.3:
@@ -422,7 +435,8 @@ class TimeSeriesAnalyzer:
 
         # Anomalies
         if trend_analysis.anomalies:
-            summary_parts.append(f"{len(trend_analysis.anomalies)} anomalies detected")
+            summary_parts.append(
+                f"{len(trend_analysis.anomalies)} anomalies detected")
 
         # Autocorrelation
         if abs(trend_analysis.autocorrelation) > 0.5:
@@ -501,7 +515,8 @@ class TimeSeriesAnalyzer:
             if evolution.trend_analysis.change_points:
                 report_lines.extend(["**Change Points:**"])
                 for cp in evolution.trend_analysis.change_points:
-                    report_lines.append(f"- {cp.strftime('%Y-%m-%d %H:%M:%S')}")
+                    report_lines.append(
+                        f"- {cp.strftime('%Y-%m-%d %H:%M:%S')}")
                 report_lines.append("")
 
             if evolution.trend_analysis.anomalies:
@@ -526,7 +541,8 @@ class TimeSeriesAnalyzer:
                         "⚠️ Quality is declining significantly. Review recent changes and consider corrective actions."
                     )
             else:
-                report_lines.append("ℹ️ Quality is stable. Monitor for emerging trends.")
+                report_lines.append(
+                    "ℹ️ Quality is stable. Monitor for emerging trends.")
 
             if overall_evolution.trend_analysis.volatility > 0.1:
                 report_lines.append(

@@ -12,16 +12,17 @@ Tests that:
 - For any Python script in examples, running the script should complete without errors
 """
 
-import pytest
 import re
+import subprocess
 import sys
 import tempfile
-import subprocess
+from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Tuple
-from hypothesis import given, strategies as st, settings, assume
-from dataclasses import dataclass
 
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
 
 PROJECT_ROOT = Path(__file__).parent.parent
 
@@ -151,7 +152,8 @@ def get_documentation_files() -> List[Path]:
         doc_files.extend(PROJECT_ROOT.glob(pattern))
 
     # Filter out non-documentation directories
-    excluded_dirs = {".venv", "node_modules", ".git", "__pycache__", ".hypothesis"}
+    excluded_dirs = {".venv", "node_modules",
+                     ".git", "__pycache__", ".hypothesis"}
     filtered = []
     for f in doc_files:
         if not any(excluded in f.parts for excluded in excluded_dirs):
@@ -193,14 +195,12 @@ class TestCodeBlockExtraction:
         Each extracted code block should have required fields.
         """
         with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
-            f.write(
-                """# Test Document
+            f.write("""# Test Document
 
 ```python
 print("Hello, World!")
 ```
-"""
-            )
+""")
             temp_path = Path(f.name)
 
         try:
@@ -410,7 +410,8 @@ class TestNotebookCellExecution:
                     f"{notebook_path.name} cells not a list"
                 )
             except json.JSONDecodeError as e:
-                pytest.fail(f"Notebook {notebook_path.name} has invalid JSON: {e}")
+                pytest.fail(
+                    f"Notebook {notebook_path.name} has invalid JSON: {e}")
 
     def test_notebook_code_cells_are_valid_python(self):
         """
@@ -442,7 +443,8 @@ class TestNotebookCellExecution:
                             continue
 
                         try:
-                            compile(source, f"{notebook_path.name}:cell{i}", "exec")
+                            compile(
+                                source, f"{notebook_path.name}:cell{i}", "exec")
                         except SyntaxError:
                             # Some cells may have intentional syntax for demonstration
                             pass
@@ -471,7 +473,8 @@ class TestPropertyBasedExampleExecution:
 
         assume(not var_name.startswith("_"))
         assume(not keyword.iskeyword(var_name))
-        assume(var_name not in ("True", "False", "None"))  # Also exclude soft keywords
+        # Also exclude soft keywords
+        assume(var_name not in ("True", "False", "None"))
 
         code = f"{var_name} = 42\nprint({var_name})"
         success, error = execute_code_safely(code)

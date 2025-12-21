@@ -4,17 +4,19 @@ Tests for comparison engine functionality.
 Tests both property-based and unit tests for UDL comparison and statistical analysis.
 """
 
-import pytest
-import numpy as np
 from datetime import datetime
 from typing import List
-from hypothesis import given, strategies as st, settings
+
+import numpy as np
+import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 from hypothesis.strategies import composite
 
+from udl_rating_framework.core.pipeline import ComputationStep, QualityReport
 from udl_rating_framework.evaluation.comparison import (
     ComparisonEngine,
 )
-from udl_rating_framework.core.pipeline import QualityReport, ComputationStep
 
 
 # Test data generators
@@ -30,7 +32,8 @@ def quality_report_strategy(draw, min_score=0.0, max_score=1.0, num_metrics=4):
         )
     )
     confidence = draw(
-        st.floats(min_value=0.0, max_value=1.0, allow_nan=False, allow_infinity=False)
+        st.floats(min_value=0.0, max_value=1.0,
+                  allow_nan=False, allow_infinity=False)
     )
 
     # Generate metric scores
@@ -87,7 +90,8 @@ def quality_report_strategy(draw, min_score=0.0, max_score=1.0, num_metrics=4):
 @composite
 def multiple_reports_strategy(draw, min_reports=2, max_reports=10):
     """Generate multiple QualityReports for comparison testing."""
-    num_reports = draw(st.integers(min_value=min_reports, max_value=max_reports))
+    num_reports = draw(st.integers(
+        min_value=min_reports, max_value=max_reports))
     reports = []
 
     for i in range(num_reports):
@@ -210,14 +214,16 @@ class TestComparisonEngineProperties:
 
             # Wilcoxon test results (may be None for insufficient data)
             if result.wilcoxon_pvalue is not None:
-                assert isinstance(result.wilcoxon_statistic, (float, type(None)))
+                assert isinstance(result.wilcoxon_statistic,
+                                  (float, type(None)))
                 assert isinstance(result.wilcoxon_pvalue, float)
                 assert 0.0 <= result.wilcoxon_pvalue <= 1.0, (
                     f"Invalid Wilcoxon p-value: {result.wilcoxon_pvalue}"
                 )
 
             # Significance determination should be based on p-values
-            min_pvalue = min(result.ttest_pvalue, result.wilcoxon_pvalue or 1.0)
+            min_pvalue = min(result.ttest_pvalue,
+                             result.wilcoxon_pvalue or 1.0)
             expected_significance = min_pvalue < engine.alpha
             assert result.is_significant == expected_significance, (
                 f"Incorrect significance determination: {result.is_significant} != {expected_significance}"
@@ -273,7 +279,8 @@ class TestComparisonEngineUnitTests:
                 overall_score=0.8,
                 confidence=0.9,
                 metric_scores={"metric1": 0.7, "metric2": 0.9, "metric3": 0.8},
-                metric_formulas={"metric1": "f1", "metric2": "f2", "metric3": "f3"},
+                metric_formulas={"metric1": "f1",
+                                 "metric2": "f2", "metric3": "f3"},
                 computation_trace=[],
                 error_bounds={},
                 timestamp=datetime.now(),
@@ -283,7 +290,8 @@ class TestComparisonEngineUnitTests:
                 overall_score=0.6,
                 confidence=0.8,
                 metric_scores={"metric1": 0.5, "metric2": 0.7, "metric3": 0.6},
-                metric_formulas={"metric1": "f1", "metric2": "f2", "metric3": "f3"},
+                metric_formulas={"metric1": "f1",
+                                 "metric2": "f2", "metric3": "f3"},
                 computation_trace=[],
                 error_bounds={},
                 timestamp=datetime.now(),
@@ -293,7 +301,8 @@ class TestComparisonEngineUnitTests:
                 overall_score=0.9,
                 confidence=0.95,
                 metric_scores={"metric1": 0.9, "metric2": 0.9, "metric3": 0.9},
-                metric_formulas={"metric1": "f1", "metric2": "f2", "metric3": "f3"},
+                metric_formulas={"metric1": "f1",
+                                 "metric2": "f2", "metric3": "f3"},
                 computation_trace=[],
                 error_bounds={},
                 timestamp=datetime.now(),
@@ -313,9 +322,12 @@ class TestComparisonEngineUnitTests:
         }
 
         # Check expected differences
-        assert abs(differences[("udl1.udl", "udl2.udl")] - 0.2) < 1e-10  # 0.8 - 0.6
-        assert abs(differences[("udl1.udl", "udl3.udl")] - (-0.1)) < 1e-10  # 0.8 - 0.9
-        assert abs(differences[("udl2.udl", "udl3.udl")] - (-0.3)) < 1e-10  # 0.6 - 0.9
+        assert abs(differences[("udl1.udl", "udl2.udl")
+                               ] - 0.2) < 1e-10  # 0.8 - 0.6
+        assert abs(differences[("udl1.udl", "udl3.udl")
+                               ] - (-0.1)) < 1e-10  # 0.8 - 0.9
+        assert abs(differences[("udl2.udl", "udl3.udl")
+                               ] - (-0.3)) < 1e-10  # 0.6 - 0.9
 
     def test_ranking_generation(self):
         """Test ranking generation with confidence intervals."""
@@ -386,7 +398,8 @@ class TestComparisonEngineUnitTests:
         report = QualityReport(
             overall_score=0.8,
             confidence=0.9,
-            metric_scores={f"metric_{i}": 0.8 + 0.1 * np.sin(i) for i in range(10)},
+            metric_scores={f"metric_{i}": 0.8 +
+                           0.1 * np.sin(i) for i in range(10)},
             metric_formulas={f"metric_{i}": f"formula_{i}" for i in range(10)},
             computation_trace=[],
             error_bounds={},

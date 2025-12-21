@@ -7,19 +7,19 @@ It can be run in CI/CD pipelines or as a scheduled task to track coverage trends
 send alerts when coverage drops below acceptable thresholds.
 """
 
-import os
-import sys
-import json
-import sqlite3
-import datetime
-import subprocess
 import argparse
-from pathlib import Path
-from typing import Dict, List, Tuple, Optional
-from dataclasses import dataclass, asdict
+import datetime
+import json
+import os
 import smtplib
-from email.mime.text import MIMEText
+import sqlite3
+import subprocess
+import sys
+from dataclasses import asdict, dataclass
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 
 @dataclass
@@ -61,8 +61,7 @@ class CoverageMonitor:
     def init_database(self):
         """Initialize the coverage history database."""
         conn = sqlite3.connect(self.db_path)
-        conn.execute(
-            """
+        conn.execute("""
             CREATE TABLE IF NOT EXISTS coverage_history (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp TEXT NOT NULL,
@@ -72,11 +71,9 @@ class CoverageMonitor:
                 modules_data TEXT NOT NULL,
                 test_results TEXT NOT NULL
             )
-        """
-        )
+        """)
 
-        conn.execute(
-            """
+        conn.execute("""
             CREATE TABLE IF NOT EXISTS coverage_alerts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp TEXT NOT NULL,
@@ -86,8 +83,7 @@ class CoverageMonitor:
                 coverage_after REAL,
                 resolved BOOLEAN DEFAULT FALSE
             )
-        """
-        )
+        """)
         conn.commit()
         conn.close()
 
@@ -219,7 +215,8 @@ class CoverageMonitor:
                         statements = int(parts[1])
                         missing = int(parts[2])
                         coverage = (
-                            float(parts[3][:-1]) if parts[3].endswith("%") else 0.0
+                            float(parts[3][:-1]
+                                  ) if parts[3].endswith("%") else 0.0
                         )
 
                         if name == "TOTAL":
@@ -354,12 +351,10 @@ class CoverageMonitor:
     def get_previous_coverage(self) -> Optional[float]:
         """Get the most recent coverage percentage."""
         conn = sqlite3.connect(self.db_path)
-        result = conn.execute(
-            """
+        result = conn.execute("""
             SELECT overall_coverage FROM coverage_history 
             ORDER BY timestamp DESC LIMIT 1
-        """
-        ).fetchone()
+        """).fetchone()
         conn.close()
 
         return result[0] if result else None
@@ -386,9 +381,11 @@ class CoverageMonitor:
         sorted_modules = sorted(report.modules, key=lambda m: m.coverage)
 
         # Add modules below threshold
-        below_threshold = [m for m in sorted_modules if m.coverage < self.threshold]
+        below_threshold = [
+            m for m in sorted_modules if m.coverage < self.threshold]
         if below_threshold:
-            lines.extend([f"### Modules Below {self.threshold}% Threshold", ""])
+            lines.extend(
+                [f"### Modules Below {self.threshold}% Threshold", ""])
             for module in below_threshold:
                 lines.append(
                     f"- **{module.name}:** {module.coverage:.1f}% ({module.missing} missing)"
@@ -396,7 +393,8 @@ class CoverageMonitor:
             lines.append("")
 
         # Add top performers
-        top_performers = [m for m in sorted_modules if m.coverage >= 95.0][-10:]
+        top_performers = [
+            m for m in sorted_modules if m.coverage >= 95.0][-10:]
         if top_performers:
             lines.extend(["### Top Performing Modules", ""])
             for module in reversed(top_performers):
@@ -442,7 +440,8 @@ class CoverageMonitor:
             body_lines.append(f"  {alert}")
 
         body_lines.extend(
-            ["", "Full Report:", "-" * 20, self.generate_coverage_report(report)]
+            ["", "Full Report:", "-" * 20,
+                self.generate_coverage_report(report)]
         )
 
         msg.attach(MIMEText("\n".join(body_lines), "plain"))

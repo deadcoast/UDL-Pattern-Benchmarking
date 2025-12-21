@@ -5,18 +5,19 @@ This module provides capabilities to predict future UDL quality trends
 using machine learning and statistical forecasting methods.
 """
 
+import warnings
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from datetime import datetime, timedelta
-from typing import Dict, List, Tuple, Optional, Any
-from dataclasses import dataclass
 from scipy import stats
-from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.preprocessing import StandardScaler, PolynomialFeatures
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import TimeSeriesSplit
-import warnings
+from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 
 from udl_rating_framework.core.pipeline import QualityReport
 
@@ -38,7 +39,8 @@ class TrendAnalysis:
     """Comprehensive trend analysis results."""
 
     historical_trends: Dict[str, float]  # metric -> trend slope
-    seasonal_patterns: Dict[str, Dict[str, float]]  # metric -> season -> effect
+    # metric -> season -> effect
+    seasonal_patterns: Dict[str, Dict[str, float]]
     volatility_metrics: Dict[str, float]  # metric -> volatility
     regime_changes: Dict[str, List[datetime]]  # metric -> change points
     forecast_accuracy: Dict[str, float]  # metric -> accuracy score
@@ -111,7 +113,8 @@ class TrendPredictor:
 
         for metric in metrics:
             try:
-                prediction_result = self._predict_single_metric(file_reports, metric)
+                prediction_result = self._predict_single_metric(
+                    file_reports, metric)
                 results[metric] = prediction_result
             except Exception as e:
                 warnings.warn(f"Could not predict metric {metric}: {e}")
@@ -183,10 +186,12 @@ class TrendPredictor:
                             elif metric == "confidence":
                                 value = report.confidence
                             else:
-                                value = report.metric_scores.get(metric, np.nan)
+                                value = report.metric_scores.get(
+                                    metric, np.nan)
 
                             if not np.isnan(value):
-                                metric_data.append((report.timestamp, value, project))
+                                metric_data.append(
+                                    (report.timestamp, value, project))
 
                 if len(metric_data) < 10:
                     continue
@@ -209,7 +214,8 @@ class TrendPredictor:
 
                 # Compute volatility
                 returns = df["value"].pct_change().dropna()
-                volatility_metrics[metric] = returns.std() if len(returns) > 1 else 0.0
+                volatility_metrics[metric] = returns.std() if len(
+                    returns) > 1 else 0.0
 
                 # Detect seasonal patterns (simplified)
                 seasonal_patterns[metric] = self._detect_seasonal_patterns(df)
@@ -218,7 +224,8 @@ class TrendPredictor:
                 regime_changes[metric] = self._detect_regime_changes(df)
 
                 # Estimate forecast accuracy using cross-validation
-                forecast_accuracy[metric] = self._estimate_forecast_accuracy(df)
+                forecast_accuracy[metric] = self._estimate_forecast_accuracy(
+                    df)
 
             except Exception as e:
                 warnings.warn(
@@ -249,7 +256,8 @@ class TrendPredictor:
             values = [r.metric_scores.get(metric, np.nan) for r in reports]
 
         # Remove NaN values
-        valid_data = [(t, v) for t, v in zip(timestamps, values) if not np.isnan(v)]
+        valid_data = [(t, v)
+                      for t, v in zip(timestamps, values) if not np.isnan(v)]
 
         if len(valid_data) < 10:
             raise ValueError(f"Insufficient valid data for metric {metric}")
@@ -358,7 +366,8 @@ class TrendPredictor:
             )
         elif hasattr(best_model, "coef_"):
             feature_names = self._get_feature_names()
-            feature_importance = dict(zip(feature_names, np.abs(best_model.coef_)))
+            feature_importance = dict(
+                zip(feature_names, np.abs(best_model.coef_)))
 
         return PredictionResult(
             predictions=prediction_series,
@@ -391,14 +400,15 @@ class TrendPredictor:
             ]
 
             # Lag features
-            lag_features = ts.iloc[i - window_size : i].values.tolist()
+            lag_features = ts.iloc[i - window_size: i].values.tolist()
 
             # Statistical features
-            recent_values = ts.iloc[max(0, i - window_size) : i]
+            recent_values = ts.iloc[max(0, i - window_size): i]
             stat_features = [
                 recent_values.mean(),
                 recent_values.std() if len(recent_values) > 1 else 0.0,
-                recent_values.iloc[-1] if len(recent_values) > 0 else 0.0,  # Last value
+                # Last value
+                recent_values.iloc[-1] if len(recent_values) > 0 else 0.0,
             ]
 
             # Combine all features
@@ -601,7 +611,8 @@ class TrendPredictor:
         for train_idx, test_idx in tscv.split(df):
             try:
                 # Simple linear model for accuracy estimation
-                X_train = np.array(timestamps_numeric)[train_idx].reshape(-1, 1)
+                X_train = np.array(timestamps_numeric)[
+                    train_idx].reshape(-1, 1)
                 y_train = df["value"].iloc[train_idx].values
                 X_test = np.array(timestamps_numeric)[test_idx].reshape(-1, 1)
                 y_test = df["value"].iloc[test_idx].values
@@ -637,7 +648,8 @@ class TrendPredictor:
         if "overall_score" in predictions:
             overall_pred = predictions["overall_score"]
             current_trend = (
-                overall_pred.predictions.iloc[-1] - overall_pred.predictions.iloc[0]
+                overall_pred.predictions.iloc[-1] -
+                overall_pred.predictions.iloc[0]
             ) / len(overall_pred.predictions)
 
             if current_trend > 0.001:
@@ -685,7 +697,8 @@ class TrendPredictor:
                     key=lambda x: x[1],
                     reverse=True,
                 )
-                for feature, importance in sorted_features[:5]:  # Top 5 features
+                # Top 5 features
+                for feature, importance in sorted_features[:5]:
                     report_lines.append(f"- {feature}: {importance:.3f}")
                 report_lines.append("")
 

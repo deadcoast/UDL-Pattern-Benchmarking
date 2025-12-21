@@ -7,11 +7,13 @@ and other web technologies for enhanced UDL analysis.
 
 import json
 import os
-from typing import Dict, List, Optional, Any
-import networkx as nx
 from pathlib import Path
-from ..models.ctm_adapter import TrackingData
+from typing import Any, Dict, List, Optional
+
+import networkx as nx
+
 from ..core.representation import UDLRepresentation
+from ..models.ctm_adapter import TrackingData
 
 
 class WebVisualizer:
@@ -1028,14 +1030,12 @@ class WebVisualizer:
         displays = []
         for metric_name, values in metric_history.items():
             latest_value = values[-1] if values else 0.0
-            displays.append(
-                f"""
+            displays.append(f"""
             <div class="metric-display">
                 <div class="metric-name">{metric_name}</div>
                 <div class="metric-value" id="metric-{metric_name}">{latest_value:.3f}</div>
             </div>
-            """
-            )
+            """)
         return "".join(displays)
 
     def _generate_dependency_flow_html(self, dependencies: Dict[str, Any]) -> str:
@@ -1426,7 +1426,8 @@ class WebVisualizer:
             metrics_nav = """
                 <li><a href="#" onclick="showSection('metrics-dashboard')">Metrics Dashboard</a></li>
             """.strip()
-            metrics_src = os.path.basename(visualization_paths["metrics_dashboard"])
+            metrics_src = os.path.basename(
+                visualization_paths["metrics_dashboard"])
             metrics_section = f"""
         <div id="metrics-dashboard" class="dashboard-section">
             <h2>Real-time Metrics Dashboard</h2>

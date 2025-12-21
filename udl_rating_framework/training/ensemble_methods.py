@@ -6,15 +6,16 @@ leveraging synchronization diversity, neuron selection strategies, and temporal 
 for improved prediction accuracy and uncertainty quantification.
 """
 
-import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader
-import numpy as np
-from typing import List, Dict, Any, Optional, Tuple
+import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-import json
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
 
 from ..models.ctm_adapter import UDLRatingCTM
 from .training_pipeline import TrainingPipeline
@@ -106,7 +107,8 @@ class EnsemblePredictor(nn.Module):
                 nn.Sigmoid(),
             ).to(self.device)
 
-        logger.info(f"Initialized ensemble with {len(members)} members using {method}")
+        logger.info(
+            f"Initialized ensemble with {len(members)} members using {method}")
 
     def forward(
         self, token_ids: torch.Tensor
@@ -204,10 +206,12 @@ class EnsemblePredictor(nn.Module):
         """
         self.eval()
         with torch.no_grad():
-            ensemble_pred, ensemble_cert, ensemble_info = self.forward(token_ids)
+            ensemble_pred, ensemble_cert, ensemble_info = self.forward(
+                token_ids)
 
         # Compute additional uncertainty measures
-        member_preds = ensemble_info["member_predictions"]  # [num_members, batch, 1]
+        # [num_members, batch, 1]
+        member_preds = ensemble_info["member_predictions"]
 
         # Epistemic uncertainty (model disagreement)
         epistemic_uncertainty = np.var(member_preds, axis=0)
@@ -276,7 +280,8 @@ class EnsemblePredictor(nn.Module):
 
         # Save meta-learner if using stacking
         if self.method == "stacking":
-            torch.save(self.meta_learner.state_dict(), save_dir / "meta_learner.pt")
+            torch.save(self.meta_learner.state_dict(),
+                       save_dir / "meta_learner.pt")
 
         logger.info(f"Saved ensemble to {filepath}")
 
@@ -305,7 +310,8 @@ class EnsemblePredictor(nn.Module):
         members = []
         for i in range(metadata["num_members"]):
             model_path = load_dir / f"member_{i}.pt"
-            checkpoint = torch.load(model_path, map_location=device, weights_only=False)
+            checkpoint = torch.load(
+                model_path, map_location=device, weights_only=False)
 
             # Create model (need to infer architecture from state dict)
             # This is a simplified approach - in practice, you'd save model config
@@ -370,7 +376,8 @@ class CTMEnsembleTrainer:
 
         self.trained_members = []
 
-        logger.info(f"Initialized CTM ensemble trainer with device: {self.device}")
+        logger.info(
+            f"Initialized CTM ensemble trainer with device: {self.device}")
 
     def train_synchronization_diverse_ensemble(
         self,
@@ -492,7 +499,8 @@ class CTMEnsembleTrainer:
 
         # Add some randomness to self-pairing for random-pairing strategy
         if config["neuron_select_type"] == "random-pairing":
-            config["n_random_pairing_self"] = member_idx % 5  # 0-4 self-pairings
+            # 0-4 self-pairings
+            config["n_random_pairing_self"] = member_idx % 5
 
         logger.info(
             f"Member {member_idx}: {config['neuron_select_type']}, "
@@ -534,7 +542,8 @@ class CTMEnsembleTrainer:
         members = []
 
         for i in range(num_members):
-            logger.info(f"Training temporal ensemble member {i + 1}/{num_members}")
+            logger.info(
+                f"Training temporal ensemble member {i + 1}/{num_members}")
 
             # Create temporal-focused diverse configuration
             config = self._create_temporal_diverse_config(i, num_members)
@@ -551,7 +560,8 @@ class CTMEnsembleTrainer:
             members.append(member)
 
         self.trained_members = members
-        logger.info(f"Completed training {len(members)} temporal ensemble members")
+        logger.info(
+            f"Completed training {len(members)} temporal ensemble members")
 
         return members
 
@@ -596,7 +606,8 @@ class CTMEnsembleTrainer:
         config["heads"] = 4 + (member_idx % 3) * 4  # 4, 8, or 12 heads
 
         # Vary dropout for different regularization patterns
-        config["dropout"] = 0.05 + (member_idx % 4) * 0.05  # 0.05, 0.10, 0.15, 0.20
+        config["dropout"] = 0.05 + (member_idx %
+                                    4) * 0.05  # 0.05, 0.10, 0.15, 0.20
 
         return config
 
@@ -676,7 +687,8 @@ class CTMEnsembleTrainer:
         )
 
         # Prepare meta-training data
-        meta_optimizer = torch.optim.Adam(ensemble.meta_learner.parameters(), lr=1e-3)
+        meta_optimizer = torch.optim.Adam(
+            ensemble.meta_learner.parameters(), lr=1e-3)
         criterion = nn.MSELoss()
 
         for epoch in range(meta_epochs):
@@ -701,7 +713,8 @@ class CTMEnsembleTrainer:
                 )  # [batch, num_members]
 
                 # Compute ground truth (simplified - would use actual metrics)
-                ground_truth = torch.mean(base_predictions, dim=1, keepdim=True)
+                ground_truth = torch.mean(
+                    base_predictions, dim=1, keepdim=True)
 
                 # Meta-learner prediction
                 meta_pred = ensemble.meta_learner(base_predictions)
@@ -775,7 +788,8 @@ def create_bootstrap_ensemble(
         # Train on bootstrap sample (simplified - just train normally)
         # TODO: Implement actual bootstrap sampling
 
-        member = EnsembleMember(model=model, weight=1.0, model_id=f"bootstrap_{i}")
+        member = EnsembleMember(model=model, weight=1.0,
+                                model_id=f"bootstrap_{i}")
         members.append(member)
 
     return EnsemblePredictor(members, method="simple_average")

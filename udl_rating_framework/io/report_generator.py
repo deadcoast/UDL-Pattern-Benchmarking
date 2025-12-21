@@ -5,13 +5,13 @@ Provides comprehensive report generation in multiple formats (JSON, CSV, HTML)
 with visualizations and mathematical traces.
 """
 
-import json
 import csv
 import html
+import json
 from datetime import datetime
-from pathlib import Path
-from typing import List, Dict, Any, Optional, Union
 from io import StringIO
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 from udl_rating_framework.core.pipeline import QualityReport
 
@@ -127,8 +127,10 @@ class ReportGenerator:
         fieldnames.extend([f"metric_{metric}" for metric in metric_columns])
 
         # Add error bound columns
-        fieldnames.extend([f"error_bound_{metric}_lower" for metric in metric_columns])
-        fieldnames.extend([f"error_bound_{metric}_upper" for metric in metric_columns])
+        fieldnames.extend(
+            [f"error_bound_{metric}_lower" for metric in metric_columns])
+        fieldnames.extend(
+            [f"error_bound_{metric}_upper" for metric in metric_columns])
 
         writer = csv.DictWriter(output, fieldnames=fieldnames)
         writer.writeheader()
@@ -227,7 +229,8 @@ class ReportGenerator:
                 "operation": step.operation,
                 "formula": step.formula,
                 "inputs": step.inputs,
-                "output": str(step.output),  # Convert to string for JSON serialization
+                # Convert to string for JSON serialization
+                "output": str(step.output),
                 "intermediate_values": step.intermediate_values,
             }
             report_dict["computation_trace"].append(step_dict)
@@ -270,7 +273,8 @@ class ReportGenerator:
         return {
             "overall_score": {
                 "mean": (
-                    sum(overall_scores) / len(overall_scores) if overall_scores else 0.0
+                    sum(overall_scores) /
+                    len(overall_scores) if overall_scores else 0.0
                 ),
                 "min": min(overall_scores) if overall_scores else 0.0,
                 "max": max(overall_scores) if overall_scores else 0.0,
@@ -316,7 +320,8 @@ class ReportGenerator:
 
         # Individual report sections
         for i, report in enumerate(reports):
-            content_sections.append(self._generate_html_report_section(report, i))
+            content_sections.append(
+                self._generate_html_report_section(report, i))
 
         # Footer section
         content_sections.append(self._generate_html_footer())
@@ -686,16 +691,14 @@ class ReportGenerator:
             ):
                 bounds_str = f"[{bounds[0]:.6f}, {bounds[1]:.6f}]"
 
-            rows.append(
-                f"""
+            rows.append(f"""
             <tr>
                 <td><strong>{html.escape(metric_name)}</strong></td>
                 <td>{score:.6f}</td>
                 <td><span class="formula">{html.escape(formula)}</span></td>
                 <td>{bounds_str}</td>
             </tr>
-            """
-            )
+            """)
 
         return f"""
         <h3>Metric Scores</h3>
@@ -726,8 +729,7 @@ class ReportGenerator:
                 f"{k}: {v}" for k, v in step.intermediate_values.items()
             )
 
-            trace_steps.append(
-                f"""
+            trace_steps.append(f"""
             <div class="trace-step">
                 <div class="trace-step-header">
                     Step {step.step_number}: {html.escape(step.operation)}
@@ -737,8 +739,7 @@ class ReportGenerator:
                 <div><strong>Output:</strong> {html.escape(str(step.output))}</div>
                 {f"<div><strong>Intermediate Values:</strong> {html.escape(intermediate_str)}</div>" if step.intermediate_values else ""}
             </div>
-            """
-            )
+            """)
 
         return f"""
         <button class="collapsible">Computation Trace ({len(report.computation_trace)} steps)</button>
@@ -754,28 +755,25 @@ class ReportGenerator:
         html_sections = []
 
         if report.errors:
-            error_items = [f"<li>{html.escape(error)}</li>" for error in report.errors]
-            html_sections.append(
-                f"""
+            error_items = [
+                f"<li>{html.escape(error)}</li>" for error in report.errors]
+            html_sections.append(f"""
             <div class="error-section">
                 <h4>Errors ({len(report.errors)})</h4>
                 <ul>{"".join(error_items)}</ul>
             </div>
-            """
-            )
+            """)
 
         if report.warnings:
             warning_items = [
                 f"<li>{html.escape(warning)}</li>" for warning in report.warnings
             ]
-            html_sections.append(
-                f"""
+            html_sections.append(f"""
             <div class="warning-section">
                 <h4>Warnings ({len(report.warnings)})</h4>
                 <ul>{"".join(warning_items)}</ul>
             </div>
-            """
-            )
+            """)
 
         return "".join(html_sections)
 

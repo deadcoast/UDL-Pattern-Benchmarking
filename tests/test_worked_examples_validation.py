@@ -8,17 +8,17 @@ the documented results when executed.
 **Validates: Requirements 4.2, 5.2**
 """
 
-from hypothesis import given, strategies as st, settings, assume
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
 
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+from udl_rating_framework.core.aggregation import MetricAggregator
 from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 from udl_rating_framework.core.metrics.expressiveness import ExpressivenessMetric
 from udl_rating_framework.core.metrics.structural_coherence import (
     StructuralCoherenceMetric,
 )
-from udl_rating_framework.core.aggregation import MetricAggregator
-
+from udl_rating_framework.core.representation import UDLRepresentation
 
 # Tolerance for floating point comparisons
 EPSILON = 1e-6

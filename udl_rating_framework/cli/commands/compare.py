@@ -4,15 +4,16 @@ Compare command for UDL Rating Framework CLI.
 Provides functionality to compare multiple UDL files using statistical tests.
 """
 
-import click
+import json
 import logging
+import sys
 from pathlib import Path
 from typing import Optional
-import json
-import sys
 
-from udl_rating_framework.evaluation.comparison import ComparisonEngine
+import click
+
 from udl_rating_framework.core.pipeline import RatingPipeline
+from udl_rating_framework.evaluation.comparison import ComparisonEngine
 from udl_rating_framework.io.file_discovery import FileDiscovery
 from udl_rating_framework.io.report_generator import ReportGenerator
 
@@ -179,8 +180,10 @@ def compare_command(
                 files = [input_path]
                 group_name = input_path.stem
             else:
-                file_discovery = FileDiscovery(supported_extensions=set(ext_list))
-                discovery_result = file_discovery.discover_files(str(input_path))
+                file_discovery = FileDiscovery(
+                    supported_extensions=set(ext_list))
+                discovery_result = file_discovery.discover_files(
+                    str(input_path))
                 files = discovery_result.discovered_files
                 group_name = input_path.name
 
@@ -246,7 +249,8 @@ def compare_command(
                 continue
 
         if len(reports) < 2:
-            logger.error("Need at least 2 successfully processed files for comparison")
+            logger.error(
+                "Need at least 2 successfully processed files for comparison")
             sys.exit(1)
 
         logger.info(f"Successfully rated {len(reports)} files")

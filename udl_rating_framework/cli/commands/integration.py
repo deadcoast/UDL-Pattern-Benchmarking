@@ -2,16 +2,17 @@
 CLI commands for integration and workflow features.
 """
 
-import click
 import logging
 from pathlib import Path
-from typing import Optional, List
+from typing import List, Optional
 
+import click
+
+from udl_rating_framework.integration.batch_processor import BatchConfig, BatchProcessor
+from udl_rating_framework.integration.cicd import CICDConfig, CICDIntegration
 from udl_rating_framework.integration.git_hooks import GitHookManager
-from udl_rating_framework.integration.cicd import CICDIntegration, CICDConfig
-from udl_rating_framework.integration.lsp_server import UDLLanguageServer, LSPServer
-from udl_rating_framework.integration.batch_processor import BatchProcessor, BatchConfig
 from udl_rating_framework.integration.ide_plugin import IDEPluginManager
+from udl_rating_framework.integration.lsp_server import LSPServer, UDLLanguageServer
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +73,8 @@ def uninstall_git_hooks(repo_path: Path):
         manager = GitHookManager(repo_path=repo_path)
 
         if manager.uninstall_hooks():
-            click.echo(f"✅ Git hooks uninstalled successfully from {repo_path}")
+            click.echo(
+                f"✅ Git hooks uninstalled successfully from {repo_path}")
         else:
             click.echo("❌ Failed to uninstall Git hooks", err=True)
             exit(1)
@@ -93,7 +95,8 @@ def uninstall_git_hooks(repo_path: Path):
 def check_staged_files(repo_path: Path, threshold: float):
     """Check quality of staged UDL files."""
     try:
-        manager = GitHookManager(repo_path=repo_path, min_quality_threshold=threshold)
+        manager = GitHookManager(
+            repo_path=repo_path, min_quality_threshold=threshold)
 
         passed, results = manager.check_staged_files()
 
@@ -229,8 +232,8 @@ def start_lsp_server(
 ):
     """Start UDL Language Server Protocol server."""
     import asyncio
-    import sys
     import json
+    import sys
 
     # Configure logging
     logging.basicConfig(
@@ -354,13 +357,15 @@ def batch_process_files(
         if input_path.is_dir():
             # Process directory
             if streaming:
-                click.echo("Streaming processing not supported for directory input")
+                click.echo(
+                    "Streaming processing not supported for directory input")
                 return
 
             result = processor.process_directory(
                 input_path,
                 patterns=list(include_patterns),
-                exclude_patterns=list(exclude_patterns) if exclude_patterns else None,
+                exclude_patterns=list(
+                    exclude_patterns) if exclude_patterns else None,
             )
         else:
             # Process file list
@@ -425,7 +430,8 @@ def generate_ide_plugin(plugin_type: str, output_dir: Path):
         elif plugin_type == "vim":
             plugin_dir = manager.generate_vim_plugin(output_dir)
         else:
-            click.echo(f"Plugin generation for {plugin_type} not yet implemented")
+            click.echo(
+                f"Plugin generation for {plugin_type} not yet implemented")
             return
 
         click.echo(f"✅ {plugin_type} plugin generated at: {plugin_dir}")

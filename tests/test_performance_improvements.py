@@ -5,37 +5,38 @@ Tests distributed computing, GPU acceleration, streaming processing,
 memory mapping, and incremental computation features.
 """
 
-import pytest
 import tempfile
 from pathlib import Path
 
-from udl_rating_framework.core.performance import (
-    PerformanceOptimizer,
-    PerformanceConfig,
-    ProcessingStrategy,
-    process_files_optimized,
-    benchmark_all_strategies,
-)
+import pytest
 
-# Import performance modules for testing
-from udl_rating_framework.core.streaming import (
-    StreamingProcessor,
-    StreamingConfig,
-    process_large_file,
+from udl_rating_framework.core.incremental import (
+    FileSnapshot,
+    IncrementalProcessor,
+    process_udl_incremental,
 )
 from udl_rating_framework.core.memory_mapping import (
-    MemoryMappedUDLProcessor,
     MemoryMappedFile,
+    MemoryMappedUDLProcessor,
     process_large_udl_file,
-)
-from udl_rating_framework.core.incremental import (
-    IncrementalProcessor,
-    FileSnapshot,
-    process_udl_incremental,
 )
 from udl_rating_framework.core.multiprocessing import (
     ParallelProcessor,
     process_udl_files_parallel,
+)
+from udl_rating_framework.core.performance import (
+    PerformanceConfig,
+    PerformanceOptimizer,
+    ProcessingStrategy,
+    benchmark_all_strategies,
+    process_files_optimized,
+)
+
+# Import performance modules for testing
+from udl_rating_framework.core.streaming import (
+    StreamingConfig,
+    StreamingProcessor,
+    process_large_file,
 )
 
 # Optional imports for distributed and GPU processing
@@ -106,7 +107,8 @@ def temp_udl_files(sample_udl_content):
         for i in range(5):
             file_path = temp_path / f"test_{i}.udl"
             content = (
-                sample_udl_content + f"\n# File {i}\nfile_rule_{i} ::= 'file_{i}'\n"
+                sample_udl_content +
+                f"\n# File {i}\nfile_rule_{i} ::= 'file_{i}'\n"
             )
             file_path.write_text(content)
             files.append(file_path)
@@ -208,7 +210,8 @@ class TestMemoryMappedProcessor:
             # Read lines
             lines = list(mapped_file.read_lines(max_lines=5))
             assert len(lines) <= 5
-            assert all(isinstance(line_content, str) for _, line_content in lines)
+            assert all(isinstance(line_content, str)
+                       for _, line_content in lines)
 
     def test_memory_mapped_processor(self, large_temp_file):
         """Test memory-mapped UDL processor."""
@@ -452,7 +455,8 @@ class TestPerformanceOptimizer:
         optimizer = PerformanceOptimizer(config)
 
         result = optimizer.process_files(
-            file_paths=temp_udl_files, metric_names=["consistency", "completeness"]
+            file_paths=temp_udl_files, metric_names=[
+                "consistency", "completeness"]
         )
 
         assert result.strategy_used == ProcessingStrategy.PARALLEL
@@ -463,7 +467,8 @@ class TestPerformanceOptimizer:
     def test_process_files_optimized_convenience(self, temp_udl_files):
         """Test convenience function for optimized processing."""
         result = process_files_optimized(
-            file_paths=temp_udl_files, metric_names=["consistency", "completeness"]
+            file_paths=temp_udl_files, metric_names=[
+                "consistency", "completeness"]
         )
 
         assert result.total_files == len(temp_udl_files)
@@ -582,7 +587,6 @@ pytestmark = [
     pytest.mark.filterwarnings("ignore:.*:DeprecationWarning"),
     pytest.mark.filterwarnings("ignore:.*:UserWarning"),
 ]
-
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])

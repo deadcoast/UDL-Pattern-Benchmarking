@@ -8,17 +8,18 @@ Tests the report generation system's ability to:
 - Verify all required fields are present
 """
 
-import pytest
-import json
 import csv
+import json
 import tempfile
 from datetime import datetime
-from pathlib import Path
 from io import StringIO
+from pathlib import Path
 from typing import List
 
+import pytest
+
+from udl_rating_framework.core.pipeline import ComputationStep, QualityReport
 from udl_rating_framework.io.report_generator import ReportGenerator
-from udl_rating_framework.core.pipeline import QualityReport, ComputationStep
 
 
 class TestReportGenerator:
@@ -113,7 +114,8 @@ class TestReportGenerator:
                 "consistency": r"C = 1 - \frac{|Contradictions| + |Cycles|}{|Rules| + 1}",
                 "completeness": r"Completeness = \frac{|Defined|}{|Required|}",
             },
-            computation_trace=sample_computation_steps[:2],  # Fewer steps due to errors
+            # Fewer steps due to errors
+            computation_trace=sample_computation_steps[:2],
             error_bounds={
                 "consistency": (0.45, 0.55),
                 "completeness": (0.35, 0.45),
@@ -272,8 +274,10 @@ class TestReportGenerator:
         assert "metric_structural_coherence" in row
 
         # Verify metric values
-        assert float(row["metric_consistency"]) == pytest.approx(0.85, rel=1e-3)
-        assert float(row["metric_completeness"]) == pytest.approx(0.75, rel=1e-3)
+        assert float(row["metric_consistency"]
+                     ) == pytest.approx(0.85, rel=1e-3)
+        assert float(row["metric_completeness"]
+                     ) == pytest.approx(0.75, rel=1e-3)
 
         # Verify error bound columns exist
         assert "error_bound_consistency_lower" in row
@@ -504,7 +508,8 @@ class TestReportGenerator:
         csv_reader = csv.DictReader(StringIO(csv_str))
         csv_rows = list(csv_reader)
         assert len(csv_rows) == 1
-        assert float(csv_rows[0]["overall_score"]) == pytest.approx(0.5, rel=1e-3)
+        assert float(csv_rows[0]["overall_score"]
+                     ) == pytest.approx(0.5, rel=1e-3)
 
         assert "minimal.udl" in html_str
         assert "0.500" in html_str

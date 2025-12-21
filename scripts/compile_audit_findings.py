@@ -21,8 +21,8 @@ if TYPE_CHECKING:
     from udl_rating_framework.validation.audit_reporter import (
         AuditReporter,
         FindingCategory,
-        Severity,
         ResolutionStatus,
+        Severity,
     )
     from udl_rating_framework.validation.link_validator import LinkValidator
 
@@ -31,8 +31,8 @@ def _load_validation_modules():
     from udl_rating_framework.validation.audit_reporter import (
         AuditReporter,
         FindingCategory,
-        Severity,
         ResolutionStatus,
+        Severity,
     )
     from udl_rating_framework.validation.link_validator import LinkValidator
 

@@ -6,21 +6,20 @@ for changed parts of UDL files, with dependency tracking and smart
 invalidation strategies.
 """
 
-import logging
-import time
 import hashlib
 import json
-from typing import Dict, List, Any, Optional, Set
-from pathlib import Path
-from dataclasses import dataclass, field, asdict
+import logging
 import threading
+import time
 from collections import defaultdict
-
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.pipeline import QualityReport, RatingPipeline
+from dataclasses import asdict, dataclass, field
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set
 
 # Import metrics to ensure they are registered in the MetricRegistry
 import udl_rating_framework.core.metrics  # noqa: F401
+from udl_rating_framework.core.pipeline import QualityReport, RatingPipeline
+from udl_rating_framework.core.representation import UDLRepresentation
 
 logger = logging.getLogger(__name__)
 
@@ -116,8 +115,10 @@ class DependencyTracker:
 
     def __init__(self):
         """Initialize dependency tracker."""
-        self.construct_dependencies = defaultdict(set)  # construct -> set of metrics
-        self.metric_dependencies = defaultdict(set)  # metric -> set of constructs
+        self.construct_dependencies = defaultdict(
+            set)  # construct -> set of metrics
+        self.metric_dependencies = defaultdict(
+            set)  # metric -> set of constructs
         self.construct_locations = {}  # construct -> (file, line_range)
         self.invalidation_rules = {}  # metric -> invalidation_function
 
@@ -132,7 +133,8 @@ class DependencyTracker:
 
         # Completeness metric depends on construct definitions
         self.add_dependency(
-            "completeness", ["construct_definition", "terminal", "non_terminal"]
+            "completeness", ["construct_definition",
+                             "terminal", "non_terminal"]
         )
 
         # Expressiveness metric depends on grammar structure
@@ -170,7 +172,8 @@ class DependencyTracker:
         affected_metrics = set()
 
         for construct in changed_constructs:
-            affected_metrics.update(self.construct_dependencies.get(construct, set()))
+            affected_metrics.update(
+                self.construct_dependencies.get(construct, set()))
 
         return affected_metrics
 
@@ -312,7 +315,8 @@ class IncrementalCache:
         self.dependency_cache = {}  # file_path -> construct dependencies
 
         # Cache metadata
-        self.cache_stats = {"hits": 0, "misses": 0, "invalidations": 0, "updates": 0}
+        self.cache_stats = {"hits": 0, "misses": 0,
+                            "invalidations": 0, "updates": 0}
 
         self._lock = threading.RLock()
 
@@ -390,9 +394,11 @@ class IncrementalCache:
     def get_cache_stats(self) -> Dict[str, Any]:
         """Get cache statistics."""
         with self._lock:
-            total_requests = self.cache_stats["hits"] + self.cache_stats["misses"]
+            total_requests = self.cache_stats["hits"] + \
+                self.cache_stats["misses"]
             hit_rate = (
-                self.cache_stats["hits"] / total_requests if total_requests > 0 else 0.0
+                self.cache_stats["hits"] /
+                total_requests if total_requests > 0 else 0.0
             )
 
             return {
@@ -570,7 +576,8 @@ class IncrementalProcessor:
             result = self._process_full(file_path, new_snapshot, change_set)
         else:
             # Minor changes - incremental update
-            result = self._process_incremental(file_path, new_snapshot, change_set)
+            result = self._process_incremental(
+                file_path, new_snapshot, change_set)
 
         # Update cache
         self.cache.update_file_snapshot(file_path, new_snapshot)
@@ -734,7 +741,8 @@ class IncrementalProcessor:
                 recomputed_metrics.add(metric_name)
             else:
                 # Try to use cached result
-                cached_result = self.cache.get_metric_result(file_path, metric_name)
+                cached_result = self.cache.get_metric_result(
+                    file_path, metric_name)
                 if cached_result is not None:
                     cached_metrics[metric_name] = cached_result
                 else:
@@ -744,7 +752,8 @@ class IncrementalProcessor:
         # Recompute only affected metrics
         if recomputed_metrics:
             # Create pipeline with only affected metrics
-            partial_pipeline = RatingPipeline(metric_names=list(recomputed_metrics))
+            partial_pipeline = RatingPipeline(
+                metric_names=list(recomputed_metrics))
             partial_report = partial_pipeline.compute_rating(new_udl)
 
             # Update cache with new results
@@ -781,7 +790,8 @@ class IncrementalProcessor:
         )
 
         cache_hit_ratio = (
-            len(cached_metrics) / len(self.metric_names) if self.metric_names else 0.0
+            len(cached_metrics) /
+            len(self.metric_names) if self.metric_names else 0.0
         )
 
         return IncrementalResult(

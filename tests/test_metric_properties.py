@@ -7,9 +7,11 @@ Tests the mathematical properties that all metrics must satisfy:
 """
 
 import pytest
-from hypothesis import given, strategies as st, settings, assume
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
+
+from udl_rating_framework.core.metrics.base import MetricRegistry, QualityMetric
 from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.base import QualityMetric, MetricRegistry
 
 
 # Test metric implementations for property testing
@@ -57,7 +59,8 @@ class TestCompletenessMetric(QualityMetric):
         # Simple completeness: ratio of unique identifiers to total tokens
         from udl_rating_framework.core.representation import TokenType
 
-        identifier_tokens = [t for t in tokens if t.type == TokenType.IDENTIFIER]
+        identifier_tokens = [
+            t for t in tokens if t.type == TokenType.IDENTIFIER]
         unique_identifiers = len(set(t.text for t in identifier_tokens))
         total_meaningful_tokens = len(
             [
@@ -213,7 +216,8 @@ class TestMetricBoundedness:
 
                 except Exception as e:
                     # If computation fails, that's also a test failure for bounded metrics
-                    pytest.fail(f"Bounded metric {metric_name} failed to compute: {e}")
+                    pytest.fail(
+                        f"Bounded metric {metric_name} failed to compute: {e}")
 
 
 class TestMetricDeterminism:
@@ -284,7 +288,8 @@ class TestMetricDeterminism:
                     # Try again to see if failure is consistent
                     metric.compute(udl)
                     # If this succeeds but previous failed, it's non-deterministic
-                    pytest.fail(f"Metric {metric_name} has inconsistent failures: {e}")
+                    pytest.fail(
+                        f"Metric {metric_name} has inconsistent failures: {e}")
                 except Exception:
                     # Consistent failure is acceptable (though not ideal)
                     pass

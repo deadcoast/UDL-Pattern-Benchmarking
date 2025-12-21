@@ -8,10 +8,10 @@ This script demonstrates how to use the deployed API to rate UDL files.
 import sys
 from pathlib import Path
 
+from python_client import UDLRatingClient
+
 # Add the client to the path
 sys.path.append(str(Path(__file__).parent.parent / "client"))
-
-from python_client import UDLRatingClient
 
 
 def main():
@@ -89,7 +89,8 @@ def main():
         print(
             f"   ✅ Processed: {batch_result['successful']} successful, {batch_result['failed']} failed"
         )
-        print(f"   ⏱️  Total Time: {batch_result['total_processing_time']:.3f}s")
+        print(
+            f"   ⏱️  Total Time: {batch_result['total_processing_time']:.3f}s")
 
         for i, result in enumerate(batch_result["results"]):
             print(f"   📄 UDL {i + 1}: Score {result['overall_score']:.3f}")
@@ -117,7 +118,8 @@ def main():
     print("\n5. Testing error handling...")
     try:
         # Test with invalid UDL
-        client.rate_udl(content="invalid grammar syntax {{{", filename="invalid.udl")
+        client.rate_udl(
+            content="invalid grammar syntax {{{", filename="invalid.udl")
         print("   ⚠️  Expected error but got success")
     except Exception as e:
         print(f"   ✅ Error handling works: {type(e).__name__}")

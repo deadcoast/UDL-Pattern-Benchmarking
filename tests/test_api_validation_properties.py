@@ -12,20 +12,22 @@ Tests that:
 - For any public API, there should be corresponding documentation
 """
 
-import pytest
-import inspect
 import importlib
+import inspect
 import pkgutil
-from typing import List
-from hypothesis import given, strategies as st, settings, assume
 from dataclasses import dataclass
+from typing import List
+
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
 
 # Import the API validator
 from udl_rating_framework.validation.api_validator import (
-    APIValidator,
-    APIExtractor,
     APIElement,
+    APIExtractor,
     APIValidationReport,
+    APIValidator,
 )
 
 
@@ -416,7 +418,8 @@ class TestPropertyBasedAPIValidation:
 
     @given(
         st.lists(
-            st.text(alphabet="abcdefghijklmnopqrstuvwxyz", min_size=1, max_size=10),
+            st.text(alphabet="abcdefghijklmnopqrstuvwxyz",
+                    min_size=1, max_size=10),
             min_size=0,
             max_size=5,
         )
@@ -430,7 +433,8 @@ class TestPropertyBasedAPIValidation:
         For any list of parameter names, the extractor should handle them consistently.
         """
         # Filter out duplicates and empty strings
-        unique_params = list(dict.fromkeys(p for p in param_names if p.strip()))
+        unique_params = list(dict.fromkeys(
+            p for p in param_names if p.strip()))
 
         # Create a mock API element
         api = APIElement(
@@ -478,8 +482,8 @@ class TestRealProjectAPIValidation:
 
         Core metric classes should have documentation.
         """
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.expressiveness import (
             ExpressivenessMetric,
         )
@@ -521,11 +525,11 @@ class TestRealProjectAPIValidation:
 
         Validation module classes should have documentation.
         """
-        from udl_rating_framework.validation.link_validator import LinkValidator
         from udl_rating_framework.validation.api_validator import APIValidator
         from udl_rating_framework.validation.docstring_validator import (
             DocstringValidator,
         )
+        from udl_rating_framework.validation.link_validator import LinkValidator
 
         validators = [LinkValidator, APIValidator, DocstringValidator]
 

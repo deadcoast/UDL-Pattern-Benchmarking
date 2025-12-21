@@ -4,13 +4,15 @@ Consistency Metric implementation.
 Measures internal coherence using graph-theoretic analysis of grammar rules.
 """
 
+from typing import Dict, List, Tuple
+
 import networkx as nx
-from typing import List, Tuple, Dict
+
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import (
-    UDLRepresentation,
-    GrammarRule,
     Constraint,
+    GrammarRule,
+    UDLRepresentation,
 )
 
 
@@ -152,7 +154,7 @@ class ConsistencyMetric(QualityMetric):
 
         # Check for direct contradictions between rules
         for i, rule1 in enumerate(rules):
-            for j, rule2 in enumerate(rules[i + 1 :], i + 1):
+            for j, rule2 in enumerate(rules[i + 1:], i + 1):
                 if self._are_contradictory(rule1, rule2):
                     contradictions.append((rule1, rule2))
 
@@ -344,8 +346,10 @@ class ConsistencyMetric(QualityMetric):
         """
         return {
             "bounded": True,  # Always produces values in [0, 1]
-            "monotonic": False,  # Not monotonic (more rules don't always mean higher consistency)
-            "additive": False,  # Not additive (consistency is not sum of parts)
+            # Not monotonic (more rules don't always mean higher consistency)
+            "monotonic": False,
+            # Not additive (consistency is not sum of parts)
+            "additive": False,
             "continuous": False,  # Discrete changes in rules can cause discrete changes in consistency
         }
 

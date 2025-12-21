@@ -11,7 +11,8 @@ Tests format detection and parsing for:
 
 import tempfile
 from pathlib import Path
-from udl_rating_framework.core.representation import UDLRepresentation, GrammarFormat
+
+from udl_rating_framework.core.representation import GrammarFormat, UDLRepresentation
 
 
 class TestFormatDetection:
@@ -350,8 +351,8 @@ class TestFormatCompatibility:
 
     def test_metrics_work_with_new_formats(self):
         """Test that quality metrics can process new grammar formats."""
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 
         # Test with ANTLR format
         antlr_content = "grammar Test; expr : term '+' factor ;"
@@ -391,7 +392,8 @@ class TestFormatCompatibility:
 
         # Should have nodes and edges
         assert len(graph.nodes()) > 0
-        assert len(graph.edges()) >= 0  # May be 0 if no valid symbol references
+        # May be 0 if no valid symbol references
+        assert len(graph.edges()) >= 0
 
         # Test PEG
         peg_content = """

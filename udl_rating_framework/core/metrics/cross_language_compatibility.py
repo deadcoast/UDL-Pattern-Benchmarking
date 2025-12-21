@@ -5,12 +5,13 @@ Measures compatibility and portability across different grammar formats and lang
 """
 
 from typing import Dict, List, Set
+
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import (
-    UDLRepresentation,
+    GrammarFormat,
     Token,
     TokenType,
-    GrammarFormat,
+    UDLRepresentation,
 )
 
 
@@ -131,7 +132,8 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
         used_constructs = self._identify_used_constructs(tokens, rules)
 
         # Check how many constructs are universal vs format-specific
-        universal_count = len(used_constructs.intersection(self.universal_constructs))
+        universal_count = len(
+            used_constructs.intersection(self.universal_constructs))
         format_specific_count = 0
 
         if current_format in self.format_specific_features:
@@ -203,7 +205,8 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
         }
 
         # Score based on presence of universal patterns
-        universality_score = sum(universal_patterns.values()) / len(universal_patterns)
+        universality_score = sum(
+            universal_patterns.values()) / len(universal_patterns)
 
         return universality_score
 
@@ -380,7 +383,8 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
     def _uses_standard_operators(self, tokens: List[Token]) -> bool:
         """Check if UDL uses standard operators."""
         standard_ops = {"|", "*", "+", "?", "(", ")", "::=", ":", "="}
-        used_ops = {token.text for token in tokens if token.type == TokenType.OPERATOR}
+        used_ops = {token.text for token in tokens if token.type ==
+                    TokenType.OPERATOR}
         return len(used_ops.intersection(standard_ops)) > 0
 
     def _uses_common_naming(self, tokens: List[Token]) -> bool:
@@ -392,7 +396,8 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
             return True
 
         # Check for common patterns
-        common_patterns = ["expr", "stmt", "decl", "term", "factor", "id", "num"]
+        common_patterns = ["expr", "stmt",
+                           "decl", "term", "factor", "id", "num"]
         return any(
             any(pattern in ident.lower() for pattern in common_patterns)
             for ident in identifiers
@@ -400,7 +405,8 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
 
     def _uses_standard_literals(self, tokens: List[Token]) -> bool:
         """Check if UDL uses standard literal notation."""
-        literals = [token.text for token in tokens if token.type == TokenType.LITERAL]
+        literals = [token.text for token in tokens if token.type ==
+                    TokenType.LITERAL]
         if not literals:
             return True
 
@@ -417,10 +423,12 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
             return False
 
         # Look for hierarchical structure (common in well-structured grammars)
-        rule_names = [rule.lhs.lower() for rule in rules if hasattr(rule, "lhs")]
+        rule_names = [rule.lhs.lower()
+                      for rule in rules if hasattr(rule, "lhs")]
 
         # Common hierarchical patterns
-        hierarchy_indicators = ["program", "statement", "expression", "term", "factor"]
+        hierarchy_indicators = ["program", "statement",
+                                "expression", "term", "factor"]
         return any(indicator in rule_names for indicator in hierarchy_indicators)
 
     def _compatible_with_yacc_bison(self, tokens: List[Token]) -> bool:
@@ -452,7 +460,8 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
         """Check compatibility with generic parsers."""
         # Generic parsers usually handle basic BNF/EBNF
         basic_constructs = {"|", "*", "+", "?", "(", ")", "::=", "="}
-        used_ops = {token.text for token in tokens if token.type == TokenType.OPERATOR}
+        used_ops = {token.text for token in tokens if token.type ==
+                    TokenType.OPERATOR}
 
         # If only basic constructs are used, it's compatible
         return used_ops.issubset(basic_constructs) or len(used_ops) == 0
@@ -538,7 +547,8 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
 
     def _has_proper_string_literals(self, tokens: List[Token]) -> bool:
         """Check for properly quoted string literals."""
-        literals = [token.text for token in tokens if token.type == TokenType.LITERAL]
+        literals = [token.text for token in tokens if token.type ==
+                    TokenType.LITERAL]
         if not literals:
             return True
 
@@ -573,4 +583,5 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
 
 
 # Register the metric in the global registry
-CrossLanguageCompatibilityMetric.register_metric("cross_language_compatibility")
+CrossLanguageCompatibilityMetric.register_metric(
+    "cross_language_compatibility")

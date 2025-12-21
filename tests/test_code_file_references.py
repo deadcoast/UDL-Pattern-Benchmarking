@@ -7,10 +7,11 @@ Tests that all code files referenced in documentation exist and are accessible.
 **Validates: Requirements 4.4**
 """
 
-import pytest
 import os
-from hypothesis import given, strategies as st, settings
 
+import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 # Code files referenced in the mathematical framework documentation
 REFERENCED_CODE_FILES = [
@@ -69,7 +70,8 @@ class TestCodeFileReferenceValidity:
                         f"Referenced code file is empty: {file_path}"
                     )
             except Exception as e:
-                pytest.fail(f"Cannot read referenced code file {file_path}: {e}")
+                pytest.fail(
+                    f"Cannot read referenced code file {file_path}: {e}")
 
     def test_all_referenced_files_are_valid_python(self):
         """
@@ -86,7 +88,8 @@ class TestCodeFileReferenceValidity:
                     content = f.read()
                 ast.parse(content)
             except SyntaxError as e:
-                pytest.fail(f"Referenced code file has syntax error {file_path}: {e}")
+                pytest.fail(
+                    f"Referenced code file has syntax error {file_path}: {e}")
 
     def test_all_referenced_files_are_importable(self):
         """
@@ -111,7 +114,8 @@ class TestCodeFileReferenceValidity:
                 module = importlib.import_module(module_name)
                 assert module is not None, f"Module {module_name} is None"
             except ImportError as e:
-                pytest.fail(f"Cannot import module {module_name} from {file_path}: {e}")
+                pytest.fail(
+                    f"Cannot import module {module_name} from {file_path}: {e}")
 
     def test_metric_classes_exist_in_files(self):
         """
@@ -120,16 +124,16 @@ class TestCodeFileReferenceValidity:
 
         The expected metric classes must exist in the referenced files.
         """
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+        from udl_rating_framework.core.aggregation import MetricAggregator
+        from udl_rating_framework.core.confidence import ConfidenceCalculator
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.expressiveness import (
             ExpressivenessMetric,
         )
         from udl_rating_framework.core.metrics.structural_coherence import (
             StructuralCoherenceMetric,
         )
-        from udl_rating_framework.core.aggregation import MetricAggregator
-        from udl_rating_framework.core.confidence import ConfidenceCalculator
 
         # Verify classes exist and are callable
         assert ConsistencyMetric is not None
@@ -153,16 +157,16 @@ class TestCodeFileReferenceValidity:
 
         The metric classes must have the required methods documented in the framework.
         """
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+        from udl_rating_framework.core.aggregation import MetricAggregator
+        from udl_rating_framework.core.confidence import ConfidenceCalculator
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.expressiveness import (
             ExpressivenessMetric,
         )
         from udl_rating_framework.core.metrics.structural_coherence import (
             StructuralCoherenceMetric,
         )
-        from udl_rating_framework.core.aggregation import MetricAggregator
-        from udl_rating_framework.core.confidence import ConfidenceCalculator
 
         # Check metric classes have compute method
         for metric_class in [

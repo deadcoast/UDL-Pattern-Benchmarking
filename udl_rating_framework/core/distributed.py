@@ -6,12 +6,11 @@ UDL analysis across multiple machines and clusters.
 """
 
 import logging
-import time
-from typing import Dict, List, Any, Optional, Callable
-from pathlib import Path
-from dataclasses import dataclass
 import os
-
+import time
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
 
 try:
     import ray
@@ -35,11 +34,11 @@ try:
 except ImportError:
     DASK_AVAILABLE = False
 
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.pipeline import RatingPipeline, QualityReport
 from udl_rating_framework.core.multiprocessing import (
     BatchProcessingStats,
 )
+from udl_rating_framework.core.pipeline import QualityReport, RatingPipeline
+from udl_rating_framework.core.representation import UDLRepresentation
 
 logger = logging.getLogger(__name__)
 
@@ -126,7 +125,8 @@ class DistributedProcessor:
 
         # Validate backend availability
         if self.config.backend == "ray" and not RAY_AVAILABLE:
-            raise RuntimeError("Ray backend requested but not available. Install Ray.")
+            raise RuntimeError(
+                "Ray backend requested but not available. Install Ray.")
         if self.config.backend == "dask" and not DASK_AVAILABLE:
             raise RuntimeError(
                 "Dask backend requested but not available. Install Dask."
@@ -450,13 +450,15 @@ def _process_udl_task_impl(task: DistributedTask) -> DistributedResult:
     try:
         # Validate input
         if not task.content or not task.content.strip():
-            raise ValueError(f"Empty or invalid content for task: {task.task_id}")
+            raise ValueError(
+                f"Empty or invalid content for task: {task.task_id}")
 
         # Create UDL representation
         udl = UDLRepresentation(task.content, task.file_path)
 
         # Create rating pipeline
-        pipeline = RatingPipeline(metric_names=task.metric_names, weights=task.weights)
+        pipeline = RatingPipeline(
+            metric_names=task.metric_names, weights=task.weights)
 
         # Compute rating
         report = pipeline.compute_rating(udl)

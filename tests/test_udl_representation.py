@@ -5,15 +5,17 @@ Property-based and unit tests for UDL representation components.
 **Validates: Requirements 4.1**
 """
 
-from hypothesis import given, strategies as st, settings
+from hypothesis import given, settings
+from hypothesis import strategies as st
+
 from udl_rating_framework.core.representation import (
-    UDLRepresentation,
-    UDLTokenizer,
+    AST,
+    Constraint,
+    GrammarRule,
     Token,
     TokenType,
-    GrammarRule,
-    Constraint,
-    AST,
+    UDLRepresentation,
+    UDLTokenizer,
 )
 
 
@@ -81,7 +83,8 @@ class TestUDLRepresentation:
         assert TokenType.EOF in token_types
 
         # Check specific tokens
-        identifier_tokens = [t for t in tokens if t.type == TokenType.IDENTIFIER]
+        identifier_tokens = [
+            t for t in tokens if t.type == TokenType.IDENTIFIER]
         assert any(t.text == "expr" for t in identifier_tokens)
         assert any(t.text == "term" for t in identifier_tokens)
         assert any(t.text == "factor" for t in identifier_tokens)
@@ -182,7 +185,8 @@ class TestUDLRepresentation:
         assert "block" in rule_names
 
         # Check that RHS contains expected symbols
-        statement_rule = next(rule for rule in rules if rule.lhs == "statement")
+        statement_rule = next(
+            rule for rule in rules if rule.lhs == "statement")
         assert "assignment" in statement_rule.rhs
         assert "expression" in statement_rule.rhs
         assert "block" in statement_rule.rhs

@@ -4,12 +4,14 @@ Property-based and unit tests for ExpressivenessMetric.
 Tests the mathematical correctness of the expressiveness metric implementation.
 """
 
-from hypothesis import given, strategies as st, settings, assume
-from udl_rating_framework.core.representation import UDLRepresentation
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
+
 from udl_rating_framework.core.metrics.expressiveness import (
     ExpressivenessMetric,
     Grammar,
 )
+from udl_rating_framework.core.representation import UDLRepresentation
 
 
 def create_udl_with_chomsky_type(chomsky_type: int) -> UDLRepresentation:
@@ -149,7 +151,8 @@ class TestExpressivenessMetricProperties:
                 grammar = Grammar(rules)
                 chomsky_type = metric.classify_chomsky_level(grammar)
                 chomsky_score = metric.chomsky_levels[chomsky_type]
-                complexity_score = metric.approximate_kolmogorov_complexity(udl)
+                complexity_score = metric.approximate_kolmogorov_complexity(
+                    udl)
 
                 # Verify individual components are bounded
                 assert 0.0 <= chomsky_score <= 1.0, (
@@ -330,7 +333,8 @@ class TestExpressivenessMetricUnits:
 
         # Test simple text (should compress well, low complexity)
         simple_udl = UDLRepresentation("A ::= 'a' A | 'a'", "simple.udl")
-        simple_complexity = metric.approximate_kolmogorov_complexity(simple_udl)
+        simple_complexity = metric.approximate_kolmogorov_complexity(
+            simple_udl)
         assert 0.0 <= simple_complexity <= 1.0, (
             f"Simple complexity {simple_complexity} not bounded"
         )
@@ -343,7 +347,8 @@ class TestExpressivenessMetricUnits:
         T2 ::= 'z2' S3 | 'w2' V2
         """
         complex_udl = UDLRepresentation(complex_text, "complex.udl")
-        complex_complexity = metric.approximate_kolmogorov_complexity(complex_udl)
+        complex_complexity = metric.approximate_kolmogorov_complexity(
+            complex_udl)
         assert 0.0 <= complex_complexity <= 1.0, (
             f"Complex complexity {complex_complexity} not bounded"
         )
@@ -470,7 +475,8 @@ class TestExpressivenessMetricUnits:
             assert score == first_score, f"Non-deterministic behavior: got {scores}"
 
         # Also test the verification method
-        assert metric.verify_determinism(udl), "Determinism verification failed"
+        assert metric.verify_determinism(
+            udl), "Determinism verification failed"
 
     def test_chomsky_levels_mapping(self):
         """Test that Chomsky levels are correctly mapped."""

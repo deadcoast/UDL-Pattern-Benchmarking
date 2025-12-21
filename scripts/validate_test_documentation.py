@@ -15,10 +15,10 @@ This script checks:
 import ast
 import re
 import sys
-from pathlib import Path
-from dataclasses import dataclass, field
-from typing import List, Optional, Tuple
 from collections import defaultdict
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import List, Optional, Tuple
 
 
 @dataclass
@@ -64,7 +64,8 @@ class ValidationReport:
     invalid_refs: List[Tuple[str, str, str]] = field(
         default_factory=list
     )  # (file, ref, reason)
-    valid_refs: List[Tuple[str, str]] = field(default_factory=list)  # (file, ref)
+    valid_refs: List[Tuple[str, str]] = field(
+        default_factory=list)  # (file, ref)
 
 
 # Valid requirement numbers from both specs
@@ -301,7 +302,8 @@ def parse_test_file(file_path: Path) -> Tuple[List[TestClass], List[TestFunction
                     file_path=str(file_path),
                     line_number=node.lineno,
                     docstring=docstring,
-                    has_docstring=docstring is not None and len(docstring.strip()) > 0,
+                    has_docstring=docstring is not None and len(
+                        docstring.strip()) > 0,
                 )
 
                 # Extract test methods
@@ -346,12 +348,16 @@ def parse_test_file(file_path: Path) -> Tuple[List[TestClass], List[TestFunction
                     file_path=str(file_path),
                     line_number=node.lineno,
                     docstring=docstring,
-                    has_docstring=docstring is not None and len(docstring.strip()) > 0,
+                    has_docstring=docstring is not None and len(
+                        docstring.strip()) > 0,
                     requirement_refs=(
-                        extract_requirement_refs(docstring) if docstring else []
+                        extract_requirement_refs(
+                            docstring) if docstring else []
                     ),
-                    property_refs=extract_property_refs(docstring) if docstring else [],
-                    feature_refs=extract_feature_refs(docstring) if docstring else [],
+                    property_refs=extract_property_refs(
+                        docstring) if docstring else [],
+                    feature_refs=extract_feature_refs(
+                        docstring) if docstring else [],
                 )
                 functions.append(test_func)
 
@@ -434,7 +440,8 @@ def print_report(report: ValidationReport):
 
     print("\n--- Docstring Coverage ---")
     print(f"✅ Functions with docstrings: {report.functions_with_docstrings}")
-    print(f"❌ Functions without docstrings: {report.functions_without_docstrings}")
+    print(
+        f"❌ Functions without docstrings: {report.functions_without_docstrings}")
 
     if report.total_test_functions > 0:
         coverage = (
@@ -447,11 +454,13 @@ def print_report(report: ValidationReport):
 
     print("\n--- Requirement References ---")
     print(f"✅ Valid requirement references: {report.valid_requirement_refs}")
-    print(f"❌ Invalid requirement references: {report.invalid_requirement_refs}")
+    print(
+        f"❌ Invalid requirement references: {report.invalid_requirement_refs}")
 
     if report.invalid_refs:
         print("\n⚠️  Invalid Requirement References:")
-        for file_path, ref, reason in report.invalid_refs[:20]:  # Limit to first 20
+        # Limit to first 20
+        for file_path, ref, reason in report.invalid_refs[:20]:
             rel_path = Path(file_path).name
             print(f"   {rel_path}: '{ref}' - {reason}")
         if len(report.invalid_refs) > 20:
@@ -466,7 +475,8 @@ def print_report(report: ValidationReport):
         for func in report.missing_docstrings:
             by_file[func.file_path].append(func)
 
-        for file_path, funcs in sorted(by_file.items())[:10]:  # Limit to first 10 files
+        # Limit to first 10 files
+        for file_path, funcs in sorted(by_file.items())[:10]:
             rel_path = Path(file_path).name
             print(f"   {rel_path}:")
             for func in funcs[:5]:  # Limit to first 5 per file
