@@ -5,7 +5,7 @@ Measures maintainability of UDL using software engineering metrics adapted for g
 """
 
 import math
-from typing import Dict, List, Set, Any, Tuple
+from typing import Dict, List
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType
 

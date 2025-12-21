@@ -7,7 +7,7 @@ Handles loading and validation of YAML configuration files.
 import yaml
 import logging
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from dataclasses import dataclass, field
 
 logger = logging.getLogger(__name__)

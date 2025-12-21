@@ -8,12 +8,11 @@ correctness and ground truth consistency.
 import pytest
 import torch
 import torch.nn as nn
-import numpy as np
 from hypothesis import given, strategies as st, settings
-from typing import List, Dict
+from typing import Dict
 
-from udl_rating_framework.training.training_pipeline import TrainingPipeline, UDLDataset
-from udl_rating_framework.models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
+from udl_rating_framework.training.training_pipeline import TrainingPipeline
+from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.aggregation import MetricAggregator
 from udl_rating_framework.core.representation import UDLRepresentation
@@ -58,10 +57,6 @@ def mock_metrics():
 @pytest.fixture
 def mock_aggregator():
     """Create mock aggregator for testing."""
-    weights = {
-        "mockmetric": 0.5,
-        "mockmetric": 0.5,  # This will overwrite, but that's fine for testing
-    }
     # Use equal weights for simplicity
     weights = {"metric1": 0.5, "metric2": 0.5}
     return MetricAggregator(weights)

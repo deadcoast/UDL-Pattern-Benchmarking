@@ -4,11 +4,9 @@ Tests for CTM adapter module.
 Tests the UDL rating CTM model and its components.
 """
 
-import pytest
 import torch
 import numpy as np
 from hypothesis import given, strategies as st, settings
-from hypothesis.extra.numpy import arrays
 
 from udl_rating_framework.models.ctm_adapter import (
     UDLRatingCTM,
@@ -362,7 +360,13 @@ class TestCTMAdapterProperties:
 
         if len(actual_shape) == 5:
             # If we have 5 dimensions, squeeze the extra dimension (likely the query dimension)
-            assert actual_shape == (iterations, batch_size, heads, 1, seq_len), (
+            assert actual_shape == (
+                iterations,
+                batch_size,
+                heads,
+                1,
+                seq_len,
+            ), (
                 f"Unexpected attention shape: {actual_shape}, expected: ({iterations}, {batch_size}, {heads}, 1, {seq_len})"
             )
             # Reshape for normalization check
@@ -370,7 +374,12 @@ class TestCTMAdapterProperties:
                 3
             )  # Remove the extra dimension
         else:
-            assert actual_shape == (iterations, batch_size, heads, seq_len), (
+            assert actual_shape == (
+                iterations,
+                batch_size,
+                heads,
+                seq_len,
+            ), (
                 f"Unexpected attention shape: {actual_shape}, expected: ({iterations}, {batch_size}, {heads}, {seq_len})"
             )
             attention_weights_reshaped = tracking_data.attention_weights

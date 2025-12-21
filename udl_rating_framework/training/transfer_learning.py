@@ -9,33 +9,22 @@ just static representations.
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torch.utils.data import DataLoader
-import numpy as np
-from typing import Dict, List, Any, Optional, Tuple, Union
+from typing import Dict, List, Any, Optional, Tuple
 import logging
 from dataclasses import dataclass
-from pathlib import Path
-import json
 
 try:
     from transformers import (
         AutoModel,
         AutoTokenizer,
-        AutoConfig,
-        BertModel,
-        GPT2Model,
-        RobertaModel,
-        PreTrainedModel,
-        PreTrainedTokenizer,
     )
 
     TRANSFORMERS_AVAILABLE = True
 except ImportError:
     TRANSFORMERS_AVAILABLE = False
 
-from ..models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
-from ..core.representation import UDLRepresentation
+from ..models.ctm_adapter import UDLRatingCTM
 from .training_pipeline import TrainingPipeline
 
 logger = logging.getLogger(__name__)

@@ -5,7 +5,6 @@ Property-based and unit tests for UDL representation components.
 **Validates: Requirements 4.1**
 """
 
-import pytest
 from hypothesis import given, strategies as st, settings
 from udl_rating_framework.core.representation import (
     UDLRepresentation,

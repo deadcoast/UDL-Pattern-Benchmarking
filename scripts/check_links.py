@@ -13,18 +13,18 @@ Usage:
 """
 
 import argparse
-import sys
-from pathlib import Path
-from typing import List, Dict, Optional
-from dataclasses import dataclass
+import importlib.util
 import json
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 # Import link validator directly to avoid package import issues
-import importlib.util
 
 
 def _import_link_validator():

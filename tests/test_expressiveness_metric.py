@@ -5,7 +5,6 @@ Tests the mathematical correctness of the expressiveness metric implementation.
 """
 
 from hypothesis import given, strategies as st, settings, assume
-from typing import List, Set
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.metrics.expressiveness import (
     ExpressivenessMetric,
@@ -389,6 +388,7 @@ class TestExpressivenessMetricUnits:
         is_regular = metric._is_regular_grammar(regular_grammar)
         # Note: Our heuristics might not perfectly detect all regular grammars
         # but should work for simple cases
+        assert is_regular, "Regular grammar not detected as regular"
 
         # Non-regular grammar (context-free)
         cf_text = """

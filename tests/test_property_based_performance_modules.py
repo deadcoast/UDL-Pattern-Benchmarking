@@ -7,11 +7,9 @@ ensure robustness under various conditions.
 """
 
 import pytest
-import numpy as np
 import tempfile
 import os
 from pathlib import Path
-from typing import Dict, List, Any, Optional
 from hypothesis import given, strategies as st, settings, assume
 import math
 
@@ -154,7 +152,7 @@ class TestStreamingModuleProperties:
             # Clean up
             try:
                 os.unlink(temp_file_path)
-            except:
+            except OSError:
                 pass
 
 

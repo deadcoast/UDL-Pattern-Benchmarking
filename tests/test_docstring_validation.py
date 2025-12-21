@@ -12,17 +12,12 @@ import pytest
 import inspect
 import importlib
 import pkgutil
-import ast
-from pathlib import Path
 from hypothesis import given, strategies as st, settings, assume
-from typing import List, Tuple, Any, Optional
+from typing import List, Tuple, Any
 
 from udl_rating_framework.validation.docstring_validator import (
     DocstringValidator,
     DocstringParser,
-    DocstringInfo,
-    SignatureMismatch,
-    UndocumentedAPI,
     find_undocumented_public_apis,
     validate_docstrings,
 )
@@ -234,10 +229,8 @@ class TestDocstringSignatureAccuracy:
         # Check coverage - at least some params should be documented
         # We don't require 100% coverage as some simple functions may not document all params
         if len(actual_params) > 0 and len(documented_params) > 0:
-            # At least one actual param should be documented
-            intersection = actual_params.intersection(documented_params)
             # This is informational - we track but don't fail for incomplete docs
-            pass
+            actual_params.intersection(documented_params)
 
 
 class TestUndocumentedAPIs:

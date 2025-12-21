@@ -10,7 +10,7 @@ import ast
 import sys
 import importlib
 from pathlib import Path
-from typing import Set, List, Tuple
+from typing import List, Tuple
 
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))

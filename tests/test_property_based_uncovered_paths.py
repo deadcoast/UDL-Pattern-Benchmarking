@@ -10,12 +10,9 @@ import pytest
 import numpy as np
 import tempfile
 import os
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Union
-from hypothesis import given, strategies as st, settings, assume, Verbosity
+from hypothesis import given, strategies as st, settings
 from hypothesis.extra.numpy import arrays
 from hypothesis.stateful import RuleBasedStateMachine, rule, initialize, invariant
-import math
 
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.aggregation import MetricAggregator
@@ -221,7 +218,7 @@ class TestComplexDataStructureInvariants:
             ast2 = udl_repr.to_ast()
             # AST should have same structure (we can't easily compare objects, but can check basic properties)
             if hasattr(ast1, "__dict__") and hasattr(ast2, "__dict__"):
-                assert type(ast1) == type(ast2), "AST types should be consistent"
+                assert type(ast1) is type(ast2), "AST types should be consistent"
 
             # Invariant 4: Representation should handle empty content gracefully
             if not udl_content.strip():
@@ -232,11 +229,11 @@ class TestComplexDataStructureInvariants:
         except Exception as e:
             # If parsing fails, it should fail consistently
             try:
-                udl_repr2 = UDLRepresentation(udl_content, "test2.udl")
+                UDLRepresentation(udl_content, "test2.udl")
                 pytest.fail(
                     f"Parsing should fail consistently, but succeeded on second try: {e}"
                 )
-            except:
+            except Exception:
                 pass  # Expected to fail consistently
 
     @given(
@@ -371,7 +368,7 @@ class TestStateMachineProperties:
             for file_path, _ in temp_files:
                 try:
                     os.unlink(file_path)
-                except:
+                except OSError:
                     pass
 
 

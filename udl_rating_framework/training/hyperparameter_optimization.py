@@ -6,17 +6,13 @@ including grid search, random search, and Bayesian optimization.
 """
 
 import torch
-import torch.nn as nn
 from torch.utils.data import DataLoader
 import numpy as np
-from typing import Dict, List, Any, Optional, Tuple, Callable
+from typing import Dict, List, Any, Optional, Tuple
 import logging
 from dataclasses import dataclass, field
 import json
-from pathlib import Path
 import itertools
-from concurrent.futures import ProcessPoolExecutor
-import multiprocessing as mp
 
 try:
     import optuna
@@ -25,7 +21,7 @@ try:
 except ImportError:
     OPTUNA_AVAILABLE = False
 
-from .training_pipeline import TrainingPipeline, UDLDataset
+from .training_pipeline import TrainingPipeline
 from ..models.ctm_adapter import UDLRatingCTM, create_udl_rating_model
 from ..core.metrics.base import QualityMetric
 from ..core.aggregation import MetricAggregator
@@ -99,7 +95,7 @@ class CTMHyperparameterSpace:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "HyperparameterSpace":
+    def from_dict(cls, data: Dict[str, Any]) -> "CTMHyperparameterSpace":
         """Create from dictionary."""
         return cls(**data)
 
@@ -279,9 +275,9 @@ class CTMHyperparameterOptimizer:
                 "params": params.copy(),
                 "score": score,
                 "final_train_loss": history["train_loss"][-1],
-                "final_val_loss": history["val_loss"][-1]
-                if history["val_loss"]
-                else None,
+                "final_val_loss": (
+                    history["val_loss"][-1] if history["val_loss"] else None
+                ),
                 "best_val_correlation": score if history["val_correlation"] else None,
             }
 

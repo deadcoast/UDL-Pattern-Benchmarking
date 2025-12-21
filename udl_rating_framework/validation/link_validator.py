@@ -133,7 +133,6 @@ class LinkValidator:
                 # Check if this link is inside inline code (backticks)
                 # Find the position of the match in the line
                 match_start = match.start()
-                match_end = match.end()
 
                 # Count backticks before the match
                 text_before = line[:match_start]

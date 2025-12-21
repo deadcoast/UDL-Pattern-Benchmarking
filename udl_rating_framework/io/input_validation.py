@@ -10,7 +10,7 @@ This module provides functionality for:
 import re
 import logging
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple, Set
+from typing import List, Optional, Tuple, Set
 from dataclasses import dataclass
 from enum import Enum
 
@@ -244,7 +244,7 @@ class InputValidator:
                         return content
                 except UnicodeDecodeError:
                     continue
-            raise ValidationError(f"Cannot decode file with any supported encoding")
+            raise ValidationError("Cannot decode file with any supported encoding")
         except Exception as e:
             raise ValidationError(f"Error reading file: {e}")
 

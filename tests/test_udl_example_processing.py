@@ -10,11 +10,10 @@ through the rating system without errors.
 
 import pytest
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List
 
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.pipeline import RatingPipeline
-from udl_rating_framework.core.metrics.base import MetricRegistry
 
 
 class TestUDLExampleProcessing:
@@ -293,7 +292,7 @@ class TestUDLExampleProcessing:
                 failures.append({"file": file_path.name, "errors": [str(e)]})
 
         # Report results
-        print(f"\n=== UDL Processing Results ===")
+        print("\n=== UDL Processing Results ===")
         print(f"Successes: {len(successes)}/{len(udl_files)}")
         for s in successes:
             print(f"  ✓ {s['file']}: score={s['score']:.4f}")
@@ -485,7 +484,7 @@ class TestUDLProcessingReport:
             print(f"  Score: {score_str}")
 
             if r["metrics"]:
-                print(f"  Metrics:")
+                print("  Metrics:")
                 for metric, value in r["metrics"].items():
                     print(f"    - {metric}: {value:.4f}")
 

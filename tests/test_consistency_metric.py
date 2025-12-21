@@ -4,14 +4,8 @@ Property-based and unit tests for ConsistencyMetric.
 Tests the mathematical correctness of the consistency metric implementation.
 """
 
-import pytest
-from hypothesis import given, strategies as st, settings, assume
-import networkx as nx
-from typing import List
 from udl_rating_framework.core.representation import (
     UDLRepresentation,
-    GrammarRule,
-    Constraint,
 )
 from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 
@@ -38,7 +32,6 @@ def create_udl_with_known_cycles_and_contradictions(
         rules_text.append(f"rule{i} ::= 'terminal{i}'")
 
     # Add cycles by creating circular dependencies
-    cycle_start_idx = base_rules
     for i in range(num_cycles):
         if i == 0:
             # Create a simple 2-node cycle: A -> B -> A
@@ -51,7 +44,6 @@ def create_udl_with_known_cycles_and_contradictions(
             rules_text.append(f"cycleC{i} ::= cycleA{i}")
 
     # Add contradictions by creating rules with same LHS but conflicting RHS
-    contradiction_start_idx = cycle_start_idx + num_cycles * 2
     for i in range(num_contradictions):
         # Create contradictory rules with same LHS
         rules_text.append(f"conflict{i} ::= 'true'")
@@ -274,10 +266,10 @@ class TestConsistencyMetricUnits:
         metric = ConsistencyMetric()
         properties = metric.get_properties()
 
-        assert properties["bounded"] == True
-        assert properties["monotonic"] == False
-        assert properties["additive"] == False
-        assert properties["continuous"] == False
+        assert properties["bounded"]
+        assert not properties["monotonic"]
+        assert not properties["additive"]
+        assert not properties["continuous"]
 
     def test_metric_formula(self):
         """Test that the metric returns the correct LaTeX formula."""

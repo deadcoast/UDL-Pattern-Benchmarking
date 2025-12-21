@@ -7,7 +7,7 @@ Provides functionality to train CTM models on UDL data.
 import click
 import logging
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Optional
 import json
 import sys
 import torch
@@ -20,7 +20,6 @@ from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.io.file_discovery import FileDiscovery
 
 # Import metrics to trigger registration
-import udl_rating_framework.core.metrics
 
 logger = logging.getLogger(__name__)
 
@@ -218,15 +217,6 @@ def train_command(
 
         # Set up metrics and aggregator
         metric_registry = MetricRegistry()
-        available_metrics = metric_registry.list_metrics()
-
-        # Map CLI weight names to registry names
-        metric_name_mapping = {
-            "ConsistencyMetric": "consistency",
-            "CompletenessMetric": "completeness",
-            "ExpressivenessMetric": "expressiveness",
-            "StructuralCoherenceMetric": "structural_coherence",
-        }
 
         # Use equal weights for training (can be overridden by config)
         weights_dict = {
@@ -311,7 +301,7 @@ def train_command(
         with open(history_path, "w") as f:
             json.dump(training_history, f, indent=2, default=str)
 
-        logger.info(f"Training completed!")
+        logger.info("Training completed!")
         logger.info(f"Final model saved to: {final_model_path}")
         logger.info(f"Training history saved to: {history_path}")
 

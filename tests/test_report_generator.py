@@ -15,7 +15,7 @@ import tempfile
 from datetime import datetime
 from pathlib import Path
 from io import StringIO
-from typing import List, Dict, Any
+from typing import List
 
 from udl_rating_framework.io.report_generator import ReportGenerator
 from udl_rating_framework.core.pipeline import QualityReport, ComputationStep

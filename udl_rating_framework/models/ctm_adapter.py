@@ -7,7 +7,7 @@ Adapts the Continuous Thought Machine architecture for UDL quality prediction.
 import torch
 import torch.nn as nn
 import numpy as np
-from typing import Tuple, List, Dict, Any, Optional, NamedTuple
+from typing import Tuple, Dict, Optional
 import sys
 import os
 import h5py
@@ -17,7 +17,7 @@ from dataclasses import dataclass
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "models"))
 
 from ctm import ContinuousThoughtMachine
-from ..core.representation import UDLRepresentation, Token, TokenType
+from ..core.representation import UDLRepresentation, TokenType
 
 
 @dataclass

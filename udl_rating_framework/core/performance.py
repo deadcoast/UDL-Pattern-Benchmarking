@@ -8,11 +8,10 @@ incremental computation.
 
 import logging
 import time
-from typing import Dict, List, Any, Optional, Union, Callable
+from typing import Dict, List, Any, Optional, Callable
 from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
-import asyncio
 
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.pipeline import QualityReport
@@ -22,20 +21,14 @@ import udl_rating_framework.core.metrics  # noqa: F401
 
 # Import performance modules
 try:
-    from udl_rating_framework.core.distributed import (
-        DistributedBatchProcessor,
-        process_files_distributed,
-    )
+    from udl_rating_framework.core.distributed import DistributedBatchProcessor
 
     DISTRIBUTED_AVAILABLE = True
 except ImportError:
     DISTRIBUTED_AVAILABLE = False
 
 try:
-    from udl_rating_framework.core.gpu_acceleration import (
-        GPUAcceleratedProcessor,
-        process_files_gpu,
-    )
+    from udl_rating_framework.core.gpu_acceleration import GPUAcceleratedProcessor
 
     GPU_AVAILABLE = True
 except ImportError:
@@ -44,11 +37,9 @@ except ImportError:
 from udl_rating_framework.core.streaming import StreamingProcessor, process_large_file
 from udl_rating_framework.core.memory_mapping import (
     MemoryMappedUDLProcessor,
-    process_large_udl_file,
 )
 from udl_rating_framework.core.incremental import (
     IncrementalProcessor,
-    process_udl_incremental,
 )
 from udl_rating_framework.core.multiprocessing import (
     ParallelProcessor,
@@ -484,9 +475,9 @@ class PerformanceOptimizer:
             successful_files=stats.successful,
             failed_files=stats.failed,
             processing_time=stats.total_time,
-            throughput=stats.successful / stats.total_time
-            if stats.total_time > 0
-            else 0.0,
+            throughput=(
+                stats.successful / stats.total_time if stats.total_time > 0 else 0.0
+            ),
             memory_peak_mb=0.0,  # TODO: Get from stats
             cache_hit_ratio=0.0,
             reports=reports,
@@ -686,9 +677,11 @@ class PerformanceOptimizer:
             "file_count": result.total_files,
             "processing_time": result.processing_time,
             "throughput": result.throughput,
-            "success_rate": result.successful_files / result.total_files
-            if result.total_files > 0
-            else 0.0,
+            "success_rate": (
+                result.successful_files / result.total_files
+                if result.total_files > 0
+                else 0.0
+            ),
             "cache_hit_ratio": result.cache_hit_ratio,
         }
 
@@ -892,9 +885,11 @@ def benchmark_all_strategies(
                     {
                         "processing_time": result.processing_time,
                         "throughput": result.throughput,
-                        "success_rate": result.successful_files / result.total_files
-                        if result.total_files > 0
-                        else 0.0,
+                        "success_rate": (
+                            result.successful_files / result.total_files
+                            if result.total_files > 0
+                            else 0.0
+                        ),
                         "cache_hit_ratio": result.cache_hit_ratio,
                     }
                 )

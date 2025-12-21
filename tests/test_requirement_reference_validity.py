@@ -8,12 +8,11 @@ Tests that for any requirement reference in a test file (e.g., "Validates: Requi
 the referenced requirement must exist in the requirements document.
 """
 
-import pytest
 import ast
 import re
 from pathlib import Path
-from hypothesis import given, strategies as st, settings, assume
-from typing import List, Set, Tuple, Optional
+from hypothesis import given, strategies as st, settings
+from typing import List
 from dataclasses import dataclass
 
 
@@ -251,9 +250,11 @@ def extract_all_requirement_refs(file_path: Path) -> List[RequirementReference]:
                         file_path=str(file_path),
                         line_number=line_number,
                         requirement_id=req_id,
-                        context=docstring[:100] + "..."
-                        if len(docstring) > 100
-                        else docstring,
+                        context=(
+                            docstring[:100] + "..."
+                            if len(docstring) > 100
+                            else docstring
+                        ),
                     )
                 )
 

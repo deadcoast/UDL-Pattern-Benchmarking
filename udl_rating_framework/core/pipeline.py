@@ -9,7 +9,6 @@ import hashlib
 from datetime import datetime
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field
-from pathlib import Path
 
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.metrics.base import QualityMetric, MetricRegistry

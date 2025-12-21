@@ -16,8 +16,7 @@ import pytest
 import inspect
 import importlib
 import pkgutil
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import List
 from hypothesis import given, strategies as st, settings, assume
 from dataclasses import dataclass
 
@@ -26,7 +25,6 @@ from udl_rating_framework.validation.api_validator import (
     APIValidator,
     APIExtractor,
     APIElement,
-    APIDiscrepancy,
     APIValidationReport,
 )
 

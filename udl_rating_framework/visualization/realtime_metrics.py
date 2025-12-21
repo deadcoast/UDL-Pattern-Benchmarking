@@ -7,7 +7,6 @@ and interactive dashboards for monitoring UDL analysis progress.
 
 import json
 import time
-import threading
 from typing import Dict, List, Optional, Any, Callable
 from pathlib import Path
 from dataclasses import dataclass, asdict

@@ -10,11 +10,10 @@ import statistics
 import logging
 import psutil
 import gc
-from typing import Dict, List, Any, Optional, Callable, Tuple
+from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, field
 from pathlib import Path
 import matplotlib.pyplot as plt
-import numpy as np
 import torch
 
 try:
@@ -38,9 +37,8 @@ except ImportError:
 
 
 from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.pipeline import RatingPipeline
 from udl_rating_framework.core.metrics.base import MetricRegistry
-from udl_rating_framework.models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
+from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
 from udl_rating_framework.core.multiprocessing import ParallelProcessor
 
 logger = logging.getLogger(__name__)
@@ -175,7 +173,7 @@ class PerformanceBenchmark:
                     # Measure computation time
                     start_time = time.perf_counter()
                     try:
-                        value = metric.compute(udl)
+                        metric.compute(udl)
                         end_time = time.perf_counter()
 
                         execution_time = end_time - start_time
@@ -208,9 +206,9 @@ class PerformanceBenchmark:
                             "metric_name": metric_name,
                             "udl_size": udl_size,
                             "iterations": iterations,
-                            "std_time": statistics.stdev(times)
-                            if len(times) > 1
-                            else 0.0,
+                            "std_time": (
+                                statistics.stdev(times) if len(times) > 1 else 0.0
+                            ),
                             "min_time": min(times),
                             "max_time": max(times),
                         },
@@ -322,9 +320,9 @@ class PerformanceBenchmark:
                             "sequence_length": seq_len,
                             "iterations": iterations,
                             "tokens_per_second": throughput,
-                            "std_time": statistics.stdev(times)
-                            if len(times) > 1
-                            else 0.0,
+                            "std_time": (
+                                statistics.stdev(times) if len(times) > 1 else 0.0
+                            ),
                         },
                     )
 
@@ -431,12 +429,14 @@ class PerformanceBenchmark:
                             "worker_count": worker_count,
                             "iterations": iterations,
                             "files_per_second": throughput,
-                            "std_time": statistics.stdev(times)
-                            if len(times) > 1
-                            else 0.0,
-                            "speedup": throughput / (file_count / max(times))
-                            if worker_count == 1
-                            else None,
+                            "std_time": (
+                                statistics.stdev(times) if len(times) > 1 else 0.0
+                            ),
+                            "speedup": (
+                                throughput / (file_count / max(times))
+                                if worker_count == 1
+                                else None
+                            ),
                         },
                     )
 

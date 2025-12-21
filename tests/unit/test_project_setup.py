@@ -6,8 +6,6 @@ Validates: Requirements 11.7
 """
 
 import pytest
-import sys
-import importlib
 
 
 class TestPackageImports:

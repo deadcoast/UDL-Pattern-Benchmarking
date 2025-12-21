@@ -6,12 +6,11 @@ effect size computation, and ranking with confidence intervals.
 """
 
 import logging
-from typing import Dict, List, Tuple, Optional, Any
-from dataclasses import dataclass, field
+from typing import Dict, List, Tuple, Optional
+from dataclasses import dataclass
 import numpy as np
 from scipy import stats
-from scipy.stats import ttest_ind, wilcoxon, mannwhitneyu
-import warnings
+from scipy.stats import ttest_ind, mannwhitneyu
 
 from udl_rating_framework.core.pipeline import QualityReport
 
@@ -232,7 +231,6 @@ class ComparisonEngine:
                 # Use a small assumed variance for the test
                 pooled_std = 0.1  # Assumed standard deviation
                 n1 = n2 = 1
-                pooled_var = pooled_std**2
                 se = pooled_std * np.sqrt(1 / n1 + 1 / n2)
                 t_stat = (score1 - score2) / se
                 df = n1 + n2 - 2
@@ -369,8 +367,6 @@ class ComparisonEngine:
         """
         # Extract scores and names
         scores = [report.overall_score for report in reports]
-        names = [report.udl_file for report in reports]
-
         # Compute base ranking (higher score = better rank)
         sorted_indices = np.argsort(scores)[::-1]  # Descending order
         base_ranks = np.empty_like(sorted_indices)
@@ -458,9 +454,9 @@ class ComparisonEngine:
             "mean_absolute_difference": float(
                 np.mean([abs(r.difference) for r in pairwise_results])
             ),
-            "max_absolute_difference": float(
-                np.max([abs(r.difference) for r in pairwise_results])
-            )
-            if pairwise_results
-            else 0.0,
+            "max_absolute_difference": (
+                float(np.max([abs(r.difference) for r in pairwise_results]))
+                if pairwise_results
+                else 0.0
+            ),
         }

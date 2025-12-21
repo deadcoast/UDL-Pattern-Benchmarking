@@ -6,7 +6,6 @@ Validates: Requirements 11.7
 """
 
 import sys
-import importlib
 from pathlib import Path
 
 # Add project root to path

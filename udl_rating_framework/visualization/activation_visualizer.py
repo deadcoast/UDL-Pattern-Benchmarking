@@ -6,7 +6,6 @@ Provides tools for visualizing neuron activation patterns from CTM processing.
 
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from typing import Dict, List, Optional, Tuple
 from ..models.ctm_adapter import TrackingData
 
@@ -304,25 +303,25 @@ class ActivationVisualizer:
         figures["post_timeseries"] = self.plot_activation_time_series(
             tracking_data,
             activation_type="post",
-            save_path=f"{save_dir}/post_activation_timeseries.png"
-            if save_dir
-            else None,
+            save_path=(
+                f"{save_dir}/post_activation_timeseries.png" if save_dir else None
+            ),
         )
 
         figures["pre_distribution"] = self.plot_activation_distribution(
             tracking_data,
             "pre",
-            save_path=f"{save_dir}/pre_activation_distribution.png"
-            if save_dir
-            else None,
+            save_path=(
+                f"{save_dir}/pre_activation_distribution.png" if save_dir else None
+            ),
         )
 
         figures["post_distribution"] = self.plot_activation_distribution(
             tracking_data,
             "post",
-            save_path=f"{save_dir}/post_activation_distribution.png"
-            if save_dir
-            else None,
+            save_path=(
+                f"{save_dir}/post_activation_distribution.png" if save_dir else None
+            ),
         )
 
         figures["correlation_matrix"] = self.plot_neuron_correlation_matrix(

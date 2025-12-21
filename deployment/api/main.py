@@ -12,9 +12,8 @@ import tempfile
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
-import torch
 import uvicorn
 from fastapi import (
     Depends,
@@ -450,12 +449,16 @@ async def get_available_metrics(_: bool = Depends(verify_token)):
                 metrics_info.append(
                     {
                         "name": metric.__class__.__name__,
-                        "formula": metric.get_formula()
-                        if hasattr(metric, "get_formula")
-                        else "N/A",
-                        "properties": metric.get_properties()
-                        if hasattr(metric, "get_properties")
-                        else {},
+                        "formula": (
+                            metric.get_formula()
+                            if hasattr(metric, "get_formula")
+                            else "N/A"
+                        ),
+                        "properties": (
+                            metric.get_properties()
+                            if hasattr(metric, "get_properties")
+                            else {}
+                        ),
                     }
                 )
             except Exception as e:

@@ -11,8 +11,6 @@ import pytest
 import tempfile
 import time
 from pathlib import Path
-from typing import List
-import os
 
 # Import metrics first to ensure registration
 import udl_rating_framework.core.metrics  # noqa: F401
@@ -20,19 +18,16 @@ import udl_rating_framework.core.metrics  # noqa: F401
 from udl_rating_framework.core.streaming import (
     StreamingProcessor,
     StreamingConfig,
-    process_large_file,
 )
 from udl_rating_framework.core.incremental import (
     IncrementalProcessor,
     IncrementalCache,
     FileSnapshot,
-    process_udl_incremental,
 )
 from udl_rating_framework.core.performance import (
     PerformanceOptimizer,
     PerformanceConfig,
     ProcessingStrategy,
-    process_files_optimized,
 )
 
 
@@ -248,8 +243,6 @@ class TestIncrementalProcessorFixed:
 
         # First processing
         result1 = processor.process_file(file_path)
-        time1 = result1.processing_time
-
         # Second processing (should use cache)
         result2 = processor.process_file(file_path)
 

@@ -6,12 +6,11 @@ Measures language power using formal language theory and Chomsky hierarchy class
 
 import zlib
 import re
-from typing import Dict, Any, List, Set, Tuple
+from typing import Dict, List
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import (
     UDLRepresentation,
     GrammarRule,
-    TokenType,
 )
 
 
@@ -284,8 +283,6 @@ class ExpressivenessMetric(QualityMetric):
 
             # Convert to complexity score (higher complexity = higher score)
             # Use 1 - compression_ratio, but normalize to reasonable range
-            complexity_score = 1.0 - compression_ratio
-
             # Apply sigmoid-like transformation to map to [0,1] more smoothly
             # Most text compresses to 30-70% of original size
             # Map compression ratios: 0.3 → 1.0, 0.7 → 0.3, 1.0 → 0.0

@@ -5,13 +5,12 @@ Validates API documentation against actual source code.
 Extracts public APIs, compares signatures, and identifies discrepancies.
 """
 
-import ast
 import inspect
 import importlib
 import pkgutil
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 import re
 
 
@@ -97,7 +96,7 @@ class APIExtractor:
             try:
                 module = importlib.import_module(modname)
                 self._extract_from_module(module, modname)
-            except Exception as e:
+            except Exception:
                 # Skip modules that can't be imported
                 continue
 
@@ -415,7 +414,7 @@ def main():
     print("Extracting public APIs...")
     report = validator.validate_all()
 
-    print(f"\n=== API Validation Report ===")
+    print("\n=== API Validation Report ===")
     print(f"Total actual APIs: {report.total_actual_apis}")
     print(f"Total documented modules: {report.total_documented_apis}")
     print(f"Undocumented APIs: {len(report.undocumented_apis)}")

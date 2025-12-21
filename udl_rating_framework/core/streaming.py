@@ -10,12 +10,9 @@ import logging
 import time
 import mmap
 import os
-from typing import Dict, List, Any, Optional, Iterator, Callable, Union, Tuple
+from typing import Dict, List, Any, Optional, Iterator, Callable, Tuple
 from pathlib import Path
 from dataclasses import dataclass, field
-import tempfile
-import json
-import hashlib
 from collections import deque
 import threading
 from queue import Queue, Empty
@@ -526,12 +523,9 @@ class StreamingProcessor:
         start_time = time.time()
 
         # Check chunk cache
-        chunk_cache_key = None
         if self.config.cache_chunk_results:
-            chunk_hash = hashlib.md5(chunk.content.encode()).hexdigest()
-            chunk_cache_key = f"chunk_{chunk_hash}"
-
             # TODO: Implement chunk-level caching if needed
+            pass
 
         # Combine content with overlap for better context
         full_content = chunk.overlap_before + chunk.content + chunk.overlap_after
@@ -635,7 +629,6 @@ class StreamingProcessor:
     def get_memory_usage(self) -> Dict[str, int]:
         """Get current memory usage statistics."""
         import psutil
-        import os
 
         process = psutil.Process(os.getpid())
         memory_info = process.memory_info()
@@ -756,7 +749,7 @@ class AsyncStreamingProcessor:
         for _ in self.worker_threads:
             try:
                 self.chunk_queue.put(None, timeout=1.0)
-            except:
+            except Exception:
                 pass
 
         # Wait for workers to complete
@@ -846,7 +839,7 @@ class AsyncStreamingProcessor:
                         success=False,
                     )
                     self.result_queue.put(error_result)
-                except:
+                except Exception:
                     pass
 
         logger.debug(f"Worker {worker_id} stopped")

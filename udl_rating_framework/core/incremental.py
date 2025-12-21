@@ -10,18 +10,14 @@ import logging
 import time
 import hashlib
 import json
-import pickle
-from typing import Dict, List, Any, Optional, Set, Tuple, Union
+from typing import Dict, List, Any, Optional, Set
 from pathlib import Path
 from dataclasses import dataclass, field, asdict
-from datetime import datetime, timedelta
 import threading
-from collections import defaultdict, deque
-import difflib
+from collections import defaultdict
 
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.pipeline import QualityReport, RatingPipeline
-from udl_rating_framework.core.caching import get_udl_cache, get_metric_cache
 
 # Import metrics to ensure they are registered in the MetricRegistry
 import udl_rating_framework.core.metrics  # noqa: F401
@@ -252,7 +248,7 @@ class DependencyTracker:
                 types.add("grammar_rule")
             if graph.number_of_edges() > 0:
                 types.add("dependency")
-        except:
+        except Exception:
             pass
 
         return types

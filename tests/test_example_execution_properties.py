@@ -18,7 +18,7 @@ import sys
 import tempfile
 import subprocess
 from pathlib import Path
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 from hypothesis import given, strategies as st, settings, assume
 from dataclasses import dataclass
 
@@ -193,12 +193,14 @@ class TestCodeBlockExtraction:
         Each extracted code block should have required fields.
         """
         with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False) as f:
-            f.write("""# Test Document
+            f.write(
+                """# Test Document
 
 ```python
 print("Hello, World!")
 ```
-""")
+"""
+            )
             temp_path = Path(f.name)
 
         try:
@@ -441,7 +443,7 @@ class TestNotebookCellExecution:
 
                         try:
                             compile(source, f"{notebook_path.name}:cell{i}", "exec")
-                        except SyntaxError as e:
+                        except SyntaxError:
                             # Some cells may have intentional syntax for demonstration
                             pass
             except json.JSONDecodeError:

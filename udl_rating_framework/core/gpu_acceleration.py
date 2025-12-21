@@ -7,26 +7,17 @@ management, memory optimization, and batch processing.
 
 import logging
 import time
-import warnings
-from typing import Dict, List, Any, Optional, Union, Tuple
+from typing import Dict, List, Any, Optional
 from pathlib import Path
 import numpy as np
 
 try:
     import torch
-    import torch.nn as nn
     from torch.utils.data import DataLoader, Dataset
 
     TORCH_AVAILABLE = True
 except ImportError:
     TORCH_AVAILABLE = False
-
-try:
-    import cupy as cp
-
-    CUPY_AVAILABLE = True
-except ImportError:
-    CUPY_AVAILABLE = False
 
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
@@ -424,7 +415,7 @@ class GPUAcceleratedCTM:
                 memory_before = torch.cuda.memory_allocated(self.device)
 
             start_time = time.perf_counter()
-            predictions = self.predict_batch(udl_representations, vocabulary)
+            self.predict_batch(udl_representations, vocabulary)
 
             if self.device.type == "cuda":
                 torch.cuda.synchronize()
@@ -658,9 +649,11 @@ class GPUAcceleratedProcessor:
             "current_device": str(self.device_manager.get_best_device()),
             "torch_version": torch.__version__ if TORCH_AVAILABLE else None,
             "cuda_available": torch.cuda.is_available() if TORCH_AVAILABLE else False,
-            "cuda_version": torch.version.cuda
-            if TORCH_AVAILABLE and torch.cuda.is_available()
-            else None,
+            "cuda_version": (
+                torch.version.cuda
+                if TORCH_AVAILABLE and torch.cuda.is_available()
+                else None
+            ),
         }
 
     def get_memory_usage(self) -> Dict[str, int]:

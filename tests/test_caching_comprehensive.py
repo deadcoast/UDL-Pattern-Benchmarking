@@ -7,22 +7,16 @@ persistence, invalidation, and performance under various conditions.
 
 import pytest
 import tempfile
-import threading
 import time
-import pickle
-import json
-import hashlib
 import concurrent.futures
 from pathlib import Path
 from datetime import datetime, timedelta
-from unittest.mock import Mock, patch, MagicMock
-from typing import List, Dict, Any
+from unittest.mock import Mock
 
 from udl_rating_framework.core.caching import (
     LRUCache,
     UDLRepresentationCache,
     MetricCache,
-    CacheEntry,
     get_udl_cache,
     get_metric_cache,
     clear_all_caches,
@@ -550,7 +544,7 @@ class TestGlobalCacheManagement:
         assert metric_cache1 is metric_cache2
 
         # Should be different types
-        assert type(udl_cache1) != type(metric_cache1)
+        assert type(udl_cache1) is not type(metric_cache1)
 
     def test_clear_all_caches(self):
         """Test clearing all global caches."""

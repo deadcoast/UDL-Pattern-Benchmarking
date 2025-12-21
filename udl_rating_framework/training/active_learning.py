@@ -6,16 +6,14 @@ and model performance with minimal labeling effort.
 """
 
 import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader, Dataset, Subset
+from torch.utils.data import DataLoader, Dataset
 import numpy as np
-from typing import List, Dict, Any, Optional, Tuple, Callable, Union
+from typing import List, Dict, Any, Optional, Callable
 import logging
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 import random
 from sklearn.cluster import KMeans
-from sklearn.metrics.pairwise import cosine_similarity
 
 from ..models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
 from ..core.representation import UDLRepresentation
@@ -633,7 +631,9 @@ class ActiveLearner:
 
         # Initialize query strategy
         if config.query_strategy == "uncertainty_sampling":
-            self.query_strategy = UncertaintySampling(config.uncertainty_method, device)
+            self.query_strategy = CTMUncertaintySampling(
+                config.uncertainty_method, device
+            )
         elif config.query_strategy == "diversity_sampling":
             self.query_strategy = DiversitySampling(
                 config.diversity_method, config.n_clusters, device
@@ -773,9 +773,11 @@ class ActiveLearner:
             "new_samples": len(new_indices),
             "training_history": training_history,
             "final_train_loss": training_history["train_loss"][-1],
-            "final_val_loss": training_history["val_loss"][-1]
-            if training_history["val_loss"]
-            else None,
+            "final_val_loss": (
+                training_history["val_loss"][-1]
+                if training_history["val_loss"]
+                else None
+            ),
         }
 
         self.learning_history.append(iteration_result)

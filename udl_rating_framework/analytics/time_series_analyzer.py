@@ -8,12 +8,10 @@ change over time, identifying trends, patterns, and anomalies.
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass
 from scipy import stats
 from scipy.signal import find_peaks
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
 import warnings
 
 from udl_rating_framework.core.pipeline import QualityReport
@@ -115,7 +113,7 @@ class TimeSeriesAnalyzer:
         values = [values[i] for i in valid_indices]
 
         if len(values) < self.min_observations:
-            raise ValueError(f"Insufficient valid data after removing NaN values")
+            raise ValueError("Insufficient valid data after removing NaN values")
 
         # Create pandas Series
         time_series = pd.Series(values, index=pd.DatetimeIndex(timestamps))
@@ -229,7 +227,7 @@ class TimeSeriesAnalyzer:
                     seasonal_autocorr = time_series.autocorr(lag=period)
                     if not np.isnan(seasonal_autocorr):
                         max_strength = max(max_strength, abs(seasonal_autocorr))
-                except:
+                except Exception:
                     continue
 
         return max_strength
@@ -456,7 +454,7 @@ class TimeSeriesAnalyzer:
     ) -> str:
         """Generate comprehensive time series analysis report."""
         report_lines = [
-            f"# Time Series Analysis Report",
+            "# Time Series Analysis Report",
             f"**UDL File:** {udl_file}",
             f"**Analysis Date:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
             "",

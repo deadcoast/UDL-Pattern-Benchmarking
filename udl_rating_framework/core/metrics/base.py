@@ -5,7 +5,7 @@ Defines the abstract interface that all metrics must implement.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Type, Set, Any, Optional
+from typing import Dict, Type, Optional
 import logging
 
 logger = logging.getLogger(__name__)

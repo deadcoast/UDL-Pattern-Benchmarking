@@ -10,8 +10,6 @@ import json
 import yaml
 from pathlib import Path
 from click.testing import CliRunner
-import shutil
-import os
 
 from udl_rating_framework.cli.main import cli
 
@@ -36,7 +34,8 @@ def sample_udl_files(temp_dir):
 
     # Simple grammar UDL
     udl1 = temp_dir / "simple_grammar.udl"
-    udl1.write_text("""
+    udl1.write_text(
+        """
     grammar SimpleLanguage {
         start: expression
         expression: term ('+' term)*
@@ -44,12 +43,14 @@ def sample_udl_files(temp_dir):
         factor: NUMBER | '(' expression ')'
         NUMBER: /[0-9]+/
     }
-    """)
+    """
+    )
     udl_files.append(udl1)
 
     # More complex UDL
     udl2 = temp_dir / "complex_grammar.udl"
-    udl2.write_text("""
+    udl2.write_text(
+        """
     grammar ComplexLanguage {
         start: program
         program: statement*
@@ -64,16 +65,19 @@ def sample_udl_files(temp_dir):
         IDENTIFIER: /[a-zA-Z][a-zA-Z0-9]*/
         NUMBER: /[0-9]+/
     }
-    """)
+    """
+    )
     udl_files.append(udl2)
 
     # Minimal UDL
     udl3 = temp_dir / "minimal.udl"
-    udl3.write_text("""
+    udl3.write_text(
+        """
     grammar Minimal {
         start: 'hello'
     }
-    """)
+    """
+    )
     udl_files.append(udl3)
 
     return udl_files
@@ -528,11 +532,7 @@ class TestConfigValidation:
     def test_invalid_validation_split_config(self, runner, temp_dir):
         """Test that invalid validation split in config is rejected."""
         invalid_config = temp_dir / "invalid_validation.yaml"
-        config_data = {
-            "training": {
-                "validation_split": 1.5  # Invalid: > 1.0
-            }
-        }
+        config_data = {"training": {"validation_split": 1.5}}  # Invalid: > 1.0
 
         with open(invalid_config, "w") as f:
             yaml.dump(config_data, f)

@@ -7,21 +7,19 @@ Provides functionality to evaluate trained CTM models using comprehensive metric
 import click
 import logging
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Optional
 import json
 import sys
 import torch
 
 from udl_rating_framework.evaluation.evaluation_suite import EvaluationSuite
-from udl_rating_framework.models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
-from udl_rating_framework.training.training_pipeline import UDLDataset
+from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
 from udl_rating_framework.core.metrics.base import MetricRegistry
 from udl_rating_framework.core.aggregation import MetricAggregator
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.io.file_discovery import FileDiscovery
 
 # Import metrics to trigger registration
-import udl_rating_framework.core.metrics
 
 logger = logging.getLogger(__name__)
 
@@ -214,13 +212,8 @@ def evaluate_command(
 
         logger.info(f"Successfully parsed {len(test_representations)} test files")
 
-        # Create test dataset
-        max_length = model_config.get("max_sequence_length", 512)
-        test_dataset = UDLDataset(test_representations, vocab, max_length)
-
         # Set up ground truth metrics
         metric_registry = MetricRegistry()
-        available_metrics = metric_registry.list_metrics()
 
         # Use equal weights (can be overridden by config)
         weights_dict = {
@@ -257,6 +250,7 @@ def evaluate_command(
 
         # Run evaluation
         logger.info("Running comprehensive evaluation...")
+        max_length = model_config.get("max_sequence_length", 512)
 
         def model_predict_fn(udl_representations):
             """Prediction function for evaluation."""
@@ -354,11 +348,15 @@ def evaluate_command(
             output_data["detailed_analysis"] = {
                 "error_distribution_normal": evaluation_result.shapiro_p_value > 0.05,
                 "model_well_calibrated": evaluation_result.calibration_error < 0.1,
-                "correlation_strength": "strong"
-                if evaluation_result.pearson_correlation > 0.7
-                else "moderate"
-                if evaluation_result.pearson_correlation > 0.5
-                else "weak",
+                "correlation_strength": (
+                    "strong"
+                    if evaluation_result.pearson_correlation > 0.7
+                    else (
+                        "moderate"
+                        if evaluation_result.pearson_correlation > 0.5
+                        else "weak"
+                    )
+                ),
             }
 
         # Generate output

@@ -5,7 +5,7 @@ Measures internal coherence using graph-theoretic analysis of grammar rules.
 """
 
 import networkx as nx
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import (
     UDLRepresentation,

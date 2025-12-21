@@ -7,13 +7,11 @@ UDL analysis across multiple machines and clusters.
 
 import logging
 import time
-import asyncio
-from typing import Dict, List, Any, Optional, Union, Callable, Iterator
+from typing import Dict, List, Any, Optional, Callable
 from pathlib import Path
-from dataclasses import dataclass, asdict
-import pickle
-import tempfile
+from dataclasses import dataclass
 import os
+
 
 try:
     import ray
@@ -22,22 +20,24 @@ try:
     RAY_AVAILABLE = True
 except ImportError:
     RAY_AVAILABLE = False
-    remote = lambda *args, **kwargs: lambda f: f  # No-op decorator
+
+    def remote(*args, **kwargs):
+        def decorator(func):
+            return func
+
+        return decorator
+
 
 try:
-    import dask
-    from dask.distributed import Client, as_completed, Future
-    from dask import delayed
+    from dask.distributed import Client, as_completed
 
     DASK_AVAILABLE = True
 except ImportError:
     DASK_AVAILABLE = False
-    delayed = lambda f: f  # No-op decorator
 
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.pipeline import RatingPipeline, QualityReport
 from udl_rating_framework.core.multiprocessing import (
-    ProcessingResult,
     BatchProcessingStats,
 )
 
@@ -248,9 +248,11 @@ class DistributedProcessor:
             successful=successful,
             failed=failed,
             total_time=total_time,
-            average_time_per_file=sum(processing_times) / len(processing_times)
-            if processing_times
-            else 0.0,
+            average_time_per_file=(
+                sum(processing_times) / len(processing_times)
+                if processing_times
+                else 0.0
+            ),
             max_time=max(processing_times) if processing_times else 0.0,
             min_time=min(processing_times) if processing_times else 0.0,
             worker_count=self.config.num_workers or 1,

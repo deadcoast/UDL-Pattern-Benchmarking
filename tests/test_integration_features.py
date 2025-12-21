@@ -9,8 +9,7 @@ import tempfile
 import json
 import yaml
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
-import subprocess
+from unittest.mock import Mock, patch
 
 from udl_rating_framework.integration.git_hooks import GitHookManager
 from udl_rating_framework.integration.cicd import CICDIntegration, CICDConfig
@@ -410,7 +409,7 @@ class TestBatchProcessor:
 
             # Test file discovery
             config = BatchConfig(max_workers=1)
-            processor = BatchProcessor(config)
+            BatchProcessor(config)
 
             udl_files = list(sample_dir.glob("*.udl"))
             assert len(udl_files) == 3

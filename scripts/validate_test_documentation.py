@@ -13,12 +13,11 @@ This script checks:
 """
 
 import ast
-import os
 import re
 import sys
 from pathlib import Path
 from dataclasses import dataclass, field
-from typing import List, Dict, Set, Optional, Tuple
+from typing import List, Optional, Tuple
 from collections import defaultdict
 
 
@@ -318,15 +317,21 @@ def parse_test_file(file_path: Path) -> Tuple[List[TestClass], List[TestFunction
                             docstring=method_docstring,
                             has_docstring=method_docstring is not None
                             and len(method_docstring.strip()) > 0,
-                            requirement_refs=extract_requirement_refs(method_docstring)
-                            if method_docstring
-                            else [],
-                            property_refs=extract_property_refs(method_docstring)
-                            if method_docstring
-                            else [],
-                            feature_refs=extract_feature_refs(method_docstring)
-                            if method_docstring
-                            else [],
+                            requirement_refs=(
+                                extract_requirement_refs(method_docstring)
+                                if method_docstring
+                                else []
+                            ),
+                            property_refs=(
+                                extract_property_refs(method_docstring)
+                                if method_docstring
+                                else []
+                            ),
+                            feature_refs=(
+                                extract_feature_refs(method_docstring)
+                                if method_docstring
+                                else []
+                            ),
                         )
                         test_class.test_methods.append(test_func)
 
@@ -342,9 +347,9 @@ def parse_test_file(file_path: Path) -> Tuple[List[TestClass], List[TestFunction
                     line_number=node.lineno,
                     docstring=docstring,
                     has_docstring=docstring is not None and len(docstring.strip()) > 0,
-                    requirement_refs=extract_requirement_refs(docstring)
-                    if docstring
-                    else [],
+                    requirement_refs=(
+                        extract_requirement_refs(docstring) if docstring else []
+                    ),
                     property_refs=extract_property_refs(docstring) if docstring else [],
                     feature_refs=extract_feature_refs(docstring) if docstring else [],
                 )

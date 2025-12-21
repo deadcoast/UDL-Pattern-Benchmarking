@@ -12,8 +12,6 @@ from click.testing import CliRunner
 from hypothesis import given, strategies as st, settings, HealthCheck
 import tempfile
 from pathlib import Path
-import json
-import yaml
 
 from udl_rating_framework.cli.main import cli
 
@@ -35,14 +33,16 @@ def temp_dir():
 def sample_udl_file(temp_dir):
     """Create a sample UDL file for testing."""
     udl_file = temp_dir / "test.udl"
-    udl_file.write_text("""
+    udl_file.write_text(
+        """
     grammar TestLanguage {
         start: expression
         expression: term ('+' term)*
         term: NUMBER
         NUMBER: /[0-9]+/
     }
-    """)
+    """
+    )
     return udl_file
 
 
@@ -373,11 +373,13 @@ class TestCLIOptionAccuracy:
         **Validates: Requirements 9.2**
         """
         udl_file2 = temp_dir / "test2.udl"
-        udl_file2.write_text("""
+        udl_file2.write_text(
+            """
         grammar Test2 {
             start: 'hello'
         }
-        """)
+        """
+        )
 
         # significance_level > 1.0 should be rejected
         result = runner.invoke(

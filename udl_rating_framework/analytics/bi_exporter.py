@@ -6,11 +6,10 @@ to various business intelligence and data visualization platforms.
 """
 
 import json
-import csv
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any, Union
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, asdict
 from collections import defaultdict
 import pandas as pd
@@ -461,11 +460,13 @@ class BusinessIntelligenceExporter:
                 "maturity_level": maturity_level,
                 "consistency_score": consistency,
                 "last_updated": project_reports[-1].timestamp,
-                "data_quality": "High"
-                if len(project_reports) > 10
-                else "Medium"
-                if len(project_reports) > 5
-                else "Low",
+                "data_quality": (
+                    "High"
+                    if len(project_reports) > 10
+                    else "Medium"
+                    if len(project_reports) > 5
+                    else "Low"
+                ),
             }
 
             exec_rows.append(exec_row)
@@ -517,12 +518,16 @@ class BusinessIntelligenceExporter:
             "data_summary": {
                 "total_reports": len(reports),
                 "date_range": {
-                    "start": min(r.timestamp for r in reports).isoformat()
-                    if reports
-                    else None,
-                    "end": max(r.timestamp for r in reports).isoformat()
-                    if reports
-                    else None,
+                    "start": (
+                        min(r.timestamp for r in reports).isoformat()
+                        if reports
+                        else None
+                    ),
+                    "end": (
+                        max(r.timestamp for r in reports).isoformat()
+                        if reports
+                        else None
+                    ),
                 },
                 "unique_udl_files": len(set(r.udl_file for r in reports)),
                 "unique_projects": len(
@@ -785,9 +790,11 @@ class BusinessIntelligenceExporter:
                 alert_rows.append(
                     {
                         "timestamp": report.timestamp,
-                        "project": report.udl_file.split("/")[0]
-                        if "/" in report.udl_file
-                        else "default",
+                        "project": (
+                            report.udl_file.split("/")[0]
+                            if "/" in report.udl_file
+                            else "default"
+                        ),
                         "udl_file": report.udl_file,
                         "alert_type": "Low Quality",
                         "severity": "High",
@@ -800,9 +807,11 @@ class BusinessIntelligenceExporter:
                 alert_rows.append(
                     {
                         "timestamp": report.timestamp,
-                        "project": report.udl_file.split("/")[0]
-                        if "/" in report.udl_file
-                        else "default",
+                        "project": (
+                            report.udl_file.split("/")[0]
+                            if "/" in report.udl_file
+                            else "default"
+                        ),
                         "udl_file": report.udl_file,
                         "alert_type": "Errors Detected",
                         "severity": "Critical",

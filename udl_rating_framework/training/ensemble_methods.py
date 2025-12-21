@@ -10,16 +10,13 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import numpy as np
-from typing import List, Dict, Any, Optional, Tuple, Union
+from typing import List, Dict, Any, Optional, Tuple
 import logging
 from dataclasses import dataclass
 from pathlib import Path
 import json
-from concurrent.futures import ThreadPoolExecutor
-import threading
 
-from ..models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
-from ..core.representation import UDLRepresentation
+from ..models.ctm_adapter import UDLRatingCTM
 from .training_pipeline import TrainingPipeline
 
 logger = logging.getLogger(__name__)
@@ -124,8 +121,6 @@ class EnsemblePredictor(nn.Module):
             Tuple of (predictions, certainties, ensemble_info)
         """
         token_ids = token_ids.to(self.device)
-        batch_size = token_ids.shape[0]
-
         # Collect predictions from all members
         member_predictions = []
         member_certainties = []

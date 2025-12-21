@@ -7,7 +7,7 @@ and CTM processing with enhanced interactivity.
 
 import json
 import numpy as np
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any
 from pathlib import Path
 from ..core.representation import UDLRepresentation
 from ..models.ctm_adapter import TrackingData

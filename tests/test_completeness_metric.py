@@ -5,9 +5,9 @@ Tests the mathematical correctness of the completeness metric implementation.
 """
 
 from hypothesis import given, strategies as st, settings, assume
-from typing import Set, List
+from typing import Set
 from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.completeness import CompletenessMetric, Construct
+from udl_rating_framework.core.metrics.completeness import CompletenessMetric
 
 
 def create_udl_with_known_constructs(construct_types: Set[str]) -> UDLRepresentation:
@@ -400,15 +400,6 @@ class TestCompletenessMetricUnits:
 
         constructs = metric.extract_defined_constructs(udl)
         construct_types = {c.construct_type for c in constructs}
-
-        # Should find production rules, terminals, operators, comments
-        expected_types = {
-            "production_rules",
-            "terminals",
-            "operators",
-            "comments",
-            "expressions",
-        }
 
         # Check that we found the basic expected types
         assert "production_rules" in construct_types, "Should detect production rules"

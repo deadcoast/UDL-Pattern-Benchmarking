@@ -9,7 +9,6 @@ are documented in deployment documentation.
 """
 
 import ast
-import os
 import re
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
@@ -185,6 +184,8 @@ def get_deployment_env_vars(project_root: Path) -> Dict[str, List[Tuple[int, str
 
     deployment_vars = {}
     for var_name, locations in all_vars.items():
+        if var_name in ddp_vars:
+            continue
         # Include if used in deployment directory
         deployment_locations = [
             (line, path) for line, path in locations if "deployment" in path
@@ -260,7 +261,7 @@ class TestEnvVarDocumentation:
         if unused_documented:
             # This is informational, not a failure
             print(
-                f"\nNote: The following documented variables are not directly read in Python code:"
+                "\nNote: The following documented variables are not directly read in Python code:"
             )
             for var in sorted(unused_documented):
                 print(f"  - {var}")

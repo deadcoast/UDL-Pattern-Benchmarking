@@ -10,17 +10,13 @@ import numpy as np
 import tempfile
 import shutil
 import os
-import json
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import patch
 
 from udl_rating_framework.visualization import (
     WebVisualizer,
     WebGLVisualizer,
     RealTimeMetricsVisualizer,
-    ActivationVisualizer,
-    SynchronizationVisualizer,
-    MetricUpdate,
 )
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.models.ctm_adapter import TrackingData

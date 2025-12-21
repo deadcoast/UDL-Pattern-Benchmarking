@@ -5,14 +5,12 @@ Provides efficient batch processing capabilities for analyzing large numbers
 of UDL files with parallel processing, progress tracking, and result aggregation.
 """
 
-import os
 import json
 import time
-import asyncio
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Callable, Iterator, Tuple
+from typing import Dict, List, Optional, Any, Callable, Iterator
 from dataclasses import dataclass, asdict
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed
 import multiprocessing as mp
 import logging
 from collections import defaultdict
@@ -451,18 +449,20 @@ class BatchProcessor:
 
         # Summary statistics
         summary_stats = {
-            "processing_rate": self.processed_count / processing_time
-            if processing_time > 0
-            else 0,
-            "success_rate": len(successful_results) / self.total_count
-            if self.total_count > 0
-            else 0,
-            "error_rate": len(self.errors) / self.total_count
-            if self.total_count > 0
-            else 0,
-            "average_processing_time": processing_time / self.total_count
-            if self.total_count > 0
-            else 0,
+            "processing_rate": (
+                self.processed_count / processing_time if processing_time > 0 else 0
+            ),
+            "success_rate": (
+                len(successful_results) / self.total_count
+                if self.total_count > 0
+                else 0
+            ),
+            "error_rate": (
+                len(self.errors) / self.total_count if self.total_count > 0 else 0
+            ),
+            "average_processing_time": (
+                processing_time / self.total_count if self.total_count > 0 else 0
+            ),
         }
 
         if successful_results:
@@ -722,7 +722,7 @@ def main():
         processor.save_results(result, args.output, args.format)
 
         # Print summary
-        print(f"\nBatch processing completed:")
+        print("\nBatch processing completed:")
         print(f"  Total files: {result.total_files}")
         print(f"  Processed: {result.processed_files}")
         print(f"  Failed: {result.failed_files}")

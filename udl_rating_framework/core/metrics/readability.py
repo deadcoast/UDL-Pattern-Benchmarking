@@ -5,8 +5,7 @@ Measures readability of UDL syntax using linguistic and structural analysis.
 """
 
 import re
-import math
-from typing import Dict, List, Set, Any, Tuple
+from typing import Dict, List
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType
 

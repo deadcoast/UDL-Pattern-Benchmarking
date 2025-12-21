@@ -7,7 +7,7 @@ Measures organizational quality using information theory and graph analysis.
 import math
 import networkx as nx
 import numpy as np
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List
 from collections import Counter
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import UDLRepresentation

@@ -5,13 +5,11 @@ Provides integration with popular IDEs and editors for real-time UDL quality fee
 """
 
 import json
-import os
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, Optional, Any
 import logging
-import tempfile
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)

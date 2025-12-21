@@ -7,15 +7,12 @@ with optimized I/O operations and minimal memory footprint.
 
 import logging
 import mmap
-import os
 import time
-from typing import Dict, List, Any, Optional, Iterator, Tuple, Union
+from typing import Dict, List, Any, Optional, Iterator, Tuple
 from pathlib import Path
 from dataclasses import dataclass
 import threading
 from contextlib import contextmanager
-import struct
-import hashlib
 
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.pipeline import QualityReport

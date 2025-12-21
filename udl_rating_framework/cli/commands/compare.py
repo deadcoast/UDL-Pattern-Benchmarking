@@ -7,19 +7,16 @@ Provides functionality to compare multiple UDL files using statistical tests.
 import click
 import logging
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Optional
 import json
 import sys
 
 from udl_rating_framework.evaluation.comparison import ComparisonEngine
 from udl_rating_framework.core.pipeline import RatingPipeline
-from udl_rating_framework.core.metrics.base import MetricRegistry
-from udl_rating_framework.core.aggregation import MetricAggregator
 from udl_rating_framework.io.file_discovery import FileDiscovery
 from udl_rating_framework.io.report_generator import ReportGenerator
 
 # Import metrics to trigger registration
-import udl_rating_framework.core.metrics
 
 logger = logging.getLogger(__name__)
 
@@ -206,9 +203,6 @@ def compare_command(
         logger.info(f"Total files to compare: {len(all_files)}")
 
         # Set up metrics and aggregator
-        metric_registry = MetricRegistry()
-        available_metrics = metric_registry.list_metrics()
-
         # Map CLI weight names to registry names
         metric_name_mapping = {
             "ConsistencyMetric": "consistency",
@@ -358,7 +352,7 @@ def compare_command(
                 click.echo(str(output_data))
 
         # Print summary
-        logger.info(f"Comparison completed!")
+        logger.info("Comparison completed!")
         logger.info(f"Files compared: {len(reports)}")
         logger.info(
             f"Average score: {summary_stats['mean_score']:.4f} ± {summary_stats['std_score']:.4f}"

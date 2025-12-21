@@ -7,13 +7,8 @@ active learning, and uncertainty quantification.
 
 import pytest
 import torch
-import torch.nn as nn
 import numpy as np
-from torch.utils.data import DataLoader, TensorDataset
-from unittest.mock import Mock, patch, MagicMock
-import tempfile
-import os
-from pathlib import Path
+from unittest.mock import Mock
 
 from udl_rating_framework.training.hyperparameter_optimization import (
     CTMHyperparameterOptimizer,
@@ -23,7 +18,6 @@ from udl_rating_framework.training.hyperparameter_optimization import (
 from udl_rating_framework.training.ensemble_methods import (
     EnsemblePredictor,
     EnsembleMember,
-    CTMEnsembleTrainer,
 )
 from udl_rating_framework.training.active_learning import (
     ActiveLearningConfig,
@@ -38,7 +32,7 @@ from udl_rating_framework.training.uncertainty_quantification import (
     UncertaintyAwarePredictor,
     bootstrap_confidence_intervals,
 )
-from udl_rating_framework.models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
+from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
 from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.aggregation import MetricAggregator

@@ -6,14 +6,12 @@ to improve performance during batch processing and repeated evaluations.
 """
 
 import hashlib
-import pickle
 import logging
 from pathlib import Path
 from typing import Dict, Any, Optional, Union
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 import threading
-import weakref
 
 from udl_rating_framework.core.representation import UDLRepresentation
 
@@ -156,9 +154,9 @@ class LRUCache:
                 "size": len(self._cache),
                 "max_size": self.max_size,
                 "total_accesses": total_accesses,
-                "average_accesses": total_accesses / len(self._cache)
-                if self._cache
-                else 0,
+                "average_accesses": (
+                    total_accesses / len(self._cache) if self._cache else 0
+                ),
                 "oldest_entry": min(
                     (entry.created_at for entry in self._cache.values()), default=None
                 ),

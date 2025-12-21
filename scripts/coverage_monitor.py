@@ -61,7 +61,8 @@ class CoverageMonitor:
     def init_database(self):
         """Initialize the coverage history database."""
         conn = sqlite3.connect(self.db_path)
-        conn.execute("""
+        conn.execute(
+            """
             CREATE TABLE IF NOT EXISTS coverage_history (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp TEXT NOT NULL,
@@ -71,9 +72,11 @@ class CoverageMonitor:
                 modules_data TEXT NOT NULL,
                 test_results TEXT NOT NULL
             )
-        """)
+        """
+        )
 
-        conn.execute("""
+        conn.execute(
+            """
             CREATE TABLE IF NOT EXISTS coverage_alerts (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp TEXT NOT NULL,
@@ -83,7 +86,8 @@ class CoverageMonitor:
                 coverage_after REAL,
                 resolved BOOLEAN DEFAULT FALSE
             )
-        """)
+        """
+        )
         conn.commit()
         conn.close()
 
@@ -264,9 +268,6 @@ class CoverageMonitor:
         if result.returncode != 0:
             raise RuntimeError(f"Coverage report failed: {result.stderr}")
 
-        # Parse text output for overall coverage
-        overall_coverage = self._parse_coverage_text(result.stdout)
-
         # Try to get JSON format for detailed data
         json_result = subprocess.run(
             ["uv", "run", "coverage", "json"], capture_output=True, text=True
@@ -353,10 +354,12 @@ class CoverageMonitor:
     def get_previous_coverage(self) -> Optional[float]:
         """Get the most recent coverage percentage."""
         conn = sqlite3.connect(self.db_path)
-        result = conn.execute("""
+        result = conn.execute(
+            """
             SELECT overall_coverage FROM coverage_history 
             ORDER BY timestamp DESC LIMIT 1
-        """).fetchone()
+        """
+        ).fetchone()
         conn.close()
 
         return result[0] if result else None
@@ -503,7 +506,7 @@ class CoverageMonitor:
             self.store_alerts(alerts, report)
 
             # Print summary
-            print(f"\nCoverage Monitoring Summary:")
+            print("\nCoverage Monitoring Summary:")
             print(f"  Overall Coverage: {report.overall.coverage:.1f}%")
             print(f"  Tests Passed: {test_results.get('passed', 0)}")
             print(f"  Tests Failed: {test_results.get('failed', 0)}")

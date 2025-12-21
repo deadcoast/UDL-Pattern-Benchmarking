@@ -5,7 +5,6 @@ This conftest is separate from the main tests/conftest.py to avoid
 torch import issues when testing the UDL rating framework.
 """
 
-import pytest
 import sys
 from pathlib import Path
 

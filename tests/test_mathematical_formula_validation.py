@@ -8,19 +8,14 @@ match the actual implementations in the code.
 **Validates: Requirements 4.1, 8.5**
 """
 
-import pytest
 import math
-import zlib
 from hypothesis import given, strategies as st, settings, assume
-from typing import List, Dict, Any
+from typing import List, Dict
 import networkx as nx
 import numpy as np
 
 from udl_rating_framework.core.representation import (
     UDLRepresentation,
-    GrammarRule,
-    Token,
-    TokenType,
 )
 from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 from udl_rating_framework.core.metrics.completeness import CompletenessMetric

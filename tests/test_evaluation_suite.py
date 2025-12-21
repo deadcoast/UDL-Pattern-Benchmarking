@@ -11,7 +11,7 @@ This module tests:
 
 import pytest
 import numpy as np
-from hypothesis import given, strategies as st, settings, assume
+from hypothesis import given, strategies as st, settings
 from scipy.stats import pearsonr, spearmanr
 from sklearn.linear_model import LinearRegression
 

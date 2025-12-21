@@ -16,7 +16,7 @@ import re
 import doctest
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional
 import io
 import sys
 
@@ -159,9 +159,9 @@ class DocstringParser:
                             DocstringParameter(
                                 name=name,
                                 type_hint=match.group(2),
-                                description=match.group(3).strip()
-                                if match.group(3)
-                                else None,
+                                description=(
+                                    match.group(3).strip() if match.group(3) else None
+                                ),
                             )
                         )
                         param_names_seen.add(name)
@@ -663,7 +663,7 @@ def find_undocumented_public_apis(
                                     file_path=str(filepath),
                                 )
                             )
-            except Exception as e:
+            except Exception:
                 continue
 
     return undocumented
@@ -688,7 +688,7 @@ def main():
     print("Validating docstrings...")
     report = validate_docstrings()
 
-    print(f"\n=== Docstring Validation Report ===")
+    print("\n=== Docstring Validation Report ===")
     print(f"Total functions checked: {report.total_functions_checked}")
     print(f"Functions with docstrings: {report.total_with_docstrings}")
     print(f"Signature mismatches: {len(report.signature_mismatches)}")

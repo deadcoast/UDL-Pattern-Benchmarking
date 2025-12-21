@@ -381,7 +381,7 @@ def batch_process_files(
         processor.save_results(result, output, format)
 
         # Print summary
-        click.echo(f"\nBatch processing completed:")
+        click.echo("\nBatch processing completed:")
         click.echo(f"  Total files: {result.total_files}")
         click.echo(f"  Processed: {result.processed_files}")
         click.echo(f"  Failed: {result.failed_files}")

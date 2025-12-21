@@ -4,17 +4,15 @@ Performance tests for UDL Rating Framework.
 Tests performance characteristics and complexity bounds of core components.
 """
 
-import pytest
 import time
 import statistics
 import tempfile
 import os
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List
 import torch
 
 from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.pipeline import RatingPipeline
 from udl_rating_framework.core.metrics.base import MetricRegistry
 from udl_rating_framework.models.ctm_adapter import UDLRatingCTM
 from udl_rating_framework.core.multiprocessing import ParallelProcessor
@@ -294,7 +292,7 @@ class TestCTMInferencePerformance:
                 f"CTM inference scales poorly with sequence length: avg ratio {avg_growth_ratio:.2f}"
             )
 
-            print(f"CTM complexity analysis:")
+            print("CTM complexity analysis:")
             print(f"  Average growth ratio: {avg_growth_ratio:.2f}")
             print(
                 f"  Scaling: {'GOOD' if avg_growth_ratio <= 2.0 else 'ACCEPTABLE' if avg_growth_ratio <= 2.5 else 'POOR'}"

@@ -308,9 +308,11 @@ class ParallelProcessor:
             successful=successful,
             failed=failed,
             total_time=total_time,
-            average_time_per_file=sum(processing_times) / len(processing_times)
-            if processing_times
-            else 0.0,
+            average_time_per_file=(
+                sum(processing_times) / len(processing_times)
+                if processing_times
+                else 0.0
+            ),
             max_time=max(processing_times) if processing_times else 0.0,
             min_time=min(processing_times) if processing_times else 0.0,
             worker_count=self.max_workers,

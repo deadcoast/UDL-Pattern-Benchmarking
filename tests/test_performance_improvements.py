@@ -7,12 +7,8 @@ memory mapping, and incremental computation features.
 
 import pytest
 import tempfile
-import time
 from pathlib import Path
-from typing import List, Dict, Any
-import os
 
-from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.performance import (
     PerformanceOptimizer,
     PerformanceConfig,
@@ -44,10 +40,7 @@ from udl_rating_framework.core.multiprocessing import (
 
 # Optional imports for distributed and GPU processing
 try:
-    from udl_rating_framework.core.distributed import (
-        DistributedProcessor,
-        process_files_distributed,
-    )
+    from udl_rating_framework.core.distributed import process_files_distributed
 
     DISTRIBUTED_AVAILABLE = True
 except ImportError:
@@ -488,6 +481,7 @@ class TestPerformanceOptimizer:
 
         stats = optimizer.get_performance_statistics()
 
+        assert result.total_files == len(temp_udl_files)
         assert "total_files_processed" in stats
         assert "average_throughput" in stats
         assert "strategy_statistics" in stats

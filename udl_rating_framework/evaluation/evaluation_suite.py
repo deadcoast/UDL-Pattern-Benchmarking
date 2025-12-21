@@ -10,11 +10,9 @@ This module provides comprehensive evaluation capabilities including:
 """
 
 import numpy as np
-import pandas as pd
-from typing import Dict, List, Tuple, Optional, Any, Callable
+from typing import Dict, List, Tuple, Optional, Callable
 from dataclasses import dataclass
 from sklearn.model_selection import KFold
-from scipy import stats
 from scipy.stats import pearsonr, spearmanr, shapiro
 import warnings
 from collections import defaultdict
@@ -95,7 +93,11 @@ class EvaluationSuite:
             Tuple of (cv_scores, mean_score, std_score)
         """
         if metric_fn is None:
-            metric_fn = lambda y_true, y_pred: np.mean((y_true - y_pred) ** 2)
+
+            def default_metric(y_true, y_pred):
+                return np.mean((y_true - y_pred) ** 2)
+
+            metric_fn = default_metric
 
         kf = KFold(n_splits=self.k_folds, shuffle=True, random_state=42)
         cv_scores = []
@@ -156,7 +158,7 @@ class EvaluationSuite:
                     pearson_bootstrap.append(p_r)
                 if not np.isnan(s_r):
                     spearman_bootstrap.append(s_r)
-            except:
+            except Exception:
                 continue
 
         # Compute confidence intervals
@@ -209,8 +211,6 @@ class EvaluationSuite:
         bin_uppers = bin_boundaries[1:]
 
         ece = 0.0
-        n_total = len(y_true_bin)
-
         for bin_lower, bin_upper in zip(bin_lowers, bin_uppers):
             # Find samples in this bin
             in_bin = (confidences > bin_lower) & (confidences <= bin_upper)
@@ -218,7 +218,11 @@ class EvaluationSuite:
 
             if prop_in_bin > 0:
                 # Accuracy in this bin
-                accuracy_in_bin = y_true_bin[in_bin].mean() if np.any(in_bin) else 0.0
+                accuracy_in_bin = (
+                    (y_pred_bin[in_bin] == y_true_bin[in_bin]).mean()
+                    if np.any(in_bin)
+                    else 0.0
+                )
 
                 # Average confidence in this bin
                 avg_confidence_in_bin = confidences[in_bin].mean()
@@ -291,7 +295,7 @@ class EvaluationSuite:
                     value = metric_fn(y_true_boot, y_pred_boot)
                     if np.isfinite(value):
                         bootstrap_results[metric_name].append(value)
-                except:
+                except Exception:
                     continue
 
         # Compute confidence intervals

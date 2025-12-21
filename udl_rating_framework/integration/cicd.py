@@ -5,13 +5,11 @@ Provides integration with popular CI/CD systems including GitHub Actions,
 Jenkins, GitLab CI, and others for automated UDL quality checking.
 """
 
-import os
-import json
 import yaml
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional
 import logging
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 
@@ -310,13 +308,15 @@ pipeline {{
                 "stage": "quality",
                 "script": [
                     "source venv/bin/activate",
-                    f"udl-rating rate . --threshold $UDL_QUALITY_THRESHOLD --format $REPORT_FORMAT --output udl-quality-report.$REPORT_FORMAT",
+                    "udl-rating rate . --threshold $UDL_QUALITY_THRESHOLD --format $REPORT_FORMAT --output udl-quality-report.$REPORT_FORMAT",
                 ],
                 "artifacts": {
                     "reports": {
-                        "junit": "udl-quality-report.xml"
-                        if self.config.report_format == "xml"
-                        else None
+                        "junit": (
+                            "udl-quality-report.xml"
+                            if self.config.report_format == "xml"
+                            else None
+                        )
                     },
                     "paths": [f"udl-quality-report.{self.config.report_format}"],
                     "expire_in": f"{self.config.artifact_retention_days} days",

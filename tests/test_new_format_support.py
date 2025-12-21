@@ -9,7 +9,6 @@ Tests format detection and parsing for:
 - Railroad diagram formats
 """
 
-import pytest
 import tempfile
 from pathlib import Path
 from udl_rating_framework.core.representation import UDLRepresentation, GrammarFormat

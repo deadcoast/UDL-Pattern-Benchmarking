@@ -17,14 +17,6 @@ def rep_size(neuron_select_type: str, n_synch: int) -> int:
     )
 
 
-def rep_size(neuron_select_type: str, n_synch: int) -> int:
-    return (
-        n_synch
-        if neuron_select_type == "random-pairing"
-        else n_synch * (n_synch + 1) // 2
-    )
-
-
 def grab_synch_tensors(model, s_type: str):
     if s_type == "out":
         return (
@@ -71,35 +63,35 @@ def test_golden_parity(
 
     assert torch.isclose(
         predictions, golden_test_expected_predictions_parity, atol=atol
-    ).all(), f"Predictions do not match expected values."
+    ).all(), "Predictions do not match expected values."
     assert torch.isclose(
         certainties, golden_test_expected_certainties_parity, atol=atol
-    ).all(), f"Certainties do not match expected values."
+    ).all(), "Certainties do not match expected values."
     assert np.isclose(
         synch_out_tracking,
         golden_test_expected_synchronization_out_tracking_parity,
         atol=atol,
-    ).all(), f"Synch Out do not match expected values."
+    ).all(), "Synch Out do not match expected values."
     assert np.isclose(
         synch_action_tracking,
         golden_test_expected_synchronization_action_tracking_parity,
         atol=atol,
-    ).all(), f"Synch Action do not match expected values."
+    ).all(), "Synch Action do not match expected values."
     assert np.isclose(
         pre_activations_tracking,
         golden_test_expected_pre_activations_tracking_parity,
         atol=atol,
-    ).all(), f"Pre-activations do not match expected values."
+    ).all(), "Pre-activations do not match expected values."
     assert np.isclose(
         post_activations_tracking,
         golden_test_expected_post_activations_tracking_parity,
         atol=atol,
-    ).all(), f"Post-activations do not match expected values."
+    ).all(), "Post-activations do not match expected values."
     assert np.isclose(
         attention_tracking,
         golden_test_expected_attentions_tracking_parity,
         atol=atol_attn,
-    ).all(), f"Attention do not match expected values."
+    ).all(), "Attention do not match expected values."
 
     pass
 
@@ -134,33 +126,33 @@ def test_golden_qamnist(
 
     assert torch.isclose(
         predictions, golden_test_expected_predictions_qamnist, atol=atol
-    ).all(), f"Predictions do not match expected values."
+    ).all(), "Predictions do not match expected values."
     assert torch.isclose(
         certainties, golden_test_expected_certainties_qamnist, atol=atol
-    ).all(), f"Certainties do not match expected values."
+    ).all(), "Certainties do not match expected values."
     assert torch.isclose(
         synch_out_tracking,
         golden_test_expected_synchronization_out_tracking_qamnist[-1],
         atol=atol,
-    ).all(), f"Synch Out do not match expected values."
+    ).all(), "Synch Out do not match expected values."
     assert np.isclose(
         pre_activations_tracking,
         golden_test_expected_pre_activations_tracking_qamnist,
         atol=atol,
-    ).all(), f"Pre-activations do not match expected values."
+    ).all(), "Pre-activations do not match expected values."
     assert np.isclose(
         post_activations_tracking,
         golden_test_expected_post_activations_tracking_qamnist,
         atol=atol,
-    ).all(), f"Post-activations do not match expected values."
+    ).all(), "Post-activations do not match expected values."
     assert np.isclose(
         attention_tracking,
         golden_test_expected_attentions_tracking_qamnist,
         atol=atol_attn,
-    ).all(), f"Attention do not match expected values."
+    ).all(), "Attention do not match expected values."
     assert np.isclose(
         embedding_tracking, golden_test_expected_embeddings_tracking_qamnist, atol=atol
-    ).all(), f"Embeddings do not match expected values."
+    ).all(), "Embeddings do not match expected values."
 
     pass
 
@@ -193,12 +185,12 @@ def test_golden_rl(
 
     assert torch.isclose(
         initial_state_trace, golden_test_expected_initial_state_trace_rl, atol=atol
-    ).all(), f"Initial hidden states of the CTM does not match expected values."
+    ).all(), "Initial hidden states of the CTM does not match expected values."
     assert torch.isclose(
         initial_activated_state_trace,
         golden_test_expected_initial_activated_state_trace_rl,
         atol=atol,
-    ).all(), f"Initial hidden states of the CTM does not match expected values."
+    ).all(), "Initial hidden states of the CTM does not match expected values."
 
     (
         _,
@@ -222,34 +214,34 @@ def test_golden_rl(
 
     assert torch.isclose(
         action_log_probs, golden_test_expected_action_log_prob_rl, atol=atol
-    ).all(), f"Action log probs do not match expected values."
+    ).all(), "Action log probs do not match expected values."
     assert torch.isclose(
         entropy, golden_test_expected_action_entropy_rl, atol=atol
-    ).all(), f"Entropy does not match expected values."
+    ).all(), "Entropy does not match expected values."
     assert torch.isclose(value, golden_test_expected_value_rl, atol=atol).all(), (
-        f"Value does not match expected values."
+        "Value does not match expected values."
     )
     assert torch.isclose(
         state_trace, golden_test_expected_state_trace_rl, atol=atol
-    ).all(), f"State trace does not match expected values."
+    ).all(), "State trace does not match expected values."
     assert torch.isclose(
         activated_state_trace, golden_test_expected_activated_state_trace_rl, atol=atol
-    ).all(), f"Activated state trace does not match expected values."
+    ).all(), "Activated state trace does not match expected values."
     assert np.isclose(
         pre_activations, golden_test_expected_pre_activations_tracking_rl, atol=atol
-    ).all(), f"Pre-activations do not match expected values."
+    ).all(), "Pre-activations do not match expected values."
     assert np.isclose(
         post_activations, golden_test_expected_post_activations_tracking_rl, atol=atol
-    ).all(), f"Post-activations do not match expected values."
+    ).all(), "Post-activations do not match expected values."
     assert np.isclose(
         synchronization, golden_test_expected_synch_out_tracking_rl, atol=atol
-    ).all(), f"Synchronisation do not match expected values."
+    ).all(), "Synchronisation do not match expected values."
     assert torch.isclose(
         action_logits, golden_test_expected_action_logits_rl, atol=atol
-    ).all(), f"Action logits do not match expected values."
+    ).all(), "Action logits do not match expected values."
     assert torch.isclose(
         action_probs, golden_test_expected_action_probs_rl, atol=atol
-    ).all(), f"Action probs do not match expected values."
+    ).all(), "Action probs do not match expected values."
 
     pass
 

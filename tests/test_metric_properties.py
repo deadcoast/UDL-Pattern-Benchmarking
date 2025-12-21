@@ -8,7 +8,6 @@ Tests the mathematical properties that all metrics must satisfy:
 
 import pytest
 from hypothesis import given, strategies as st, settings, assume
-from typing import List
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.metrics.base import QualityMetric, MetricRegistry
 
@@ -31,7 +30,7 @@ class TestConsistencyMetric(QualityMetric):
             cycles = list(nx.simple_cycles(graph))
             cycle_count = len(cycles)
             return max(0.0, min(1.0, 1.0 - (cycle_count / (len(rules) + 1))))
-        except:
+        except Exception:
             return 0.5  # Default if cycle detection fails
 
     def get_formula(self) -> str:
@@ -286,7 +285,7 @@ class TestMetricDeterminism:
                     metric.compute(udl)
                     # If this succeeds but previous failed, it's non-deterministic
                     pytest.fail(f"Metric {metric_name} has inconsistent failures: {e}")
-                except:
+                except Exception:
                     # Consistent failure is acceptable (though not ideal)
                     pass
 
@@ -347,18 +346,18 @@ class TestMetricRegistry:
         # Test well-behaved metric
         good_metric = TestConsistencyMetric()
         results = good_metric.validate_properties(udl)
-        assert results["bounded"] == True
-        assert results["deterministic"] == True
+        assert results["bounded"]
+        assert results["deterministic"]
 
         # Test broken boundedness metric
         broken_metric = TestBrokenBoundednessMetric()
         results = broken_metric.validate_properties(udl)
-        assert results["bounded"] == False  # Should fail boundedness
+        assert not results["bounded"]  # Should fail boundedness
 
         # Test non-deterministic metric
         random_metric = TestNonDeterministicMetric()
         results = random_metric.validate_properties(udl)
-        assert results["deterministic"] == False  # Should fail determinism
+        assert not results["deterministic"]  # Should fail determinism
 
     def test_class_registration_method(self):
         """Test the class method for self-registration."""

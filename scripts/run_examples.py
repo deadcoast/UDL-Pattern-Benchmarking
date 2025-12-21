@@ -16,10 +16,8 @@ import argparse
 import sys
 import subprocess
 import json
-import re
-import tempfile
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -303,18 +301,22 @@ class ExampleRunner:
                         path=path,
                         example_type=ExampleType.PYTHON_SCRIPT,
                         success=False,
-                        error_message=result.stderr[:500]
-                        if result.stderr
-                        else "Non-zero exit code",
+                        error_message=(
+                            result.stderr[:500]
+                            if result.stderr
+                            else "Non-zero exit code"
+                        ),
                     )
 
                 return ExampleResult(
                     path=path,
                     example_type=ExampleType.PYTHON_SCRIPT,
                     success=True,
-                    output=result.stdout[:200]
-                    if result.stdout
-                    else "Completed successfully",
+                    output=(
+                        result.stdout[:200]
+                        if result.stdout
+                        else "Completed successfully"
+                    ),
                 )
             else:
                 # Just validate syntax

@@ -6,7 +6,7 @@ Measures coverage of language constructs using set-theoretic formulations.
 
 from typing import Set, Dict, Any, List
 from udl_rating_framework.core.metrics.base import QualityMetric
-from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType
+from udl_rating_framework.core.representation import UDLRepresentation, TokenType
 
 
 class Construct:

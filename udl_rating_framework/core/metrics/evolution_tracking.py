@@ -4,9 +4,7 @@ Evolution Tracking Metric implementation.
 Measures evolution and versioning characteristics of UDL definitions.
 """
 
-import hashlib
-import difflib
-from typing import Dict, List, Set, Any, Tuple, Optional
+from typing import Dict, List, Set, Any, Tuple
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType
 

@@ -8,10 +8,8 @@ comparing UDLs, and evaluating model performance.
 import click
 import logging
 import sys
-import yaml
 from pathlib import Path
-from typing import Dict, List, Optional, Any
-import json
+from typing import Optional
 
 from udl_rating_framework.cli.commands.rate import rate_command
 from udl_rating_framework.cli.commands.train import train_command
@@ -19,7 +17,7 @@ from udl_rating_framework.cli.commands.compare import compare_command
 from udl_rating_framework.cli.commands.evaluate import evaluate_command
 from udl_rating_framework.cli.commands.integration import integration
 from udl_rating_framework.cli.commands.analytics import analytics
-from udl_rating_framework.cli.config import load_config, validate_config
+from udl_rating_framework.cli.config import load_config
 
 
 # Configure logging

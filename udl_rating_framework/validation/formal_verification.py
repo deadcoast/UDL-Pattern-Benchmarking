@@ -7,7 +7,7 @@ satisfy their mathematical properties as specified in the design document.
 
 import numpy as np
 import logging
-from typing import List, Dict, Any, Tuple, Optional, Callable
+from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 
@@ -370,8 +370,6 @@ class FormalVerifier:
             Complete formal verification report
         """
         import time
-
-        start_time = time.time()
 
         all_results = []
 

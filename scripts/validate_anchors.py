@@ -110,13 +110,13 @@ def main():
         else:
             print(f"{file_path}: {len(valid)} anchor(s) - all valid ✓")
 
-    print(f"\n=== Summary ===")
+    print("\n=== Summary ===")
     print(f"Total anchor links: {total_valid + total_broken}")
     print(f"Valid: {total_valid}")
     print(f"Broken: {total_broken}")
 
     if all_broken:
-        print(f"\n=== Broken Links ===")
+        print("\n=== Broken Links ===")
         for file_path, line_num, link_text, anchor in all_broken:
             print(f"  {file_path}:{line_num} - #{anchor}")
 

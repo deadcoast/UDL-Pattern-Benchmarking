@@ -8,7 +8,6 @@ import pytest
 from hypothesis import given, strategies as st, assume
 import tempfile
 import os
-from pathlib import Path
 
 from udl_rating_framework.core.pipeline import (
     RatingPipeline,
@@ -372,7 +371,7 @@ class TestIndependentMetricComputation:
         report1_first = pipeline.compute_rating(udl1)
 
         # Compute metrics for second UDL
-        report2 = pipeline.compute_rating(udl2)
+        pipeline.compute_rating(udl2)
 
         # Compute metrics for first UDL again
         report1_second = pipeline.compute_rating(udl1)

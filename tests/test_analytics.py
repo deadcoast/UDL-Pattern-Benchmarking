@@ -13,7 +13,7 @@ from pathlib import Path
 import tempfile
 import json
 
-from udl_rating_framework.core.pipeline import QualityReport, ComputationStep
+from udl_rating_framework.core.pipeline import QualityReport
 from udl_rating_framework.analytics import (
     TimeSeriesAnalyzer,
     PortfolioAnalyzer,
@@ -423,6 +423,7 @@ class TestBusinessIntelligenceExporter:
 
             dataset = exporter.export_quality_data(sample_reports, config, output_path)
 
+            assert dataset.name == "udl_quality_summary"
             assert output_path.exists()
 
             # Check JSON structure

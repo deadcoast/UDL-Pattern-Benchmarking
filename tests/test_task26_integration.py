@@ -9,7 +9,6 @@ Tests end-to-end functionality for new grammar formats:
 - Railroad diagram formats
 """
 
-import pytest
 import tempfile
 from pathlib import Path
 from udl_rating_framework.io.file_discovery import FileDiscovery
@@ -251,6 +250,7 @@ class TestTask26Integration:
                 rules = udl.get_grammar_rules()
 
                 assert len(tokens) > 0
+                assert rules is not None
                 # Rules may be empty for simple formats, but should not error
 
     def test_mixed_format_directory(self):

@@ -7,8 +7,7 @@ and other web technologies for enhanced UDL analysis.
 
 import json
 import os
-from typing import Dict, List, Optional, Any, Tuple
-import numpy as np
+from typing import Dict, List, Optional, Any
 import networkx as nx
 from pathlib import Path
 from ..models.ctm_adapter import TrackingData
@@ -326,9 +325,11 @@ class WebVisualizer:
             "n_neurons": tracking_data.n_neurons,
             "activations": tracking_data.post_activations.tolist(),
             "synchronization": tracking_data.synch_out.tolist(),
-            "attention_weights": tracking_data.attention_weights.tolist()
-            if tracking_data.attention_weights is not None
-            else None,
+            "attention_weights": (
+                tracking_data.attention_weights.tolist()
+                if tracking_data.attention_weights is not None
+                else None
+            ),
         }
 
     def _extract_dependencies(self, udl: UDLRepresentation) -> Dict[str, Any]:
@@ -1027,12 +1028,14 @@ class WebVisualizer:
         displays = []
         for metric_name, values in metric_history.items():
             latest_value = values[-1] if values else 0.0
-            displays.append(f"""
+            displays.append(
+                f"""
             <div class="metric-display">
                 <div class="metric-name">{metric_name}</div>
                 <div class="metric-value" id="metric-{metric_name}">{latest_value:.3f}</div>
             </div>
-            """)
+            """
+            )
         return "".join(displays)
 
     def _generate_dependency_flow_html(self, dependencies: Dict[str, Any]) -> str:
@@ -1402,6 +1405,35 @@ class WebVisualizer:
         self, visualization_paths: Dict[str, str]
     ) -> str:
         """Generate HTML for comprehensive dashboard."""
+        ctm_nav = ""
+        metrics_nav = ""
+        ctm_section = ""
+        metrics_section = ""
+
+        if "ctm_animation" in visualization_paths:
+            ctm_nav = """
+                <li><a href="#" onclick="showSection('ctm-animation')">CTM Animation</a></li>
+            """.strip()
+            ctm_src = os.path.basename(visualization_paths["ctm_animation"])
+            ctm_section = f"""
+        <div id="ctm-animation" class="dashboard-section">
+            <h2>CTM Processing Animation</h2>
+            <iframe src="{ctm_src}" class="visualization-frame"></iframe>
+        </div>
+            """.strip()
+
+        if "metrics_dashboard" in visualization_paths:
+            metrics_nav = """
+                <li><a href="#" onclick="showSection('metrics-dashboard')">Metrics Dashboard</a></li>
+            """.strip()
+            metrics_src = os.path.basename(visualization_paths["metrics_dashboard"])
+            metrics_section = f"""
+        <div id="metrics-dashboard" class="dashboard-section">
+            <h2>Real-time Metrics Dashboard</h2>
+            <iframe src="{metrics_src}" class="visualization-frame"></iframe>
+        </div>
+            """.strip()
+
         return f"""
 <!DOCTYPE html>
 <html>
@@ -1464,8 +1496,8 @@ class WebVisualizer:
             <ul>
                 <li><a href="#" onclick="showSection('grammar-graph')">Grammar Graph</a></li>
                 <li><a href="#" onclick="showSection('dependency-flow')">Dependency Flow</a></li>
-                {"<li><a href='#' onclick=\"showSection('ctm-animation')\">CTM Animation</a></li>" if "ctm_animation" in visualization_paths else ""}
-                {"<li><a href='#' onclick=\"showSection('metrics-dashboard')\">Metrics Dashboard</a></li>" if "metrics_dashboard" in visualization_paths else ""}
+                {ctm_nav}
+                {metrics_nav}
             </ul>
         </nav>
         
@@ -1479,9 +1511,9 @@ class WebVisualizer:
             <iframe src="{os.path.basename(visualization_paths["dependency_flow"])}" class="visualization-frame"></iframe>
         </div>
         
-        {"<div id='ctm-animation' class='dashboard-section'><h2>CTM Processing Animation</h2><iframe src='" + os.path.basename(visualization_paths["ctm_animation"]) + "' class='visualization-frame'></iframe></div>" if "ctm_animation" in visualization_paths else ""}
+        {ctm_section}
         
-        {"<div id='metrics-dashboard' class='dashboard-section'><h2>Real-time Metrics Dashboard</h2><iframe src='" + os.path.basename(visualization_paths["metrics_dashboard"]) + "' class='visualization-frame'></iframe></div>" if "metrics_dashboard" in visualization_paths else ""}
+        {metrics_section}
     </div>
 
     <script>

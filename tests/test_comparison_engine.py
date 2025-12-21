@@ -7,15 +7,12 @@ Tests both property-based and unit tests for UDL comparison and statistical anal
 import pytest
 import numpy as np
 from datetime import datetime
-from typing import List, Dict
-from hypothesis import given, strategies as st, assume, settings
+from typing import List
+from hypothesis import given, strategies as st, settings
 from hypothesis.strategies import composite
 
 from udl_rating_framework.evaluation.comparison import (
     ComparisonEngine,
-    ComparisonResult,
-    RankingResult,
-    ComparisonSummary,
 )
 from udl_rating_framework.core.pipeline import QualityReport, ComputationStep
 
@@ -396,8 +393,6 @@ class TestComparisonEngineUnitTests:
             timestamp=datetime.now(),
             udl_file="test.udl",
         )
-
-        reports = [report]
 
         engine = ComparisonEngine(bootstrap_samples=100)  # Smaller for testing
         summary = engine.compare_udls(

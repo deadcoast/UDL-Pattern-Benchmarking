@@ -8,11 +8,7 @@ the documented results when executed.
 **Validates: Requirements 4.2, 5.2**
 """
 
-import pytest
-import math
 from hypothesis import given, strategies as st, settings, assume
-from typing import Dict, Any
-import numpy as np
 
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.metrics.consistency import ConsistencyMetric

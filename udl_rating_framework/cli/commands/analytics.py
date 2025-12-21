@@ -20,7 +20,6 @@ from udl_rating_framework.analytics import (
 )
 from udl_rating_framework.analytics.bi_exporter import BIExportConfig
 from udl_rating_framework.core.pipeline import QualityReport
-from udl_rating_framework.io.report_generator import ReportGenerator
 
 
 def load_reports_from_directory(reports_dir: Path) -> List[QualityReport]:
@@ -262,7 +261,7 @@ def portfolio(
             click.echo(report)
 
         # Display summary
-        click.echo(f"\nPortfolio Summary:")
+        click.echo("\nPortfolio Summary:")
         click.echo(f"- Projects analyzed: {len(comparison.project_profiles)}")
         click.echo(f"- Clusters identified: {len(comparison.clusters)}")
         click.echo(f"- Outlier projects: {len(comparison.outliers)}")
@@ -449,7 +448,7 @@ def improve(
             click.echo(report)
 
         # Display summary
-        click.echo(f"\nImprovement Plan Summary:")
+        click.echo("\nImprovement Plan Summary:")
         click.echo(f"- Current score: {plan.current_score:.3f}")
         click.echo(f"- Target score: {plan.target_score:.3f}")
         click.echo(f"- Recommendations: {len(plan.suggestions)}")
@@ -569,7 +568,7 @@ def export(
         click.echo(f"✓ Saved metadata to {metadata_file}")
 
         # Display summary
-        click.echo(f"\nExport Summary:")
+        click.echo("\nExport Summary:")
         click.echo(f"- Format: {format}")
         click.echo(f"- Aggregation: {aggregation}")
         click.echo(f"- Records: {len(dataset.data)}")
@@ -642,12 +641,12 @@ def dashboard(
         click.echo(f"✓ Created {platform} package at {package_path}")
 
         # List package contents
-        click.echo(f"\nPackage Contents:")
+        click.echo("\nPackage Contents:")
         for item in package_path.iterdir():
             if item.is_file():
                 click.echo(f"- {item.name}")
 
-        click.echo(f"\nTo use this package:")
+        click.echo("\nTo use this package:")
         if platform == "powerbi":
             click.echo("1. Import the CSV files as data sources in Power BI")
             click.echo("2. Use the template and model files as guides")

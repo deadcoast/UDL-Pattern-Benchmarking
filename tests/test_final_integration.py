@@ -14,12 +14,8 @@ Requirements: All
 import pytest
 import tempfile
 import json
-import yaml
 from pathlib import Path
-from typing import List, Dict, Any
-import subprocess
-import sys
-import os
+from typing import List
 import shutil
 from click.testing import CliRunner
 

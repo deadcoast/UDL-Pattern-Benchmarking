@@ -7,8 +7,7 @@ Provides real-time UDL quality feedback in IDEs and editors that support LSP.
 import asyncio
 import json
 import logging
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
 import threading
 import time
@@ -270,8 +269,6 @@ class UDLLanguageServer:
     ) -> List[Dict[str, Any]]:
         """Handle textDocument/codeAction request."""
         text_document = params["textDocument"]
-        range_param = params["range"]
-        context = params["context"]
         uri = text_document["uri"]
 
         if uri not in self.documents:
@@ -537,9 +534,7 @@ class UDLLanguageServer:
             },
         }
 
-        logger.debug(
-            f"Publishing diagnostics for {uri}: {len(lsp_diagnostics)} diagnostics"
-        )
+        logger.debug("Publishing diagnostics payload for %s: %s", uri, notification)
 
 
 class LSPServer:

@@ -7,10 +7,9 @@ based on analysis of quality metrics, patterns, and best practices.
 
 import numpy as np
 from datetime import datetime
-from typing import Dict, List, Tuple, Optional, Any, Set
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
-from collections import defaultdict, Counter
-import re
+from collections import defaultdict
 
 from udl_rating_framework.core.pipeline import QualityReport
 

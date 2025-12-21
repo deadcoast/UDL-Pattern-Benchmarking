@@ -7,9 +7,8 @@ the system produces identical results within numerical precision.
 """
 
 import pytest
-import os
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict
 
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.metrics.consistency import ConsistencyMetric

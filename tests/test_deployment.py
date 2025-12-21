@@ -5,7 +5,6 @@ This module tests the deployment-related functionality including
 the FastAPI application and client libraries.
 """
 
-import json
 import os
 import tempfile
 from pathlib import Path

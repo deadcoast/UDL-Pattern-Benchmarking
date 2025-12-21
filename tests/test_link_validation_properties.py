@@ -391,12 +391,14 @@ class TestAnchorLinkValidation:
         """Valid anchor links should pass validation."""
         with tempfile.TemporaryDirectory() as tmpdir:
             source = Path(tmpdir) / "source.md"
-            source.write_text("""# My Heading
+            source.write_text(
+                """# My Heading
 
 Some content here.
 
 [Link to heading](#my-heading)
-""")
+"""
+            )
 
             validator = LinkValidator(Path(tmpdir))
             links = validator.extract_links_from_file(source)
@@ -412,10 +414,12 @@ Some content here.
         """Broken anchor links should fail validation."""
         with tempfile.TemporaryDirectory() as tmpdir:
             source = Path(tmpdir) / "source.md"
-            source.write_text("""# My Heading
+            source.write_text(
+                """# My Heading
 
 [Link to nonexistent](#nonexistent-heading)
-""")
+"""
+            )
 
             validator = LinkValidator(Path(tmpdir))
             links = validator.extract_links_from_file(source)
@@ -450,7 +454,8 @@ Some content here.
         """Multiple headings at same level should all be extractable."""
         with tempfile.TemporaryDirectory() as tmpdir:
             source = Path(tmpdir) / "source.md"
-            source.write_text("""# First Heading
+            source.write_text(
+                """# First Heading
 
 ## Second Heading
 
@@ -459,7 +464,8 @@ Some content here.
 [Link 1](#first-heading)
 [Link 2](#second-heading)
 [Link 3](#third-heading)
-""")
+"""
+            )
 
             validator = LinkValidator(Path(tmpdir))
             headings = validator.extract_headings_from_file(source)
@@ -472,7 +478,8 @@ Some content here.
         """Nested headings (h1, h2, h3, etc.) should all be extractable."""
         with tempfile.TemporaryDirectory() as tmpdir:
             source = Path(tmpdir) / "source.md"
-            source.write_text("""# Level 1
+            source.write_text(
+                """# Level 1
 
 ## Level 2
 
@@ -483,7 +490,8 @@ Some content here.
 ##### Level 5
 
 ###### Level 6
-""")
+"""
+            )
 
             validator = LinkValidator(Path(tmpdir))
             headings = validator.extract_headings_from_file(source)
@@ -496,10 +504,12 @@ Some content here.
         """Empty anchor links should fail validation."""
         with tempfile.TemporaryDirectory() as tmpdir:
             source = Path(tmpdir) / "source.md"
-            source.write_text("""# Heading
+            source.write_text(
+                """# Heading
 
 [Empty anchor](#)
-""")
+"""
+            )
 
             validator = LinkValidator(Path(tmpdir))
             links = validator.extract_links_from_file(source)

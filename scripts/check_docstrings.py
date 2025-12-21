@@ -3,7 +3,6 @@
 
 import ast
 import os
-from pathlib import Path
 
 
 def check_docstrings():
@@ -79,7 +78,7 @@ def main():
     if len(functions) > 20:
         print(f"  ... and {len(functions) - 20} more")
 
-    print(f"\n=== Summary ===")
+    print("\n=== Summary ===")
     print(f"Total undocumented classes: {len(classes)}")
     print(f"Total undocumented functions: {len(functions)}")
 

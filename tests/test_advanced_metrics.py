@@ -5,8 +5,6 @@ Tests semantic similarity, readability, maintainability, cross-language compatib
 and evolution tracking metrics.
 """
 
-import pytest
-import numpy as np
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.metrics.semantic_similarity import (
     SemanticSimilarityMetric,

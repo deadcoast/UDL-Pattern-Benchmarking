@@ -6,7 +6,6 @@ Provides tools for visualizing synchronization matrix evolution over time.
 
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 from typing import Dict, List, Optional, Tuple
 from ..models.ctm_adapter import TrackingData
 

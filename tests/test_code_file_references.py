@@ -9,7 +9,6 @@ Tests that all code files referenced in documentation exist and are accessible.
 
 import pytest
 import os
-from pathlib import Path
 from hypothesis import given, strategies as st, settings
 
 

@@ -4,8 +4,7 @@ Cross-Language Compatibility Metric implementation.
 Measures compatibility and portability across different grammar formats and language paradigms.
 """
 
-import re
-from typing import Dict, List, Set, Any, Tuple, Optional
+from typing import Dict, List, Set
 from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import (
     UDLRepresentation,
@@ -219,8 +218,6 @@ class CrossLanguageCompatibilityMetric(QualityMetric):
             Interoperability score in [0, 1]
         """
         tokens = udl.get_tokens()
-        current_format = udl.get_format()
-
         # Check compatibility with common parser generators
         tool_compatibility = {
             "yacc_bison": self._compatible_with_yacc_bison(tokens),

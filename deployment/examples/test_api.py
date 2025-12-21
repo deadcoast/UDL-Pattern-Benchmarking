@@ -5,15 +5,13 @@ Example script to test the UDL Rating Framework API.
 This script demonstrates how to use the deployed API to rate UDL files.
 """
 
-import json
 import sys
-import time
 from pathlib import Path
 
 # Add the client to the path
 sys.path.append(str(Path(__file__).parent.parent / "client"))
 
-from python_client import UDLRatingClient, UDLRatingError
+from python_client import UDLRatingClient
 
 
 def main():

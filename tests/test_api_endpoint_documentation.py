@@ -11,7 +11,7 @@ have corresponding documentation in the deployment README.md.
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Tuple
 
 import pytest
 from hypothesis import given, settings, strategies as st
@@ -80,7 +80,7 @@ def extract_fastapi_endpoints() -> List[Dict[str, str]]:
                     )
 
         return endpoints
-    except Exception as e:
+    except Exception:
         return []
 
 
@@ -264,8 +264,8 @@ class TestAPIEndpointDocumentation:
 
         if missing_core:
             pytest.fail(
-                f"Core endpoints missing from documentation:\n"
-                f"  - " + "\n  - ".join(missing_core)
+                "Core endpoints missing from documentation:\n"
+                "  - " + "\n  - ".join(missing_core)
             )
 
     def test_endpoint_count_matches(self):
@@ -369,8 +369,8 @@ class TestAPIDocumentationConsistency:
 
         if missing_methods:
             pytest.fail(
-                f"Python client missing methods for API endpoints:\n"
-                f"  - " + "\n  - ".join(missing_methods)
+                "Python client missing methods for API endpoints:\n"
+                "  - " + "\n  - ".join(missing_methods)
             )
 
 

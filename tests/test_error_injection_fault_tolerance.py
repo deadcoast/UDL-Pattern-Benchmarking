@@ -16,23 +16,19 @@ import tempfile
 import os
 import time
 import threading
-import socket
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 from concurrent.futures import TimeoutError
-import multiprocessing as mp
-from typing import List, Dict, Any, Optional
 
 # Import framework components
 from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.pipeline import RatingPipeline, QualityReport
+from udl_rating_framework.core.pipeline import RatingPipeline
 from udl_rating_framework.core.multiprocessing import (
     ParallelProcessor,
     ProcessingResult,
-    BatchProcessingStats,
 )
-from udl_rating_framework.io.file_discovery import FileDiscovery, FileDiscoveryError
-from udl_rating_framework.core.caching import LRUCache, get_udl_cache, get_metric_cache
+from udl_rating_framework.io.file_discovery import FileDiscovery
+from udl_rating_framework.core.caching import LRUCache, get_metric_cache
 
 
 def _check_distributed_available():
@@ -403,6 +399,7 @@ class TestDatabaseConnectionFailures:
         count = cache.invalidate_udl("invalidate_test_hash")
 
         # Should be gone
+        assert count == 1
         assert cache.get_metric("invalidate_test_hash", "consistency") is None
 
     def test_database_error_simulation(self):
@@ -503,7 +500,6 @@ class TestTimeoutHandling:
 
     def test_timeout_simulation(self):
         """Test timeout handling simulation."""
-        import threading
 
         result = {"completed": False, "timed_out": False}
         timeout_seconds = 0.5

@@ -7,20 +7,16 @@ uncertainty, neuron-level dynamics analysis, and temporal uncertainty evolution.
 """
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from torch.utils.data import DataLoader
 import numpy as np
 from typing import Dict, List, Any, Optional, Tuple, Union, Callable
 import logging
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
-import scipy.stats as stats
 from sklearn.isotonic import IsotonicRegression
 from sklearn.linear_model import LogisticRegression
 
 from ..models.ctm_adapter import UDLRatingCTM, TrackingData
-from ..core.representation import UDLRepresentation
 
 logger = logging.getLogger(__name__)
 
@@ -203,9 +199,6 @@ class SynchronizationUncertainty(UncertaintyQuantifier):
         Returns:
             Uncertainty estimate based on synchronization patterns
         """
-        device = token_ids.device
-        batch_size = token_ids.shape[0]
-
         model.eval()
 
         predictions = []
@@ -522,6 +515,88 @@ class NeuronLevelUncertainty(UncertaintyQuantifier):
         return estimate
 
 
+class MonteCarloDropout(UncertaintyQuantifier):
+    """
+    Monte Carlo Dropout uncertainty quantification.
+
+    Performs multiple stochastic forward passes with dropout enabled to
+    estimate epistemic and aleatoric uncertainty.
+    """
+
+    def __init__(self, n_samples: int = 50):
+        """
+        Initialize Monte Carlo Dropout.
+
+        Args:
+            n_samples: Number of stochastic forward passes
+        """
+        self.n_samples = n_samples
+
+    def estimate_uncertainty(
+        self, model: UDLRatingCTM, token_ids: torch.Tensor, **kwargs
+    ) -> UncertaintyEstimate:
+        """
+        Estimate uncertainty using Monte Carlo Dropout.
+
+        Args:
+            model: Trained CTM model
+            token_ids: Input token IDs
+
+        Returns:
+            Uncertainty estimate
+        """
+        was_training = model.training
+        model.train()
+
+        predictions = []
+        certainties = []
+
+        with torch.no_grad():
+            for _ in range(self.n_samples):
+                output = model(token_ids)
+                pred = output[0]
+                cert = output[1]
+                predictions.append(pred.cpu().numpy())
+                certainties.append(cert.cpu().numpy())
+
+        if not was_training:
+            model.eval()
+
+        predictions = np.array(predictions)  # [n_samples, batch, 1]
+        certainties = np.array(certainties)  # [n_samples, batch, 2]
+
+        pred_samples = predictions[:, 0, 0]
+        cert_samples = certainties[:, 0, :]
+
+        mean_prediction = np.mean(pred_samples)
+        mean_confidence = np.mean(cert_samples[:, 1])
+
+        epistemic_uncertainty = np.var(pred_samples)
+        aleatoric_uncertainty = np.mean(1.0 - cert_samples[:, 1])
+        total_uncertainty = epistemic_uncertainty + aleatoric_uncertainty
+
+        confidence_level = kwargs.get("confidence_level", 0.95)
+        alpha = 1 - confidence_level
+        lower_percentile = (alpha / 2) * 100
+        upper_percentile = (1 - alpha / 2) * 100
+
+        ci_lower = np.percentile(pred_samples, lower_percentile)
+        ci_upper = np.percentile(pred_samples, upper_percentile)
+
+        return UncertaintyEstimate(
+            prediction=float(mean_prediction),
+            confidence=float(mean_confidence),
+            epistemic_uncertainty=float(epistemic_uncertainty),
+            aleatoric_uncertainty=float(aleatoric_uncertainty),
+            total_uncertainty=float(total_uncertainty),
+            confidence_interval_lower=float(ci_lower),
+            confidence_interval_upper=float(ci_upper),
+            confidence_level=confidence_level,
+            method="monte_carlo_dropout",
+            n_samples=self.n_samples,
+        )
+
+
 class DeepEnsembleUncertainty(UncertaintyQuantifier):
     """
     Deep ensemble uncertainty quantification.
@@ -556,8 +631,6 @@ class DeepEnsembleUncertainty(UncertaintyQuantifier):
         Returns:
             Uncertainty estimate
         """
-        device = token_ids.device
-
         predictions = []
         certainties = []
 

@@ -5,7 +5,6 @@ Provides pre-commit and pre-push hooks that automatically check UDL quality
 and prevent commits/pushes if quality thresholds are not met.
 """
 
-import os
 import sys
 import json
 import subprocess
