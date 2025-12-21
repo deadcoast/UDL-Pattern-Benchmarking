@@ -8,12 +8,14 @@ Tests that for any internal link in documentation (file reference, anchor link,
 or code reference), the target must exist and be accessible.
 """
 
-import pytest
-import tempfile
-import os
-from pathlib import Path
-from hypothesis import given, strategies as st, settings, assume
 import importlib.util
+import os
+import tempfile
+from pathlib import Path
+
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
 
 
 # Import directly from the module file to avoid package import issues
@@ -25,7 +27,8 @@ def _import_link_validator():
         / "validation"
         / "link_validator.py"
     )
-    spec = importlib.util.spec_from_file_location("link_validator", module_path)
+    spec = importlib.util.spec_from_file_location(
+        "link_validator", module_path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -45,24 +48,30 @@ class TestLinkClassification:
     def test_external_url_https(self):
         """HTTPS URLs should be classified as external."""
         validator = LinkValidator(Path("."))
-        assert validator.classify_link("https://example.com") == LinkType.EXTERNAL_URL
+        assert validator.classify_link(
+            "https://example.com") == LinkType.EXTERNAL_URL
 
     def test_external_url_http(self):
         """HTTP URLs should be classified as external."""
         validator = LinkValidator(Path("."))
-        assert validator.classify_link("http://example.com") == LinkType.EXTERNAL_URL
+        assert validator.classify_link(
+            "http://example.com") == LinkType.EXTERNAL_URL
 
     def test_anchor_link(self):
         """Anchor links should be classified correctly."""
         validator = LinkValidator(Path("."))
-        assert validator.classify_link("#section-heading") == LinkType.ANCHOR_LINK
+        assert validator.classify_link(
+            "#section-heading") == LinkType.ANCHOR_LINK
 
     def test_file_reference(self):
         """File references should be classified correctly."""
         validator = LinkValidator(Path("."))
-        assert validator.classify_link("path/to/file.md") == LinkType.FILE_REFERENCE
-        assert validator.classify_link("./relative/path.txt") == LinkType.FILE_REFERENCE
-        assert validator.classify_link("/absolute/path.md") == LinkType.FILE_REFERENCE
+        assert validator.classify_link(
+            "path/to/file.md") == LinkType.FILE_REFERENCE
+        assert validator.classify_link(
+            "./relative/path.txt") == LinkType.FILE_REFERENCE
+        assert validator.classify_link(
+            "/absolute/path.md") == LinkType.FILE_REFERENCE
 
 
 class TestLinkExtraction:
@@ -438,10 +447,12 @@ Some content here.
         assert validator._heading_to_anchor("Hello, World!") == "hello-world"
 
         # Multiple spaces become single hyphen
-        assert validator._heading_to_anchor("Multiple   Spaces") == "multiple-spaces"
+        assert validator._heading_to_anchor(
+            "Multiple   Spaces") == "multiple-spaces"
 
         # Underscores preserved
-        assert validator._heading_to_anchor("with_underscore") == "with_underscore"
+        assert validator._heading_to_anchor(
+            "with_underscore") == "with_underscore"
 
         # Numbers preserved
         assert validator._heading_to_anchor("Version 2.0") == "version-20"
@@ -581,7 +592,8 @@ class TestPropertyBasedAnchorValidation:
         **Validates: Requirements 2.3**
         """
         # Filter out problematic inputs
-        valid_headings = [h for h in heading_texts if h.strip() and not h.isspace()]
+        valid_headings = [
+            h for h in heading_texts if h.strip() and not h.isspace()]
         assume(len(valid_headings) > 0)
 
         with tempfile.TemporaryDirectory() as tmpdir:
