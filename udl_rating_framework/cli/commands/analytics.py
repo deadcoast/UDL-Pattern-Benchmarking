@@ -5,18 +5,19 @@ Provides command-line interface for time series analysis, portfolio analysis,
 trend prediction, improvement advisory, and business intelligence export.
 """
 
-import click
 import json
-from pathlib import Path
 from datetime import datetime
-from typing import Optional, List
+from pathlib import Path
+from typing import List, Optional
+
+import click
 
 from udl_rating_framework.analytics import (
-    TimeSeriesAnalyzer,
-    PortfolioAnalyzer,
-    TrendPredictor,
-    ImprovementAdvisor,
     BusinessIntelligenceExporter,
+    ImprovementAdvisor,
+    PortfolioAnalyzer,
+    TimeSeriesAnalyzer,
+    TrendPredictor,
 )
 from udl_rating_framework.analytics.bi_exporter import BIExportConfig
 from udl_rating_framework.core.pipeline import QualityReport
@@ -118,7 +119,8 @@ def timeseries(
     reports = load_reports_from_directory(reports_dir)
 
     if not reports:
-        click.echo("Error: No reports found in the specified directory.", err=True)
+        click.echo(
+            "Error: No reports found in the specified directory.", err=True)
         return
 
     # Filter reports for the specific UDL file
@@ -219,7 +221,8 @@ def portfolio(
     reports = load_reports_from_directory(reports_dir)
 
     if not reports:
-        click.echo("Error: No reports found in the specified directory.", err=True)
+        click.echo(
+            "Error: No reports found in the specified directory.", err=True)
         return
 
     # Load project mapping if provided
@@ -230,7 +233,8 @@ def portfolio(
                 mapping = json.load(f)
             click.echo(f"Loaded project mapping with {len(mapping)} entries")
         except Exception as e:
-            click.echo(f"Warning: Could not load project mapping: {e}", err=True)
+            click.echo(
+                f"Warning: Could not load project mapping: {e}", err=True)
 
     click.echo(f"Analyzing portfolio with {len(reports)} reports...")
 
@@ -315,7 +319,8 @@ def predict(
     reports = load_reports_from_directory(reports_dir)
 
     if not reports:
-        click.echo("Error: No reports found in the specified directory.", err=True)
+        click.echo(
+            "Error: No reports found in the specified directory.", err=True)
         return
 
     # Filter reports for the specific UDL file
@@ -329,12 +334,14 @@ def predict(
         )
         return
 
-    click.echo(f"Predicting trends for {udl_file} with {len(file_reports)} reports...")
+    click.echo(
+        f"Predicting trends for {udl_file} with {len(file_reports)} reports...")
 
     predictor_models = (
         list(models) if models else ["linear", "polynomial", "random_forest"]
     )
-    predictor = TrendPredictor(prediction_horizon=horizon, models=predictor_models)
+    predictor = TrendPredictor(
+        prediction_horizon=horizon, models=predictor_models)
 
     try:
         # Predict trends
@@ -362,10 +369,12 @@ def predict(
         # Display summary
         for metric, result in predictions.items():
             current_value = (
-                result.predictions.iloc[0] if len(result.predictions) > 0 else 0.0
+                result.predictions.iloc[0] if len(
+                    result.predictions) > 0 else 0.0
             )
             future_value = (
-                result.predictions.iloc[-1] if len(result.predictions) > 0 else 0.0
+                result.predictions.iloc[-1] if len(
+                    result.predictions) > 0 else 0.0
             )
             trend = (
                 "improving"
@@ -414,7 +423,8 @@ def improve(
     reports = load_reports_from_directory(reports_dir)
 
     if not reports:
-        click.echo("Error: No reports found in the specified directory.", err=True)
+        click.echo(
+            "Error: No reports found in the specified directory.", err=True)
         return
 
     # Filter reports for the specific UDL file
@@ -432,9 +442,11 @@ def improve(
 
     try:
         # Generate improvement plan
-        plan = advisor.generate_improvement_plan(file_reports, udl_file, target_score)
+        plan = advisor.generate_improvement_plan(
+            file_reports, udl_file, target_score)
 
-        click.echo(f"✓ Generated plan with {len(plan.suggestions)} recommendations")
+        click.echo(
+            f"✓ Generated plan with {len(plan.suggestions)} recommendations")
 
         # Generate report
         report = advisor.generate_improvement_report(plan)
@@ -528,7 +540,8 @@ def export(
     reports = load_reports_from_directory(reports_dir)
 
     if not reports:
-        click.echo("Error: No reports found in the specified directory.", err=True)
+        click.echo(
+            "Error: No reports found in the specified directory.", err=True)
         return
 
     # Load project mapping if provided
@@ -539,7 +552,8 @@ def export(
                 mapping = json.load(f)
             click.echo(f"Loaded project mapping with {len(mapping)} entries")
         except Exception as e:
-            click.echo(f"Warning: Could not load project mapping: {e}", err=True)
+            click.echo(
+                f"Warning: Could not load project mapping: {e}", err=True)
 
     click.echo(f"Exporting {len(reports)} reports in {format} format...")
 
@@ -557,7 +571,8 @@ def export(
         output_file = output_dir / f"udl_quality_{aggregation}.{format}"
 
         # Export data
-        dataset = exporter.export_quality_data(reports, config, output_file, mapping)
+        dataset = exporter.export_quality_data(
+            reports, config, output_file, mapping)
 
         click.echo(f"✓ Exported {len(dataset.data)} records to {output_file}")
 
@@ -616,7 +631,8 @@ def dashboard(
     reports = load_reports_from_directory(reports_dir)
 
     if not reports:
-        click.echo("Error: No reports found in the specified directory.", err=True)
+        click.echo(
+            "Error: No reports found in the specified directory.", err=True)
         return
 
     # Load project mapping if provided
@@ -627,7 +643,8 @@ def dashboard(
                 mapping = json.load(f)
             click.echo(f"Loaded project mapping with {len(mapping)} entries")
         except Exception as e:
-            click.echo(f"Warning: Could not load project mapping: {e}", err=True)
+            click.echo(
+                f"Warning: Could not load project mapping: {e}", err=True)
 
     click.echo(f"Creating {platform} dashboard package...")
 
@@ -635,9 +652,11 @@ def dashboard(
 
     try:
         if platform == "powerbi":
-            package_path = exporter.create_powerbi_package(reports, output_dir, mapping)
+            package_path = exporter.create_powerbi_package(
+                reports, output_dir, mapping)
         else:  # tableau
-            package_path = exporter.create_tableau_package(reports, output_dir, mapping)
+            package_path = exporter.create_tableau_package(
+                reports, output_dir, mapping)
 
         click.echo(f"✓ Created {platform} package at {package_path}")
 
@@ -651,7 +670,8 @@ def dashboard(
         if platform == "powerbi":
             click.echo("1. Import the CSV files as data sources in Power BI")
             click.echo("2. Use the template and model files as guides")
-            click.echo("3. Create visualizations based on the provided structure")
+            click.echo(
+                "3. Create visualizations based on the provided structure")
         else:
             click.echo("1. Open Tableau Desktop")
             click.echo("2. Connect to the data source using the TDS file")

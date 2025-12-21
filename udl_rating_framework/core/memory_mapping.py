@@ -5,20 +5,20 @@ Provides efficient memory-mapped file access for large UDL files,
 with optimized I/O operations and minimal memory footprint.
 """
 
+import hashlib
 import logging
 import mmap
 import os
-import time
-from typing import Dict, List, Any, Optional, Iterator, Tuple, Union
-from pathlib import Path
-from dataclasses import dataclass
-import threading
-from contextlib import contextmanager
 import struct
-import hashlib
+import threading
+import time
+from contextlib import contextmanager
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
-from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.core.pipeline import QualityReport
+from udl_rating_framework.core.representation import UDLRepresentation
 
 logger = logging.getLogger(__name__)
 
@@ -216,7 +216,8 @@ class MemoryMappedFile:
                 lines_read += 1
 
             except UnicodeDecodeError as e:
-                logger.warning(f"Unicode decode error at offset {current_offset}: {e}")
+                logger.warning(
+                    f"Unicode decode error at offset {current_offset}: {e}")
 
             current_offset = line_end + 1  # Skip line ending
 
@@ -245,7 +246,8 @@ class MemoryMappedFile:
                 break
 
             # Search in chunks to manage memory
-            chunk_size = min(self.config.prefetch_size, self.file_size - current_offset)
+            chunk_size = min(self.config.prefetch_size,
+                             self.file_size - current_offset)
             chunk_data = self.read(current_offset, chunk_size)
 
             # Find pattern in chunk
@@ -352,11 +354,12 @@ class MemoryMappedFile:
             return
 
         try:
-            prefetch_size = min(self.config.prefetch_size, self.file_size - offset)
+            prefetch_size = min(self.config.prefetch_size,
+                                self.file_size - offset)
             if prefetch_size > 0:
                 # Touch the pages to bring them into memory
                 _ = self.mmap_handle[
-                    offset : offset + prefetch_size : self.config.page_size
+                    offset: offset + prefetch_size: self.config.page_size
                 ]
 
         except Exception as e:
@@ -383,7 +386,8 @@ class MemoryMappedFile:
 
     def _find_line_ending(self, start_offset: int) -> int:
         """Find next line ending from given offset."""
-        search_size = min(1024, self.file_size - start_offset)  # Search in 1KB chunks
+        search_size = min(1024, self.file_size -
+                          start_offset)  # Search in 1KB chunks
 
         while start_offset < self.file_size:
             chunk = self.read(start_offset, search_size)
@@ -462,7 +466,8 @@ class MemoryMappedUDLProcessor:
 
             while current_offset < mapped_file.file_size:
                 # Calculate chunk boundaries
-                chunk_end = min(current_offset + chunk_size, mapped_file.file_size)
+                chunk_end = min(current_offset + chunk_size,
+                                mapped_file.file_size)
 
                 # Adjust to line boundaries to avoid splitting constructs
                 if chunk_end < mapped_file.file_size:
@@ -475,12 +480,15 @@ class MemoryMappedUDLProcessor:
 
                 # Read chunk with overlap
                 chunk_start = max(0, current_offset - overlap_size)
-                chunk_data = mapped_file.read(chunk_start, chunk_end - chunk_start)
+                chunk_data = mapped_file.read(
+                    chunk_start, chunk_end - chunk_start)
 
                 # Process chunk
                 try:
-                    chunk_content = chunk_data.decode("utf-8", errors="replace")
-                    chunk_report = self._process_chunk(chunk_content, str(file_path))
+                    chunk_content = chunk_data.decode(
+                        "utf-8", errors="replace")
+                    chunk_report = self._process_chunk(
+                        chunk_content, str(file_path))
                     chunk_reports.append(
                         (chunk_report, chunk_end - current_offset)
                     )  # Weight by size
@@ -493,10 +501,12 @@ class MemoryMappedUDLProcessor:
                 current_offset = chunk_end
 
             # Aggregate chunk results
-            final_report = self._aggregate_reports(chunk_reports, str(file_path))
+            final_report = self._aggregate_reports(
+                chunk_reports, str(file_path))
 
             processing_time = time.time() - start_time
-            logger.info(f"Memory-mapped processing completed in {processing_time:.3f}s")
+            logger.info(
+                f"Memory-mapped processing completed in {processing_time:.3f}s")
 
             return final_report
 
@@ -607,7 +617,8 @@ class MemoryMappedUDLProcessor:
                     )
 
             if analysis["line_count"] > 0:
-                analysis["avg_line_length"] = total_line_length / analysis["line_count"]
+                analysis["avg_line_length"] = total_line_length / \
+                    analysis["line_count"]
 
             return analysis
 
@@ -617,7 +628,8 @@ class MemoryMappedUDLProcessor:
             cache_key = str(file_path)
 
             if cache_key not in self.file_cache:
-                self.file_cache[cache_key] = MemoryMappedFile(file_path, self.config)
+                self.file_cache[cache_key] = MemoryMappedFile(
+                    file_path, self.config)
 
             return self.file_cache[cache_key]
 
@@ -718,7 +730,8 @@ class MemoryMappedUDLProcessor:
                 stats["total_cache_misses"] += file_stats["cache_misses"]
                 stats["total_access_count"] += file_stats["access_count"]
 
-            total_accesses = stats["total_cache_hits"] + stats["total_cache_misses"]
+            total_accesses = stats["total_cache_hits"] + \
+                stats["total_cache_misses"]
             stats["overall_cache_hit_rate"] = (
                 stats["total_cache_hits"] / total_accesses
                 if total_accesses > 0

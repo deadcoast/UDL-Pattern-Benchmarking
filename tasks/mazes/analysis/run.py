@@ -1,26 +1,29 @@
-import torch
-import numpy as np
+import argparse
+import os
 
-np.seterr(divide="ignore", invalid="warn")  # Keep specific numpy error settings
+import cv2
+import imageio  # Used for saving GIFs in viz
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+import torch
+
+from data.custom_datasets import MazeImageFolder
+from models.ctm import ContinuousThoughtMachine
+from tasks.image_classification.plotting import save_frames_to_mp4
+from tasks.mazes.plotting import draw_path
+
+# Keep specific numpy error settings
+np.seterr(divide="ignore", invalid="warn")
 
 mpl.use(
     "Agg"
 )  # Use Agg backend for matplotlib (important to set before importing pyplot)
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 sns.set_style("darkgrid")  # Keep seaborn style
-import os
-import argparse
-import cv2
-import imageio  # Used for saving GIFs in viz
 
 # Local imports
-from data.custom_datasets import MazeImageFolder
-from models.ctm import ContinuousThoughtMachine
-from tasks.mazes.plotting import draw_path  #
-from tasks.image_classification.plotting import save_frames_to_mp4
 
 
 def has_solved_checker(
@@ -154,7 +157,8 @@ def parse_args():
 def _load_ctm_model(checkpoint_path, device):
     """Loads the ContinuousThoughtMachine model from a checkpoint."""
     print(f"Loading checkpoint: {checkpoint_path}")
-    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    checkpoint = torch.load(
+        checkpoint_path, map_location=device, weights_only=False)
     model_args = checkpoint["args"]
 
     # Handle legacy arguments for model_args
@@ -164,7 +168,8 @@ def _load_ctm_model(checkpoint_path, device):
     # Ensure prediction_reshaper is derived correctly
     # Assuming out_dims exists and is used for this
     prediction_reshaper = (
-        [model_args.out_dims // 5, 5] if hasattr(model_args, "out_dims") else None
+        [model_args.out_dims // 5,
+            5] if hasattr(model_args, "out_dims") else None
     )
 
     if not hasattr(model_args, "neuron_select_type"):
@@ -184,7 +189,8 @@ def _load_ctm_model(checkpoint_path, device):
         memory_length=model_args.memory_length,
         deep_nlms=model_args.deep_memory,  # Mapping from model_args.deep_memory
         memory_hidden_dims=model_args.memory_hidden_dims,
-        do_layernorm_nlm=model_args.do_normalisation,  # Mapping from model_args.do_normalisation
+        # Mapping from model_args.do_normalisation
+        do_layernorm_nlm=model_args.do_normalisation,
         backbone_type=model_args.backbone_type,
         positional_embedding_type=model_args.positional_embedding_type,
         out_dims=model_args.out_dims,
@@ -230,7 +236,8 @@ if __name__ == "__main__":
             root=data_root,
             which_set="test",
             maze_route_length=max_target_route_len,
-            expand_range=not args.legacy_scaling,  # Legacy checkpoints need a [0, 1] range, but it might be better to default to [-1, 1] in the future
+            # Legacy checkpoints need a [0, 1] range, but it might be better to default to [-1, 1] in the future
+            expand_range=not args.legacy_scaling,
             trunc=True,
         )
         # Load a single large batch for 'gen'
@@ -255,7 +262,8 @@ if __name__ == "__main__":
 
         results = {}
         fault_tolerance = 2  # Specific to 'gen' analysis
-        output_gen_dir = os.path.join(args.output_dir, "gen", args.dataset_for_gen)
+        output_gen_dir = os.path.join(
+            args.output_dir, "gen", args.dataset_for_gen)
         os.makedirs(output_gen_dir, exist_ok=True)
 
         for n_tested in range(test_how_many):
@@ -265,8 +273,10 @@ if __name__ == "__main__":
                 f"Testing maze {maze_idx_display}/{test_how_many} (Len: {maze_actual_length})..."
             )
 
-            initial_input_maze = inputs[n_tested : n_tested + 1].clone().to(device)
-            maze_output_dir = os.path.join(output_gen_dir, f"maze_{maze_idx_display}")
+            initial_input_maze = inputs[n_tested: n_tested +
+                                        1].clone().to(device)
+            maze_output_dir = os.path.join(
+                output_gen_dir, f"maze_{maze_idx_display}")
 
             re_applications = 0
             has_solved = False
@@ -292,7 +302,8 @@ if __name__ == "__main__":
                 ]  # Use a different name to avoid conflict if n_steps is used elsewhere
                 step_linspace = np.linspace(0, 1, n_steps_viz)
                 current_maze_np = (
-                    current_input_maze[0].permute(1, 2, 0).detach().cpu().numpy()
+                    current_input_maze[0].permute(
+                        1, 2, 0).detach().cpu().numpy()
                 )
 
                 for stepi in range(n_steps_viz):
@@ -313,7 +324,8 @@ if __name__ == "__main__":
                             attn = attention_tracking[stepi].mean(0)
                             attn_resized = cv2.resize(
                                 attn,
-                                (current_maze_np.shape[1], current_maze_np.shape[0]),
+                                (current_maze_np.shape[1],
+                                 current_maze_np.shape[0]),
                                 interpolation=cv2.INTER_LINEAR,
                             )
                             if attn_resized.max() > attn_resized.min():
@@ -432,7 +444,8 @@ if __name__ == "__main__":
                 if ongoing_solution_img is not None:
                     cv2.imwrite(
                         os.path.join(maze_output_dir, "ongoing_solution.png"),
-                        (ongoing_solution_img * 255).astype(np.uint8)[:, :, ::-1],
+                        (ongoing_solution_img *
+                         255).astype(np.uint8)[:, :, ::-1],
                     )
                 if long_frames:
                     save_frames_to_mp4(
@@ -506,7 +519,8 @@ if __name__ == "__main__":
             plt.close(fig_success)
             plt.close(fig_reapp)
             np.savez(
-                os.path.join(output_gen_dir, f"{args.dataset_for_gen}_results.npz"),
+                os.path.join(output_gen_dir,
+                             f"{args.dataset_for_gen}_results.npz"),
                 results=results,
             )
 
@@ -516,7 +530,8 @@ if __name__ == "__main__":
     if "viz" in args.actions:
         model = _load_ctm_model(args.checkpoint, device)
 
-        print(f"\n--- Running Visualization ('viz'): {args.dataset_for_viz} ---")
+        print(
+            f"\n--- Running Visualization ('viz'): {args.dataset_for_viz} ---")
         output_viz_dir = os.path.join(args.output_dir, "viz")
         os.makedirs(output_viz_dir, exist_ok=True)
 
@@ -526,7 +541,8 @@ if __name__ == "__main__":
             root=data_root,
             which_set="test",
             maze_route_length=100,  # Max route length for viz data
-            expand_range=not args.legacy_scaling,  #  # Legacy checkpoints need a [0, 1] range, but it might be better to default to [-1, 1] in the future
+            # Legacy checkpoints need a [0, 1] range, but it might be better to default to [-1, 1] in the future
+            expand_range=not args.legacy_scaling,
             trunc=True,
         )
         testloader = torch.utils.data.DataLoader(
@@ -556,7 +572,8 @@ if __name__ == "__main__":
             print("Error: No mazes found to visualize. Exiting 'viz' action.")
             exit()
 
-        top_indices = torch.argsort(all_lengths, descending=True)[:num_viz_mazes]
+        top_indices = torch.argsort(all_lengths, descending=True)[
+            :num_viz_mazes]
         inputs_viz, targets_viz = (
             all_inputs[top_indices].to(device),
             all_targets[top_indices],
@@ -565,7 +582,8 @@ if __name__ == "__main__":
         print(f"Visualizing {len(inputs_viz)} longest mazes...")
 
         with torch.no_grad():
-            predictions, _, _, _, _, attention_tracking = model(inputs_viz, track=True)
+            predictions, _, _, _, _, attention_tracking = model(
+                inputs_viz, track=True)
 
         # Reshape attention: (Steps, Batch, Heads, H_feat, W_feat) assuming model.kv_features has H_feat, W_feat
         # The original reshape was slightly different, this tries to match the likely intended dimensions for per-step, per-batch item attention
@@ -589,7 +607,8 @@ if __name__ == "__main__":
 
         for maze_i in range(inputs_viz.size(0)):
             maze_idx_display = maze_i + 1
-            maze_output_dir = os.path.join(output_viz_dir, f"maze_{maze_idx_display}")
+            maze_output_dir = os.path.join(
+                output_viz_dir, f"maze_{maze_idx_display}")
             os.makedirs(maze_output_dir, exist_ok=True)
 
             current_input_np_original = (
@@ -653,15 +672,18 @@ if __name__ == "__main__":
                         attn_norm = (attn_resized - attn_resized.min()) / (
                             attn_resized.max() - attn_resized.min()
                         )
-                        attn_norm[attn_norm < np.percentile(attn_norm, 80)] = 0.0
+                        attn_norm[attn_norm < np.percentile(
+                            attn_norm, 80)] = 0.0
                         frame = np.clip(
                             (
-                                np.copy(frame) * (1 - attn_norm[:, :, np.newaxis]) * 0.9
+                                np.copy(frame) *
+                                (1 - attn_norm[:, :, np.newaxis]) * 0.9
                                 + (
                                     attn_norm[:, :, np.newaxis]
                                     * 1.2
                                     * np.reshape(
-                                        np.array(cmap(step_linspace[stepi]))[:3],
+                                        np.array(cmap(step_linspace[stepi]))[
+                                            :3],
                                         (1, 1, 3),
                                     )
                                 )
@@ -673,7 +695,8 @@ if __name__ == "__main__":
                 frame_resized = cv2.resize(
                     frame, (256, 256), interpolation=cv2.INTER_NEAREST
                 )
-                frames.append((np.clip(frame_resized, 0, 1) * 255).astype(np.uint8))
+                frames.append(
+                    (np.clip(frame_resized, 0, 1) * 255).astype(np.uint8))
 
             if frames:
                 imageio.mimsave(

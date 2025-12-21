@@ -1,27 +1,22 @@
-import numpy as np
-import cv2
-import torch
 import os
+import subprocess as sp
+
+import cv2  # Still potentially useful for color conversion checks if needed
 import imageio
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+import torch
+import umap
 from matplotlib import patheffects
+from scipy import ndimage
+from scipy.special import softmax
+from tqdm.auto import tqdm
 
 mpl.use("Agg")
-import seaborn as sns
-import numpy as np
-from tqdm.auto import tqdm
 
 sns.set_style("darkgrid")
-
-from tqdm.auto import tqdm
-from scipy import ndimage
-import umap
-from scipy.special import softmax
-
-import subprocess as sp
-import cv2  # Still potentially useful for color conversion checks if needed
-import os
 
 
 def save_frames_to_mp4(
@@ -67,7 +62,8 @@ def save_frames_to_mp4(
         first_frame = frames[0]
         print(first_frame.shape)
         if not isinstance(first_frame, np.ndarray):
-            print(f"Error: Frame 0 is not a NumPy array (type: {type(first_frame)}).")
+            print(
+                f"Error: Frame 0 is not a NumPy array (type: {type(first_frame)}).")
             return
 
         frame_height, frame_width = first_frame.shape[:2]
@@ -83,7 +79,8 @@ def save_frames_to_mp4(
         elif len(first_frame.shape) == 2:
             input_pixel_format = "gray"
             expected_dims = 2
-            print(f"Info: Detected grayscale frames (shape: {first_frame.shape}).")
+            print(
+                f"Info: Detected grayscale frames (shape: {first_frame.shape}).")
         else:
             print(
                 f"Error: Unsupported frame shape {first_frame.shape}. Must be (h, w) or (h, w, 3)."
@@ -157,10 +154,12 @@ def save_frames_to_mp4(
 
     # --- Execute FFmpeg via Subprocess ---
     try:
-        process = sp.Popen(command, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
+        process = sp.Popen(command, stdin=sp.PIPE,
+                           stdout=sp.PIPE, stderr=sp.PIPE)
 
         print(f"\nWriting {len(frames)} frames to FFmpeg...")
-        progress_interval = max(1, len(frames) // 10)  # Print progress roughly 10 times
+        # Print progress roughly 10 times
+        progress_interval = max(1, len(frames) // 10)
 
         for i, frame in enumerate(frames):
             # Basic validation and conversion for each frame
@@ -212,10 +211,12 @@ def save_frames_to_mp4(
                         print(stderr_output_on_error.decode(errors="ignore"))
                         print("--- End FFmpeg stderr ---")
                 except Exception as read_err:
-                    print(f"(Could not read stderr after pipe error: {read_err})")
+                    print(
+                        f"(Could not read stderr after pipe error: {read_err})")
                 return
             except Exception as write_err:
-                print(f"Unexpected error writing frame {i}: {write_err}. Skipping.")
+                print(
+                    f"Unexpected error writing frame {i}: {write_err}. Skipping.")
                 continue
 
             if (i + 1) % progress_interval == 0 or (i + 1) == len(frames):
@@ -274,7 +275,8 @@ def find_island_centers(array_2d, threshold):
         island = labeled_image == i
         total_mass = np.sum(array_2d[island])
         if total_mass > 0:
-            y_coords, x_coords = np.mgrid[: array_2d.shape[0], : array_2d.shape[1]]
+            y_coords, x_coords = np.mgrid[: array_2d.shape[0],
+                                          : array_2d.shape[1]]
             x_center = np.average(x_coords[island], weights=array_2d[island])
             y_center = np.average(y_coords[island], weights=array_2d[island])
             centers.append((round(y_center, 4), round(x_center, 4)))
@@ -299,7 +301,8 @@ def plot_neural_dynamics(
     figscale = 2
     aspect_ratio = 3
     mosaic = (
-        np.array([[f"{i}"] for i in range(N_to_plot)]).flatten().reshape(-1, N_per_row)
+        np.array([[f"{i}"] for i in range(N_to_plot)]
+                 ).flatten().reshape(-1, N_per_row)
     )
     fig_synch, axes_synch = plt.subplot_mosaic(
         mosaic=mosaic,
@@ -328,7 +331,8 @@ def plot_neural_dynamics(
     )
     if use_most_active_neurons:
         metric = (
-            np.abs(np.fft.rfft(post_activations_history, axis=0))[3:].mean(0).std(0)
+            np.abs(np.fft.rfft(post_activations_history, axis=0))[
+                3:].mean(0).std(0)
         )
         random_indices = np.argsort(metric)[-N_to_plot:]
         np.random.shuffle(random_indices)
@@ -337,7 +341,8 @@ def plot_neural_dynamics(
     )
 
     if mid_colours is None:
-        mid_colours = [palette[np.random.randint(0, 8)] for ndx in range(N_to_plot)]
+        mid_colours = [palette[np.random.randint(
+            0, 8)] for ndx in range(N_to_plot)]
     with tqdm(
         total=N_to_plot, initial=0, leave=False, position=1, dynamic_ncols=True
     ) as pbar_inner:
@@ -346,7 +351,8 @@ def plot_neural_dynamics(
             ax_s = axes_synch[f"{ndx}"]
             ax_m = axes_mid[f"{ndx}"]
 
-            traces_s = post_activations_history[:, :, which_neurons_synch[ndx]].T
+            traces_s = post_activations_history[:,
+                                                :, which_neurons_synch[ndx]].T
             traces_m = post_activations_history[:, :, which_neurons_mid[ndx]].T
             c_s = palette[np.random.randint(0, 8)]
             c_m = mid_colours[ndx]
@@ -445,8 +451,10 @@ def plot_neural_dynamics(
     fig_synch.tight_layout(pad=0.05)
     fig_mid.tight_layout(pad=0.05)
     if save_location is not None:
-        fig_synch.savefig(f"{save_location}/neural_dynamics_synch.pdf", dpi=200)
-        fig_synch.savefig(f"{save_location}/neural_dynamics_synch.png", dpi=200)
+        fig_synch.savefig(
+            f"{save_location}/neural_dynamics_synch.pdf", dpi=200)
+        fig_synch.savefig(
+            f"{save_location}/neural_dynamics_synch.png", dpi=200)
         fig_mid.savefig(f"{save_location}/neural_dynamics_other.pdf", dpi=200)
         fig_mid.savefig(f"{save_location}/neural_dynamics_other.png", dpi=200)
         plt.close(fig_synch)
@@ -478,7 +486,8 @@ def make_classification_gif(
 
         low = np.percentile(post_activations, 1, axis=0, keepdims=True)
         high = np.percentile(post_activations, 99, axis=0, keepdims=True)
-        post_activations_normed = np.clip((post_activations - low) / (high - low), 0, 1)
+        post_activations_normed = np.clip(
+            (post_activations - low) / (high - low), 0, 1)
         metric = "cosine"
         reducer = (
             umap.UMAP(
@@ -520,7 +529,7 @@ def make_classification_gif(
         for stepi in np.arange(0, n_steps, 1):
             pbar_inner.set_description("Making frames for gif")
 
-            attention_now = attention_tracking[max(0, stepi - 5) : stepi + 1].mean(
+            attention_now = attention_tracking[max(0, stepi - 5): stepi + 1].mean(
                 0
             )  # Make it smooth for pretty
             # attention_now[:,0,0] = 0  # Corners can be weird looking
@@ -615,7 +624,8 @@ def make_classification_gif(
 
             ps = torch.softmax(torch.from_numpy(predictions[:, stepi]), -1)
             k = 15 if len(class_labels) > 15 else len(class_labels)
-            topk = torch.topk(ps, k, dim=0, largest=True).indices.detach().cpu().numpy()
+            topk = torch.topk(
+                ps, k, dim=0, largest=True).indices.detach().cpu().numpy()
             top_classes = np.array(class_labels)[topk]
             true_class = target
             colours = [("b" if ci != true_class else "g") for ci in topk]
@@ -645,12 +655,13 @@ def make_classification_gif(
                     color=fg_color,
                     alpha=0.5,
                     path_effects=[
-                        patheffects.Stroke(linewidth=3, foreground="aliceblue"),
+                        patheffects.Stroke(
+                            linewidth=3, foreground="aliceblue"),
                         patheffects.Normal(),
                     ],
                 )
 
-            attention_now = attention_tracking[max(0, stepi - 5) : stepi + 1].mean(
+            attention_now = attention_tracking[max(0, stepi - 5): stepi + 1].mean(
                 0
             )  # Make it smooth for pretty
             # attention_now = (attention_tracking[:stepi+1, 0] * decay).sum(0)/(decay.sum(0))
@@ -673,7 +684,8 @@ def make_classification_gif(
 
             for hi in range(min(8, n_heads)):
                 ax = axes[f"head_{hi}"]
-                img_to_plot = cmap_viridis(attention_interp[hi].detach().cpu().numpy())
+                img_to_plot = cmap_viridis(
+                    attention_interp[hi].detach().cpu().numpy())
                 ax.imshow(img_to_plot)
 
                 ax_overlay = axes[f"head_{hi}_overlay"]

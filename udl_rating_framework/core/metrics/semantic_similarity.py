@@ -4,12 +4,14 @@ Semantic Similarity Metric implementation.
 Measures semantic similarity between UDL constructs using embeddings.
 """
 
+from typing import Any, Dict, List, Optional, Set
+
 import numpy as np
-from typing import Dict, List, Set, Any, Optional
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+
 from udl_rating_framework.core.metrics.base import QualityMetric
-from udl_rating_framework.core.representation import UDLRepresentation, Token, TokenType
+from udl_rating_framework.core.representation import Token, TokenType, UDLRepresentation
 
 
 class SemanticSimilarityMetric(QualityMetric):

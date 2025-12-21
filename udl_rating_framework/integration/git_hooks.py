@@ -5,18 +5,18 @@ Provides pre-commit and pre-push hooks that automatically check UDL quality
 and prevent commits/pushes if quality thresholds are not met.
 """
 
-import os
-import sys
 import json
+import logging
+import os
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
-import logging
+from typing import Any, Dict, List, Optional, Tuple
 
 from udl_rating_framework.core.pipeline import RatingPipeline
-from udl_rating_framework.io.file_discovery import FileDiscovery
 from udl_rating_framework.core.representation import UDLRepresentation
+from udl_rating_framework.io.file_discovery import FileDiscovery
 
 logger = logging.getLogger(__name__)
 
@@ -166,7 +166,8 @@ class GitHookManager:
 
                 except Exception as e:
                     logger.error(f"Error checking {file_path}: {e}")
-                    results[str(file_path)] = {"error": str(e), "passed": False}
+                    results[str(file_path)] = {
+                        "error": str(e), "passed": False}
                     all_passed = False
 
             return all_passed, results
@@ -185,7 +186,8 @@ class GitHookManager:
         try:
             # Discover all UDL files
             udl_files = self.file_discovery.discover_files(
-                self.repo_path, extensions=[".udl", ".dsl", ".grammar", ".ebnf"]
+                self.repo_path, extensions=[
+                    ".udl", ".dsl", ".grammar", ".ebnf"]
             )
 
             if not udl_files:
@@ -213,7 +215,8 @@ class GitHookManager:
 
                 except Exception as e:
                     logger.error(f"Error checking {file_path}: {e}")
-                    results[str(file_path)] = {"error": str(e), "passed": False}
+                    results[str(file_path)] = {
+                        "error": str(e), "passed": False}
                     all_passed = False
 
             return all_passed, results

@@ -5,20 +5,21 @@ Tests the new visualization components including web-based, WebGL,
 and real-time visualizations.
 """
 
-import pytest
-import numpy as np
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
 
-from udl_rating_framework.visualization import (
-    WebVisualizer,
-    WebGLVisualizer,
-    RealTimeMetricsVisualizer,
-    MetricUpdate,
-)
+import numpy as np
+import pytest
+
 from udl_rating_framework.core.representation import UDLRepresentation
 from udl_rating_framework.models.ctm_adapter import TrackingData
+from udl_rating_framework.visualization import (
+    MetricUpdate,
+    RealTimeMetricsVisualizer,
+    WebGLVisualizer,
+    WebVisualizer,
+)
 
 
 @pytest.fixture
@@ -51,7 +52,8 @@ def sample_tracking_data():
     post_activations = np.tanh(pre_activations)
     synch_out = np.random.rand(iterations, batch_size, n_synch_out)
     synch_action = np.random.rand(iterations, batch_size, n_synch_action)
-    attention_weights = np.random.rand(iterations, batch_size, n_heads, seq_len)
+    attention_weights = np.random.rand(
+        iterations, batch_size, n_heads, seq_len)
     attention_weights = attention_weights / attention_weights.sum(
         axis=-1, keepdims=True
     )
@@ -269,9 +271,11 @@ class TestRealTimeMetricsVisualizer:
         # Add sample data
         for i in range(5):
             viz.add_metric_update("consistency", 0.7 + i * 0.05, "test.udl", i)
-            viz.add_metric_update("completeness", 0.6 + i * 0.04, "test.udl", i)
+            viz.add_metric_update("completeness", 0.6 +
+                                  i * 0.04, "test.udl", i)
 
-        html_path = viz.create_metric_comparison_view(["consistency", "completeness"])
+        html_path = viz.create_metric_comparison_view(
+            ["consistency", "completeness"])
 
         assert Path(html_path).exists()
 

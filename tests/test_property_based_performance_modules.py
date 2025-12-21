@@ -6,21 +6,23 @@ low test coverage, using property-based testing to find edge cases and
 ensure robustness under various conditions.
 """
 
-import pytest
-import numpy as np
-import tempfile
-import os
-from pathlib import Path
-from typing import Dict, List, Any, Optional
-from hypothesis import given, strategies as st, settings, assume
 import math
+import os
+import tempfile
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
+import numpy as np
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
+
+from udl_rating_framework.core.performance import PerformanceConfig, ProcessingStrategy
 from udl_rating_framework.core.streaming import (
-    StreamingConfig,
-    StreamingChunk,
     MemoryMappedFileReader,
+    StreamingChunk,
+    StreamingConfig,
 )
-from udl_rating_framework.core.performance import ProcessingStrategy, PerformanceConfig
 
 
 class TestStreamingModuleProperties:
@@ -163,10 +165,13 @@ class TestPerformanceConfigProperties:
 
     @given(
         max_memory_mb=st.integers(min_value=1, max_value=16384),  # 1MB to 16GB
-        max_workers=st.one_of(st.none(), st.integers(min_value=1, max_value=64)),
-        max_file_size_mb=st.integers(min_value=1, max_value=1024),  # 1MB to 1GB
+        max_workers=st.one_of(
+            st.none(), st.integers(min_value=1, max_value=64)),
+        max_file_size_mb=st.integers(
+            min_value=1, max_value=1024),  # 1MB to 1GB
         gpu_batch_size=st.integers(min_value=1, max_value=256),
-        streaming_chunk_size=st.integers(min_value=1024, max_value=10 * 1024 * 1024),
+        streaming_chunk_size=st.integers(
+            min_value=1024, max_value=10 * 1024 * 1024),
     )
     @settings(max_examples=100, deadline=3000)
     def test_performance_config_invariants(
@@ -271,7 +276,8 @@ class TestNumericalStabilityProperties:
         # Average processing time
         avg_time = total_time / num_items
         assert avg_time > 0, "Average processing time should be positive"
-        assert math.isfinite(avg_time), "Average processing time should be finite"
+        assert math.isfinite(
+            avg_time), "Average processing time should be finite"
 
         # Throughput (items per second)
         throughput = num_items / total_time
@@ -279,7 +285,8 @@ class TestNumericalStabilityProperties:
         assert math.isfinite(throughput), "Throughput should be finite"
 
         # Variance calculation
-        variance = sum((t - avg_time) ** 2 for t in processing_times) / num_items
+        variance = sum((t - avg_time) **
+                       2 for t in processing_times) / num_items
         assert variance >= 0, "Variance should be non-negative"
         assert math.isfinite(variance), "Variance should be finite"
 
@@ -292,7 +299,8 @@ class TestNumericalStabilityProperties:
         if avg_time > 0:
             cv = std_dev / avg_time
             assert cv >= 0, "Coefficient of variation should be non-negative"
-            assert math.isfinite(cv), "Coefficient of variation should be finite"
+            assert math.isfinite(
+                cv), "Coefficient of variation should be finite"
 
     @given(
         memory_usage_bytes=st.lists(

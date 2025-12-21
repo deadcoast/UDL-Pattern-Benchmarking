@@ -1,5 +1,6 @@
-import torch
 import numpy as np
+import torch
+
 from models.ctm import ContinuousThoughtMachine
 
 
@@ -56,9 +57,12 @@ class ContinuousThoughtMachineSORT(ContinuousThoughtMachine):
         self.neuron_select_type_action = None
         self.synch_representation_size_action = None
 
-        self.attention = None  # Should already be None because super(... heads=0... )
-        self.q_proj = None  # Should already be None because super(... heads=0... )
-        self.kv_proj = None  # Should already be None because super(... heads=0... )
+        # Should already be None because super(... heads=0... )
+        self.attention = None
+        # Should already be None because super(... heads=0... )
+        self.q_proj = None
+        # Should already be None because super(... heads=0... )
+        self.kv_proj = None
 
     def forward(self, x, track=False):
         B = x.size(0)
@@ -84,7 +88,8 @@ class ContinuousThoughtMachineSORT(ContinuousThoughtMachine):
         predictions = torch.empty(
             B, self.out_dims, self.iterations, device=device, dtype=x.dtype
         )
-        certainties = torch.empty(B, 2, self.iterations, device=device, dtype=x.dtype)
+        certainties = torch.empty(
+            B, 2, self.iterations, device=device, dtype=x.dtype)
 
         # --- Initialise Recurrent Synch Values  ---
         r_out = (
@@ -137,8 +142,10 @@ class ContinuousThoughtMachineSORT(ContinuousThoughtMachine):
                 pre_activations_tracking.append(
                     state_trace[:, :, -1].detach().cpu().numpy()
                 )
-                post_activations_tracking.append(activated_state.detach().cpu().numpy())
-                synch_out_tracking.append(synchronisation_out.detach().cpu().numpy())
+                post_activations_tracking.append(
+                    activated_state.detach().cpu().numpy())
+                synch_out_tracking.append(
+                    synchronisation_out.detach().cpu().numpy())
 
         # --- Return Values ---
         if track:

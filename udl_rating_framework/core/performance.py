@@ -6,19 +6,18 @@ computing, GPU acceleration, streaming processing, memory mapping, and
 incremental computation.
 """
 
+import asyncio
 import logging
 import time
-from typing import Dict, List, Any, Optional, Union, Callable
-from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
-import asyncio
-
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.pipeline import QualityReport
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Union
 
 # Import metrics to ensure they are registered in the MetricRegistry
 import udl_rating_framework.core.metrics  # noqa: F401
+from udl_rating_framework.core.pipeline import QualityReport
+from udl_rating_framework.core.representation import UDLRepresentation
 
 # Import performance modules
 try:
@@ -41,19 +40,19 @@ try:
 except ImportError:
     GPU_AVAILABLE = False
 
-from udl_rating_framework.core.streaming import StreamingProcessor, process_large_file
-from udl_rating_framework.core.memory_mapping import (
-    MemoryMappedUDLProcessor,
-    process_large_udl_file,
-)
 from udl_rating_framework.core.incremental import (
     IncrementalProcessor,
     process_udl_incremental,
+)
+from udl_rating_framework.core.memory_mapping import (
+    MemoryMappedUDLProcessor,
+    process_large_udl_file,
 )
 from udl_rating_framework.core.multiprocessing import (
     ParallelProcessor,
     process_udl_files_parallel,
 )
+from udl_rating_framework.core.streaming import StreamingProcessor, process_large_file
 
 logger = logging.getLogger(__name__)
 
@@ -212,7 +211,8 @@ class PerformanceOptimizer:
         """
         start_time = time.time()
 
-        logger.info(f"Processing {len(file_paths)} files with performance optimization")
+        logger.info(
+            f"Processing {len(file_paths)} files with performance optimization")
 
         # Analyze workload characteristics
         workload_info = self._analyze_workload(file_paths)
@@ -234,7 +234,8 @@ class PerformanceOptimizer:
             return result
 
         except Exception as e:
-            logger.error(f"Processing failed with strategy {strategy.value}: {e}")
+            logger.error(
+                f"Processing failed with strategy {strategy.value}: {e}")
 
             # Try fallback strategy
             if strategy != self.config.fallback_strategy:
@@ -254,7 +255,8 @@ class PerformanceOptimizer:
                     return result
 
                 except Exception as fallback_error:
-                    logger.error(f"Fallback strategy also failed: {fallback_error}")
+                    logger.error(
+                        f"Fallback strategy also failed: {fallback_error}")
 
             # Create error result
             processing_time = time.time() - start_time
@@ -395,13 +397,15 @@ class PerformanceOptimizer:
         start_time = time.time()
 
         if strategy == ProcessingStrategy.SEQUENTIAL:
-            result = self._process_sequential(file_paths, metric_names, weights)
+            result = self._process_sequential(
+                file_paths, metric_names, weights)
 
         elif strategy == ProcessingStrategy.PARALLEL:
             result = self._process_parallel(file_paths, metric_names, weights)
 
         elif strategy == ProcessingStrategy.DISTRIBUTED:
-            result = self._process_distributed(file_paths, metric_names, weights)
+            result = self._process_distributed(
+                file_paths, metric_names, weights)
 
         elif strategy == ProcessingStrategy.GPU:
             result = self._process_gpu(file_paths, metric_names, weights)
@@ -410,10 +414,12 @@ class PerformanceOptimizer:
             result = self._process_streaming(file_paths, metric_names, weights)
 
         elif strategy == ProcessingStrategy.MEMORY_MAPPED:
-            result = self._process_memory_mapped(file_paths, metric_names, weights)
+            result = self._process_memory_mapped(
+                file_paths, metric_names, weights)
 
         elif strategy == ProcessingStrategy.INCREMENTAL:
-            result = self._process_incremental(file_paths, metric_names, weights)
+            result = self._process_incremental(
+                file_paths, metric_names, weights)
 
         else:
             raise ValueError(f"Unsupported strategy: {strategy}")
@@ -484,9 +490,9 @@ class PerformanceOptimizer:
             successful_files=stats.successful,
             failed_files=stats.failed,
             processing_time=stats.total_time,
-            throughput=stats.successful / stats.total_time
-            if stats.total_time > 0
-            else 0.0,
+            throughput=(
+                stats.successful / stats.total_time if stats.total_time > 0 else 0.0
+            ),
             memory_peak_mb=0.0,  # TODO: Get from stats
             cache_hit_ratio=0.0,
             reports=reports,
@@ -657,10 +663,12 @@ class PerformanceOptimizer:
         reports = [r.report for r in incremental_results]
         cache_hits = sum(1 for r in incremental_results if r.was_cached)
         cache_hit_ratio = (
-            cache_hits / len(incremental_results) if incremental_results else 0.0
+            cache_hits /
+            len(incremental_results) if incremental_results else 0.0
         )
 
-        successful_results = [r for r in incremental_results if not r.report.errors]
+        successful_results = [
+            r for r in incremental_results if not r.report.errors]
         failed_results = [r for r in incremental_results if r.report.errors]
 
         return PerformanceResult(
@@ -686,9 +694,11 @@ class PerformanceOptimizer:
             "file_count": result.total_files,
             "processing_time": result.processing_time,
             "throughput": result.throughput,
-            "success_rate": result.successful_files / result.total_files
-            if result.total_files > 0
-            else 0.0,
+            "success_rate": (
+                result.successful_files / result.total_files
+                if result.total_files > 0
+                else 0.0
+            ),
             "cache_hit_ratio": result.cache_hit_ratio,
         }
 
@@ -711,7 +721,8 @@ class PerformanceOptimizer:
 
         # Overall statistics
         total_files = sum(r["file_count"] for r in self.performance_history)
-        total_time = sum(r["processing_time"] for r in self.performance_history)
+        total_time = sum(r["processing_time"]
+                         for r in self.performance_history)
         avg_throughput = sum(r["throughput"] for r in self.performance_history) / len(
             self.performance_history
         )
@@ -883,7 +894,8 @@ def benchmark_all_strategies(
 
         for i in range(iterations):
             try:
-                config = PerformanceConfig(strategy=strategy, enable_progress=False)
+                config = PerformanceConfig(
+                    strategy=strategy, enable_progress=False)
                 optimizer = PerformanceOptimizer(config)
 
                 result = optimizer.process_files(test_files, metric_names)
@@ -892,9 +904,11 @@ def benchmark_all_strategies(
                     {
                         "processing_time": result.processing_time,
                         "throughput": result.throughput,
-                        "success_rate": result.successful_files / result.total_files
-                        if result.total_files > 0
-                        else 0.0,
+                        "success_rate": (
+                            result.successful_files / result.total_files
+                            if result.total_files > 0
+                            else 0.0
+                        ),
                         "cache_hit_ratio": result.cache_hit_ratio,
                     }
                 )

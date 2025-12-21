@@ -1,22 +1,21 @@
-import torch
-import os
 import math
+import os
+
 import imageio
-import numpy as np
+import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import numpy as np
+import torch
+import umap
 from matplotlib.patches import FancyArrowPatch
 from scipy.special import softmax
-import matplotlib.cm as cm
-from data.custom_datasets import ParityDataset
-import umap
 from tqdm import tqdm
 
-
+from data.custom_datasets import ParityDataset
 from models.utils import reshape_predictions
-from tasks.parity.utils import reshape_inputs
-from tasks.parity.analysis.run import build_model_from_checkpoint_path
-
 from tasks.image_classification.plotting import save_frames_to_mp4
+from tasks.parity.analysis.run import build_model_from_checkpoint_path
+from tasks.parity.utils import reshape_inputs
 
 
 def make_parity_gif(
@@ -76,7 +75,8 @@ def make_parity_gif(
             vmax=1,
         )
         ax["target"].axis("off")
-        ax["target"].grid(which="minor", color="black", linestyle="-", linewidth=0.5)
+        ax["target"].grid(which="minor", color="black",
+                          linestyle="-", linewidth=0.5)
 
         z = post_act_this_batch[t]
         low, high = np.percentile(z, 5), np.percentile(z, 95)
@@ -214,14 +214,17 @@ def run_model_and_make_gif(checkpoint_path, save_path, device):
     parity_sequence_length = 64
     iterations = 75
 
-    test_data = ParityDataset(sequence_length=parity_sequence_length, length=10000)
+    test_data = ParityDataset(
+        sequence_length=parity_sequence_length, length=10000)
     testloader = torch.utils.data.DataLoader(
         test_data, batch_size=256, shuffle=True, num_workers=0, drop_last=False
     )
 
-    model, _ = build_model_from_checkpoint_path(checkpoint_path, "ctm", device=device)
+    model, _ = build_model_from_checkpoint_path(
+        checkpoint_path, "ctm", device=device)
 
-    input = torch.randint(0, 2, (64,), dtype=torch.float32, device=device) * 2 - 1
+    input = torch.randint(
+        0, 2, (64,), dtype=torch.float32, device=device) * 2 - 1
     input = input.unsqueeze(0)
 
     target = torch.cumsum((input == -1).to(torch.long), dim=1) % 2
@@ -231,7 +234,8 @@ def run_model_and_make_gif(checkpoint_path, save_path, device):
 
     model.eval()
     with torch.inference_mode():
-        predictions, _, _, _, post_activations, attention = model(input, track=True)
+        predictions, _, _, _, post_activations, attention = model(
+            input, track=True)
         predictons = reshape_predictions(
             predictions, prediction_reshaper=[parity_sequence_length, 2]
         )

@@ -7,6 +7,7 @@ UDL quality before commits and pushes.
 """
 
 from pathlib import Path
+
 from udl_rating_framework.integration.git_hooks import GitHookManager
 
 

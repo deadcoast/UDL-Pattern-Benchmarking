@@ -4,23 +4,23 @@ Train command for UDL Rating Framework CLI.
 Provides functionality to train CTM models on UDL data.
 """
 
-import click
-import logging
-from pathlib import Path
-from typing import List, Dict, Any, Optional
 import json
+import logging
 import sys
-import torch
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
-from udl_rating_framework.training.training_pipeline import TrainingPipeline, UDLDataset
-from udl_rating_framework.models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
-from udl_rating_framework.core.metrics.base import MetricRegistry
-from udl_rating_framework.core.aggregation import MetricAggregator
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.io.file_discovery import FileDiscovery
+import click
+import torch
 
 # Import metrics to trigger registration
 import udl_rating_framework.core.metrics
+from udl_rating_framework.core.aggregation import MetricAggregator
+from udl_rating_framework.core.metrics.base import MetricRegistry
+from udl_rating_framework.core.representation import UDLRepresentation
+from udl_rating_framework.io.file_discovery import FileDiscovery
+from udl_rating_framework.models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
+from udl_rating_framework.training.training_pipeline import TrainingPipeline, UDLDataset
 
 logger = logging.getLogger(__name__)
 
@@ -135,13 +135,15 @@ def train_command(
             batch_size = training_config.get("batch_size", batch_size)
             learning_rate = training_config.get("learning_rate", learning_rate)
             epochs = training_config.get("epochs", epochs)
-            validation_split = training_config.get("validation_split", validation_split)
+            validation_split = training_config.get(
+                "validation_split", validation_split)
             early_stopping_patience = training_config.get(
                 "early_stopping_patience", early_stopping_patience
             )
             alpha = training_config.get("alpha", alpha)
             beta = training_config.get("beta", beta)
-            output_dir = Path(training_config.get("checkpoint_dir", str(output_dir)))
+            output_dir = Path(training_config.get(
+                "checkpoint_dir", str(output_dir)))
 
         if "model" in config:
             model_config = config["model"]
@@ -200,7 +202,8 @@ def train_command(
             logger.error("No UDL files could be parsed successfully")
             sys.exit(1)
 
-        logger.info(f"Successfully parsed {len(udl_representations)} UDL files")
+        logger.info(
+            f"Successfully parsed {len(udl_representations)} UDL files")
 
         # Build vocabulary
         logger.info("Building vocabulary...")

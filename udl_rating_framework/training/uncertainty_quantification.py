@@ -6,21 +6,22 @@ architecture of Continuous Thought Machines, including synchronization-based
 uncertainty, neuron-level dynamics analysis, and temporal uncertainty evolution.
 """
 
+import logging
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+
+import numpy as np
+import scipy.stats as stats
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import DataLoader
-import numpy as np
-from typing import Dict, List, Any, Optional, Tuple, Union, Callable
-import logging
-from dataclasses import dataclass
-from abc import ABC, abstractmethod
-import scipy.stats as stats
 from sklearn.isotonic import IsotonicRegression
 from sklearn.linear_model import LogisticRegression
+from torch.utils.data import DataLoader
 
-from ..models.ctm_adapter import UDLRatingCTM, TrackingData
 from ..core.representation import UDLRepresentation
+from ..models.ctm_adapter import TrackingData, UDLRatingCTM
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +133,8 @@ class SynchronizationUncertainty(UncertaintyQuantifier):
         entropy = -torch.sum(synch_probs * torch.log(synch_probs + 1e-10))
 
         # Normalize by maximum possible entropy
-        max_entropy = torch.log(torch.tensor(len(synch_probs), dtype=torch.float32))
+        max_entropy = torch.log(torch.tensor(
+            len(synch_probs), dtype=torch.float32))
         normalized_entropy = entropy / max_entropy
 
         return normalized_entropy.item()
@@ -159,7 +161,8 @@ class SynchronizationUncertainty(UncertaintyQuantifier):
         if synch_out.shape[0] > 1:
             initial_synch = synch_out[0]  # [batch, synch_dim]
             final_synch = synch_out[-1]  # [batch, synch_dim]
-            convergence_distance = np.linalg.norm(final_synch - initial_synch, axis=-1)
+            convergence_distance = np.linalg.norm(
+                final_synch - initial_synch, axis=-1)
             mean_convergence = np.mean(convergence_distance)
         else:
             mean_convergence = 0.0
@@ -216,14 +219,16 @@ class SynchronizationUncertainty(UncertaintyQuantifier):
         with torch.no_grad():
             for _ in range(self.n_samples):
                 # Forward pass with tracking enabled
-                pred, cert, synch_out, tracking_data = model(token_ids, track=True)
+                pred, cert, synch_out, tracking_data = model(
+                    token_ids, track=True)
 
                 predictions.append(pred.cpu().numpy())
                 certainties.append(cert.cpu().numpy())
 
                 # Compute synchronization entropy
                 if synch_out is not None:
-                    synch_entropy = self._compute_synchronization_entropy(synch_out)
+                    synch_entropy = self._compute_synchronization_entropy(
+                        synch_out)
                     synchronization_entropies.append(synch_entropy)
 
                 if tracking_data is not None:
@@ -261,7 +266,8 @@ class SynchronizationUncertainty(UncertaintyQuantifier):
             )
 
             # Use temporal instability as additional uncertainty signal
-            temporal_uncertainty = stability_metrics.get("temporal_instability", 0.0)
+            temporal_uncertainty = stability_metrics.get(
+                "temporal_instability", 0.0)
         else:
             temporal_uncertainty = 0.0
 
@@ -271,7 +277,8 @@ class SynchronizationUncertainty(UncertaintyQuantifier):
 
         # Aleatoric: individual model uncertainties + temporal instability
         individual_uncertainties = 1.0 - cert_samples[:, 1]
-        aleatoric_uncertainty = np.mean(individual_uncertainties) + temporal_uncertainty
+        aleatoric_uncertainty = np.mean(
+            individual_uncertainties) + temporal_uncertainty
 
         # Total uncertainty
         total_uncertainty = epistemic_uncertainty + aleatoric_uncertainty
@@ -355,7 +362,8 @@ class NeuronLevelUncertainty(UncertaintyQuantifier):
 
         # Compute activation diversity (inverse of mean pairwise correlation)
         if len(final_activations) > 1:
-            activation_matrix = post_activations[:, 0, :].T  # [neurons, iterations]
+            # [neurons, iterations]
+            activation_matrix = post_activations[:, 0, :].T
             correlation_matrix = np.corrcoef(activation_matrix)
 
             # Remove diagonal (self-correlations)
@@ -368,7 +376,8 @@ class NeuronLevelUncertainty(UncertaintyQuantifier):
             diversity_score = 0.0
 
         # Compute activation entropy across neurons
-        activation_probs = torch.softmax(torch.tensor(final_activations), dim=0)
+        activation_probs = torch.softmax(
+            torch.tensor(final_activations), dim=0)
         neuron_entropy = -torch.sum(
             activation_probs * torch.log(activation_probs + 1e-10)
         ).item()
@@ -692,7 +701,8 @@ class CalibrationAnalyzer:
         """
         # Convert to binary accuracy (within threshold)
         threshold = 0.1
-        accuracies = (np.abs(predictions - ground_truth) < threshold).astype(float)
+        accuracies = (np.abs(predictions - ground_truth)
+                      < threshold).astype(float)
 
         # Create bins
         bin_boundaries = np.linspace(0, 1, n_bins + 1)
@@ -879,7 +889,8 @@ class UncertaintyAwarePredictor:
             for token_ids, udl_representations in dataloader:
                 for i, udl_repr in enumerate(udl_representations):
                     # Get uncertainty estimate
-                    estimate = self.predict_with_uncertainty(token_ids[i : i + 1])
+                    estimate = self.predict_with_uncertainty(
+                        token_ids[i: i + 1])
 
                     # Get ground truth
                     gt = ground_truth_fn(udl_repr)
@@ -1001,7 +1012,8 @@ def create_uncertainty_quantifier(
     elif method == "variational_inference":
         return VariationalInference(**kwargs)
     else:
-        raise ValueError(f"Unknown uncertainty quantification method: {method}")
+        raise ValueError(
+            f"Unknown uncertainty quantification method: {method}")
 
 
 def bootstrap_confidence_intervals(

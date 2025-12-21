@@ -1,25 +1,26 @@
 import os
-import torch
-from tqdm import tqdm
+
+import imageio
 import numpy as np
+import torch
 import umap
 from matplotlib import pyplot as plt
-import imageio
 from scipy.special import softmax
+from tqdm import tqdm
 
-
-from tasks.rl.train import Agent
+from tasks.image_classification.plotting import save_frames_to_mp4
 from tasks.rl.analysis.run import (
-    get_training_data_from_checkpoint_path,
     get_size_action_space,
+    get_training_data_from_checkpoint_path,
     prepare_env,
 )
+from tasks.rl.train import Agent
 from tasks.rl.utils import combine_tracking_data
-from tasks.image_classification.plotting import save_frames_to_mp4
 
 
 def load_model(agent, checkpoint_path, device):
-    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    checkpoint = torch.load(
+        checkpoint_path, map_location=device, weights_only=False)
     agent.load_state_dict(checkpoint["model_state_dict"])
     pass
 
@@ -34,7 +35,8 @@ def interpolate_post_activations(arrays, target_length):
             continue
         x_old = np.linspace(0, 1, T)
         x_new = np.linspace(0, 1, target_length)
-        arr_interp = np.array([np.interp(x_new, x_old, arr[:, d]) for d in range(D)]).T
+        arr_interp = np.array(
+            [np.interp(x_new, x_old, arr[:, d]) for d in range(D)]).T
         interpolated.append(arr_interp)
     return interpolated
 
@@ -55,7 +57,8 @@ def make_rl_gif(
 
     inputs_this_batch = inputs_to_model  # Already shape (T, H, W, C)
 
-    class_labels = ["Left", "Right", "Forward", "Pickup", "Drop", "Toggle", "Done"]
+    class_labels = ["Left", "Right", "Forward",
+                    "Pickup", "Drop", "Toggle", "Done"]
 
     post_act_this_batch = post_activations[:, batch_index]
 
@@ -64,7 +67,8 @@ def make_rl_gif(
         [f"obs", f"obs", f"obs", f"obs", "probs", "probs", "probs", "probs"],
     ]
     for _ in range(2, 8):
-        mosaic.append(["umap", "umap", "umap", "umap", "umap", "umap", "umap", "umap"])
+        mosaic.append(["umap", "umap", "umap", "umap",
+                      "umap", "umap", "umap", "umap"])
 
     for t in range(n_steps):
         rows = len(mosaic)
@@ -92,7 +96,8 @@ def make_rl_gif(
         ax["obs"].axis("off")
 
         probs_t = action_probs[t]
-        colors = ["black" if i == actions[t] else "gray" for i in range(len(probs_t))]
+        colors = ["black" if i == actions[t]
+                  else "gray" for i in range(len(probs_t))]
         bars = ax["probs"].bar(
             np.arange(len(probs_t)), probs_t, color=colors, width=0.9, alpha=0.8
         )
@@ -198,7 +203,8 @@ def run_umap(agent, model_args):
                     np.array(reward), (model_args.iterations)
                 )  # Shape T
                 tracking_data["inputs"] = np.tile(
-                    np.array(eval_env.render()), (model_args.iterations, 1, 1, 1)
+                    np.array(eval_env.render()
+                             ), (model_args.iterations, 1, 1, 1)
                 )  # Shape T, H, W, C
 
                 tracking_data_by_world_step.append(tracking_data)
@@ -208,8 +214,10 @@ def run_umap(agent, model_args):
 
             eval_env.close()
 
-            combined_tracking_data = combine_tracking_data(tracking_data_by_world_step)
-            all_post_activations.append(combined_tracking_data["post_activations"])
+            combined_tracking_data = combine_tracking_data(
+                tracking_data_by_world_step)
+            all_post_activations.append(
+                combined_tracking_data["post_activations"])
             pbar.update(1)
 
     all_post_activations = interpolate_post_activations(

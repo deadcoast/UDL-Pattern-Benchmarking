@@ -9,15 +9,16 @@ This module provides comprehensive evaluation capabilities including:
 - Bootstrap confidence intervals
 """
 
-import numpy as np
-import pandas as pd
-from typing import Dict, List, Tuple, Optional, Any, Callable
-from dataclasses import dataclass
-from sklearn.model_selection import KFold
-from scipy import stats
-from scipy.stats import pearsonr, spearmanr, shapiro
 import warnings
 from collections import defaultdict
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List, Optional, Tuple
+
+import numpy as np
+import pandas as pd
+from scipy import stats
+from scipy.stats import pearsonr, shapiro, spearmanr
+from sklearn.model_selection import KFold
 
 
 @dataclass
@@ -31,7 +32,8 @@ class EvaluationResult:
     calibration_error: float
     shapiro_statistic: float
     shapiro_p_value: float
-    bootstrap_metrics: Dict[str, Tuple[float, float]]  # metric -> (lower, upper) CI
+    # metric -> (lower, upper) CI
+    bootstrap_metrics: Dict[str, Tuple[float, float]]
     cv_scores: List[float]
     mean_cv_score: float
     std_cv_score: float
@@ -95,7 +97,9 @@ class EvaluationSuite:
             Tuple of (cv_scores, mean_score, std_score)
         """
         if metric_fn is None:
-            metric_fn = lambda y_true, y_pred: np.mean((y_true - y_pred) ** 2)
+
+            def metric_fn(y_true, y_pred):
+                return np.mean((y_true - y_pred) ** 2)
 
         kf = KFold(n_splits=self.k_folds, shuffle=True, random_state=42)
         cv_scores = []
@@ -108,7 +112,8 @@ class EvaluationSuite:
             model = model_fn(X_train, y_train)
 
             # Make predictions
-            y_pred = model.predict(X_val) if hasattr(model, "predict") else model(X_val)
+            y_pred = model.predict(X_val) if hasattr(
+                model, "predict") else model(X_val)
 
             # Compute metric
             score = metric_fn(y_val, y_pred)
@@ -218,13 +223,15 @@ class EvaluationSuite:
 
             if prop_in_bin > 0:
                 # Accuracy in this bin
-                accuracy_in_bin = y_true_bin[in_bin].mean() if np.any(in_bin) else 0.0
+                accuracy_in_bin = y_true_bin[in_bin].mean(
+                ) if np.any(in_bin) else 0.0
 
                 # Average confidence in this bin
                 avg_confidence_in_bin = confidences[in_bin].mean()
 
                 # Add to ECE
-                ece += np.abs(avg_confidence_in_bin - accuracy_in_bin) * prop_in_bin
+                ece += np.abs(avg_confidence_in_bin -
+                              accuracy_in_bin) * prop_in_bin
 
         return ece
 

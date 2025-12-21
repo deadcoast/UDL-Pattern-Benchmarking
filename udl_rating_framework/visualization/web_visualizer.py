@@ -7,12 +7,14 @@ and other web technologies for enhanced UDL analysis.
 
 import json
 import os
-from typing import Dict, List, Optional, Any, Tuple
-import numpy as np
-import networkx as nx
 from pathlib import Path
-from ..models.ctm_adapter import TrackingData
+from typing import Any, Dict, List, Optional, Tuple
+
+import networkx as nx
+import numpy as np
+
 from ..core.representation import UDLRepresentation
+from ..models.ctm_adapter import TrackingData
 
 
 class WebVisualizer:

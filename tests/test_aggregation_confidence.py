@@ -6,10 +6,13 @@ Tests the mathematical properties of:
 - ConfidenceCalculator: C = 1 - H(p)/H_max with entropy-based computation
 """
 
-import pytest
-import numpy as np
-from hypothesis import given, strategies as st, settings, assume
 from typing import Dict, List
+
+import numpy as np
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
+
 from udl_rating_framework.core.aggregation import MetricAggregator
 from udl_rating_framework.core.confidence import ConfidenceCalculator
 
@@ -41,7 +44,8 @@ class TestAggregationCorrectness:
         n_metrics = len(metric_names)
 
         # Generate random weights and normalize them to sum to 1
-        raw_weights = np.random.uniform(0.1, 1.0, n_metrics)  # Avoid zero weights
+        raw_weights = np.random.uniform(
+            0.1, 1.0, n_metrics)  # Avoid zero weights
         normalized_weights = raw_weights / np.sum(raw_weights)
 
         weights = {
@@ -62,7 +66,8 @@ class TestAggregationCorrectness:
         result = aggregator.aggregate(metric_values)
 
         # Verify the formula: Q = Σ(wᵢ · mᵢ)
-        expected = sum(weights[name] * value for name, value in metric_values.items())
+        expected = sum(weights[name] * value for name,
+                       value in metric_values.items())
         assert abs(result - expected) < 1e-10, (
             f"Aggregation formula incorrect: expected {expected}, got {result}"
         )

@@ -5,14 +5,14 @@ Provides integration with popular IDEs and editors for real-time UDL quality fee
 """
 
 import json
+import logging
 import os
 import shutil
 import subprocess
-from pathlib import Path
-from typing import Dict, List, Optional, Any, Union
-import logging
 import tempfile
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 logger = logging.getLogger(__name__)
 
@@ -978,7 +978,8 @@ au BufRead,BufNewFile *.udl,*.dsl,*.grammar,*.ebnf set filetype=udl
         try:
             # Build extension
             subprocess.run(["npm", "install"], cwd=plugin_dir, check=True)
-            subprocess.run(["npm", "run", "compile"], cwd=plugin_dir, check=True)
+            subprocess.run(["npm", "run", "compile"],
+                           cwd=plugin_dir, check=True)
 
             # Package extension
             subprocess.run(["vsce", "package"], cwd=plugin_dir, check=True)
@@ -1003,10 +1004,12 @@ au BufRead,BufNewFile *.udl,*.dsl,*.grammar,*.ebnf set filetype=udl
         """Install IntelliJ plugin."""
         try:
             # Build plugin
-            subprocess.run(["./gradlew", "buildPlugin"], cwd=plugin_dir, check=True)
+            subprocess.run(["./gradlew", "buildPlugin"],
+                           cwd=plugin_dir, check=True)
 
             logger.info("IntelliJ plugin built successfully")
-            logger.info("Install manually through IntelliJ IDEA plugin manager")
+            logger.info(
+                "Install manually through IntelliJ IDEA plugin manager")
             return True
 
         except subprocess.CalledProcessError as e:
@@ -1017,7 +1020,8 @@ au BufRead,BufNewFile *.udl,*.dsl,*.grammar,*.ebnf set filetype=udl
         """Install Vim plugin."""
         try:
             # Determine Vim config directory
-            vim_config_dirs = [Path.home() / ".vim", Path.home() / ".config" / "nvim"]
+            vim_config_dirs = [
+                Path.home() / ".vim", Path.home() / ".config" / "nvim"]
 
             vim_config_dir = None
             for config_dir in vim_config_dirs:
@@ -1084,7 +1088,8 @@ def main():
         elif args.plugin_type == "vim":
             plugin_dir = manager.generate_vim_plugin(args.output_dir)
         else:
-            print(f"Plugin generation for {args.plugin_type} not yet implemented")
+            print(
+                f"Plugin generation for {args.plugin_type} not yet implemented")
             return
 
         print(f"Plugin generated at: {plugin_dir}")

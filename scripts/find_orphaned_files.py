@@ -10,7 +10,7 @@ Requirements: 6.2
 import ast
 import sys
 from pathlib import Path
-from typing import Set, Dict, List
+from typing import Dict, List, Set
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
@@ -77,11 +77,13 @@ def main():
 
     # Get all Python files in tests
     tests_dir = project_root / "tests"
-    test_files = get_all_python_files(tests_dir) if tests_dir.exists() else set()
+    test_files = get_all_python_files(
+        tests_dir) if tests_dir.exists() else set()
 
     # Get all Python files in scripts
     scripts_dir = project_root / "scripts"
-    script_files = get_all_python_files(scripts_dir) if scripts_dir.exists() else set()
+    script_files = get_all_python_files(
+        scripts_dir) if scripts_dir.exists() else set()
 
     # Get all Python files in examples
     examples_dir = project_root / "examples"
@@ -153,7 +155,8 @@ def main():
         print("No orphaned files found!")
 
     print()
-    print(f"Summary: {len(imported)} imported, {len(orphaned)} potentially orphaned")
+    print(
+        f"Summary: {len(imported)} imported, {len(orphaned)} potentially orphaned")
 
     return 0 if not orphaned else 1
 

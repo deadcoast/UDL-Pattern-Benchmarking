@@ -1,34 +1,34 @@
 # --- Core Libraries ---
-import torch
-import numpy as np
-import os
 import argparse
-from tqdm.auto import tqdm
-import torch.nn.functional as F  # Used for interpolate
+import os
+
+import cv2
+import imageio
+import matplotlib as mpl
 
 # --- Plotting & Visualization ---
 import matplotlib.pyplot as plt
-import matplotlib as mpl
-
-mpl.use("Agg")
+import numpy as np
 import seaborn as sns
-
-sns.set_style("darkgrid")
+import torch
+import torch.nn.functional as F  # Used for interpolate
 from matplotlib import patheffects
-import seaborn as sns
-import imageio
-import cv2
-from scipy.special import softmax
-from tasks.image_classification.plotting import save_frames_to_mp4
-
-# --- Data Handling & Model ---
-from torchvision import transforms
-from torchvision import datasets  # Only used for CIFAR100 in debug mode
 from scipy import ndimage  # Used in find_island_centers
+from scipy.special import softmax
+from torchvision import datasets  # Only used for CIFAR100 in debug mode
+from torchvision import transforms
+from tqdm.auto import tqdm
+
 from data.custom_datasets import ImageNet
 from models.ctm import ContinuousThoughtMachine
 from tasks.image_classification.imagenet_classes import IMAGENET2012_CLASSES
-from tasks.image_classification.plotting import plot_neural_dynamics
+from tasks.image_classification.plotting import plot_neural_dynamics, save_frames_to_mp4
+
+mpl.use("Agg")
+
+sns.set_style("darkgrid")
+
+# --- Data Handling & Model ---
 
 # --- Global Settings ---
 np.seterr(divide="ignore")
@@ -54,10 +54,13 @@ def find_island_centers(array_2d, threshold):
         total_mass = np.sum(array_2d[island_mask])
         if total_mass > 0:
             # Get coordinates for this island
-            y_coords, x_coords = np.mgrid[: array_2d.shape[0], : array_2d.shape[1]]
+            y_coords, x_coords = np.mgrid[: array_2d.shape[0],
+                                          : array_2d.shape[1]]
             # Calculate weighted average for center
-            x_center = np.average(x_coords[island_mask], weights=array_2d[island_mask])
-            y_center = np.average(y_coords[island_mask], weights=array_2d[island_mask])
+            x_center = np.average(
+                x_coords[island_mask], weights=array_2d[island_mask])
+            y_center = np.average(
+                y_coords[island_mask], weights=array_2d[island_mask])
             centers.append((round(y_center, 4), round(x_center, 4)))
             areas.append(
                 np.sum(island_mask)
@@ -105,7 +108,8 @@ def parse_args():
         default=True,
         help="Debug mode: use CIFAR100 instead of ImageNet for debugging.",
     )
-    parser.add_argument("--plot_every", type=int, default=10, help="How often to plot.")
+    parser.add_argument("--plot_every", type=int,
+                        default=10, help="How often to plot.")
 
     parser.add_argument(
         "--inference_iterations",
@@ -174,7 +178,8 @@ if __name__ == "__main__":
     ).to(device)
 
     # Load weights into model
-    load_result = model.load_state_dict(checkpoint["model_state_dict"], strict=False)
+    load_result = model.load_state_dict(
+        checkpoint["model_state_dict"], strict=False)
     print(
         f" Loaded state_dict. Missing: {load_result.missing_keys}, Unexpected: {load_result.unexpected_keys}"
     )
@@ -184,14 +189,17 @@ if __name__ == "__main__":
     if args.debug:
         print("Debug mode: Using CIFAR100")
         # CIFAR100 specific normalization constants
-        dataset_mean = [0.5070751592371341, 0.48654887331495067, 0.4409178433670344]
-        dataset_std = [0.2673342858792403, 0.2564384629170882, 0.27615047132568393]
+        dataset_mean = [0.5070751592371341,
+                        0.48654887331495067, 0.4409178433670344]
+        dataset_std = [0.2673342858792403,
+                       0.2564384629170882, 0.27615047132568393]
         img_size = 256  # Resize CIFAR images for consistency
         transform = transforms.Compose(
             [
                 transforms.Resize(img_size),
                 transforms.ToTensor(),
-                transforms.Normalize(mean=dataset_mean, std=dataset_std),  # Normalize
+                transforms.Normalize(
+                    mean=dataset_mean, std=dataset_std),  # Normalize
             ]
         )
         validation_dataset = datasets.CIFAR100(
@@ -211,10 +219,12 @@ if __name__ == "__main__":
             [
                 transforms.Resize(img_size),
                 transforms.ToTensor(),
-                transforms.Normalize(mean=dataset_mean, std=dataset_std),  # Normalize
+                transforms.Normalize(
+                    mean=dataset_mean, std=dataset_std),  # Normalize
             ]
         )
-        validation_dataset = ImageNet(which_split="validation", transform=transform)
+        validation_dataset = ImageNet(
+            which_split="validation", transform=transform)
         validation_dataset_centercrop = ImageNet(
             which_split="train",
             transform=transforms.Compose(
@@ -228,7 +238,8 @@ if __name__ == "__main__":
                 ]
             ),
         )
-    class_labels = list(IMAGENET2012_CLASSES.values())  # Load actual class names
+    class_labels = list(IMAGENET2012_CLASSES.values()
+                        )  # Load actual class names
 
     os.makedirs(f"{args.output_dir}", exist_ok=True)
 
@@ -278,7 +289,8 @@ if __name__ == "__main__":
                         dynamics_inputs, _ = next(
                             iter(loader_crop)
                         )  # Use this because of batching
-                        _, _, _, _, post_activations_viz, _ = model(inputs, track=True)
+                        _, _, _, _, post_activations_viz, _ = model(
+                            inputs, track=True)
                         plot_neural_dynamics(
                             post_activations_viz,
                             15 * 10,
@@ -288,9 +300,11 @@ if __name__ == "__main__":
                         )
                     predictions, certainties, synchronisation = model(inputs)
 
-                    tracked_predictions.append(predictions.detach().cpu().numpy())
+                    tracked_predictions.append(
+                        predictions.detach().cpu().numpy())
                     tracked_targets.append(targets.detach().cpu().numpy())
-                    tracked_certainties.append(certainties.detach().cpu().numpy())
+                    tracked_certainties.append(
+                        certainties.detach().cpu().numpy())
 
                     pbar.set_description(
                         f"Processing base image of size {inputs.shape}"
@@ -302,7 +316,8 @@ if __name__ == "__main__":
                         concatenated_certainties = np.concatenate(
                             tracked_certainties, axis=0
                         )
-                        concatenated_targets = np.concatenate(tracked_targets, axis=0)
+                        concatenated_targets = np.concatenate(
+                            tracked_targets, axis=0)
                         concatenated_predictions = np.concatenate(
                             tracked_predictions, axis=0
                         )
@@ -352,13 +367,15 @@ if __name__ == "__main__":
                                         ]
                                     )
                                     pred_avg_logits = (
-                                        concatenated_predictions[:, :, : stepi + 1]
+                                        concatenated_predictions[:,
+                                                                 :, : stepi + 1]
                                         .mean(-1)
                                         .argsort(1)[:, -topk:]
                                     )
                                     pred_weighted_logits = (
                                         (
-                                            concatenated_predictions[:, :, : stepi + 1]
+                                            concatenated_predictions[:,
+                                                                     :, : stepi + 1]
                                             * concatenated_certainties[
                                                 :, 1:, : stepi + 1
                                             ]
@@ -402,11 +419,13 @@ if __name__ == "__main__":
                                             -1,
                                         ).mean()
                                     )
-                            fig = plt.figure(figsize=(10 * figscale, 4 * figscale))
+                            fig = plt.figure(
+                                figsize=(10 * figscale, 4 * figscale))
                             ax = fig.add_subplot(111)
                             cp = sns.color_palette("bright")
                             ax.plot(
-                                np.arange(concatenated_predictions.shape[-1]) + 1,
+                                np.arange(
+                                    concatenated_predictions.shape[-1]) + 1,
                                 100 * np.array(accs_instant),
                                 linestyle="-",
                                 color=cp[0],
@@ -414,27 +433,31 @@ if __name__ == "__main__":
                             )
                             # ax.plot(np.arange(concatenated_predictions.shape[-1])+1, 100*np.array(accs_avg), linestyle='--', color=cp[1], label='Based on average probability up to this step')
                             ax.plot(
-                                np.arange(concatenated_predictions.shape[-1]) + 1,
+                                np.arange(
+                                    concatenated_predictions.shape[-1]) + 1,
                                 100 * np.array(accs_certain),
                                 linestyle=":",
                                 color=cp[2],
                                 label="Most certain",
                             )
                             ax.plot(
-                                np.arange(concatenated_predictions.shape[-1]) + 1,
+                                np.arange(
+                                    concatenated_predictions.shape[-1]) + 1,
                                 100 * np.array(accs_avg_logits),
                                 linestyle="-.",
                                 color=cp[3],
                                 label="Average logits",
                             )
                             ax.plot(
-                                np.arange(concatenated_predictions.shape[-1]) + 1,
+                                np.arange(
+                                    concatenated_predictions.shape[-1]) + 1,
                                 100 * np.array(accs_weighted_logits),
                                 linestyle="--",
                                 color=cp[4],
                                 label="Logits weighted by certainty",
                             )
-                            ax.set_xlim([0, concatenated_predictions.shape[-1] + 1])
+                            ax.set_xlim(
+                                [0, concatenated_predictions.shape[-1] + 1])
                             ax.set_ylim([75, 92])
                             ax.set_xlabel("Internal ticks")
                             ax.set_ylabel(f"Top-k={topk} accuracy")
@@ -497,12 +520,14 @@ if __name__ == "__main__":
                                         / predictions_here.shape[0]
                                     )
                                     percentage_incorrects.append(
-                                        (~is_correct_here)[certainty_mask].sum()
+                                        (~is_correct_here)[
+                                            certainty_mask].sum()
                                         / predictions_here.shape[0]
                                     )
 
                                     if certainty_threshold == 0.8:
-                                        indices_certain = np.where(certainty_mask)[0]
+                                        indices_certain = np.where(
+                                            certainty_mask)[0]
                                         for index in indices_certain:
                                             if index not in indices_over_80:
                                                 indices_over_80.append(index)
@@ -529,10 +554,12 @@ if __name__ == "__main__":
                                                     ] + [is_correct_here[index]]
 
                                     pbarinner.update(1)
-                            fig = plt.figure(figsize=(6.5 * figscale, 4 * figscale))
+                            fig = plt.figure(
+                                figsize=(6.5 * figscale, 4 * figscale))
                             ax = fig.add_subplot(111)
                             ax.bar(
-                                np.arange(concatenated_predictions.shape[-1]) + 1,
+                                np.arange(
+                                    concatenated_predictions.shape[-1]) + 1,
                                 percentage_corrects,
                                 color="forestgreen",
                                 hatch="OO",
@@ -543,7 +570,8 @@ if __name__ == "__main__":
                             )
 
                             ax.bar(
-                                np.arange(concatenated_predictions.shape[-1]) + 1,
+                                np.arange(
+                                    concatenated_predictions.shape[-1]) + 1,
                                 percentage_incorrects,
                                 bottom=percentage_corrects,
                                 color="crimson",
@@ -553,7 +581,8 @@ if __name__ == "__main__":
                                 alpha=0.9,
                                 linewidth=1.0 * figscale,
                             )
-                            ax.set_xlim(-1, concatenated_predictions.shape[-1] + 1)
+                            ax.set_xlim(-1,
+                                        concatenated_predictions.shape[-1] + 1)
                             ax.set_xlabel("Internal tick")
                             ax.set_ylabel("% of data")
                             ax.legend(loc="lower right")
@@ -570,8 +599,10 @@ if __name__ == "__main__":
                             plt.close(fig)
 
                         class_list = list(classes_80.keys())
-                        mean_steps = [np.mean(classes_80[cls]) for cls in class_list]
-                        std_steps = [np.std(classes_80[cls]) for cls in class_list]
+                        mean_steps = [np.mean(classes_80[cls])
+                                      for cls in class_list]
+                        std_steps = [np.std(classes_80[cls])
+                                     for cls in class_list]
 
                         # Following code plots the class distribution over internal ticks
                         indices_to_show = np.arange(1000)
@@ -590,10 +621,12 @@ if __name__ == "__main__":
                                 colour = colours[iii]
                                 vs, cts = np.unique(steps, return_counts=True)
 
-                                bar = np.zeros(concatenated_predictions.shape[-1])
+                                bar = np.zeros(
+                                    concatenated_predictions.shape[-1])
                                 bar[vs] = cts
                                 ax.bar(
-                                    np.arange(concatenated_predictions.shape[-1]) + 1,
+                                    np.arange(
+                                        concatenated_predictions.shape[-1]) + 1,
                                     bar,
                                     bottom=bottom,
                                     color=colour,
@@ -604,8 +637,10 @@ if __name__ == "__main__":
                         ax.set_xlabel("Internal ticks")
                         ax.set_ylabel("Counts over 0.8 certainty")
                         fig.tight_layout(pad=0.1)
-                        fig.savefig(f"{args.output_dir}/class_counts.png", dpi=200)
-                        fig.savefig(f"{args.output_dir}/class_counts.pdf", dpi=200)
+                        fig.savefig(
+                            f"{args.output_dir}/class_counts.png", dpi=200)
+                        fig.savefig(
+                            f"{args.output_dir}/class_counts.pdf", dpi=200)
                         plt.close(fig)
 
                         # The following code plots calibration
@@ -626,12 +661,15 @@ if __name__ == "__main__":
                             pbarinner.set_description(f"Calibration")
                             for stepi in np.arange(concatenated_predictions.shape[-1]):
                                 color = cmap_calib(color_linspace[stepi])
-                                pred = concatenated_predictions[:, :, stepi].argmax(1)
+                                pred = concatenated_predictions[:, :, stepi].argmax(
+                                    1)
                                 is_correct = pred == concatenated_targets  # BxT
                                 probabilities = softmax(
-                                    concatenated_predictions[:, :, : stepi + 1], axis=1
+                                    concatenated_predictions[:,
+                                                             :, : stepi + 1], axis=1
                                 )[
-                                    np.arange(concatenated_predictions.shape[0]), pred
+                                    np.arange(
+                                        concatenated_predictions.shape[0]), pred
                                 ].mean(
                                     -1
                                 )  # softmax(concatenated_predictions[:,:,stepi], axis=1).max(1)
@@ -652,8 +690,10 @@ if __name__ == "__main__":
                                             & (probabilities <= bin_high)
                                         )
                                     )
-                                    accuracies_per_bin.append(is_correct[mask].mean())
-                                    bin_centers.append(probabilities[mask].mean())
+                                    accuracies_per_bin.append(
+                                        is_correct[mask].mean())
+                                    bin_centers.append(
+                                        probabilities[mask].mean())
 
                                 if stepi == concatenated_predictions.shape[-1] - 1:
                                     ax.plot(
@@ -692,7 +732,8 @@ if __name__ == "__main__":
                             ),
                         )
                         sm.set_array([])  # Empty array for colormap
-                        cbar = fig.colorbar(sm, ax=ax, orientation="vertical", pad=0.02)
+                        cbar = fig.colorbar(
+                            sm, ax=ax, orientation="vertical", pad=0.02)
                         cbar.set_label("Internal ticks")
 
                         ax.set_xlabel("Mean predicted probabilities")
@@ -723,7 +764,8 @@ if __name__ == "__main__":
 
             # --- Get Data & Run Inference ---
             # inputs_norm is already normalized by the transform
-            inputs, ground_truth_target = validation_dataset.__getitem__(int(di))
+            inputs, ground_truth_target = validation_dataset.__getitem__(
+                int(di))
 
             # Add batch dimension and send to device
             inputs = inputs.to(device).unsqueeze(0)
@@ -785,7 +827,7 @@ if __name__ == "__main__":
                 # --- Process Attention & Certainty ---
                 # Average attention over last few steps (from original code)
                 start_step = max(0, step_i - 5)
-                attention_now = attention_tracking[start_step : step_i + 1].mean(
+                attention_now = attention_tracking[start_step: step_i + 1].mean(
                     0
                 )  # Avg over steps -> (Heads, H_feat, W_feat)
                 # Get certainties up to current step
@@ -846,10 +888,12 @@ if __name__ == "__main__":
                 # Find island center for each head
                 for head_i in range(n_heads):
                     attn_head_np = (
-                        attention_interp_bilinear[head_i].detach().cpu().numpy()
+                        attention_interp_bilinear[head_i].detach(
+                        ).cpu().numpy()
                     )
                     # Keep threshold=0.7 based on original call
-                    centers, areas = find_island_centers(attn_head_np, threshold=0.7)
+                    centers, areas = find_island_centers(
+                        attn_head_np, threshold=0.7)
 
                     if centers:  # If islands found
                         largest_island_idx = np.argmax(areas)
@@ -955,7 +999,8 @@ if __name__ == "__main__":
                 ]
 
                 img_aspect = data_img_np.shape[0] / data_img_np.shape[1]
-                aspect_ratio = (8 * figscale, 9 * figscale * img_aspect)  # W, H
+                aspect_ratio = (8 * figscale, 9 *
+                                figscale * img_aspect)  # W, H
                 fig, axes = plt.subplot_mosaic(mosaic, figsize=aspect_ratio)
 
                 for ax in axes.values():
@@ -972,7 +1017,8 @@ if __name__ == "__main__":
                 # Add background color based on prediction correctness at each step
                 for ii in range(len(certainties_now)):
                     is_correct = (
-                        predictions[0, :, ii].argmax(-1).item() == ground_truth_target
+                        predictions[0, :,
+                                    ii].argmax(-1).item() == ground_truth_target
                     )  # .item() for scalar tensor
                     facecolor = "limegreen" if is_correct else "orchid"
                     ax_cert.axvspan(
@@ -994,9 +1040,11 @@ if __name__ == "__main__":
                 # --- Plot Probabilities ---
                 ax_prob = axes["probabilities"]
                 # Get probabilities for the current step
-                ps = torch.softmax(predictions[0, :, step_i], -1).detach().cpu()
+                ps = torch.softmax(
+                    predictions[0, :, step_i], -1).detach().cpu()
                 k = 15  # Top k predictions
-                topk_probs, topk_indices = torch.topk(ps, k, dim=0, largest=True)
+                topk_probs, topk_indices = torch.topk(
+                    ps, k, dim=0, largest=True)
                 topk_indices = topk_indices.numpy()
                 topk_probs = topk_probs.numpy()
 
@@ -1083,7 +1131,8 @@ if __name__ == "__main__":
 
                     # Plot attention heatmap
                     this_attn = (
-                        attention_interp_plot_np[head_i] if head_i != -1 else attn_mean
+                        attention_interp_plot_np[head_i] if head_i != -
+                        1 else attn_mean
                     )
                     img_to_plot = cmap_attention(this_attn)
                     ax.imshow(img_to_plot)
@@ -1104,7 +1153,8 @@ if __name__ == "__main__":
                         y_coords_flipped = img_h - 1 - y_coords
 
                         # Show original image flipped vertically to match coordinate system
-                        ax_overlay.imshow(np.flipud(data_img_np), origin="lower")
+                        ax_overlay.imshow(
+                            np.flipud(data_img_np), origin="lower")
 
                         # Draw arrows for path segments
                         # Arrow size scaling from original
@@ -1143,7 +1193,8 @@ if __name__ == "__main__":
                             )
 
                     else:  # If no path yet, just show the image
-                        ax_overlay.imshow(np.flipud(data_img_np), origin="lower")
+                        ax_overlay.imshow(
+                            np.flipud(data_img_np), origin="lower")
 
                     # Set limits and turn off axes for overlay
                     ax_overlay.set_xlim([0, img_w - 1])
@@ -1156,7 +1207,8 @@ if __name__ == "__main__":
                 # Render the plot to a numpy array
                 canvas = fig.canvas
                 canvas.draw()
-                image_numpy = np.frombuffer(canvas.buffer_rgba(), dtype="uint8")
+                image_numpy = np.frombuffer(
+                    canvas.buffer_rgba(), dtype="uint8")
                 image_numpy = image_numpy.reshape(
                     *reversed(canvas.get_width_height()), 4
                 )[:, :, :3]  # Get RGB
@@ -1198,7 +1250,8 @@ if __name__ == "__main__":
 
             print(f"\nBuilding viz for dataset index {di}.")
 
-            inputs, ground_truth_target = validation_dataset.__getitem__(int(di))
+            inputs, ground_truth_target = validation_dataset.__getitem__(
+                int(di))
 
             # Add batch dimension and send to device
             inputs = inputs.to(device).unsqueeze(0)
@@ -1255,7 +1308,7 @@ if __name__ == "__main__":
                 # --- Process Attention & Certainty ---
                 # Average attention over last few steps (from original code)
                 start_step = max(0, step_i - 5)
-                attention_now = attention_tracking[start_step : step_i + 1].mean(
+                attention_now = attention_tracking[start_step: step_i + 1].mean(
                     0
                 )  # Avg over steps -> (Heads, H_feat, W_feat)
                 # Get certainties up to current step
@@ -1382,7 +1435,8 @@ if __name__ == "__main__":
                 ]
 
                 img_aspect = data_img_np.shape[0] / data_img_np.shape[1]
-                aspect_ratio = (12 * figscale, 6 * figscale * img_aspect)  # W, H
+                aspect_ratio = (12 * figscale, 6 *
+                                figscale * img_aspect)  # W, H
                 fig, axes = plt.subplot_mosaic(mosaic, figsize=aspect_ratio)
                 for ax in axes.values():
                     ax.axis("off")
@@ -1398,7 +1452,8 @@ if __name__ == "__main__":
                 # Add background color based on prediction correctness at each step
                 for ii in range(len(certainties_now)):
                     is_correct = (
-                        predictions[0, :, ii].argmax(-1).item() == ground_truth_target
+                        predictions[0, :,
+                                    ii].argmax(-1).item() == ground_truth_target
                     )  # .item() for scalar tensor
                     facecolor = "limegreen" if is_correct else "orchid"
                     ax_cert.axvspan(
@@ -1420,9 +1475,11 @@ if __name__ == "__main__":
                 # --- Plot Probabilities ---
                 ax_prob = axes["probabilities"]
                 # Get probabilities for the current step
-                ps = torch.softmax(predictions[0, :, step_i], -1).detach().cpu()
+                ps = torch.softmax(
+                    predictions[0, :, step_i], -1).detach().cpu()
                 k = 15  # Top k predictions
-                topk_probs, topk_indices = torch.topk(ps, k, dim=0, largest=True)
+                topk_probs, topk_indices = torch.topk(
+                    ps, k, dim=0, largest=True)
                 topk_indices = topk_indices.numpy()
                 topk_probs = topk_probs.numpy()
 
@@ -1550,7 +1607,8 @@ if __name__ == "__main__":
                     ax = axes[f"head_{head_i}"]
 
                     # Plot attention heatmap
-                    attn_up_to_now = attention_tracking[: step_i + 1, head_i].mean(0)
+                    attn_up_to_now = attention_tracking[: step_i +
+                                                        1, head_i].mean(0)
                     attn_up_to_now = (attn_up_to_now - attn_up_to_now.min()) / (
                         attn_up_to_now.max() - attn_up_to_now.min()
                     )
@@ -1564,7 +1622,8 @@ if __name__ == "__main__":
                 # Render the plot to a numpy array
                 canvas = fig.canvas
                 canvas.draw()
-                image_numpy = np.frombuffer(canvas.buffer_rgba(), dtype="uint8")
+                image_numpy = np.frombuffer(
+                    canvas.buffer_rgba(), dtype="uint8")
                 image_numpy = image_numpy.reshape(
                     *reversed(canvas.get_width_height()), 4
                 )[:, :, :3]  # Get RGB

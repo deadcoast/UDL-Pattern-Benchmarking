@@ -1,28 +1,28 @@
-import torch.nn as nn
-import torch
-import numpy as np
 import math
+
+import numpy as np
+import torch
+import torch.nn as nn
 from huggingface_hub import PyTorchModelHubMixin, hf_hub_download
 
+from models.constants import (
+    VALID_BACKBONE_TYPES,
+    VALID_NEURON_SELECT_TYPES,
+    VALID_POSITIONAL_EMBEDDING_TYPES,
+)
 from models.modules import (
-    ParityBackbone,
-    SynapseUNET,
-    Squeeze,
-    SuperLinear,
-    LearnableFourierPositionalEncoding,
-    MultiLearnableFourierPositionalEncoding,
     CustomRotationalEmbedding,
     CustomRotationalEmbedding1D,
+    LearnableFourierPositionalEncoding,
+    MultiLearnableFourierPositionalEncoding,
+    ParityBackbone,
     ShallowWide,
+    Squeeze,
+    SuperLinear,
+    SynapseUNET,
 )
 from models.resnet import prepare_resnet_backbone
 from models.utils import compute_normalized_entropy
-
-from models.constants import (
-    VALID_NEURON_SELECT_TYPES,
-    VALID_BACKBONE_TYPES,
-    VALID_POSITIONAL_EMBEDDING_TYPES,
-)
 
 
 class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
@@ -137,13 +137,15 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
         self.set_backbone()
         self.positional_embedding = self.get_positional_embedding(d_backbone)
         self.kv_proj = (
-            nn.Sequential(nn.LazyLinear(self.d_input), nn.LayerNorm(self.d_input))
+            nn.Sequential(nn.LazyLinear(self.d_input),
+                          nn.LayerNorm(self.d_input))
             if heads
             else None
         )
         self.q_proj = nn.LazyLinear(self.d_input) if heads else None
         self.attention = (
-            nn.MultiheadAttention(self.d_input, heads, dropout, batch_first=True)
+            nn.MultiheadAttention(self.d_input, heads,
+                                  dropout, batch_first=True)
             if heads
             else None
         )
@@ -248,7 +250,8 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
         )
         from safetensors.torch import load_model as load_model_as_safetensor
 
-        load_model_as_safetensor(model, model_file, strict=strict, device=map_location)
+        load_model_as_safetensor(
+            model, model_file, strict=strict, device=map_location)
 
         model.eval()
         return model
@@ -329,7 +332,8 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
         initial_rgb = self.initial_rgb(x)
         self.kv_features = self.backbone(initial_rgb)
         pos_emb = self.positional_embedding(self.kv_features)
-        combined_features = (self.kv_features + pos_emb).flatten(2).transpose(1, 2)
+        combined_features = (self.kv_features +
+                             pos_emb).flatten(2).transpose(1, 2)
         kv = self.kv_proj(combined_features)
         return kv
 
@@ -342,7 +346,8 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
         For legacy reasons we stack that in a 2D vector as this can be used for optimisation later.
         """
         B = current_prediction.size(0)
-        reshaped_pred = current_prediction.reshape([B] + self.prediction_reshaper)
+        reshaped_pred = current_prediction.reshape(
+            [B] + self.prediction_reshaper)
         ne = compute_normalized_entropy(reshaped_pred)
         current_certainty = torch.stack((ne, 1 - ne), -1)
         return current_certainty
@@ -355,7 +360,8 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
         doesn't hurt the model in any way that we can tell.
         """
         if "resnet" in self.backbone_type:
-            self.initial_rgb = nn.LazyConv2d(3, 1, 1)  # Adapts input channels lazily
+            # Adapts input channels lazily
+            self.initial_rgb = nn.LazyConv2d(3, 1, 1)
         else:
             self.initial_rgb = nn.Identity()
 
@@ -405,7 +411,8 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
             self.backbone = ShallowWide()
         elif self.backbone_type == "parity_backbone":
             d_backbone = self.get_d_backbone()
-            self.backbone = ParityBackbone(n_embeddings=2, d_embedding=d_backbone)
+            self.backbone = ParityBackbone(
+                n_embeddings=2, d_embedding=d_backbone)
         elif "resnet" in self.backbone_type:
             self.backbone = prepare_resnet_backbone(self.backbone_type)
         elif self.backbone_type == "none":
@@ -533,7 +540,8 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
         2. Set the parameters for learnable exponential decay when computing synchronisation between all
             neurons.
         """
-        assert synch_type in ("out", "action"), f"Invalid synch_type: {synch_type}"
+        assert synch_type in (
+            "out", "action"), f"Invalid synch_type: {synch_type}"
         left, right = self.initialize_left_right_neurons(
             synch_type, self.d_model, n_synch, n_random_pairing_self
         )
@@ -546,7 +554,8 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
         self.register_buffer(f"{synch_type}_neuron_indices_right", right)
         self.register_parameter(
             f"decay_params_{synch_type}",
-            nn.Parameter(torch.zeros(synch_representation_size), requires_grad=True),
+            nn.Parameter(torch.zeros(synch_representation_size),
+                         requires_grad=True),
         )
 
     def initialize_left_right_neurons(
@@ -559,7 +568,8 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
         """
         if self.neuron_select_type == "first-last":
             if synch_type == "out":
-                neuron_indices_left = neuron_indices_right = torch.arange(0, n_synch)
+                neuron_indices_left = neuron_indices_right = torch.arange(
+                    0, n_synch)
             elif synch_type == "action":
                 neuron_indices_left = neuron_indices_right = torch.arange(
                     d_model - n_synch, d_model
@@ -719,7 +729,8 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
                 q, kv, kv, average_attn_weights=False, need_weights=True
             )
             attn_out = attn_out.squeeze(1)
-            pre_synapse_input = torch.concatenate((attn_out, activated_state), dim=-1)
+            pre_synapse_input = torch.concatenate(
+                (attn_out, activated_state), dim=-1)
 
             # --- Apply Synapses ---
             state = self.synapses(pre_synapse_input)
@@ -757,9 +768,11 @@ class ContinuousThoughtMachine(nn.Module, PyTorchModelHubMixin):
                 pre_activations_tracking.append(
                     state_trace[:, :, -1].detach().cpu().numpy()
                 )
-                post_activations_tracking.append(activated_state.detach().cpu().numpy())
+                post_activations_tracking.append(
+                    activated_state.detach().cpu().numpy())
                 attention_tracking.append(attn_weights.detach().cpu().numpy())
-                synch_out_tracking.append(synchronisation_out.detach().cpu().numpy())
+                synch_out_tracking.append(
+                    synchronisation_out.detach().cpu().numpy())
                 synch_action_tracking.append(
                     synchronisation_action.detach().cpu().numpy()
                 )

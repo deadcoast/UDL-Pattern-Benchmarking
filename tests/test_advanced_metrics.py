@@ -5,18 +5,19 @@ Tests semantic similarity, readability, maintainability, cross-language compatib
 and evolution tracking metrics.
 """
 
-import pytest
 import numpy as np
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.semantic_similarity import (
-    SemanticSimilarityMetric,
-)
-from udl_rating_framework.core.metrics.readability import ReadabilityMetric
-from udl_rating_framework.core.metrics.maintainability import MaintainabilityMetric
+import pytest
+
 from udl_rating_framework.core.metrics.cross_language_compatibility import (
     CrossLanguageCompatibilityMetric,
 )
 from udl_rating_framework.core.metrics.evolution_tracking import EvolutionTrackingMetric
+from udl_rating_framework.core.metrics.maintainability import MaintainabilityMetric
+from udl_rating_framework.core.metrics.readability import ReadabilityMetric
+from udl_rating_framework.core.metrics.semantic_similarity import (
+    SemanticSimilarityMetric,
+)
+from udl_rating_framework.core.representation import UDLRepresentation
 
 
 class TestSemanticSimilarityMetric:
@@ -447,7 +448,8 @@ class TestAdvancedMetricsIntegration:
             EvolutionTrackingMetric(),
         ]
 
-        expected_properties = ["bounded", "monotonic", "additive", "continuous"]
+        expected_properties = ["bounded",
+                               "monotonic", "additive", "continuous"]
 
         for metric in metrics:
             properties = metric.get_properties()

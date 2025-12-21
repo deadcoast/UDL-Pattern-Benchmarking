@@ -9,16 +9,16 @@ identifies undocumented public APIs, and verifies mathematical formulas.
 """
 
 import ast
-import inspect
+import doctest
 import importlib
+import inspect
+import io
 import pkgutil
 import re
-import doctest
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
-import io
-import sys
 
 
 @dataclass
@@ -97,7 +97,8 @@ class DocstringParser:
     """Parses docstrings in various formats (Google, NumPy, Sphinx)."""
 
     # Patterns for different docstring sections
-    GOOGLE_PARAM_PATTERN = re.compile(r"^\s*(\w+)\s*(?:\(([^)]+)\))?\s*:\s*(.*)$")
+    GOOGLE_PARAM_PATTERN = re.compile(
+        r"^\s*(\w+)\s*(?:\(([^)]+)\))?\s*:\s*(.*)$")
     NUMPY_PARAM_PATTERN = re.compile(r"^\s*(\w+)\s*:\s*(\S+)?\s*$")
     SPHINX_PARAM_PATTERN = re.compile(r":param\s+(?:(\w+)\s+)?(\w+):\s*(.*)$")
     SPHINX_TYPE_PATTERN = re.compile(r":type\s+(\w+):\s*(.*)$")
@@ -159,9 +160,10 @@ class DocstringParser:
                             DocstringParameter(
                                 name=name,
                                 type_hint=match.group(2),
-                                description=match.group(3).strip()
-                                if match.group(3)
-                                else None,
+                                description=(
+                                    match.group(3).strip() if match.group(
+                                        3) else None
+                                ),
                             )
                         )
                         param_names_seen.add(name)
@@ -221,7 +223,8 @@ class DocstringParser:
         examples = []
 
         # Find doctest-style examples (>>> ...)
-        doctest_pattern = re.compile(r">>>\s+.+(?:\n(?:\.\.\.|\s+).+)*", re.MULTILINE)
+        doctest_pattern = re.compile(
+            r">>>\s+.+(?:\n(?:\.\.\.|\s+).+)*", re.MULTILINE)
         for match in doctest_pattern.finditer(docstring):
             examples.append(match.group(0))
 
@@ -348,7 +351,8 @@ class DocstringValidator:
             if param_name in actual_params and doc_param.type_hint:
                 actual_param = actual_params[param_name]
                 if actual_param.annotation != inspect.Parameter.empty:
-                    actual_type = self._get_type_string(actual_param.annotation)
+                    actual_type = self._get_type_string(
+                        actual_param.annotation)
                     if not self._types_match(doc_param.type_hint, actual_type):
                         mismatches.append(
                             SignatureMismatch(
@@ -436,7 +440,8 @@ class DocstringValidator:
     ) -> None:
         """Validate all functions and methods in a module."""
         # Get all public names
-        public_names = [name for name in dir(module) if not name.startswith("_")]
+        public_names = [name for name in dir(
+            module) if not name.startswith("_")]
 
         for name in public_names:
             try:
@@ -712,7 +717,8 @@ def main():
     if report.undocumented_apis:
         print(f"\n=== Undocumented APIs ({len(report.undocumented_apis)}) ===")
         for api in report.undocumented_apis[:20]:
-            print(f"  {api.file_path}:{api.line_number} {api.element_type} {api.name}")
+            print(
+                f"  {api.file_path}:{api.line_number} {api.element_type} {api.name}")
         if len(report.undocumented_apis) > 20:
             print(f"  ... and {len(report.undocumented_apis) - 20} more")
 

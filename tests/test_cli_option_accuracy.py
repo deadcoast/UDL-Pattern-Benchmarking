@@ -7,13 +7,15 @@ Property-based tests for CLI option accuracy.
 For any CLI option documented in help text, the option should exist and behave as described.
 """
 
-import pytest
-from click.testing import CliRunner
-from hypothesis import given, strategies as st, settings, HealthCheck
+import json
 import tempfile
 from pathlib import Path
-import json
+
+import pytest
 import yaml
+from click.testing import CliRunner
+from hypothesis import HealthCheck, given, settings
+from hypothesis import strategies as st
 
 from udl_rating_framework.cli.main import cli
 
@@ -280,7 +282,8 @@ class TestCLIOptionAccuracy:
 
             # Should succeed
             assert result.exit_code == 0, f"Format '{fmt}' failed: {result.output}"
-            assert output_file.exists(), f"Output file not created for format '{fmt}'"
+            assert output_file.exists(
+            ), f"Output file not created for format '{fmt}'"
 
     def test_rate_format_option_rejects_invalid_choices(self, runner, sample_udl_file):
         """
@@ -329,7 +332,8 @@ class TestCLIOptionAccuracy:
         # bootstrap_samples < 1000 should be rejected
         result = runner.invoke(
             cli,
-            ["evaluate", str(fake_model), str(temp_dir), "--bootstrap-samples", "500"],
+            ["evaluate", str(fake_model), str(temp_dir),
+             "--bootstrap-samples", "500"],
         )
 
         # Should fail with non-zero exit code (error message is logged, not in output)
@@ -501,7 +505,8 @@ class TestAnalyticsSubcommandOptions:
         result = runner.invoke(cli, ["analytics", "dashboard", "--help"])
         assert result.exit_code == 0
 
-        expected_options = ["--reports-dir", "-r", "--output-dir", "-o", "--platform"]
+        expected_options = ["--reports-dir", "-r",
+                            "--output-dir", "-o", "--platform"]
         for option in expected_options:
             assert option in result.output, (
                 f"Option '{option}' not found in dashboard help"
@@ -518,7 +523,8 @@ class TestIntegrationSubcommandOptions:
 
     def test_git_install_hooks_options_exist(self, runner):
         """Test git install-hooks subcommand options."""
-        result = runner.invoke(cli, ["integration", "git", "install-hooks", "--help"])
+        result = runner.invoke(
+            cli, ["integration", "git", "install-hooks", "--help"])
         assert result.exit_code == 0
 
         expected_options = ["--repo-path", "--threshold", "--config"]
@@ -529,10 +535,12 @@ class TestIntegrationSubcommandOptions:
 
     def test_cicd_generate_options_exist(self, runner):
         """Test cicd generate subcommand options."""
-        result = runner.invoke(cli, ["integration", "cicd", "generate", "--help"])
+        result = runner.invoke(
+            cli, ["integration", "cicd", "generate", "--help"])
         assert result.exit_code == 0
 
-        expected_options = ["--platform", "--output-dir", "--threshold", "--timeout"]
+        expected_options = ["--platform",
+                            "--output-dir", "--threshold", "--timeout"]
         for option in expected_options:
             assert option in result.output, (
                 f"Option '{option}' not found in cicd generate help"
@@ -558,7 +566,8 @@ class TestIntegrationSubcommandOptions:
 
     def test_ide_generate_options_exist(self, runner):
         """Test ide generate subcommand options."""
-        result = runner.invoke(cli, ["integration", "ide", "generate", "--help"])
+        result = runner.invoke(
+            cli, ["integration", "ide", "generate", "--help"])
         assert result.exit_code == 0
 
         expected_options = ["--plugin-type", "--output-dir"]

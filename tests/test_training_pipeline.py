@@ -5,18 +5,20 @@ Tests the TrainingPipeline class and its components including loss function
 correctness and ground truth consistency.
 """
 
+from typing import Dict, List
+
+import numpy as np
 import pytest
 import torch
 import torch.nn as nn
-import numpy as np
-from hypothesis import given, strategies as st, settings
-from typing import List, Dict
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
-from udl_rating_framework.training.training_pipeline import TrainingPipeline, UDLDataset
-from udl_rating_framework.models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
-from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.aggregation import MetricAggregator
+from udl_rating_framework.core.metrics.base import QualityMetric
 from udl_rating_framework.core.representation import UDLRepresentation
+from udl_rating_framework.models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
+from udl_rating_framework.training.training_pipeline import TrainingPipeline, UDLDataset
 
 
 class MockMetric(QualityMetric):
@@ -211,8 +213,10 @@ class TestLossFunctionCorrectness:
         )
 
         # Convert to tensors
-        pred_tensor = torch.tensor(predictions, dtype=torch.float32).unsqueeze(1)
-        gt_tensor = torch.tensor(ground_truth, dtype=torch.float32).unsqueeze(1)
+        pred_tensor = torch.tensor(
+            predictions, dtype=torch.float32).unsqueeze(1)
+        gt_tensor = torch.tensor(
+            ground_truth, dtype=torch.float32).unsqueeze(1)
 
         # Create mock certainties (random but valid)
         certainties = torch.rand(len(predictions), 2)
@@ -282,7 +286,8 @@ class TestLossFunctionCorrectness:
         )
 
         # Create tensors
-        pred_tensor = torch.tensor(predictions, dtype=torch.float32).unsqueeze(1)
+        pred_tensor = torch.tensor(
+            predictions, dtype=torch.float32).unsqueeze(1)
         gt_tensor = torch.rand(len(predictions), 1)  # Random ground truth
         certainties = torch.rand(len(predictions), 2)
 
@@ -334,18 +339,21 @@ class TestGroundTruthConsistency:
         # Compute ground truth manually using the same metrics and aggregator
         # Use the same naming scheme as the pipeline
         metric_values = {}
-        aggregator_metric_names = list(training_pipeline.aggregator.weights.keys())
+        aggregator_metric_names = list(
+            training_pipeline.aggregator.weights.keys())
 
         for i, metric in enumerate(training_pipeline.metrics):
             # Use the metric name from aggregator if available, otherwise generate one
             if i < len(aggregator_metric_names):
                 metric_name = aggregator_metric_names[i]
             else:
-                metric_name = metric.__class__.__name__.replace("Metric", "").lower()
+                metric_name = metric.__class__.__name__.replace(
+                    "Metric", "").lower()
 
             metric_values[metric_name] = metric.compute(udl)
 
-        manual_ground_truth = training_pipeline.aggregator.aggregate(metric_values)
+        manual_ground_truth = training_pipeline.aggregator.aggregate(
+            metric_values)
 
         # They should be identical (within floating point precision)
         assert abs(pipeline_ground_truth - manual_ground_truth) < 1e-6, (

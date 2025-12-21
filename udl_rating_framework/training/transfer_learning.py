@@ -7,35 +7,36 @@ dynamics, neuron-level patterns, and synchronization strategies rather than
 just static representations.
 """
 
+import json
+import logging
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-import numpy as np
-from typing import Dict, List, Any, Optional, Tuple, Union
-import logging
-from dataclasses import dataclass
-from pathlib import Path
-import json
 
 try:
     from transformers import (
+        AutoConfig,
         AutoModel,
         AutoTokenizer,
-        AutoConfig,
         BertModel,
         GPT2Model,
-        RobertaModel,
         PreTrainedModel,
         PreTrainedTokenizer,
+        RobertaModel,
     )
 
     TRANSFORMERS_AVAILABLE = True
 except ImportError:
     TRANSFORMERS_AVAILABLE = False
 
-from ..models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
 from ..core.representation import UDLRepresentation
+from ..models.ctm_adapter import UDLRatingCTM, UDLTokenVocabulary
 from .training_pipeline import TrainingPipeline
 
 logger = logging.getLogger(__name__)
@@ -55,7 +56,8 @@ class CTMTransferConfig:
     freeze_source_ctm: bool = True
 
     # Transfer strategy
-    transfer_method: str = "temporal_dynamics"  # 'temporal_dynamics', 'synchronization_patterns', 'neuron_level_models'
+    # 'temporal_dynamics', 'synchronization_patterns', 'neuron_level_models'
+    transfer_method: str = "temporal_dynamics"
 
     # Temporal transfer configuration
     transfer_iterations: bool = True  # Transfer learned iteration patterns
@@ -76,7 +78,8 @@ class CTMTransferConfig:
     fine_tune_lr: float = 1e-5
 
     # CTM-specific parameters
-    preserve_temporal_structure: bool = True  # Maintain temporal processing structure
+    # Maintain temporal processing structure
+    preserve_temporal_structure: bool = True
     adapt_memory_length: bool = False  # Whether to adapt memory length for new task
 
     def to_dict(self) -> Dict[str, Any]:
@@ -230,7 +233,8 @@ class PretrainedFeatureExtractor(nn.Module):
         self.projection = nn.Linear(self.hidden_dim, projection_dim)
 
         logger.info(f"Initialized feature extractor with {model_name}")
-        logger.info(f"Hidden dim: {self.hidden_dim}, Projection dim: {projection_dim}")
+        logger.info(
+            f"Hidden dim: {self.hidden_dim}, Projection dim: {projection_dim}")
 
     def tokenize_udl(
         self, udl_text: str, max_length: int = 512
@@ -274,7 +278,8 @@ class PretrainedFeatureExtractor(nn.Module):
         )
 
         # Get hidden states
-        hidden_states = outputs.last_hidden_state  # [batch, seq_len, hidden_dim]
+        # [batch, seq_len, hidden_dim]
+        hidden_states = outputs.last_hidden_state
 
         # Apply adapters if using adapter method
         if self.adaptation_method == "adapter" and hasattr(self, "adapters"):
@@ -282,7 +287,8 @@ class PretrainedFeatureExtractor(nn.Module):
                 hidden_states = adapter(hidden_states)
 
         # Project to target dimension
-        features = self.projection(hidden_states)  # [batch, seq_len, projection_dim]
+        # [batch, seq_len, projection_dim]
+        features = self.projection(hidden_states)
 
         return features
 
@@ -424,10 +430,12 @@ class CTMTransferLearningTrainer:
         )
 
         # Create model
-        self.model = CTMTransferLearningModel(vocab_size, transfer_config, ctm_config)
+        self.model = CTMTransferLearningModel(
+            vocab_size, transfer_config, ctm_config)
         self.model.to(self.device)
 
-        logger.info(f"Initialized transfer learning trainer with device: {self.device}")
+        logger.info(
+            f"Initialized transfer learning trainer with device: {self.device}")
 
     def pretrain_on_language_modeling(
         self, text_corpus: List[str], num_epochs: int = 10, batch_size: int = 16
@@ -443,7 +451,8 @@ class CTMTransferLearningTrainer:
         Returns:
             Pre-training history
         """
-        logger.info(f"Starting language modeling pre-training for {num_epochs} epochs")
+        logger.info(
+            f"Starting language modeling pre-training for {num_epochs} epochs")
 
         # Create optimizer for pre-training
         optimizer = torch.optim.Adam(
@@ -463,7 +472,7 @@ class CTMTransferLearningTrainer:
 
             # Process corpus in batches
             for i in range(0, len(text_corpus), batch_size):
-                batch_texts = text_corpus[i : i + batch_size]
+                batch_texts = text_corpus[i: i + batch_size]
 
                 # Tokenize batch
                 inputs = self.model.feature_extractor.tokenizer(
@@ -627,7 +636,8 @@ class CTMTransferLearningTrainer:
         Returns:
             Loaded trainer
         """
-        checkpoint = torch.load(filepath, map_location=device, weights_only=False)
+        checkpoint = torch.load(
+            filepath, map_location=device, weights_only=False)
 
         transfer_config = CTMTransferConfig(**checkpoint["transfer_config"])
 
@@ -663,9 +673,11 @@ def create_ctm_transfer_learning_model(
         Transfer learning CTM model
     """
     if transfer_config is None:
-        transfer_config = CTMTransferConfig(source_model_path=source_model_path)
+        transfer_config = CTMTransferConfig(
+            source_model_path=source_model_path)
 
     if ctm_config is None:
-        ctm_config = {"d_model": 256, "iterations": 20, "n_synch_out": 32, "heads": 8}
+        ctm_config = {"d_model": 256, "iterations": 20,
+                      "n_synch_out": 32, "heads": 8}
 
     return CTMTransferLearningModel(vocab_size, transfer_config, ctm_config)

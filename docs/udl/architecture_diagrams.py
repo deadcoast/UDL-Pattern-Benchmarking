@@ -3,10 +3,10 @@
 Generate architecture diagrams for the UDL Rating Framework documentation.
 """
 
-import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-from matplotlib.patches import FancyBboxPatch, ConnectionPatch
+import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.patches import ConnectionPatch, FancyBboxPatch
 
 
 def create_high_level_architecture():
@@ -66,7 +66,8 @@ def create_high_level_architecture():
     )
 
     # Individual metrics
-    metrics = ["Consistency", "Completeness", "Expressiveness", "Structural\nCoherence"]
+    metrics = ["Consistency", "Completeness",
+               "Expressiveness", "Structural\nCoherence"]
     metric_positions = [(4, 5.8), (6, 5.8), (4, 4.7), (6, 4.7)]
 
     for metric, pos in zip(metrics, metric_positions):
@@ -91,7 +92,8 @@ def create_high_level_architecture():
         edgecolor="blue",
     )
     ax.add_patch(agg_box)
-    ax.text(5, 4.35, "Aggregation", ha="center", va="center", fontsize=8, weight="bold")
+    ax.text(5, 4.35, "Aggregation", ha="center",
+            va="center", fontsize=8, weight="bold")
 
     # CTM Layer (Optional)
     ctm_box = FancyBboxPatch(
@@ -198,7 +200,8 @@ def create_high_level_architecture():
         patches.Patch(color=output_color, label="Output Generation"),
         patches.Patch(color=optional_color, label="Optional Components"),
     ]
-    ax.legend(handles=legend_elements, loc="upper right", bbox_to_anchor=(0.98, 0.98))
+    ax.legend(handles=legend_elements, loc="upper right",
+              bbox_to_anchor=(0.98, 0.98))
 
     plt.tight_layout()
     plt.savefig(
@@ -225,7 +228,8 @@ def create_metric_computation_flow():
         edgecolor="blue",
     )
     ax.add_patch(udl_box)
-    ax.text(2, 7.4, "UDL Input", ha="center", va="center", fontsize=12, weight="bold")
+    ax.text(2, 7.4, "UDL Input", ha="center",
+            va="center", fontsize=12, weight="bold")
 
     # Representation
     repr_box = FancyBboxPatch(
@@ -475,7 +479,8 @@ def create_ctm_architecture():
     # CTM internals
     ax.text(8, 5.5, "• T iterations", ha="center", va="center", fontsize=9)
     ax.text(8, 5.2, "• Neuron dynamics", ha="center", va="center", fontsize=9)
-    ax.text(8, 4.9, "• Synchronization S(t)", ha="center", va="center", fontsize=9)
+    ax.text(8, 4.9, "• Synchronization S(t)",
+            ha="center", va="center", fontsize=9)
 
     # Rating head
     rating_box = FancyBboxPatch(
@@ -591,7 +596,8 @@ def create_ctm_architecture():
     )
 
     plt.tight_layout()
-    plt.savefig("docs/_static/ctm_architecture.png", dpi=300, bbox_inches="tight")
+    plt.savefig("docs/_static/ctm_architecture.png",
+                dpi=300, bbox_inches="tight")
     plt.close()
 
 

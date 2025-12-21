@@ -4,21 +4,21 @@ Rate command for UDL Rating Framework CLI.
 Provides functionality to rate UDL files or directories.
 """
 
-import click
-import logging
-from pathlib import Path
-from typing import List, Dict, Any, Optional
 import json
+import logging
 import sys
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
-from udl_rating_framework.core.pipeline import RatingPipeline, QualityReport
-from udl_rating_framework.core.metrics.base import MetricRegistry
-from udl_rating_framework.core.aggregation import MetricAggregator
-from udl_rating_framework.io.file_discovery import FileDiscovery
-from udl_rating_framework.io.report_generator import ReportGenerator
+import click
 
 # Import metrics to trigger registration
 import udl_rating_framework.core.metrics
+from udl_rating_framework.core.aggregation import MetricAggregator
+from udl_rating_framework.core.metrics.base import MetricRegistry
+from udl_rating_framework.core.pipeline import QualityReport, RatingPipeline
+from udl_rating_framework.io.file_discovery import FileDiscovery
+from udl_rating_framework.io.report_generator import ReportGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -148,7 +148,8 @@ def rate_command(
                 output_dir = Path(output_config.get("output_dir", "output"))
                 output_dir.mkdir(exist_ok=True)
                 output = output_dir / f"rating_results.{format}"
-            include_traces = output_config.get("include_traces", include_traces)
+            include_traces = output_config.get(
+                "include_traces", include_traces)
 
         logger.info(f"Rating UDL files in: {input_path}")
         logger.info(f"Output format: {format}")

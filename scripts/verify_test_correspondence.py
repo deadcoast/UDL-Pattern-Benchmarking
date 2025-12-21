@@ -10,7 +10,7 @@ Validates: Requirements 6.4
 
 import sys
 from pathlib import Path
-from typing import Set, Dict, List
+from typing import Dict, List, Set
 
 project_root = Path(__file__).parent.parent
 
@@ -149,7 +149,8 @@ def main():
     print(f"  Total source modules: {len(source_modules)}")
     print(f"  Modules with tests: {len(covered)}")
     print(f"  Modules without tests: {len(uncovered)}")
-    coverage_pct = (len(covered) / len(source_modules) * 100) if source_modules else 0
+    coverage_pct = (len(covered) / len(source_modules)
+                    * 100) if source_modules else 0
     print(f"  Test coverage: {coverage_pct:.1f}%")
 
     print()

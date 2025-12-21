@@ -50,7 +50,8 @@ class UDLRatingClient:
 
         # Set authentication header
         if api_token:
-            self.session.headers.update({"Authorization": f"Bearer {api_token}"})
+            self.session.headers.update(
+                {"Authorization": f"Bearer {api_token}"})
 
     def health_check(self) -> Dict:
         """
@@ -59,7 +60,8 @@ class UDLRatingClient:
         Returns:
             Health status information
         """
-        response = self.session.get(f"{self.base_url}/health", timeout=self.timeout)
+        response = self.session.get(
+            f"{self.base_url}/health", timeout=self.timeout)
         response.raise_for_status()
         return response.json()
 
@@ -166,7 +168,8 @@ class UDLRatingClient:
         Returns:
             Information about available metrics
         """
-        response = self.session.get(f"{self.base_url}/metrics", timeout=self.timeout)
+        response = self.session.get(
+            f"{self.base_url}/metrics", timeout=self.timeout)
         response.raise_for_status()
         return response.json()
 
@@ -230,7 +233,7 @@ class UDLRatingClient:
         all_results = []
 
         for i in range(0, len(udl_requests), batch_size):
-            batch = udl_requests[i : i + batch_size]
+            batch = udl_requests[i: i + batch_size]
             try:
                 batch_response = self.rate_udl_batch(batch, parallel=parallel)
                 all_results.extend(batch_response["results"])

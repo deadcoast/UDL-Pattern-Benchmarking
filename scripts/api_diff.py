@@ -13,16 +13,16 @@ Usage:
 """
 
 import argparse
-import sys
 import ast
-import inspect
 import importlib
-import pkgutil
-from pathlib import Path
-from typing import Dict, List, Set, Optional, Any, Tuple
-from dataclasses import dataclass, field
+import inspect
 import json
+import pkgutil
 import re
+import sys
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
@@ -188,7 +188,8 @@ class APIExtractor:
             sig = "()"
 
         element = APIElement(
-            name=method.__name__ if hasattr(method, "__name__") else str(method),
+            name=method.__name__ if hasattr(
+                method, "__name__") else str(method),
             module=module_name,
             element_type="method",
             signature=sig,
@@ -299,7 +300,8 @@ class APIDiff:
 
         # Get documented modules
         rst_file = self.docs_path / "api_reference.rst"
-        documented_modules = self.doc_extractor.extract_documented_modules(rst_file)
+        documented_modules = self.doc_extractor.extract_documented_modules(
+            rst_file)
 
         if self.verbose:
             print(f"  Found {len(documented_modules)} documented modules")
@@ -500,7 +502,8 @@ class APIDiff:
                     lines.append(f"  ✗ {api.full_name}")
 
                 if len(result.undocumented_apis) > 20:
-                    lines.append(f"  ... and {len(result.undocumented_apis) - 20} more")
+                    lines.append(
+                        f"  ... and {len(result.undocumented_apis) - 20} more")
                 lines.append("")
 
             if not result.orphaned_docs and not result.undocumented_apis:
@@ -530,8 +533,10 @@ class APIDiff:
             lines.append(f"## {module}")
             lines.append("")
 
-            classes = [a for a in by_module[module] if a.element_type == "class"]
-            functions = [a for a in by_module[module] if a.element_type == "function"]
+            classes = [a for a in by_module[module]
+                       if a.element_type == "class"]
+            functions = [a for a in by_module[module]
+                         if a.element_type == "function"]
 
             if classes:
                 lines.append("### Classes")
@@ -546,7 +551,8 @@ class APIDiff:
                 lines.append("")
                 for func in functions:
                     has_doc = "✓" if func.docstring else "✗"
-                    lines.append(f"- `{func.name}{func.signature}` [{has_doc}]")
+                    lines.append(
+                        f"- `{func.name}{func.signature}` [{has_doc}]")
                 lines.append("")
 
         return "\n".join(lines)

@@ -4,14 +4,15 @@ Integration tests for CLI commands.
 Tests all CLI commands end-to-end to ensure they work correctly with real data.
 """
 
-import pytest
-import tempfile
 import json
-import yaml
-from pathlib import Path
-from click.testing import CliRunner
-import shutil
 import os
+import shutil
+import tempfile
+from pathlib import Path
+
+import pytest
+import yaml
+from click.testing import CliRunner
 
 from udl_rating_framework.cli.main import cli
 
@@ -114,7 +115,8 @@ class TestRateCommand:
 
         result = runner.invoke(
             cli,
-            ["rate", str(udl_file), "--output", str(output_file), "--format", "json"],
+            ["rate", str(udl_file), "--output",
+             str(output_file), "--format", "json"],
         )
 
         assert result.exit_code == 0
@@ -208,7 +210,8 @@ class TestRateCommand:
 
         result = runner.invoke(
             cli,
-            ["rate", str(udl_file), "--output", str(output_file), "--format", "csv"],
+            ["rate", str(udl_file), "--output",
+             str(output_file), "--format", "csv"],
         )
 
         assert result.exit_code == 0
@@ -420,7 +423,8 @@ class TestEvaluateCommand:
         """Test evaluation with nonexistent model."""
         fake_model = temp_dir / "fake_model.pt"
 
-        result = runner.invoke(cli, ["evaluate", str(fake_model), str(temp_dir)])
+        result = runner.invoke(
+            cli, ["evaluate", str(fake_model), str(temp_dir)])
 
         assert result.exit_code != 0
 
@@ -481,14 +485,16 @@ class TestCLIGeneral:
 
     def test_verbose_logging(self, runner, sample_udl_files):
         """Test verbose logging option."""
-        result = runner.invoke(cli, ["--verbose", "rate", str(sample_udl_files[0])])
+        result = runner.invoke(
+            cli, ["--verbose", "rate", str(sample_udl_files[0])])
 
         # Should not crash with verbose logging
         assert result.exit_code in [0, 1]
 
     def test_quiet_logging(self, runner, sample_udl_files):
         """Test quiet logging option."""
-        result = runner.invoke(cli, ["--quiet", "rate", str(sample_udl_files[0])])
+        result = runner.invoke(
+            cli, ["--quiet", "rate", str(sample_udl_files[0])])
 
         # Should not crash with quiet logging
         assert result.exit_code in [0, 1]
@@ -498,7 +504,8 @@ class TestCLIGeneral:
         invalid_config = temp_dir / "invalid.yaml"
         invalid_config.write_text("invalid: yaml: content: [")
 
-        result = runner.invoke(cli, ["--config", str(invalid_config), "rate", "--help"])
+        result = runner.invoke(
+            cli, ["--config", str(invalid_config), "rate", "--help"])
 
         assert result.exit_code != 0
 
@@ -521,18 +528,15 @@ class TestConfigValidation:
         with open(invalid_config, "w") as f:
             yaml.dump(config_data, f)
 
-        result = runner.invoke(cli, ["--config", str(invalid_config), "rate", "--help"])
+        result = runner.invoke(
+            cli, ["--config", str(invalid_config), "rate", "--help"])
 
         assert result.exit_code != 0
 
     def test_invalid_validation_split_config(self, runner, temp_dir):
         """Test that invalid validation split in config is rejected."""
         invalid_config = temp_dir / "invalid_validation.yaml"
-        config_data = {
-            "training": {
-                "validation_split": 1.5  # Invalid: > 1.0
-            }
-        }
+        config_data = {"training": {"validation_split": 1.5}}  # Invalid: > 1.0
 
         with open(invalid_config, "w") as f:
             yaml.dump(config_data, f)

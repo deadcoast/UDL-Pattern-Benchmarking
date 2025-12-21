@@ -4,16 +4,19 @@ Property-based and unit tests for ConsistencyMetric.
 Tests the mathematical correctness of the consistency metric implementation.
 """
 
-import pytest
-from hypothesis import given, strategies as st, settings, assume
-import networkx as nx
 from typing import List
-from udl_rating_framework.core.representation import (
-    UDLRepresentation,
-    GrammarRule,
-    Constraint,
-)
+
+import networkx as nx
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
+
 from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+from udl_rating_framework.core.representation import (
+    Constraint,
+    GrammarRule,
+    UDLRepresentation,
+)
 
 
 def create_udl_with_known_cycles_and_contradictions(
@@ -114,7 +117,8 @@ class TestConsistencyMetricProperties:
             expected_score = 1.0 - (actual_contradictions + actual_cycles) / (
                 actual_rules + 1
             )
-            expected_score = max(0.0, min(1.0, expected_score))  # Ensure bounded
+            expected_score = max(
+                0.0, min(1.0, expected_score))  # Ensure bounded
 
             # Verify the formula is correctly implemented
             assert abs(computed_score - expected_score) < 1e-6, (
@@ -229,7 +233,8 @@ class TestConsistencyMetricUnits:
         cycles = metric.detect_cycles(graph)
 
         # Should find one cycle: A -> B -> C -> A
-        assert len(cycles) >= 1, f"Expected at least 1 cycle, found {len(cycles)}"
+        assert len(
+            cycles) >= 1, f"Expected at least 1 cycle, found {len(cycles)}"
 
         # Check that the cycle contains the expected nodes
         cycle_nodes = set()
@@ -334,4 +339,5 @@ class TestConsistencyMetricUnits:
             assert score == first_score, f"Non-deterministic behavior: got {scores}"
 
         # Also test the verification method
-        assert metric.verify_determinism(udl), "Determinism verification failed"
+        assert metric.verify_determinism(
+            udl), "Determinism verification failed"

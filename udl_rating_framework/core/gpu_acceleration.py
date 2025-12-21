@@ -8,8 +8,9 @@ management, memory optimization, and batch processing.
 import logging
 import time
 import warnings
-from typing import Dict, List, Any, Optional, Union, Tuple
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple, Union
+
 import numpy as np
 
 try:
@@ -144,7 +145,8 @@ class GPUDeviceManager:
                     free_memory = torch.cuda.get_device_properties(
                         device_info["id"]
                     ).total_memory
-                    free_memory -= torch.cuda.memory_allocated(device_info["id"])
+                    free_memory -= torch.cuda.memory_allocated(
+                        device_info["id"])
 
                     if free_memory > max_free_memory:
                         max_free_memory = free_memory
@@ -217,7 +219,8 @@ class UDLDataset(Dataset):
         self.tokenized_udls = []
         for udl in udl_representations:
             tokens = udl.get_tokens()
-            token_ids = [vocabulary.get_token_id(token.text) for token in tokens]
+            token_ids = [vocabulary.get_token_id(
+                token.text) for token in tokens]
 
             # Truncate or pad to max_length
             if len(token_ids) > max_length:
@@ -323,7 +326,8 @@ class GPUAcceleratedCTM:
             List of prediction dictionaries
         """
         # Create dataset and dataloader
-        dataset = UDLDataset(udl_representations, vocabulary, self.max_sequence_length)
+        dataset = UDLDataset(udl_representations,
+                             vocabulary, self.max_sequence_length)
         dataloader = DataLoader(
             dataset,
             batch_size=self.batch_size,
@@ -336,14 +340,17 @@ class GPUAcceleratedCTM:
 
         with torch.no_grad():
             for batch in dataloader:
-                token_ids = batch["token_ids"].to(self.device, non_blocking=True)
+                token_ids = batch["token_ids"].to(
+                    self.device, non_blocking=True)
 
                 # Forward pass with optional mixed precision
                 if self.enable_mixed_precision and self.device.type == "cuda":
                     with torch.cuda.amp.autocast():
-                        ratings, certainties, activations, synch = self.model(token_ids)
+                        ratings, certainties, activations, synch = self.model(
+                            token_ids)
                 else:
-                    ratings, certainties, activations, synch = self.model(token_ids)
+                    ratings, certainties, activations, synch = self.model(
+                        token_ids)
 
                 # Convert to CPU and extract results
                 ratings = ratings.cpu().numpy()
@@ -403,7 +410,8 @@ class GPUAcceleratedCTM:
         Returns:
             Benchmark results
         """
-        logger.info(f"Benchmarking GPU inference with {len(udl_representations)} UDLs")
+        logger.info(
+            f"Benchmarking GPU inference with {len(udl_representations)} UDLs")
 
         # Warmup
         for _ in range(warmup_iterations):
@@ -586,10 +594,12 @@ class GPUAcceleratedProcessor:
         self._initialize_model(vocabulary)
 
         # Process UDLs in batches
-        logger.info(f"Processing {len(udl_representations)} UDLs with GPU acceleration")
+        logger.info(
+            f"Processing {len(udl_representations)} UDLs with GPU acceleration")
 
         start_time = time.time()
-        predictions = self.gpu_model.predict_batch(udl_representations, vocabulary)
+        predictions = self.gpu_model.predict_batch(
+            udl_representations, vocabulary)
         processing_time = time.time() - start_time
 
         logger.info(
@@ -658,9 +668,11 @@ class GPUAcceleratedProcessor:
             "current_device": str(self.device_manager.get_best_device()),
             "torch_version": torch.__version__ if TORCH_AVAILABLE else None,
             "cuda_available": torch.cuda.is_available() if TORCH_AVAILABLE else False,
-            "cuda_version": torch.version.cuda
-            if TORCH_AVAILABLE and torch.cuda.is_available()
-            else None,
+            "cuda_version": (
+                torch.version.cuda
+                if TORCH_AVAILABLE and torch.cuda.is_available()
+                else None
+            ),
         }
 
     def get_memory_usage(self) -> Dict[str, int]:

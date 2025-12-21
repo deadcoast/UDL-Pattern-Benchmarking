@@ -3,13 +3,13 @@
 Debug script to manually check example calculations without running tests.
 """
 
-import sys
 import os
+import sys
+
+from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+from udl_rating_framework.core.representation import UDLRepresentation
 
 sys.path.insert(0, os.path.abspath("."))
-
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 
 
 def debug_simple_calculator():
@@ -76,7 +76,8 @@ Digit ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
         num_cycles = len(cycles)
         num_rules = len(rules)
 
-        manual_score = 1.0 - (num_contradictions + num_cycles) / (num_rules + 1)
+        manual_score = 1.0 - (num_contradictions +
+                              num_cycles) / (num_rules + 1)
         print(
             f"✓ Manual calculation: 1 - ({num_contradictions} + {num_cycles}) / ({num_rules} + 1) = {manual_score:.6f}"
         )

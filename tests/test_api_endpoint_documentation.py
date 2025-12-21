@@ -14,7 +14,8 @@ from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
 import pytest
-from hypothesis import given, settings, strategies as st
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 # Add deployment API path for imports - must be done before any FastAPI imports
 deployment_api_path = str(Path(__file__).parent.parent / "deployment" / "api")
@@ -73,10 +74,12 @@ def extract_fastapi_endpoints() -> List[Dict[str, str]]:
 
                     description = ""
                     if hasattr(route, "endpoint") and route.endpoint.__doc__:
-                        description = route.endpoint.__doc__.strip().split("\n")[0]
+                        description = route.endpoint.__doc__.strip().split("\n")[
+                            0]
 
                     endpoints.append(
-                        {"method": method, "path": path, "description": description}
+                        {"method": method, "path": path,
+                            "description": description}
                     )
 
         return endpoints
@@ -130,10 +133,12 @@ def extract_documented_endpoints() -> List[Dict[str, str]]:
         path = path.split("?")[0].strip("\"'")
 
         # Check if this endpoint is already documented
-        existing = any(e["path"] == path and e["method"] == method for e in endpoints)
+        existing = any(e["path"] == path and e["method"]
+                       == method for e in endpoints)
         if not existing:
             endpoints.append(
-                {"method": method, "path": path, "description": "Found in curl example"}
+                {"method": method, "path": path,
+                    "description": "Found in curl example"}
             )
 
     return endpoints
@@ -204,7 +209,8 @@ class TestAPIEndpointDocumentation:
 
         # Report findings
         if orphaned:
-            orphaned_list = [f"{method} {path}" for method, path in sorted(orphaned)]
+            orphaned_list = [f"{method} {path}" for method,
+                             path in sorted(orphaned)]
             pytest.fail(
                 f"Found {len(orphaned)} documented endpoints that don't exist in API:\n"
                 f"  - " + "\n  - ".join(orphaned_list)
@@ -232,7 +238,8 @@ class TestAPIEndpointDocumentation:
         # Allow some endpoints to be documented only in curl examples
         # but flag if there are too many
         if len(incomplete) > len(documented_endpoints) // 2:
-            incomplete_list = [f"{e['method']} {e['path']}" for e in incomplete]
+            incomplete_list = [
+                f"{e['method']} {e['path']}" for e in incomplete]
             pytest.fail(
                 f"Found {len(incomplete)} endpoints with incomplete documentation:\n"
                 f"  - " + "\n  - ".join(incomplete_list)
@@ -345,7 +352,8 @@ class TestAPIDocumentationConsistency:
 
         # Read Python client
         client_path = (
-            Path(__file__).parent.parent / "deployment" / "client" / "python_client.py"
+            Path(__file__).parent.parent / "deployment" /
+            "client" / "python_client.py"
         )
 
         if not client_path.exists():
@@ -390,7 +398,8 @@ def test_http_methods_documented_consistently(method: str):
 
     # Get endpoints using this method
     actual_with_method = [e for e in actual_endpoints if e["method"] == method]
-    documented_with_method = [e for e in documented_endpoints if e["method"] == method]
+    documented_with_method = [
+        e for e in documented_endpoints if e["method"] == method]
 
     if not actual_with_method:
         # No endpoints use this method, skip

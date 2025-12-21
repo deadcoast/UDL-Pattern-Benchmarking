@@ -6,20 +6,20 @@ This script computes the exact metric values using the implemented algorithms
 and can be used to verify that the expected values in the test file are correct.
 """
 
-import sys
 import os
+import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.abspath("."))
-
-from udl_rating_framework.core.representation import UDLRepresentation
-from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
+from udl_rating_framework.core.aggregation import MetricAggregator
 from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
 from udl_rating_framework.core.metrics.expressiveness import ExpressivenessMetric
 from udl_rating_framework.core.metrics.structural_coherence import (
     StructuralCoherenceMetric,
 )
-from udl_rating_framework.core.aggregation import MetricAggregator
+from udl_rating_framework.core.representation import UDLRepresentation
+
+sys.path.insert(0, os.path.abspath("."))
 
 
 def calculate_all_examples():

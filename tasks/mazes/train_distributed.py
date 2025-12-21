@@ -1,44 +1,43 @@
 import argparse
+import gc
 import os
 import random
-import gc
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+import torch
+import torch.distributed as dist
+import torchvision
+from torch.nn.parallel import DistributedDataParallel as DDP
+from torch.utils.data.distributed import DistributedSampler
+from tqdm.auto import tqdm
+
+from data.custom_datasets import MazeImageFolder
+from models.ctm import ContinuousThoughtMachine
+from models.ff import FFBaseline
+from models.lstm import LSTMBaseline
+from tasks.image_classification.plotting import plot_neural_dynamics
+from tasks.mazes.plotting import make_maze_gif
+from utils.housekeeping import set_seed, zip_python_code
+from utils.losses import maze_loss
+from utils.samplers import FastRandomDistributedSampler
+from utils.schedulers import WarmupCosineAnnealingLR, WarmupMultiStepLR, warmup
 
 sns.set_style("darkgrid")
-import torch
 
 if torch.cuda.is_available():
     # For faster
     torch.set_float32_matmul_precision("high")
-import torch.distributed as dist
-from torch.nn.parallel import DistributedDataParallel as DDP
-from torch.utils.data.distributed import DistributedSampler
-from utils.samplers import FastRandomDistributedSampler
-from tqdm.auto import tqdm
 
 # Data/Task Specific Imports
-from data.custom_datasets import MazeImageFolder
 
 # Model Imports
-from models.ctm import ContinuousThoughtMachine
-from models.lstm import LSTMBaseline
-from models.ff import FFBaseline
 
 # Plotting/Utils Imports
-from tasks.mazes.plotting import make_maze_gif
-from tasks.image_classification.plotting import plot_neural_dynamics
-from utils.housekeeping import set_seed, zip_python_code
-from utils.losses import maze_loss
-from utils.schedulers import WarmupCosineAnnealingLR, WarmupMultiStepLR, warmup
-
-import torchvision
 
 torchvision.disable_beta_transforms_warning()
-
-import warnings
 
 warnings.filterwarnings(
     "ignore", message="using precomputed metric; inverse_transform will be unavailable"
@@ -73,7 +72,8 @@ def parse_args():
     parser.add_argument(
         "--d_model", type=int, default=512, help="Dimension of the model."
     )
-    parser.add_argument("--dropout", type=float, default=0.0, help="Dropout rate.")
+    parser.add_argument("--dropout", type=float,
+                        default=0.0, help="Dropout rate.")
     parser.add_argument(
         "--backbone_type",
         type=str,
@@ -340,7 +340,8 @@ def setup_ddp():
         os.environ["RANK"] = "0"
         os.environ["WORLD_SIZE"] = "1"
         os.environ["MASTER_ADDR"] = "localhost"
-        os.environ["MASTER_PORT"] = "12356"  # Different port from image classification
+        # Different port from image classification
+        os.environ["MASTER_PORT"] = "12356"
         os.environ["LOCAL_RANK"] = "0"
         print("Running in non-distributed mode (simulated DDP setup).")
         if not torch.cuda.is_available() or int(os.environ["WORLD_SIZE"]) == 1:
@@ -374,7 +375,6 @@ def is_main_process(rank):
 
 
 # --- End DDP Setup ---
-
 
 if __name__ == "__main__":
     args = parse_args()
@@ -476,7 +476,8 @@ if __name__ == "__main__":
 
     # Wrap model with DDP
     if device.type == "cuda" and world_size > 1:
-        model = DDP(model_base, device_ids=[local_rank], output_device=local_rank)
+        model = DDP(model_base, device_ids=[
+                    local_rank], output_device=local_rank)
     elif device.type == "cpu" and world_size > 1:
         model = DDP(model_base)
     else:
@@ -626,7 +627,8 @@ if __name__ == "__main__":
 
             model_to_load = model.module if isinstance(model, DDP) else model
             state_dict = checkpoint["model_state_dict"]
-            has_module_prefix = all(k.startswith("module.") for k in state_dict)
+            has_module_prefix = all(k.startswith("module.")
+                                    for k in state_dict)
             is_wrapped = isinstance(model, DDP)
 
             if has_module_prefix and not is_wrapped:
@@ -681,7 +683,8 @@ if __name__ == "__main__":
                         "test_accuracies_most_certain_permaze"
                     ]
                 elif is_main_process(rank) and args.ignore_metrics_when_reloading:
-                    print(f"Rank {rank}: Ignoring metrics history upon reload.")
+                    print(
+                        f"Rank {rank}: Ignoring metrics history upon reload.")
             else:
                 print(f"Rank {rank}: Only reloading model weights!")
 
@@ -699,7 +702,8 @@ if __name__ == "__main__":
             gc.collect()
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
-            print(f"Rank {rank}: Reload finished, starting from iteration {start_iter}")
+            print(
+                f"Rank {rank}: Reload finished, starting from iteration {start_iter}")
         else:
             print(
                 f"Rank {rank}: Checkpoint not found at {chkpt_path}, starting from scratch."
@@ -858,8 +862,10 @@ if __name__ == "__main__":
                 # Aggregate Train Metrics
                 if world_size > 1:
                     dist.all_reduce(total_train_loss, op=dist.ReduceOp.SUM)
-                    dist.all_reduce(total_train_correct_certain, op=dist.ReduceOp.SUM)
-                    dist.all_reduce(total_train_mazes_solved, op=dist.ReduceOp.SUM)
+                    dist.all_reduce(total_train_correct_certain,
+                                    op=dist.ReduceOp.SUM)
+                    dist.all_reduce(total_train_mazes_solved,
+                                    op=dist.ReduceOp.SUM)
                     dist.all_reduce(total_train_steps, op=dist.ReduceOp.SUM)
                     dist.all_reduce(total_train_mazes, op=dist.ReduceOp.SUM)
 
@@ -876,7 +882,8 @@ if __name__ == "__main__":
                     )  # Avg full maze solved %
                     train_losses.append(avg_train_loss)
                     train_accuracies_most_certain.append(avg_train_acc_step)
-                    train_accuracies_most_certain_permaze.append(avg_train_acc_maze)
+                    train_accuracies_most_certain_permaze.append(
+                        avg_train_acc_maze)
                     # train_accuracies list remains unused/placeholder for this simplified metric structure
                     print(
                         f"Iter {bi} Train Metrics (Agg): Loss={avg_train_loss:.4f}, StepAcc={avg_train_acc_step:.4f}, MazeAcc={avg_train_acc_maze:.4f}"
@@ -939,7 +946,8 @@ if __name__ == "__main__":
                             ]
                         elif args.model == "ff":
                             predictions_raw = model(inputs)
-                            predictions = predictions_raw.reshape(batch_size, -1, 5)
+                            predictions = predictions_raw.reshape(
+                                batch_size, -1, 5)
                             loss_eval, where_most_certain, _ = maze_loss(
                                 predictions.unsqueeze(-1),
                                 None,
@@ -951,7 +959,8 @@ if __name__ == "__main__":
                         total_test_loss += loss_eval * batch_size
                         correct_steps = pred_at_certain == targets
                         total_test_correct_certain += correct_steps.sum()
-                        total_test_mazes_solved += correct_steps.all(dim=-1).sum()
+                        total_test_mazes_solved += correct_steps.all(
+                            dim=-1).sum()
                         total_test_steps += batch_size * seq_len
                         total_test_mazes += batch_size
 
@@ -965,8 +974,10 @@ if __name__ == "__main__":
                 # Aggregate Test Metrics
                 if world_size > 1:
                     dist.all_reduce(total_test_loss, op=dist.ReduceOp.SUM)
-                    dist.all_reduce(total_test_correct_certain, op=dist.ReduceOp.SUM)
-                    dist.all_reduce(total_test_mazes_solved, op=dist.ReduceOp.SUM)
+                    dist.all_reduce(total_test_correct_certain,
+                                    op=dist.ReduceOp.SUM)
+                    dist.all_reduce(total_test_mazes_solved,
+                                    op=dist.ReduceOp.SUM)
                     dist.all_reduce(total_test_steps, op=dist.ReduceOp.SUM)
                     dist.all_reduce(total_test_mazes, op=dist.ReduceOp.SUM)
 
@@ -981,7 +992,8 @@ if __name__ == "__main__":
                     )
                     test_losses.append(avg_test_loss)
                     test_accuracies_most_certain.append(avg_test_acc_step)
-                    test_accuracies_most_certain_permaze.append(avg_test_acc_maze)
+                    test_accuracies_most_certain_permaze.append(
+                        avg_test_acc_maze)
                     print(
                         f"Iter {bi} Test Metrics (Agg): Loss={avg_test_loss:.4f}, StepAcc={avg_test_acc_step:.4f}, MazeAcc={avg_test_acc_maze:.4f}\n"
                     )
@@ -1067,7 +1079,8 @@ if __name__ == "__main__":
                 # --- Visualization (Rank 0, Conditional) ---
                 if is_main_process(rank) and args.model in ["ctm", "lstm"]:
                     # try:
-                    model_module = model.module if isinstance(model, DDP) else model
+                    model_module = model.module if isinstance(
+                        model, DDP) else model
                     # Use a consistent batch for viz if possible, or just next batch
                     inputs_viz, targets_viz = next(iter(testloader))
                     inputs_viz = inputs_viz.to(device)
@@ -1086,7 +1099,8 @@ if __name__ == "__main__":
                         attention_tracking_viz,
                     ) = model_module(inputs_viz, track=True)
                     predictions_viz = predictions_viz_raw.reshape(
-                        predictions_viz_raw.size(0), -1, 5, predictions_viz_raw.size(-1)
+                        predictions_viz_raw.size(
+                            0), -1, 5, predictions_viz_raw.size(-1)
                     )
 
                     att_shape = (
@@ -1109,8 +1123,10 @@ if __name__ == "__main__":
                     pbar.set_description("Tracking (Rank 0): Maze GIF")
                     if attention_tracking_viz is not None:
                         make_maze_gif(
-                            (inputs_viz[longest_index].detach().cpu().numpy() + 1) / 2,
-                            predictions_viz[longest_index].detach().cpu().numpy(),
+                            (inputs_viz[longest_index].detach(
+                            ).cpu().numpy() + 1) / 2,
+                            predictions_viz[longest_index].detach(
+                            ).cpu().numpy(),
                             targets_viz[longest_index].detach().cpu().numpy(),
                             attention_tracking_viz[:, longest_index],
                             args.log_dir,
@@ -1145,7 +1161,8 @@ if __name__ == "__main__":
         targets = targets.to(device, non_blocking=True)
 
         # Defaults for logging
-        loss = torch.tensor(0.0, device=device)  # Need loss defined for logging scope
+        # Need loss defined for logging scope
+        loss = torch.tensor(0.0, device=device)
         accuracy_finegrained = 0.0
         where_most_certain_val = -1.0
         where_most_certain_std = 0.0
@@ -1180,7 +1197,8 @@ if __name__ == "__main__":
                     accuracy_finegrained = (
                         (
                             predictions.argmax(2)[
-                                torch.arange(predictions.size(0), device=device),
+                                torch.arange(predictions.size(0),
+                                             device=device),
                                 :,
                                 where_most_certain,
                             ]
@@ -1206,7 +1224,8 @@ if __name__ == "__main__":
                     accuracy_finegrained = (
                         (
                             predictions.argmax(2)[
-                                torch.arange(predictions.size(0), device=device),
+                                torch.arange(predictions.size(0),
+                                             device=device),
                                 :,
                                 where_most_certain,
                             ]
@@ -1269,9 +1288,11 @@ if __name__ == "__main__":
         if is_main_process(rank):
             pbar_desc = f"Loss(avg)={loss_log.item():.3f} Acc(loc)={accuracy_finegrained:.3f} LR={current_lr:.6f}"
             if args.model in ["ctm", "lstm"] or torch.is_tensor(where_most_certain):
-                pbar_desc += f" Cert={where_most_certain_val:.2f}"  # +-{where_most_certain_std:.2f}' # Removed std for brevity
+                # +-{where_most_certain_std:.2f}' # Removed std for brevity
+                pbar_desc += f" Cert={where_most_certain_val:.2f}"
             if isinstance(upto_where, (np.ndarray, list)) and len(upto_where) > 0:
-                pbar_desc += f" Path={upto_where_mean:.1f}"  # +-{upto_where_std:.1f}'
+                # +-{upto_where_std:.1f}'
+                pbar_desc += f" Path={upto_where_mean:.1f}"
             pbar.set_description(f"{args.model.upper()} {pbar_desc}")
         # --- End Aggregation and Logging ---
 

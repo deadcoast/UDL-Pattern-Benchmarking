@@ -1,6 +1,7 @@
+import math
 import os
 import re
-import math
+
 from models.ctm import ContinuousThoughtMachine
 from models.lstm import LSTMBaseline
 
@@ -41,7 +42,8 @@ def prepare_model(prediction_reshaper, args, device):
             dropout=args.dropout,
         ).to(device)
     else:
-        raise ValueError(f"Model must be either ctm or lstm, not {args.model_type}")
+        raise ValueError(
+            f"Model must be either ctm or lstm, not {args.model_type}")
 
     return model
 

@@ -4,10 +4,12 @@ Activation Pattern Visualization Utilities.
 Provides tools for visualizing neuron activation patterns from CTM processing.
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 from typing import Dict, List, Optional, Tuple
+
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+
 from ..models.ctm_adapter import TrackingData
 
 
@@ -81,10 +83,12 @@ class ActivationVisualizer:
 
         # Set ticks
         ax.set_xticks(
-            range(0, tracking_data.iterations, max(1, tracking_data.iterations // 10))
+            range(0, tracking_data.iterations, max(
+                1, tracking_data.iterations // 10))
         )
         ax.set_yticks(
-            range(0, tracking_data.n_neurons, max(1, tracking_data.n_neurons // 10))
+            range(0, tracking_data.n_neurons, max(
+                1, tracking_data.n_neurons // 10))
         )
 
         plt.tight_layout()
@@ -184,10 +188,12 @@ class ActivationVisualizer:
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=self.figsize)
 
         # Histogram
-        ax1.hist(activations, bins=50, alpha=0.7, density=True, edgecolor="black")
+        ax1.hist(activations, bins=50, alpha=0.7,
+                 density=True, edgecolor="black")
         ax1.set_xlabel("Activation Value")
         ax1.set_ylabel("Density")
-        ax1.set_title(f"{activation_type.capitalize()} Activation Distribution")
+        ax1.set_title(
+            f"{activation_type.capitalize()} Activation Distribution")
         ax1.grid(True, alpha=0.3)
 
         # Box plot
@@ -256,7 +262,8 @@ class ActivationVisualizer:
 
         # Set ticks
         n_ticks = min(10, tracking_data.n_neurons)
-        tick_indices = np.linspace(0, tracking_data.n_neurons - 1, n_ticks, dtype=int)
+        tick_indices = np.linspace(
+            0, tracking_data.n_neurons - 1, n_ticks, dtype=int)
         ax.set_xticks(tick_indices)
         ax.set_yticks(tick_indices)
 
@@ -304,25 +311,25 @@ class ActivationVisualizer:
         figures["post_timeseries"] = self.plot_activation_time_series(
             tracking_data,
             activation_type="post",
-            save_path=f"{save_dir}/post_activation_timeseries.png"
-            if save_dir
-            else None,
+            save_path=(
+                f"{save_dir}/post_activation_timeseries.png" if save_dir else None
+            ),
         )
 
         figures["pre_distribution"] = self.plot_activation_distribution(
             tracking_data,
             "pre",
-            save_path=f"{save_dir}/pre_activation_distribution.png"
-            if save_dir
-            else None,
+            save_path=(
+                f"{save_dir}/pre_activation_distribution.png" if save_dir else None
+            ),
         )
 
         figures["post_distribution"] = self.plot_activation_distribution(
             tracking_data,
             "post",
-            save_path=f"{save_dir}/post_activation_distribution.png"
-            if save_dir
-            else None,
+            save_path=(
+                f"{save_dir}/post_activation_distribution.png" if save_dir else None
+            ),
         )
 
         figures["correlation_matrix"] = self.plot_neuron_correlation_matrix(

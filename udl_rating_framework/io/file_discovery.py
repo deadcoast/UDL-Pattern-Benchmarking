@@ -9,11 +9,10 @@ This module provides functionality for:
 """
 
 import logging
-from pathlib import Path
-from typing import List, Set, Generator, Optional, Tuple
-from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Generator, List, Optional, Set, Tuple
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -102,10 +101,12 @@ class FileDiscovery:
 
         # Validate directory path
         if not path.exists():
-            raise FileDiscoveryError(f"Directory does not exist: {directory_path}")
+            raise FileDiscoveryError(
+                f"Directory does not exist: {directory_path}")
 
         if not path.is_dir():
-            raise FileDiscoveryError(f"Path is not a directory: {directory_path}")
+            raise FileDiscoveryError(
+                f"Path is not a directory: {directory_path}")
 
         discovered_files = []
         errors = []

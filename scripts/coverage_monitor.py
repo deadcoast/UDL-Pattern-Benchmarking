@@ -7,19 +7,19 @@ It can be run in CI/CD pipelines or as a scheduled task to track coverage trends
 send alerts when coverage drops below acceptable thresholds.
 """
 
-import os
-import sys
-import json
-import sqlite3
-import datetime
-import subprocess
 import argparse
-from pathlib import Path
-from typing import Dict, List, Tuple, Optional
-from dataclasses import dataclass, asdict
+import datetime
+import json
+import os
 import smtplib
-from email.mime.text import MIMEText
+import sqlite3
+import subprocess
+import sys
+from dataclasses import asdict, dataclass
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 
 @dataclass
@@ -215,7 +215,8 @@ class CoverageMonitor:
                         statements = int(parts[1])
                         missing = int(parts[2])
                         coverage = (
-                            float(parts[3][:-1]) if parts[3].endswith("%") else 0.0
+                            float(parts[3][:-1]
+                                  ) if parts[3].endswith("%") else 0.0
                         )
 
                         if name == "TOTAL":
@@ -383,9 +384,11 @@ class CoverageMonitor:
         sorted_modules = sorted(report.modules, key=lambda m: m.coverage)
 
         # Add modules below threshold
-        below_threshold = [m for m in sorted_modules if m.coverage < self.threshold]
+        below_threshold = [
+            m for m in sorted_modules if m.coverage < self.threshold]
         if below_threshold:
-            lines.extend([f"### Modules Below {self.threshold}% Threshold", ""])
+            lines.extend(
+                [f"### Modules Below {self.threshold}% Threshold", ""])
             for module in below_threshold:
                 lines.append(
                     f"- **{module.name}:** {module.coverage:.1f}% ({module.missing} missing)"
@@ -393,7 +396,8 @@ class CoverageMonitor:
             lines.append("")
 
         # Add top performers
-        top_performers = [m for m in sorted_modules if m.coverage >= 95.0][-10:]
+        top_performers = [
+            m for m in sorted_modules if m.coverage >= 95.0][-10:]
         if top_performers:
             lines.extend(["### Top Performing Modules", ""])
             for module in reversed(top_performers):
@@ -439,7 +443,8 @@ class CoverageMonitor:
             body_lines.append(f"  {alert}")
 
         body_lines.extend(
-            ["", "Full Report:", "-" * 20, self.generate_coverage_report(report)]
+            ["", "Full Report:", "-" * 20,
+                self.generate_coverage_report(report)]
         )
 
         msg.attach(MIMEText("\n".join(body_lines), "plain"))

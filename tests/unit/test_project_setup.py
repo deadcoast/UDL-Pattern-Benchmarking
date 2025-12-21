@@ -5,9 +5,10 @@ Tests package imports and dependency availability.
 Validates: Requirements 11.7
 """
 
-import pytest
-import sys
 import importlib
+import sys
+
+import pytest
 
 
 class TestPackageImports:
@@ -218,8 +219,9 @@ class TestBasicFunctionality:
 
     def test_confidence_calculator_basic_computation(self):
         """Test basic confidence computation."""
-        from udl_rating_framework.core.confidence import ConfidenceCalculator
         import numpy as np
+
+        from udl_rating_framework.core.confidence import ConfidenceCalculator
 
         calculator = ConfidenceCalculator()
 

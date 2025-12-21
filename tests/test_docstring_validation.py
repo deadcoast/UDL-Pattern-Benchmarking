@@ -8,19 +8,21 @@ and return types.
 **Validates: Requirements 8.1, 8.2, 8.3, 8.4, 8.5**
 """
 
-import pytest
-import inspect
-import importlib
-import pkgutil
 import ast
+import importlib
+import inspect
+import pkgutil
 from pathlib import Path
-from hypothesis import given, strategies as st, settings, assume
-from typing import List, Tuple, Any, Optional
+from typing import Any, List, Optional, Tuple
+
+import pytest
+from hypothesis import assume, given, settings
+from hypothesis import strategies as st
 
 from udl_rating_framework.validation.docstring_validator import (
-    DocstringValidator,
-    DocstringParser,
     DocstringInfo,
+    DocstringParser,
+    DocstringValidator,
     SignatureMismatch,
     UndocumentedAPI,
     find_undocumented_public_apis,
@@ -151,10 +153,12 @@ class TestDocstringSignatureAccuracy:
         len(DOCUMENTED_FUNCTIONS) == 0, reason="No documented functions found"
     )
     @given(
-        st.sampled_from(DOCUMENTED_FUNCTIONS) if DOCUMENTED_FUNCTIONS else st.nothing()
+        st.sampled_from(
+            DOCUMENTED_FUNCTIONS) if DOCUMENTED_FUNCTIONS else st.nothing()
     )
     @settings(
-        max_examples=min(100, len(DOCUMENTED_FUNCTIONS)) if DOCUMENTED_FUNCTIONS else 1,
+        max_examples=min(100, len(DOCUMENTED_FUNCTIONS)
+                         ) if DOCUMENTED_FUNCTIONS else 1,
         deadline=None,
     )
     def test_documented_parameters_exist_in_signature(self, func_info: Tuple[str, Any]):
@@ -197,10 +201,12 @@ class TestDocstringSignatureAccuracy:
         len(DOCUMENTED_FUNCTIONS) == 0, reason="No documented functions found"
     )
     @given(
-        st.sampled_from(DOCUMENTED_FUNCTIONS) if DOCUMENTED_FUNCTIONS else st.nothing()
+        st.sampled_from(
+            DOCUMENTED_FUNCTIONS) if DOCUMENTED_FUNCTIONS else st.nothing()
     )
     @settings(
-        max_examples=min(100, len(DOCUMENTED_FUNCTIONS)) if DOCUMENTED_FUNCTIONS else 1,
+        max_examples=min(100, len(DOCUMENTED_FUNCTIONS)
+                         ) if DOCUMENTED_FUNCTIONS else 1,
         deadline=None,
     )
     def test_actual_parameters_are_documented(self, func_info: Tuple[str, Any]):
@@ -312,8 +318,8 @@ class TestDocstringExamples:
 
     def test_doctest_runner_for_module(self):
         """Test that doctest runner can process a specific module."""
-        from udl_rating_framework.validation.docstring_validator import DoctestRunner
         import udl_rating_framework.core.metrics.consistency as consistency_module
+        from udl_rating_framework.validation.docstring_validator import DoctestRunner
 
         runner = DoctestRunner()
         results = runner.run_doctests_for_module(consistency_module)
@@ -351,8 +357,8 @@ class TestMathematicalFormulasInDocstrings:
 
     def test_metrics_have_formula_methods(self):
         """Test that metric classes have get_formula() methods."""
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.expressiveness import (
             ExpressivenessMetric,
         )
@@ -375,8 +381,8 @@ class TestMathematicalFormulasInDocstrings:
 
     def test_metric_docstrings_contain_formulas(self):
         """Test that metric class docstrings contain mathematical definitions."""
-        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.completeness import CompletenessMetric
+        from udl_rating_framework.core.metrics.consistency import ConsistencyMetric
         from udl_rating_framework.core.metrics.expressiveness import (
             ExpressivenessMetric,
         )

@@ -1,44 +1,39 @@
 import argparse
+import gc
 import os
 import random
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-
-sns.set_style("darkgrid")
 import torch
-
-if torch.cuda.is_available():
-    # For faster
-    torch.set_float32_matmul_precision("high")
 import torch.nn as nn
+import torchvision
+from autoclip.torch import QuantileClip
+from torchvision import datasets, transforms
 from tqdm.auto import tqdm
 
 from data.custom_datasets import ImageNet
-from torchvision import datasets
-from torchvision import transforms
-from tasks.image_classification.imagenet_classes import IMAGENET2012_CLASSES
 from models.ctm import ContinuousThoughtMachine
-from models.lstm import LSTMBaseline
 from models.ff import FFBaseline
+from models.lstm import LSTMBaseline
+from tasks.image_classification.imagenet_classes import IMAGENET2012_CLASSES
 from tasks.image_classification.plotting import (
-    plot_neural_dynamics,
     make_classification_gif,
+    plot_neural_dynamics,
 )
 from utils.housekeeping import set_seed, zip_python_code
 from utils.losses import image_classification_loss  # Used by CTM, LSTM
 from utils.schedulers import WarmupCosineAnnealingLR, WarmupMultiStepLR, warmup
 
-from autoclip.torch import QuantileClip
+sns.set_style("darkgrid")
 
-import gc
-import torchvision
+if torch.cuda.is_available():
+    # For faster
+    torch.set_float32_matmul_precision("high")
 
 torchvision.disable_beta_transforms_warning()
-
-
-import warnings
 
 warnings.filterwarnings(
     "ignore", message="using precomputed metric; inverse_transform will be unavailable"
@@ -50,19 +45,22 @@ warnings.filterwarnings(
     "ignore",
     "Corrupt EXIF data",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 warnings.filterwarnings(
     "ignore",
     "UserWarning: Metadata Warning",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 warnings.filterwarnings(
     "ignore",
     "UserWarning: Truncated File Read",
     UserWarning,
-    r"^PIL\.TiffImagePlugin$",  # Using a regular expression to match the module.
+    # Using a regular expression to match the module.
+    r"^PIL\.TiffImagePlugin$",
 )
 
 
@@ -83,7 +81,8 @@ def parse_args():
     parser.add_argument(
         "--d_model", type=int, default=512, help="Dimension of the model."
     )
-    parser.add_argument("--dropout", type=float, default=0.0, help="Dropout rate.")
+    parser.add_argument("--dropout", type=float,
+                        default=0.0, help="Dropout rate.")
     parser.add_argument(
         "--backbone_type",
         type=str,
@@ -346,7 +345,8 @@ def get_dataset(dataset, root):
         class_labels = list(IMAGENET2012_CLASSES.values())
 
         train_data = ImageNet(which_split="train", transform=train_transform)
-        test_data = ImageNet(which_split="validation", transform=test_transform)
+        test_data = ImageNet(which_split="validation",
+                             transform=test_transform)
     elif dataset == "cifar10":
         dataset_mean = [0.49139968, 0.48215827, 0.44653124]
         dataset_std = [0.24703233, 0.24348505, 0.26158768]
@@ -384,8 +384,10 @@ def get_dataset(dataset, root):
             "truck",
         ]
     elif dataset == "cifar100":
-        dataset_mean = [0.5070751592371341, 0.48654887331495067, 0.4409178433670344]
-        dataset_std = [0.2673342858792403, 0.2564384629170882, 0.27615047132568393]
+        dataset_mean = [0.5070751592371341,
+                        0.48654887331495067, 0.4409178433670344]
+        dataset_std = [0.2673342858792403,
+                       0.2564384629170882, 0.27615047132568393]
         normalize = transforms.Normalize(mean=dataset_mean, std=dataset_std)
 
         train_transform = transforms.Compose(
@@ -407,8 +409,10 @@ def get_dataset(dataset, root):
         test_data = datasets.CIFAR100(
             root, train=False, transform=test_transform, download=True
         )
-        idx_order = np.argsort(np.array(list(train_data.class_to_idx.values())))
-        class_labels = list(np.array(list(train_data.class_to_idx.keys()))[idx_order])
+        idx_order = np.argsort(
+            np.array(list(train_data.class_to_idx.values())))
+        class_labels = list(
+            np.array(list(train_data.class_to_idx.keys()))[idx_order])
     else:
         raise NotImplementedError
 
@@ -734,7 +738,8 @@ if __name__ == "__main__":
                 elif args.model == "ff":
                     predictions = model(inputs)
                     loss = nn.CrossEntropyLoss()(predictions, targets)
-                    accuracy = (predictions.argmax(1) == targets).float().mean().item()
+                    accuracy = (predictions.argmax(1) ==
+                                targets).float().mean().item()
                     pbar_desc = f"FF Loss={loss.item():0.3f}. Acc={accuracy:0.3f}. LR={current_lr:0.6f}"
 
             scaler.scale(loss).backward()
@@ -761,8 +766,10 @@ if __name__ == "__main__":
                 iters.append(bi)
                 current_train_losses = []
                 current_test_losses = []
-                current_train_accuracies = []  # Holds list of accuracies per tick for CTM/LSTM, single value for FF
-                current_test_accuracies = []  # Holds list of accuracies per tick for CTM/LSTM, single value for FF
+                # Holds list of accuracies per tick for CTM/LSTM, single value for FF
+                current_train_accuracies = []
+                # Holds list of accuracies per tick for CTM/LSTM, single value for FF
+                current_test_accuracies = []
                 current_train_accuracies_most_certain = []  # Only for CTM/LSTM
                 current_test_accuracies_most_certain = []  # Only for CTM/LSTM
 
@@ -791,7 +798,8 @@ if __name__ == "__main__":
                         num_workers=num_workers_test,
                     )
                     all_targets_list = []
-                    all_predictions_list = []  # List to store raw predictions (B, C, T) or (B, C)
+                    # List to store raw predictions (B, C, T) or (B, C)
+                    all_predictions_list = []
                     all_predictions_most_certain_list = []  # Only for CTM/LSTM
                     all_losses = []
 
@@ -805,11 +813,13 @@ if __name__ == "__main__":
                         for inferi, (inputs, targets) in enumerate(loader):
                             inputs = inputs.to(device)
                             targets = targets.to(device)
-                            all_targets_list.append(targets.detach().cpu().numpy())
+                            all_targets_list.append(
+                                targets.detach().cpu().numpy())
 
                             # Model-specific forward and loss for evaluation
                             if args.model == "ctm":
-                                these_predictions, certainties, _ = model(inputs)
+                                these_predictions, certainties, _ = model(
+                                    inputs)
                                 loss, where_most_certain = image_classification_loss(
                                     these_predictions,
                                     certainties,
@@ -817,7 +827,8 @@ if __name__ == "__main__":
                                     use_most_certain=True,
                                 )
                                 all_predictions_list.append(
-                                    these_predictions.argmax(1).detach().cpu().numpy()
+                                    these_predictions.argmax(
+                                        1).detach().cpu().numpy()
                                 )  # Shape (B, T)
                                 all_predictions_most_certain_list.append(
                                     these_predictions.argmax(1)[
@@ -833,7 +844,8 @@ if __name__ == "__main__":
                                 )  # Shape (B,)
 
                             elif args.model == "lstm":
-                                these_predictions, certainties, _ = model(inputs)
+                                these_predictions, certainties, _ = model(
+                                    inputs)
                                 loss, where_most_certain = image_classification_loss(
                                     these_predictions,
                                     certainties,
@@ -841,7 +853,8 @@ if __name__ == "__main__":
                                     use_most_certain=True,
                                 )
                                 all_predictions_list.append(
-                                    these_predictions.argmax(1).detach().cpu().numpy()
+                                    these_predictions.argmax(
+                                        1).detach().cpu().numpy()
                                 )  # Shape (B, T)
                                 all_predictions_most_certain_list.append(
                                     these_predictions.argmax(1)[
@@ -860,7 +873,8 @@ if __name__ == "__main__":
                                 these_predictions = model(inputs)
                                 loss = nn.CrossEntropyLoss()(these_predictions, targets)
                                 all_predictions_list.append(
-                                    these_predictions.argmax(1).detach().cpu().numpy()
+                                    these_predictions.argmax(
+                                        1).detach().cpu().numpy()
                                 )  # Shape (B,)
 
                             all_losses.append(loss.item())
@@ -930,11 +944,13 @@ if __name__ == "__main__":
                         for inferi, (inputs, targets) in enumerate(loader):
                             inputs = inputs.to(device)
                             targets = targets.to(device)
-                            all_targets_list.append(targets.detach().cpu().numpy())
+                            all_targets_list.append(
+                                targets.detach().cpu().numpy())
 
                             # Model-specific forward and loss for evaluation
                             if args.model == "ctm":
-                                these_predictions, certainties, _ = model(inputs)
+                                these_predictions, certainties, _ = model(
+                                    inputs)
                                 loss, where_most_certain = image_classification_loss(
                                     these_predictions,
                                     certainties,
@@ -942,7 +958,8 @@ if __name__ == "__main__":
                                     use_most_certain=True,
                                 )
                                 all_predictions_list.append(
-                                    these_predictions.argmax(1).detach().cpu().numpy()
+                                    these_predictions.argmax(
+                                        1).detach().cpu().numpy()
                                 )
                                 all_predictions_most_certain_list.append(
                                     these_predictions.argmax(1)[
@@ -958,7 +975,8 @@ if __name__ == "__main__":
                                 )
 
                             elif args.model == "lstm":
-                                these_predictions, certainties, _ = model(inputs)
+                                these_predictions, certainties, _ = model(
+                                    inputs)
                                 loss, where_most_certain = image_classification_loss(
                                     these_predictions,
                                     certainties,
@@ -966,7 +984,8 @@ if __name__ == "__main__":
                                     use_most_certain=True,
                                 )
                                 all_predictions_list.append(
-                                    these_predictions.argmax(1).detach().cpu().numpy()
+                                    these_predictions.argmax(
+                                        1).detach().cpu().numpy()
                                 )
                                 all_predictions_most_certain_list.append(
                                     these_predictions.argmax(1)[
@@ -985,7 +1004,8 @@ if __name__ == "__main__":
                                 these_predictions = model(inputs)
                                 loss = nn.CrossEntropyLoss()(these_predictions, targets)
                                 all_predictions_list.append(
-                                    these_predictions.argmax(1).detach().cpu().numpy()
+                                    these_predictions.argmax(
+                                        1).detach().cpu().numpy()
                                 )
 
                             all_losses.append(loss.item())
@@ -1032,8 +1052,10 @@ if __name__ == "__main__":
 
                 if args.model in ["ctm", "lstm"]:
                     # Plot per-tick accuracy for CTM/LSTM
-                    train_acc_arr = np.array(train_accuracies)  # Shape (N_iters, T)
-                    test_acc_arr = np.array(test_accuracies)  # Shape (N_iters, T)
+                    train_acc_arr = np.array(
+                        train_accuracies)  # Shape (N_iters, T)
+                    test_acc_arr = np.array(
+                        test_accuracies)  # Shape (N_iters, T)
                     num_ticks = train_acc_arr.shape[1]
                     for ti in range(num_ticks):
                         axacc_train.plot(
@@ -1120,7 +1142,8 @@ if __name__ == "__main__":
                         inputs_viz = inputs_viz.to(device)
                         targets_viz = targets_viz.to(device)
 
-                        pbar.set_description("Tracking: Processing test data for viz")
+                        pbar.set_description(
+                            "Tracking: Processing test data for viz")
                         (
                             predictions_viz,
                             certainties_viz,
@@ -1162,7 +1185,8 @@ if __name__ == "__main__":
                             -1,
                         )
 
-                        pbar.set_description("Tracking: Producing attention gif")
+                        pbar.set_description(
+                            "Tracking: Producing attention gif")
                         make_classification_gif(
                             img_to_gif,
                             targets_viz[imgi].item(),
@@ -1181,7 +1205,8 @@ if __name__ == "__main__":
                             attention_tracking_viz,
                         )
                     except Exception as e:
-                        print(f"Visualization failed for model {args.model}: {e}")
+                        print(
+                            f"Visualization failed for model {args.model}: {e}")
 
                 gc.collect()
                 if torch.cuda.is_available():
@@ -1202,8 +1227,10 @@ if __name__ == "__main__":
                     # Always save these
                     "train_losses": train_losses,
                     "test_losses": test_losses,
-                    "train_accuracies": train_accuracies,  # This is list of scalars for FF, list of arrays for CTM/LSTM
-                    "test_accuracies": test_accuracies,  # This is list of scalars for FF, list of arrays for CTM/LSTM
+                    # This is list of scalars for FF, list of arrays for CTM/LSTM
+                    "train_accuracies": train_accuracies,
+                    # This is list of scalars for FF, list of arrays for CTM/LSTM
+                    "test_accuracies": test_accuracies,
                     "iters": iters,
                     "args": args,  # Save args used for this run
                     # RNG states
